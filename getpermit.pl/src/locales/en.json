@@ -1,0 +1,308 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact",
+    "consultation": "Book consultation"
+  },
+  "hero": {
+    "badge": "Legal help for foreigners",
+    "title": "Your residence and work in Poland — without stress and paperwork errors",
+    "subtitle": "We help foreigners legally live and work in Poland. Residence cards, work permits, citizenship — we guide you through the entire process.",
+    "ctaPrimary": "Book consultation",
+    "blogCta": "Read the blog"
+  },
+  "stats": {
+    "years": "Years of experience",
+    "clients": "Happy clients",
+    "success": "Success rate"
+  },
+  "services": {
+    "title": "Our services",
+    "subtitle": "Comprehensive help at every stage of legalization",
+    "viewAll": "View all services",
+    "viewDetails": "Learn more",
+    "from": "from",
+    "duration": "Processing time",
+    "price": "Price",
+    "documents": "Required documents",
+    "forWhom": "Who it's for",
+    "process": "How the process works",
+    "faq": "Frequently asked questions"
+  },
+  "testimonials": {
+    "title": "What our clients say",
+    "subtitle": "Hundreds of foreigners have already received their documents thanks to our help"
+  },
+  "ctaBanner": {
+    "title": "Have questions about your situation?",
+    "subtitle": "Write to us — we will assess your case for free and propose the best solution.",
+    "button": "Contact us"
+  },
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "Fill out the form and we will respond within 24 hours",
+    "form": {
+      "name": "Full name",
+      "namePlaceholder": "John Doe",
+      "email": "Email address",
+      "emailPlaceholder": "john@example.com",
+      "phone": "Phone (optional)",
+      "phonePlaceholder": "+48 600 000 000",
+      "service": "Service of interest",
+      "servicePlaceholder": "Select a service",
+      "message": "Your message",
+      "messagePlaceholder": "Briefly describe your situation...",
+      "consent": "I consent to the processing of my personal data for the purpose of receiving a response.",
+      "submit": "Send message",
+      "submitting": "Sending...",
+      "success": "Thank you! We will respond within 24 hours.",
+      "error": "An error occurred. Please try again or email us directly."
+    },
+    "info": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Office address",
+      "hours": "Working hours",
+      "hoursValue": "Mon–Fri: 9:00–17:00"
+    }
+  },
+  "footer": {
+    "tagline": "Professional help with residence and work legalization in Poland.",
+    "services": "Services",
+    "company": "Company",
+    "legal": "Legal information",
+    "privacy": "Privacy policy",
+    "terms": "Terms of service",
+    "cookies": "Cookie policy",
+    "rights": "All rights reserved."
+  },
+  "errors": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "minLength": "Minimum {min} characters",
+    "consent": "Consent to data processing is required"
+  },
+  "metadata": {
+    "title": "getpermit.pl — Residence cards and work permits in Poland",
+    "description": "Comprehensive help for foreigners in legalizing residence and work in Poland. Residence cards, work permits, citizenship."
+  },
+  "panel": {
+    "auth": {
+      "loginTitle": "Sign in to the panel",
+      "loginSubtitle": "Enter your email address — we'll send you a passwordless login link.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@email.com",
+      "submitButton": "Send login link",
+      "submitting": "Sending...",
+      "verifyTitle": "Check your inbox",
+      "verifySubtitle": "We've sent a login link to {email}. Click the link to sign in. The link is valid for 1 hour.",
+      "verifyResend": "Didn't arrive? Resend",
+      "verifyBack": "Use a different address",
+      "errorInvalidEmail": "Invalid email address",
+      "errorSendFailed": "Failed to send the link. Please try again in a moment.",
+      "errorCallback": "Sign-in failed. The link may have expired — please try again.",
+      "logoutButton": "Sign out"
+    },
+    "header": {
+      "dashboard": "My cases",
+      "settings": "Settings",
+      "backToSite": "Back to site"
+    },
+    "dashboard": {
+      "greeting": "Welcome, {name}",
+      "greetingFallback": "Welcome",
+      "subtitle": "Here you can find all your legalization cases, their current status, and documents prepared by our consultants.",
+      "noCases": "You don't have any cases yet",
+      "noCasesDescription": "After signing the agreement, your case manager will create a case and you'll see it here.",
+      "contactButton": "Contact your case manager",
+      "submittedAt": "Submitted",
+      "expectedDecision": "Expected decision",
+      "viewDetails": "View details"
+    },
+    "case": {
+      "backToList": "Back to cases list",
+      "details": "Case details",
+      "description": "Description",
+      "submittedAt": "Submission date",
+      "expectedDecision": "Expected decision",
+      "assignedStaff": "Your case manager",
+      "noStaff": "Not assigned",
+      "timeline": "Case history",
+      "noEvents": "No events in this case yet",
+      "documents": "Documents",
+      "noDocuments": "No documents available yet",
+      "downloadButton": "Download",
+      "fileSize": "Size"
+    },
+    "settings": {
+      "title": "Account settings",
+      "subtitle": "Update your contact details.",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email (cannot be changed)",
+      "localeLabel": "Interface language",
+      "saveButton": "Save changes",
+      "saving": "Saving...",
+      "saved": "Changes saved",
+      "error": "Failed to save. Please try again."
+    }
+  },
+  "admin": {
+    "header": {
+      "cases": "Cases",
+      "clients": "Clients",
+      "newCase": "New case",
+      "newClient": "New client"
+    },
+    "casesList": {
+      "title": "All cases",
+      "subtitle": "Manage foundation client cases.",
+      "filters": {
+        "search": "Search by client or title",
+        "status": "Status",
+        "type": "Type",
+        "staff": "Staff",
+        "all": "All",
+        "unassigned": "Unassigned",
+        "clear": "Clear filters"
+      },
+      "columns": {
+        "title": "Case",
+        "client": "Client",
+        "status": "Status",
+        "type": "Type",
+        "staff": "Staff",
+        "updated": "Updated"
+      },
+      "noResults": "No cases match the criteria.",
+      "createButton": "New case"
+    },
+    "caseForm": {
+      "newTitle": "New case",
+      "editTitle": "Edit case",
+      "section": {
+        "basics": "Basic info",
+        "events": "Events",
+        "documents": "Documents"
+      },
+      "field": {
+        "client": "Client",
+        "type": "Case type",
+        "status": "Status",
+        "title": "Case title",
+        "titlePlaceholder": "e.g. Temporary residence card — Jan Kowalski",
+        "description": "Description (visible to client)",
+        "submittedAt": "Submitted to office on",
+        "expectedDecisionAt": "Expected decision",
+        "assignedStaff": "Case manager"
+      },
+      "saveButton": "Save case",
+      "saving": "Saving...",
+      "saved": "Case saved",
+      "saveError": "Failed to save case.",
+      "deleteButton": "Delete case",
+      "deleteConfirm": "Delete case and all its events and documents?",
+      "deleted": "Case deleted",
+      "noClient": "— select client —",
+      "noStaff": "— unassigned —"
+    },
+    "eventForm": {
+      "addButton": "Add event",
+      "type": "Event type",
+      "title": "Title",
+      "titlePlaceholder": "e.g. Office summons",
+      "description": "Description",
+      "eventDate": "Event date",
+      "save": "Add",
+      "saving": "Adding...",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this event?"
+    },
+    "documentUpload": {
+      "dropzone": "Drop files here or click to select",
+      "dropzoneActive": "Drop files here...",
+      "uploading": "Uploading {count} files...",
+      "uploaded": "Files uploaded",
+      "uploadError": "Failed to upload file: {message}",
+      "deleteConfirm": "Delete this document?",
+      "delete": "Delete",
+      "addDescription": "Add description (optional)"
+    },
+    "clientsList": {
+      "title": "Clients",
+      "subtitle": "All foundation clients.",
+      "search": "Search by name or email",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "cases": "Cases",
+        "lastLogin": "Last login"
+      },
+      "noResults": "No clients found.",
+      "addCaseButton": "Add case",
+      "createButton": "New client"
+    },
+    "clientForm": {
+      "title": "New client",
+      "subtitle": "After creation the client will receive an email with a login link.",
+      "field": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Email",
+        "phone": "Phone",
+        "locale": "Interface language"
+      },
+      "createButton": "Create client and send invitation",
+      "creating": "Creating...",
+      "created": "Client created, invitation sent",
+      "error": "Failed to create client",
+      "errorEmailTaken": "A client with this email already exists"
+    }
+  },
+  "caseStatus": {
+    "SUBMITTED": "Submitted",
+    "IN_PROGRESS": "In progress",
+    "SUPPLEMENT_REQUIRED": "Supplement required",
+    "DECISION_POSITIVE": "Positive decision",
+    "DECISION_NEGATIVE": "Negative decision",
+    "APPEAL": "Under appeal"
+  },
+  "caseType": {
+    "TEMPORARY_RESIDENCE": "Temporary residence",
+    "PERMANENT_RESIDENCE": "Permanent residence",
+    "WORK_PERMIT_A": "Work permit type A",
+    "WORK_PERMIT_B": "Work permit type B",
+    "BLUE_CARD": "EU Blue Card",
+    "CITIZENSHIP": "Citizenship",
+    "INVITATION": "Invitation",
+    "OTHER": "Other case"
+  },
+  "eventType": {
+    "APPLICATION_SUBMITTED": "Application submitted",
+    "OFFICE_CONFIRMATION": "Office confirmation",
+    "SUPPLEMENT_REQUEST": "Supplement request",
+    "SUPPLEMENT_SENT": "Supplement sent",
+    "DECISION": "Decision",
+    "APPEAL": "Appeal",
+    "OTHER": "Other"
+  },
+  "cookies": {
+    "title": "Cookies and privacy",
+    "message": "We use cookies essential for the client panel to function (session, language). No tracking, no ads. More in our privacy policy.",
+    "accept": "Got it",
+    "privacyLink": "Privacy policy"
+  },
+  "blog": {
+    "metaTitle": "Blog — getpermit.pl",
+    "metaDescription": "News, guides and analysis on residence and work legalization for foreigners in Poland.",
+    "title": "Blog",
+    "subtitle": "News, guides and analysis on residence and work legalization in Poland.",
+    "comingSoonTitle": "Coming soon",
+    "comingSoonBody": "We're working on our first articles. Check back soon!"
+  }
+}

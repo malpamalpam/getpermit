@@ -1,0 +1,180 @@
+// Prisma schema dla panelu klienta getpermit.pl
+//
+// Założenia:
+// - Postgres uruchomiony w Supabase EU (Frankfurt)
+// - User.id jest UUID-em zsynchronizowanym z auth.users.id (Supabase Auth)
+// - Schema = public; nie tworzymy FK do auth.users (osobna schema), tylko
+//   zapewniamy spójność po stronie aplikacji (przy callback po magic linku)
+// - RLS jest dodawane osobnym SQL-em (prisma/manual_rls.sql) — Prisma migracje
+//   nie zarządzają politykami bezpieczeństwa RLS automatycznie
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// =============================================================================
+// ENUMY
+// =============================================================================
+
+enum Role {
+  CLIENT
+  STAFF
+  ADMIN
+}
+
+enum CaseType {
+  TEMPORARY_RESIDENCE
+  PERMANENT_RESIDENCE
+  WORK_PERMIT_A
+  WORK_PERMIT_B
+  BLUE_CARD
+  CITIZENSHIP
+  INVITATION
+  OTHER
+}
+
+enum CaseStatus {
+  SUBMITTED
+  IN_PROGRESS
+  SUPPLEMENT_REQUIRED
+  DECISION_POSITIVE
+  DECISION_NEGATIVE
+  APPEAL
+}
+
+enum EventType {
+  APPLICATION_SUBMITTED
+  OFFICE_CONFIRMATION
+  SUPPLEMENT_REQUEST
+  SUPPLEMENT_SENT
+  DECISION
+  APPEAL
+  OTHER
+}
+
+enum AccessAction {
+  VIEW_CASE
+  VIEW_DOCUMENT
+  DOWNLOAD_DOCUMENT
+  CREATE_CASE
+  UPDATE_CASE
+  CREATE_EVENT
+  UPLOAD_DOCUMENT
+}
+
+// =============================================================================
+// MODELE
+// =============================================================================
+
+model User {
+  id          String    @id @db.Uuid
+  email       String    @unique
+  role        Role      @default(CLIENT)
+  firstName   String?   @map("first_name")
+  lastName    String?   @map("last_name")
+  phone       String?
+  locale      String    @default("pl")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  lastLoginAt DateTime? @map("last_login_at")
+
+  // sprawy klienta
+  cases Case[] @relation("ClientCases")
+  // sprawy przypisane jako opiekun (staff)
+  assignedCases Case[] @relation("AssignedStaff")
+  // utworzone eventy (staff)
+  createdEvents CaseEvent[] @relation("EventCreator")
+  // uploadowane dokumenty (staff)
+  uploadedDocuments Document[] @relation("DocumentUploader")
+  // logi dostępu
+  accessLogs AccessLog[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model Case {
+  id                  String     @id @default(uuid()) @db.Uuid
+  userId              String     @map("user_id") @db.Uuid
+  type                CaseType
+  status              CaseStatus @default(SUBMITTED)
+  title               String
+  description         String?
+  submittedAt         DateTime?  @map("submitted_at")
+  expectedDecisionAt  DateTime?  @map("expected_decision_at")
+  assignedStaffId     String?    @map("assigned_staff_id") @db.Uuid
+  createdAt           DateTime   @default(now()) @map("created_at")
+  updatedAt           DateTime   @updatedAt @map("updated_at")
+
+  user          User        @relation("ClientCases", fields: [userId], references: [id], onDelete: Cascade)
+  assignedStaff User?       @relation("AssignedStaff", fields: [assignedStaffId], references: [id], onDelete: SetNull)
+  events        CaseEvent[]
+  documents     Document[]
+  accessLogs    AccessLog[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([assignedStaffId])
+  @@map("cases")
+}
+
+model CaseEvent {
+  id                String    @id @default(uuid()) @db.Uuid
+  caseId            String    @map("case_id") @db.Uuid
+  eventType         EventType @map("event_type")
+  title             String
+  description       String?
+  eventDate         DateTime  @map("event_date")
+  createdByStaffId  String?   @map("created_by_staff_id") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  case             Case  @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdByStaff   User? @relation("EventCreator", fields: [createdByStaffId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@index([eventDate])
+  @@map("case_events")
+}
+
+model Document {
+  id                String   @id @default(uuid()) @db.Uuid
+  caseId            String   @map("case_id") @db.Uuid
+  fileName          String   @map("file_name")
+  /// Ścieżka w Supabase Storage (bucket: case-documents)
+  storagePath       String   @map("storage_path")
+  fileSize          Int      @map("file_size")
+  mimeType          String   @map("mime_type")
+  description       String?
+  uploadedByStaffId String?  @map("uploaded_by_staff_id") @db.Uuid
+  uploadedAt        DateTime @default(now()) @map("uploaded_at")
+
+  case             Case  @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  uploadedByStaff  User? @relation("DocumentUploader", fields: [uploadedByStaffId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@map("documents")
+}
+
+model AccessLog {
+  id        String       @id @default(uuid()) @db.Uuid
+  userId    String?      @map("user_id") @db.Uuid
+  caseId    String?      @map("case_id") @db.Uuid
+  action    AccessAction
+  ipAddress String?      @map("ip_address")
+  userAgent String?      @map("user_agent")
+  metadata  Json?
+  timestamp DateTime     @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  case Case? @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  @@index([caseId, timestamp])
+  @@index([userId, timestamp])
+  @@map("access_logs")
+}

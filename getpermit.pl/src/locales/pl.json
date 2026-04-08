@@ -1,0 +1,308 @@
+{
+  "nav": {
+    "home": "Strona główna",
+    "services": "Usługi",
+    "about": "O nas",
+    "blog": "Blog",
+    "contact": "Kontakt",
+    "consultation": "Umów konsultację"
+  },
+  "hero": {
+    "badge": "Pomoc prawna dla cudzoziemców",
+    "title": "Twój pobyt i praca w Polsce — bez stresu i błędów urzędowych",
+    "subtitle": "Pomagamy cudzoziemcom legalnie zamieszkać i pracować w Polsce. Karty pobytu, zezwolenia na pracę, obywatelstwo — prowadzimy Cię przez cały proces.",
+    "ctaPrimary": "Umów konsultację",
+    "blogCta": "Czytaj blog"
+  },
+  "stats": {
+    "years": "Lat doświadczenia",
+    "clients": "Zadowolonych klientów",
+    "success": "Skuteczność spraw"
+  },
+  "services": {
+    "title": "Nasze usługi",
+    "subtitle": "Kompleksowa pomoc na każdym etapie legalizacji",
+    "viewAll": "Zobacz wszystkie usługi",
+    "viewDetails": "Dowiedz się więcej",
+    "from": "od",
+    "duration": "Czas realizacji",
+    "price": "Cena",
+    "documents": "Wymagane dokumenty",
+    "forWhom": "Dla kogo",
+    "process": "Jak wygląda proces",
+    "faq": "Najczęściej zadawane pytania"
+  },
+  "testimonials": {
+    "title": "Co mówią nasi klienci",
+    "subtitle": "Setki cudzoziemców otrzymały już swoje dokumenty dzięki naszej pomocy"
+  },
+  "ctaBanner": {
+    "title": "Masz pytania o swoją sytuację?",
+    "subtitle": "Napisz do nas — bezpłatnie ocenimy Twoją sprawę i zaproponujemy najlepsze rozwiązanie.",
+    "button": "Skontaktuj się z nami"
+  },
+  "contact": {
+    "title": "Skontaktuj się z nami",
+    "subtitle": "Wypełnij formularz, a odpowiemy w ciągu 24 godzin",
+    "form": {
+      "name": "Imię i nazwisko",
+      "namePlaceholder": "Jan Kowalski",
+      "email": "Adres email",
+      "emailPlaceholder": "jan@example.com",
+      "phone": "Telefon (opcjonalnie)",
+      "phonePlaceholder": "+48 600 000 000",
+      "service": "Interesuje mnie usługa",
+      "servicePlaceholder": "Wybierz usługę",
+      "message": "Twoja wiadomość",
+      "messagePlaceholder": "Opisz krótko swoją sytuację...",
+      "consent": "Wyrażam zgodę na przetwarzanie moich danych osobowych w celu udzielenia odpowiedzi.",
+      "submit": "Wyślij wiadomość",
+      "submitting": "Wysyłanie...",
+      "success": "Dziękujemy! Odpowiemy w ciągu 24 godzin.",
+      "error": "Wystąpił błąd. Spróbuj ponownie lub napisz na nasz email."
+    },
+    "info": {
+      "email": "Email",
+      "phone": "Telefon",
+      "address": "Adres biura",
+      "hours": "Godziny pracy",
+      "hoursValue": "Pon–Pt: 9:00–17:00"
+    }
+  },
+  "footer": {
+    "tagline": "Profesjonalna pomoc w legalizacji pobytu i pracy w Polsce.",
+    "services": "Usługi",
+    "company": "Firma",
+    "legal": "Informacje prawne",
+    "privacy": "Polityka prywatności",
+    "terms": "Regulamin",
+    "cookies": "Polityka cookies",
+    "rights": "Wszelkie prawa zastrzeżone."
+  },
+  "errors": {
+    "required": "To pole jest wymagane",
+    "email": "Nieprawidłowy adres email",
+    "minLength": "Minimum {min} znaków",
+    "consent": "Wymagana jest zgoda na przetwarzanie danych"
+  },
+  "metadata": {
+    "title": "getpermit.pl — Karty pobytu i zezwolenia na pracę w Polsce",
+    "description": "Kompleksowa pomoc cudzoziemcom w legalizacji pobytu i pracy w Polsce. Karty pobytu, zezwolenia na pracę, obywatelstwo."
+  },
+  "panel": {
+    "auth": {
+      "loginTitle": "Zaloguj się do panelu",
+      "loginSubtitle": "Wpisz swój adres email — wyślemy Ci link do logowania bez hasła.",
+      "emailLabel": "Adres email",
+      "emailPlaceholder": "twoj@email.pl",
+      "submitButton": "Wyślij link do logowania",
+      "submitting": "Wysyłanie...",
+      "verifyTitle": "Sprawdź swoją skrzynkę",
+      "verifySubtitle": "Wysłaliśmy link do logowania na adres {email}. Kliknij w link, aby się zalogować. Link jest ważny 1 godzinę.",
+      "verifyResend": "Nie dotarł? Wyślij ponownie",
+      "verifyBack": "Użyj innego adresu",
+      "errorInvalidEmail": "Nieprawidłowy adres email",
+      "errorSendFailed": "Nie udało się wysłać linku. Spróbuj ponownie za chwilę.",
+      "errorCallback": "Logowanie nie powiodło się. Link mógł wygasnąć — spróbuj jeszcze raz.",
+      "logoutButton": "Wyloguj się"
+    },
+    "header": {
+      "dashboard": "Moje sprawy",
+      "settings": "Ustawienia",
+      "backToSite": "Wróć na stronę"
+    },
+    "dashboard": {
+      "greeting": "Witaj, {name}",
+      "greetingFallback": "Witaj",
+      "subtitle": "Tu znajdziesz wszystkie swoje sprawy legalizacyjne, ich aktualny status oraz dokumenty przygotowane przez naszych konsultantów.",
+      "noCases": "Nie masz jeszcze żadnych spraw",
+      "noCasesDescription": "Po podpisaniu umowy z naszą fundacją Twój opiekun utworzy sprawę i będziesz ją tu widzieć.",
+      "contactButton": "Skontaktuj się z opiekunem",
+      "submittedAt": "Złożono",
+      "expectedDecision": "Planowana decyzja",
+      "viewDetails": "Zobacz szczegóły"
+    },
+    "case": {
+      "backToList": "Wróć do listy spraw",
+      "details": "Szczegóły sprawy",
+      "description": "Opis",
+      "submittedAt": "Data złożenia",
+      "expectedDecision": "Planowana decyzja",
+      "assignedStaff": "Twój opiekun",
+      "noStaff": "Nie przypisano",
+      "timeline": "Historia sprawy",
+      "noEvents": "Brak wydarzeń w tej sprawie",
+      "documents": "Dokumenty",
+      "noDocuments": "Nie ma jeszcze dokumentów do pobrania",
+      "downloadButton": "Pobierz",
+      "fileSize": "Rozmiar"
+    },
+    "settings": {
+      "title": "Ustawienia konta",
+      "subtitle": "Zaktualizuj swoje dane kontaktowe.",
+      "firstNameLabel": "Imię",
+      "lastNameLabel": "Nazwisko",
+      "phoneLabel": "Telefon",
+      "emailLabel": "Email (nie można zmienić)",
+      "localeLabel": "Język interfejsu",
+      "saveButton": "Zapisz zmiany",
+      "saving": "Zapisywanie...",
+      "saved": "Zmiany zapisane",
+      "error": "Nie udało się zapisać. Spróbuj ponownie."
+    }
+  },
+  "admin": {
+    "header": {
+      "cases": "Sprawy",
+      "clients": "Klienci",
+      "newCase": "Nowa sprawa",
+      "newClient": "Nowy klient"
+    },
+    "casesList": {
+      "title": "Wszystkie sprawy",
+      "subtitle": "Zarządzaj sprawami klientów fundacji.",
+      "filters": {
+        "search": "Szukaj po kliencie lub tytule",
+        "status": "Status",
+        "type": "Typ",
+        "staff": "Opiekun",
+        "all": "Wszystkie",
+        "unassigned": "Nieprzypisane",
+        "clear": "Wyczyść filtry"
+      },
+      "columns": {
+        "title": "Sprawa",
+        "client": "Klient",
+        "status": "Status",
+        "type": "Typ",
+        "staff": "Opiekun",
+        "updated": "Aktualizacja"
+      },
+      "noResults": "Brak spraw spełniających kryteria.",
+      "createButton": "Nowa sprawa"
+    },
+    "caseForm": {
+      "newTitle": "Nowa sprawa",
+      "editTitle": "Edycja sprawy",
+      "section": {
+        "basics": "Dane podstawowe",
+        "events": "Wydarzenia",
+        "documents": "Dokumenty"
+      },
+      "field": {
+        "client": "Klient",
+        "type": "Typ sprawy",
+        "status": "Status",
+        "title": "Tytuł sprawy",
+        "titlePlaceholder": "np. Karta pobytu czasowego — Jan Kowalski",
+        "description": "Opis (widoczny dla klienta)",
+        "submittedAt": "Data złożenia w urzędzie",
+        "expectedDecisionAt": "Planowana decyzja",
+        "assignedStaff": "Opiekun"
+      },
+      "saveButton": "Zapisz sprawę",
+      "saving": "Zapisywanie...",
+      "saved": "Sprawa zapisana",
+      "saveError": "Nie udało się zapisać sprawy.",
+      "deleteButton": "Usuń sprawę",
+      "deleteConfirm": "Usunąć sprawę i wszystkie jej eventy oraz dokumenty?",
+      "deleted": "Sprawa usunięta",
+      "noClient": "— wybierz klienta —",
+      "noStaff": "— nieprzypisane —"
+    },
+    "eventForm": {
+      "addButton": "Dodaj wydarzenie",
+      "type": "Typ wydarzenia",
+      "title": "Tytuł",
+      "titlePlaceholder": "np. Wezwanie z urzędu",
+      "description": "Opis",
+      "eventDate": "Data wydarzenia",
+      "save": "Dodaj",
+      "saving": "Dodawanie...",
+      "delete": "Usuń",
+      "deleteConfirm": "Usunąć to wydarzenie?"
+    },
+    "documentUpload": {
+      "dropzone": "Upuść pliki tutaj lub kliknij, aby wybrać",
+      "dropzoneActive": "Upuść pliki tutaj...",
+      "uploading": "Wgrywanie {count} plików...",
+      "uploaded": "Pliki wgrane",
+      "uploadError": "Nie udało się wgrać pliku: {message}",
+      "deleteConfirm": "Usunąć ten dokument?",
+      "delete": "Usuń",
+      "addDescription": "Dodaj opis (opcjonalnie)"
+    },
+    "clientsList": {
+      "title": "Klienci",
+      "subtitle": "Wszyscy klienci fundacji.",
+      "search": "Szukaj po imieniu, nazwisku lub email",
+      "columns": {
+        "name": "Imię i nazwisko",
+        "email": "Email",
+        "phone": "Telefon",
+        "cases": "Sprawy",
+        "lastLogin": "Ostatnie logowanie"
+      },
+      "noResults": "Brak klientów.",
+      "addCaseButton": "Dodaj sprawę",
+      "createButton": "Nowy klient"
+    },
+    "clientForm": {
+      "title": "Nowy klient",
+      "subtitle": "Po utworzeniu klient otrzyma email z linkiem do logowania.",
+      "field": {
+        "firstName": "Imię",
+        "lastName": "Nazwisko",
+        "email": "Email",
+        "phone": "Telefon",
+        "locale": "Język interfejsu"
+      },
+      "createButton": "Utwórz klienta i wyślij zaproszenie",
+      "creating": "Tworzenie...",
+      "created": "Klient utworzony, zaproszenie wysłane",
+      "error": "Nie udało się utworzyć klienta",
+      "errorEmailTaken": "Klient z tym emailem już istnieje"
+    }
+  },
+  "caseStatus": {
+    "SUBMITTED": "Złożona",
+    "IN_PROGRESS": "W toku",
+    "SUPPLEMENT_REQUIRED": "Wymaga uzupełnień",
+    "DECISION_POSITIVE": "Decyzja pozytywna",
+    "DECISION_NEGATIVE": "Decyzja negatywna",
+    "APPEAL": "W odwołaniu"
+  },
+  "caseType": {
+    "TEMPORARY_RESIDENCE": "Pobyt czasowy",
+    "PERMANENT_RESIDENCE": "Pobyt stały",
+    "WORK_PERMIT_A": "Zezwolenie na pracę typ A",
+    "WORK_PERMIT_B": "Zezwolenie na pracę typ B",
+    "BLUE_CARD": "Niebieska Karta UE",
+    "CITIZENSHIP": "Obywatelstwo",
+    "INVITATION": "Zaproszenie",
+    "OTHER": "Inna sprawa"
+  },
+  "eventType": {
+    "APPLICATION_SUBMITTED": "Złożenie wniosku",
+    "OFFICE_CONFIRMATION": "Potwierdzenie z urzędu",
+    "SUPPLEMENT_REQUEST": "Wezwanie do uzupełnień",
+    "SUPPLEMENT_SENT": "Wysłanie uzupełnień",
+    "DECISION": "Decyzja",
+    "APPEAL": "Odwołanie",
+    "OTHER": "Inne"
+  },
+  "cookies": {
+    "title": "Ciasteczka i prywatność",
+    "message": "Używamy ciasteczek niezbędnych do działania panelu klienta (sesja, język). Nie używamy trackingu ani reklam. Więcej w naszej polityce prywatności.",
+    "accept": "Rozumiem",
+    "privacyLink": "Polityka prywatności"
+  },
+  "blog": {
+    "metaTitle": "Blog — getpermit.pl",
+    "metaDescription": "Aktualności, poradniki i analizy dotyczące legalizacji pobytu i pracy cudzoziemców w Polsce.",
+    "title": "Blog",
+    "subtitle": "Aktualności, poradniki i analizy dotyczące legalizacji pobytu i pracy w Polsce.",
+    "comingSoonTitle": "Wkrótce",
+    "comingSoonBody": "Pracujemy nad pierwszymi artykułami. Zapraszamy wkrótce!"
+  }
+}

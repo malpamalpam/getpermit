@@ -1,0 +1,12 @@
+<!-- Placeholder logo — replace this file with the official GP SVG/PNG export.
+     Header & Footer load it from /logo.svg, so just overwrite this file. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 140" fill="none">
+  <!-- G: open circle with internal crossbar -->
+  <circle cx="70" cy="70" r="48" stroke="#3eb1e5" stroke-width="20" />
+  <path d="M 70 70 L 118 70" stroke="#3eb1e5" stroke-width="20" stroke-linecap="round"/>
+  <!-- S-curve connector between G and P -->
+  <path d="M 110 70 C 130 70, 140 95, 160 95" stroke="#3eb1e5" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <!-- P: vertical stem with rounded bowl -->
+  <path d="M 170 120 L 170 30 L 210 30 A 30 30 0 0 1 210 90 L 170 90"
+        stroke="#3eb1e5" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
