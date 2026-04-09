@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useLocale } from "next-intl";
 import { X } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -40,22 +41,23 @@ export function BookingDialog({
   const calLocale = CALCOM_LOCALE[locale] ?? "en";
   const embedUrl = `${siteConfig.calcom.url}?layout=month_view&theme=light&locale=${calLocale}`;
 
-  return (
+  const dialog = (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Umów konsultację"
-      className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-primary-900/70 p-2 backdrop-blur-sm sm:p-4"
+      style={{ position: "fixed", inset: 0, zIndex: 99999 }}
+      className="flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative my-2 min-h-[700px] w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl sm:my-4" style={{ height: "calc(100vh - 2rem)" }}>
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl" style={{ height: "90vh" }}>
         <button
           type="button"
           onClick={onClose}
           aria-label="Zamknij"
-          className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-primary shadow transition hover:bg-white"
+          className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-lg transition hover:bg-gray-100"
         >
           <X className="h-5 w-5" />
         </button>
@@ -69,4 +71,6 @@ export function BookingDialog({
       </div>
     </div>
   );
+
+  return createPortal(dialog, document.body);
 }
