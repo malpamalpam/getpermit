@@ -36,7 +36,7 @@ export function PanelHeader({ user, active }: Props) {
               aria-label="getpermit.pl panel"
             >
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="getpermit.pl"
                 width={120}
                 height={40}
