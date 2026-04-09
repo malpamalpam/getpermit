@@ -44,15 +44,11 @@ export const siteConfig = {
     successRate: 98,
   },
 
-  // Calendly — adres event-typu pokazywany w modalu "Umów konsultację".
-  // Po założeniu konta na calendly.com podmień URL poniżej (lub ustaw
-  // NEXT_PUBLIC_CALENDLY_URL w .env). Zalecane: utworzyć JEDEN event type
-  // z polami formularza: język rozmowy + rodzaj sprawy (legalizacja pobytu,
-  // zezwolenie na pracę, obywatelstwo, rejestracja firmy).
-  calendly: {
+  // Cal.com — adres event-typu pokazywany w modalu "Umów konsultację".
+  calcom: {
     url:
-      process.env.NEXT_PUBLIC_CALENDLY_URL ||
-      "https://calendly.com/getpermit/konsultacja",
+      process.env.NEXT_PUBLIC_CALCOM_URL ||
+      "https://cal.eu/getpermit",
   },
 } as const;
 
