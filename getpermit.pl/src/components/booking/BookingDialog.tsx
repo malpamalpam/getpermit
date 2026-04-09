@@ -45,12 +45,12 @@ export function BookingDialog({
       role="dialog"
       aria-modal="true"
       aria-label="Umów konsultację"
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-primary-900/70 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-primary-900/70 p-2 backdrop-blur-sm sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="relative my-2 min-h-[700px] w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl sm:my-4" style={{ height: "calc(100vh - 2rem)" }}>
         <button
           type="button"
           onClick={onClose}
@@ -64,6 +64,7 @@ export function BookingDialog({
           title="Cal.com — umów konsultację"
           className="h-full w-full border-0"
           loading="lazy"
+          allow="payment"
         />
       </div>
     </div>
