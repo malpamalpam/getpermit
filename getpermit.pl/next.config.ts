@@ -49,6 +49,13 @@ const nextConfig: NextConfig = {
       }
     }
 
+    // Root "/" → /pl (localePrefix: "always" wymaga explicit redirect)
+    redirects.push({
+      source: "/",
+      destination: "/pl",
+      permanent: false,
+    });
+
     return redirects;
   },
 };
