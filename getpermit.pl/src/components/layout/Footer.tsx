@@ -24,7 +24,7 @@ export function Footer() {
                 alt="getpermit.pl"
                 width={48}
                 height={32}
-                className="h-8 w-auto brightness-0 invert md:h-10"
+                className="h-7 w-auto brightness-0 invert md:h-9"
               />
               <span className="font-display text-xl font-bold tracking-tight text-white md:text-2xl">
                 get<span className="text-brand">permit</span>.pl

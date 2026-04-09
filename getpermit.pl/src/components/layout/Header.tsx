@@ -69,7 +69,7 @@ export function Header() {
               width={48}
               height={32}
               priority
-              className="h-8 w-auto md:h-10"
+              className="h-7 w-auto md:h-9"
             />
             <span className="font-display text-xl font-bold tracking-tight text-primary md:text-2xl">
               get<span className="text-brand">permit</span>.pl

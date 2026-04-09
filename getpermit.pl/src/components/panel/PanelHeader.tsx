@@ -40,7 +40,7 @@ export function PanelHeader({ user, active }: Props) {
                 alt="getpermit.pl"
                 width={40}
                 height={28}
-                className="h-7 w-auto"
+                className="h-6 w-auto"
               />
               <span className="font-display text-lg font-bold tracking-tight">
                 get<span className="text-brand">permit</span>.pl
