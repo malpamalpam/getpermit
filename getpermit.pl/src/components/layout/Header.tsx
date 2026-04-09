@@ -84,7 +84,7 @@ export function Header() {
                 <a
                   key={s.id}
                   href={sectionHref(s.id)}
-                  className={`relative text-lg font-medium transition-colors ${
+                  className={`relative text-sm font-medium transition-colors ${
                     isActive
                       ? "text-primary"
                       : "text-primary/70 hover:text-primary"
