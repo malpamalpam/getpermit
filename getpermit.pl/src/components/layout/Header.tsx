@@ -64,7 +64,7 @@ export function Header() {
             aria-label="getpermit.pl"
           >
             <Image
-              src="/logo.png"
+              src="/logo.jpg"
               alt=""
               width={48}
               height={32}
