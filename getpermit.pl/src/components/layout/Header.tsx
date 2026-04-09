@@ -66,10 +66,10 @@ export function Header() {
             <Image
               src="/logo.jpg"
               alt="getpermit.pl"
-              width={200}
-              height={70}
+              width={300}
+              height={100}
               priority
-              className="h-16 w-auto md:h-20"
+              className="h-20 w-auto md:h-24"
             />
             <span className="font-display text-xl font-bold tracking-tight text-primary md:text-2xl">
               get<span className="text-brand">permit</span>.pl
@@ -118,6 +118,12 @@ export function Header() {
             <BookingButton variant="primary" size="sm">
               {t("consultation")}
             </BookingButton>
+            <a
+              href="/panel/login"
+              className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+            >
+              {t("clientPanel")}
+            </a>
           </div>
 
           {/* Mobile toggle */}
@@ -160,11 +166,20 @@ export function Header() {
               >
                 {t("blog")}
               </Link>
-              <div className="flex items-center justify-between border-t border-primary/10 pt-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-4">
                 <LanguageSwitcher />
-                <BookingButton variant="primary" size="sm">
-                  {t("consultation")}
-                </BookingButton>
+                <div className="flex items-center gap-2">
+                  <BookingButton variant="primary" size="sm">
+                    {t("consultation")}
+                  </BookingButton>
+                  <a
+                    href="/panel/login"
+                    className="inline-flex items-center rounded-md border border-primary/20 bg-white px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {t("clientPanel")}
+                  </a>
+                </div>
               </div>
             </nav>
           </div>
