@@ -84,7 +84,7 @@ export function Header() {
                 <a
                   key={s.id}
                   href={sectionHref(s.id)}
-                  className={`relative text-sm font-medium transition-colors ${
+                  className={`relative text-lg font-medium transition-colors ${
                     isActive
                       ? "text-primary"
                       : "text-primary/70 hover:text-primary"
@@ -101,13 +101,13 @@ export function Header() {
             })}
             <Link
               href="/o-nas"
-              className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
+              className="text-lg font-medium text-primary/70 transition-colors hover:text-primary"
             >
               {t("about")}
             </Link>
             <Link
               href="/blog"
-              className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
+              className="text-lg font-medium text-primary/70 transition-colors hover:text-primary"
             >
               {t("blog")}
             </Link>
