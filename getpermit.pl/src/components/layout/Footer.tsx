@@ -18,13 +18,13 @@ export function Footer() {
         <div className="grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/logo.svg"
                 alt="getpermit.pl"
-                width={150}
-                height={50}
-                className="h-10 w-auto brightness-0 invert md:h-12"
+                width={48}
+                height={32}
+                className="h-8 w-auto brightness-0 invert md:h-10"
               />
               <span className="font-display text-xl font-bold tracking-tight text-white md:text-2xl">
                 get<span className="text-brand">permit</span>.pl

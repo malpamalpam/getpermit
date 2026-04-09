@@ -27,15 +27,15 @@ export function AdminHeader({ user, active }: Props) {
           <div className="flex items-center gap-8">
             <Link
               href="/admin"
-              className="flex items-center gap-2 text-primary"
+              className="flex items-center gap-3 text-primary"
               aria-label="getpermit.pl admin"
             >
               <Image
                 src="/logo.svg"
                 alt="getpermit.pl"
-                width={120}
-                height={40}
-                className="h-10 w-auto"
+                width={40}
+                height={28}
+                className="h-7 w-auto"
               />
               <span className="font-display text-lg font-bold tracking-tight">
                 get<span className="text-brand">permit</span>.pl

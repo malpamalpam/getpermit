@@ -60,16 +60,16 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-primary"
+            className="flex items-center gap-3 text-primary"
             aria-label="getpermit.pl"
           >
             <Image
               src="/logo.svg"
               alt="getpermit.pl — karta pobytu i zezwolenie na pracę w Polsce"
-              width={150}
-              height={50}
+              width={48}
+              height={32}
               priority
-              className="h-10 w-auto md:h-12"
+              className="h-8 w-auto md:h-10"
             />
             <span className="font-display text-xl font-bold tracking-tight text-primary md:text-2xl">
               get<span className="text-brand">permit</span>.pl
