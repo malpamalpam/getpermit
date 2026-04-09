@@ -42,6 +42,9 @@ export function PanelHeader({ user, active }: Props) {
                 height={40}
                 className="h-10 w-auto"
               />
+              <span className="font-display text-lg font-bold tracking-tight">
+                get<span className="text-brand">permit</span>.pl
+              </span>
             </Link>
 
             <nav className="hidden items-center gap-6 md:flex">

@@ -66,11 +66,14 @@ export function Header() {
             <Image
               src="/logo.jpg"
               alt="getpermit.pl"
-              width={140}
-              height={48}
+              width={200}
+              height={70}
               priority
-              className="h-12 w-auto md:h-14"
+              className="h-16 w-auto md:h-20"
             />
+            <span className="font-display text-xl font-bold tracking-tight text-primary md:text-2xl">
+              get<span className="text-brand">permit</span>.pl
+            </span>
           </Link>
 
           {/* Desktop nav */}

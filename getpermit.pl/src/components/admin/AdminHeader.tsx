@@ -37,6 +37,9 @@ export function AdminHeader({ user, active }: Props) {
                 height={40}
                 className="h-10 w-auto"
               />
+              <span className="font-display text-lg font-bold tracking-tight">
+                get<span className="text-brand">permit</span>.pl
+              </span>
               <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
                 <ShieldCheck className="h-3 w-3" />
                 admin

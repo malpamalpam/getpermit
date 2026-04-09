@@ -26,6 +26,9 @@ export function Footer() {
                 height={48}
                 className="h-12 w-auto"
               />
+              <span className="font-display text-xl font-bold text-white">
+                get<span className="text-brand">permit</span>.pl
+              </span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-white/70">
               {t("tagline")}
