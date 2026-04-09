@@ -1,7 +1,5 @@
 import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/i18n/routing";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
 import {
   SERVICE_CATEGORIES,
   localized,
@@ -34,7 +32,7 @@ export function ServicesGrid() {
   );
 
   return (
-    <section className="bg-surface py-20 md:py-28">
+    <section className="bg-surface py-16 md:py-20">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-accent">
@@ -51,11 +49,9 @@ export function ServicesGrid() {
           {sortedCategories.map((category) => {
             const Icon = CATEGORY_ICONS[category.icon];
             return (
-              <Link
+              <a
                 key={category.slug}
-                href={{
-                  pathname: "/uslugi",
-                }}
+                href={`/${locale}/uslugi#${category.slug}`}
                 className="group relative flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg"
               >
                 <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
@@ -79,18 +75,16 @@ export function ServicesGrid() {
                   {t("viewDetails")}
                   <ArrowRight className="h-4 w-4" />
                 </div>
-              </Link>
+              </a>
             );
           })}
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/uslugi">
-            <Button variant="outline" size="lg">
-              {t("viewAll")}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
+          <a href={`/${locale}/uslugi`} className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-white px-6 py-3 text-base font-medium text-primary transition-colors hover:bg-primary/5">
+            {t("viewAll")}
+            <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
       </Container>
     </section>

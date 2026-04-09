@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { BookingButton } from "@/components/booking/BookingButton";
+import { siteConfig } from "@/config/site";
 import { ArrowRight } from "lucide-react";
 
 const HERO_VIDEO_SRC =
@@ -8,6 +9,13 @@ const HERO_VIDEO_SRC =
 
 export function HeroSection() {
   const t = useTranslations("hero");
+  const tStats = useTranslations("stats");
+
+  const stats = [
+    { value: `${siteConfig.stats.yearsOfExperience}+`, label: tStats("years") },
+    { value: `${siteConfig.stats.clientsServed.toLocaleString("pl-PL")}+`, label: tStats("clients") },
+    { value: `${siteConfig.stats.successRate}%`, label: tStats("success") },
+  ];
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary-800 via-primary-700 to-[#1a2f5a]">
@@ -31,6 +39,25 @@ export function HeroSection() {
                 {t("ctaPrimary")}
                 <ArrowRight className="h-5 w-5" />
               </BookingButton>
+            </div>
+
+            {/* Stats inline */}
+            <div className="mt-10 flex items-center gap-6 md:gap-10">
+              {stats.map((stat, i) => (
+                <div key={i} className="flex items-center gap-6 md:gap-10">
+                  {i > 0 && (
+                    <div className="h-10 w-px bg-white/20" aria-hidden="true" />
+                  )}
+                  <div>
+                    <div className="font-display text-2xl font-extrabold text-white md:text-3xl">
+                      {stat.value}
+                    </div>
+                    <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                      {stat.label}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

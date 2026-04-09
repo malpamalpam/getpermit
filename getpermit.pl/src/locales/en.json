@@ -10,8 +10,8 @@
   },
   "hero": {
     "badge": "Legal help for foreigners",
-    "title": "Your residence and work in Poland — without stress and paperwork errors",
-    "subtitle": "We help foreigners legally live and work in Poland. Residence cards, work permits, citizenship — we guide you through the entire process.",
+    "title": "Poland without paperwork. Residence card without stress.",
+    "subtitle": "We handle the documents so you can focus on your life. From the first application to the residence card in your hand — 98% of our cases end in success.",
     "ctaPrimary": "Book consultation",
     "blogCta": "Read the blog"
   },
@@ -310,6 +310,36 @@
     "DECISION": "Decision",
     "APPEAL": "Appeal",
     "OTHER": "Other"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "subtitle": "Answers to the questions we hear most often from our clients.",
+    "items": {
+      "cost": {
+        "q": "How much does help with a residence card cost?",
+        "a": "The cost depends on the type and complexity of the case. A free consultation will allow us to quote your case precisely. Contact us and you'll receive a quote within 24 hours."
+      },
+      "duration": {
+        "q": "How long does the residence card process take?",
+        "a": "The standard office processing time is 3-6 months, but with properly prepared documentation and our experience, we can often shorten this time."
+      },
+      "documents": {
+        "q": "What documents do I need to prepare?",
+        "a": "The list of documents depends on the type of permit. During a free consultation, we'll present you with the exact list — don't worry, we guide you step by step."
+      },
+      "workWhileWaiting": {
+        "q": "Can I work in Poland while waiting for the decision?",
+        "a": "In most cases — yes. After submitting a complete application for a residence and work permit, you receive a stamp in your passport that allows you to work legally until the decision is issued."
+      },
+      "worldwide": {
+        "q": "Do you help people from all over the world?",
+        "a": "Yes, we help citizens of all countries outside the European Union. We serve clients in Polish, English, Russian and Ukrainian."
+      },
+      "rejected": {
+        "q": "What if my application is rejected?",
+        "a": "We prepare appeals against negative decisions and urgency complaints in case of delays. 98% of our cases end with a positive decision."
+      }
+    }
   },
   "cookies": {
     "title": "Cookies and privacy",

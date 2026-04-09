@@ -21,7 +21,7 @@ const STEPS = [
 
 export function ProcessSection() {
   return (
-    <section className="bg-surface py-20 md:py-28">
+    <section className="bg-surface py-16 md:py-20">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-accent">

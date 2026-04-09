@@ -10,8 +10,8 @@
   },
   "hero": {
     "badge": "Pomoc prawna dla cudzoziemców",
-    "title": "Twój pobyt i praca w Polsce — bez stresu i błędów urzędowych",
-    "subtitle": "Pomagamy cudzoziemcom legalnie zamieszkać i pracować w Polsce. Karty pobytu, zezwolenia na pracę, obywatelstwo — prowadzimy Cię przez cały proces.",
+    "title": "Polska bez papierologii. Karta pobytu bez nerwów.",
+    "subtitle": "Zajmujemy się dokumentami, żebyś Ty mógł zająć się życiem. Od pierwszego wniosku po kartę pobytu w ręku — 98% naszych spraw kończy się sukcesem.",
     "ctaPrimary": "Umów konsultację",
     "blogCta": "Czytaj blog"
   },
@@ -310,6 +310,36 @@
     "DECISION": "Decyzja",
     "APPEAL": "Odwołanie",
     "OTHER": "Inne"
+  },
+  "faq": {
+    "title": "Najczęściej zadawane pytania",
+    "subtitle": "Odpowiadamy na pytania, które słyszymy najczęściej od naszych klientów.",
+    "items": {
+      "cost": {
+        "q": "Ile kosztuje pomoc w uzyskaniu karty pobytu?",
+        "a": "Koszt zależy od rodzaju sprawy i jej złożoności. Bezpłatna konsultacja pozwoli nam dokładnie wycenić Twoją sprawę. Skontaktuj się z nami, a otrzymasz wycenę w ciągu 24 godzin."
+      },
+      "duration": {
+        "q": "Jak długo trwa proces uzyskania karty pobytu?",
+        "a": "Standardowy czas oczekiwania w urzędzie to 3-6 miesięcy, ale dzięki prawidłowo przygotowanej dokumentacji i naszemu doświadczeniu często udaje się skrócić ten czas."
+      },
+      "documents": {
+        "q": "Jakie dokumenty muszę przygotować?",
+        "a": "Lista dokumentów zależy od rodzaju zezwolenia. Na bezpłatnej konsultacji przedstawimy Ci dokładną listę potrzebnych dokumentów — nie musisz się martwić, prowadzimy Cię krok po kroku."
+      },
+      "workWhileWaiting": {
+        "q": "Czy mogę pracować w Polsce czekając na decyzję?",
+        "a": "W większości przypadków — tak. Po złożeniu kompletnego wniosku o zezwolenie na pobyt i pracę otrzymujesz stempel w paszporcie, który pozwala legalnie pracować do czasu wydania decyzji."
+      },
+      "worldwide": {
+        "q": "Czy pomagacie osobom z całego świata?",
+        "a": "Tak, pomagamy obywatelom wszystkich krajów spoza Unii Europejskiej. Obsługujemy klientów po polsku, angielsku, rosyjsku i ukraińsku."
+      },
+      "rejected": {
+        "q": "Co jeśli mój wniosek zostanie odrzucony?",
+        "a": "Przygotowujemy odwołania od negatywnych decyzji i ponaglenia w przypadku przewlekłości postępowania. 98% naszych spraw kończy się pozytywną decyzją."
+      }
+    }
   },
   "cookies": {
     "title": "Ciasteczka i prywatność",
