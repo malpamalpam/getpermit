@@ -18,6 +18,16 @@ function isPublicPanelPath(pathname: string): boolean {
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const code = request.nextUrl.searchParams.get("code");
+
+  // Supabase recovery/magic link redirect — przechwytujemy `code` na root URL
+  // i przekierowujemy na /api/auth/callback
+  if (code && (pathname === "/" || LOCALES.some((l) => pathname === `/${l}`))) {
+    const callbackUrl = new URL("/api/auth/callback", request.url);
+    callbackUrl.searchParams.set("code", code);
+    callbackUrl.searchParams.set("next", "/panel/nowe-haslo");
+    return NextResponse.redirect(callbackUrl);
+  }
 
   const isPanelRoute = PANEL_REGEX.test(pathname);
   const isAdminRoute = ADMIN_REGEX.test(pathname);
