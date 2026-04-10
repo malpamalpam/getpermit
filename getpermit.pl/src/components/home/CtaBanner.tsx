@@ -21,9 +21,9 @@ export function CtaBanner() {
             <p className="mt-4 text-lg text-white/80">{t("subtitle")}</p>
             <div className="mt-8">
               <a href={`/${locale}/kontakt`}>
-                <Button variant="accent" size="lg">
+                <Button variant="accent" size="xl">
                   {t("button")}
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </a>
             </div>
