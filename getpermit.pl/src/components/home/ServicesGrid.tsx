@@ -3,25 +3,10 @@ import { Container } from "@/components/ui/Container";
 import {
   SERVICE_CATEGORIES,
   localized,
-  type ServiceCategoryIcon,
 } from "@/lib/services";
 import {
-  Briefcase,
-  Home,
-  MapPin,
-  Scale,
-  Languages,
   ArrowRight,
-  type LucideIcon,
 } from "lucide-react";
-
-const CATEGORY_ICONS: Record<ServiceCategoryIcon, LucideIcon> = {
-  Briefcase,
-  Home,
-  MapPin,
-  Scale,
-  Languages,
-};
 
 export function ServicesGrid() {
   const t = useTranslations("services");
@@ -47,33 +32,33 @@ export function ServicesGrid() {
 
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {sortedCategories.map((category) => {
-            const Icon = CATEGORY_ICONS[category.icon];
             return (
               <a
                 key={category.slug}
                 href={`/${locale}/uslugi#${category.slug}`}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-white p-8 shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-white shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl"
               >
-                <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
-                  <Icon className="h-7 w-7" strokeWidth={2} />
+                <div className="bg-primary px-8 py-4">
+                  <h3 className="font-display text-xl font-extrabold text-white">
+                    {localized(category.title, locale)}
+                  </h3>
                 </div>
-                <h3 className="font-display text-xl font-bold text-primary">
-                  {localized(category.title, locale)}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-ink/60">
-                  {localized(category.description, locale)}
-                </p>
-                <ul className="mt-5 flex-1 space-y-1.5 text-sm text-primary/70">
-                  {category.services.map((s) => (
-                    <li key={s.slug} className="flex items-start gap-2">
-                      <span className="mt-2 inline-block h-1 w-1 flex-shrink-0 rounded-full bg-accent" />
-                      <span>{localized(s.title, locale)}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
-                  {t("viewDetails")}
-                  <ArrowRight className="h-4 w-4" />
+                <div className="flex flex-1 flex-col px-8 pb-8 pt-5">
+                  <p className="text-sm leading-relaxed text-ink/60">
+                    {localized(category.description, locale)}
+                  </p>
+                  <ul className="mt-5 flex-1 space-y-1.5 text-sm text-primary/70">
+                    {category.services.map((s) => (
+                      <li key={s.slug} className="flex items-start gap-2">
+                        <span className="mt-2 inline-block h-1 w-1 flex-shrink-0 rounded-full bg-accent" />
+                        <span>{localized(s.title, locale)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
+                    {t("viewDetails")}
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
                 </div>
               </a>
             );
