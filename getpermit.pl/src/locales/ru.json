@@ -132,7 +132,15 @@
       "resetButton": "Отправить ссылку",
       "resetSending": "Отправка...",
       "resetSent": "Если аккаунт с таким email существует, мы отправили ссылку для сброса пароля. Проверьте почту.",
-      "resetBackToLogin": "Вернуться к входу"
+      "resetBackToLogin": "Вернуться к входу",
+      "newPasswordTitle": "Установить новый пароль",
+      "newPasswordSubtitle": "Введите новый пароль для вашего аккаунта.",
+      "newPasswordLabel": "Новый пароль",
+      "newPasswordConfirmLabel": "Подтвердите пароль",
+      "newPasswordButton": "Сохранить пароль",
+      "newPasswordSaving": "Сохранение...",
+      "newPasswordSuccess": "Пароль изменён. Вы будете перенаправлены в панель.",
+      "newPasswordMismatch": "Пароли не совпадают"
     },
     "header": {
       "dashboard": "Мои дела",

@@ -132,7 +132,15 @@
       "resetButton": "Send reset link",
       "resetSending": "Sending...",
       "resetSent": "If an account with this email exists, we've sent a password reset link. Check your inbox.",
-      "resetBackToLogin": "Back to login"
+      "resetBackToLogin": "Back to login",
+      "newPasswordTitle": "Set new password",
+      "newPasswordSubtitle": "Enter a new password for your account.",
+      "newPasswordLabel": "New password",
+      "newPasswordConfirmLabel": "Confirm password",
+      "newPasswordButton": "Save password",
+      "newPasswordSaving": "Saving...",
+      "newPasswordSuccess": "Password has been changed. You will be redirected to the panel shortly.",
+      "newPasswordMismatch": "Passwords do not match"
     },
     "header": {
       "dashboard": "My cases",

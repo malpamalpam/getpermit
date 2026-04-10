@@ -176,8 +176,12 @@ export async function resetPasswordAction(input: {
   callbackUrl.searchParams.set("locale", input.locale);
   callbackUrl.searchParams.set("next", "/panel");
 
+  const resetCallbackUrl = new URL("/api/auth/callback", siteConfig.url);
+  resetCallbackUrl.searchParams.set("locale", input.locale);
+  resetCallbackUrl.searchParams.set("next", "/panel/nowe-haslo");
+
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: callbackUrl.toString(),
+    redirectTo: resetCallbackUrl.toString(),
   });
 
   if (error) {
@@ -186,6 +190,39 @@ export async function resetPasswordAction(input: {
   }
 
   // Always return ok to prevent email enumeration
+  return { ok: true };
+}
+
+/* ============================================================================ */
+/*                          USTAWIENIE NOWEGO HASŁA                             */
+/* ============================================================================ */
+
+export type UpdatePasswordResult =
+  | { ok: true }
+  | { ok: false; error: "validation" | "weak_password" | "general" };
+
+export async function updatePasswordAction(input: {
+  password: string;
+}): Promise<UpdatePasswordResult> {
+  const parsed = z.object({ password: z.string().min(8) }).safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: "validation" };
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+
+  if (error) {
+    console.error("[updatePassword] Supabase error:", error.message);
+    if (error.message.includes("password")) {
+      return { ok: false, error: "weak_password" };
+    }
+    return { ok: false, error: "general" };
+  }
+
   return { ok: true };
 }
 

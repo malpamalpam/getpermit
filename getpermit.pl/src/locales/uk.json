@@ -132,7 +132,15 @@
       "resetButton": "Надіслати посилання",
       "resetSending": "Надсилання...",
       "resetSent": "Якщо акаунт з цим email існує, ми надіслали посилання для скидання пароля. Перевірте пошту.",
-      "resetBackToLogin": "Повернутися до входу"
+      "resetBackToLogin": "Повернутися до входу",
+      "newPasswordTitle": "Встановити новий пароль",
+      "newPasswordSubtitle": "Введіть новий пароль для вашого акаунту.",
+      "newPasswordLabel": "Новий пароль",
+      "newPasswordConfirmLabel": "Підтвердіть пароль",
+      "newPasswordButton": "Зберегти пароль",
+      "newPasswordSaving": "Збереження...",
+      "newPasswordSuccess": "Пароль змінено. Вас буде перенаправлено до панелі.",
+      "newPasswordMismatch": "Паролі не збігаються"
     },
     "header": {
       "dashboard": "Мої справи",

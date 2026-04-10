@@ -132,7 +132,15 @@
       "resetButton": "Wyślij link",
       "resetSending": "Wysyłanie...",
       "resetSent": "Jeśli konto z tym adresem email istnieje, wysłaliśmy link do resetowania hasła. Sprawdź swoją skrzynkę pocztową.",
-      "resetBackToLogin": "Wróć do logowania"
+      "resetBackToLogin": "Wróć do logowania",
+      "newPasswordTitle": "Ustaw nowe hasło",
+      "newPasswordSubtitle": "Wpisz nowe hasło do swojego konta.",
+      "newPasswordLabel": "Nowe hasło",
+      "newPasswordConfirmLabel": "Powtórz hasło",
+      "newPasswordButton": "Zapisz hasło",
+      "newPasswordSaving": "Zapisywanie...",
+      "newPasswordSuccess": "Hasło zostało zmienione. Za chwilę zostaniesz przekierowany do panelu.",
+      "newPasswordMismatch": "Hasła nie są identyczne"
     },
     "header": {
       "dashboard": "Moje sprawy",
