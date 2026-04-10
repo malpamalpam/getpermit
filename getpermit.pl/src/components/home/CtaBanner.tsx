@@ -1,10 +1,11 @@
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Container } from "@/components/ui/Container";
-import { BookingButton } from "@/components/booking/BookingButton";
+import { Button } from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
 
 export function CtaBanner() {
   const t = useTranslations("ctaBanner");
+  const locale = useLocale();
 
   return (
     <section className="py-16 md:py-20">
@@ -19,10 +20,12 @@ export function CtaBanner() {
             </h2>
             <p className="mt-4 text-lg text-white/80">{t("subtitle")}</p>
             <div className="mt-8">
-              <BookingButton variant="accent" size="lg">
-                {t("button")}
-                <ArrowRight className="h-4 w-4" />
-              </BookingButton>
+              <a href={`/${locale}/kontakt`}>
+                <Button variant="accent" size="lg">
+                  {t("button")}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </a>
             </div>
           </div>
         </div>

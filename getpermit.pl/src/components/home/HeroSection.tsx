@@ -1,6 +1,6 @@
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Container } from "@/components/ui/Container";
-import { BookingButton } from "@/components/booking/BookingButton";
+import { Button } from "@/components/ui/Button";
 import { siteConfig } from "@/config/site";
 import { ArrowRight } from "lucide-react";
 
@@ -10,6 +10,7 @@ const HERO_VIDEO_SRC =
 export function HeroSection() {
   const t = useTranslations("hero");
   const tStats = useTranslations("stats");
+  const locale = useLocale();
 
   const stats = [
     { value: `${siteConfig.stats.yearsOfExperience}+`, label: tStats("years") },
@@ -35,10 +36,12 @@ export function HeroSection() {
             </p>
 
             <div className="mt-7">
-              <BookingButton variant="accent" size="xl" className="w-full sm:w-auto">
-                {t("ctaPrimary")}
-                <ArrowRight className="h-5 w-5" />
-              </BookingButton>
+              <a href={`/${locale}/kontakt`}>
+                <Button variant="accent" size="xl" className="w-full sm:w-auto">
+                  {t("ctaPrimary")}
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </a>
             </div>
 
             {/* Stats inline */}

@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
-import { BookingButton } from "@/components/booking/BookingButton";
+import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Menu, X } from "lucide-react";
 
@@ -115,9 +115,11 @@ export function Header() {
 
           <div className="hidden items-center gap-4 md:flex">
             <LanguageSwitcher />
-            <BookingButton variant="primary" size="sm">
-              {t("consultation")}
-            </BookingButton>
+            <Link href="/kontakt">
+              <Button variant="primary" size="sm">
+                {t("consultation")}
+              </Button>
+            </Link>
             <a
               href="/panel/login"
               className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
@@ -169,9 +171,11 @@ export function Header() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-4">
                 <LanguageSwitcher />
                 <div className="flex items-center gap-2">
-                  <BookingButton variant="primary" size="sm">
-                    {t("consultation")}
-                  </BookingButton>
+                  <Link href="/kontakt" onClick={() => setMobileOpen(false)}>
+                    <Button variant="primary" size="sm">
+                      {t("consultation")}
+                    </Button>
+                  </Link>
                   <a
                     href="/panel/login"
                     className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
