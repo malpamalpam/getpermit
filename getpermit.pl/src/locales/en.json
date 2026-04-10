@@ -125,7 +125,14 @@
       "errorCallback": "Account activation failed. The link may have expired.",
       "errorConsent": "You must consent to data processing",
       "errorTerms": "You must accept the terms of service",
-      "logoutButton": "Sign out"
+      "logoutButton": "Sign out",
+      "forgotPassword": "Forgot your password?",
+      "resetTitle": "Reset password",
+      "resetSubtitle": "Enter the email address associated with your account and we'll send you a password reset link.",
+      "resetButton": "Send reset link",
+      "resetSending": "Sending...",
+      "resetSent": "If an account with this email exists, we've sent a password reset link. Check your inbox.",
+      "resetBackToLogin": "Back to login"
     },
     "header": {
       "dashboard": "My cases",

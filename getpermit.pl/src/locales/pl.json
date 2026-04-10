@@ -125,7 +125,14 @@
       "errorCallback": "Aktywacja konta nie powiodła się. Link mógł wygasnąć.",
       "errorConsent": "Musisz wyrazić zgodę na przetwarzanie danych",
       "errorTerms": "Musisz zaakceptować regulamin",
-      "logoutButton": "Wyloguj się"
+      "logoutButton": "Wyloguj się",
+      "forgotPassword": "Nie pamiętasz hasła?",
+      "resetTitle": "Resetowanie hasła",
+      "resetSubtitle": "Podaj adres email powiązany z kontem, a wyślemy Ci link do zresetowania hasła.",
+      "resetButton": "Wyślij link",
+      "resetSending": "Wysyłanie...",
+      "resetSent": "Jeśli konto z tym adresem email istnieje, wysłaliśmy link do resetowania hasła. Sprawdź swoją skrzynkę pocztową.",
+      "resetBackToLogin": "Wróć do logowania"
     },
     "header": {
       "dashboard": "Moje sprawy",

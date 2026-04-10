@@ -154,6 +154,42 @@ export async function loginAction(input: {
 }
 
 /* ============================================================================ */
+/*                          RESETOWANIE HASŁA                                   */
+/* ============================================================================ */
+
+export type ResetPasswordResult =
+  | { ok: true }
+  | { ok: false; error: "validation" | "general" };
+
+export async function resetPasswordAction(input: {
+  email: string;
+  locale: string;
+}): Promise<ResetPasswordResult> {
+  const parsed = z.object({ email: z.string().trim().toLowerCase().email() }).safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: "validation" };
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const callbackUrl = new URL("/api/auth/callback", siteConfig.url);
+  callbackUrl.searchParams.set("locale", input.locale);
+  callbackUrl.searchParams.set("next", "/panel");
+
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: callbackUrl.toString(),
+  });
+
+  if (error) {
+    console.error("[resetPassword] Supabase error:", error.message);
+    // Don't reveal whether the email exists
+  }
+
+  // Always return ok to prevent email enumeration
+  return { ok: true };
+}
+
+/* ============================================================================ */
 /*                              WYLOGOWANIE                                     */
 /* ============================================================================ */
 
