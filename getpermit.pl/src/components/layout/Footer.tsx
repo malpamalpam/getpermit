@@ -3,7 +3,7 @@ import { Link } from "@/i18n/routing";
 import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/config/site";
 import Image from "next/image";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MapPin, ArrowRight } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("footer");
@@ -71,19 +71,19 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-sm text-white/80">
               <li>
-                <a href="/polityka-prywatnosci" className="hover:text-white">
+                <Link href="/polityka-prywatnosci" className="hover:text-white">
                   {t("privacy")}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/regulamin" className="hover:text-white">
+                <Link href="/regulamin" className="hover:text-white">
                   {t("terms")}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/cookies" className="hover:text-white">
+                <Link href="/cookies" className="hover:text-white">
                   {t("cookies")}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -104,22 +104,19 @@ export function Footer() {
                 </a>
               </li>
               <li className="flex items-start gap-2">
-                <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-light" />
-                <a
-                  href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
-                  className="hover:text-white"
-                >
-                  {siteConfig.contact.phone}
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-light" />
                 <span>
-                  {siteConfig.contact.address.street}
-                  <br />
-                  {siteConfig.contact.address.postal}{" "}
-                  {siteConfig.contact.address.city}
+                  {siteConfig.contact.address.city}, {t("country")}
                 </span>
+              </li>
+              <li>
+                <Link
+                  href="/kontakt"
+                  className="inline-flex items-center gap-1 font-medium text-brand-light hover:text-white"
+                >
+                  {t("contactCta")}
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
               </li>
             </ul>
           </div>

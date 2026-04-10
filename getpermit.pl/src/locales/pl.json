@@ -78,7 +78,9 @@
     "privacy": "Polityka prywatności",
     "terms": "Regulamin",
     "cookies": "Polityka cookies",
-    "rights": "Wszelkie prawa zastrzeżone."
+    "rights": "Wszelkie prawa zastrzeżone.",
+    "country": "Polska",
+    "contactCta": "Skontaktuj się z nami"
   },
   "errors": {
     "required": "To pole jest wymagane",
@@ -88,7 +90,7 @@
   },
   "metadata": {
     "title": "Karta pobytu i zezwolenie na pracę w Polsce | getpermit.pl",
-    "description": "Karta pobytu, karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę — pomagamy cudzoziemcom legalnie mieszkać i pracować w Polsce. 98% skuteczności spraw. Bezpłatna konsultacja w ciągu 24h.",
+    "description": "Karta pobytu i zezwolenie na pracę w Polsce. Pomagamy cudzoziemcom — 98% skuteczności, 5000+ klientów. Bezpłatna konsultacja w 24h.",
     "keywords": "karta pobytu, karta stałego pobytu, karta pobytu czasowego, zezwolenie na pracę, zezwolenie na pracę typu a, karta czasowego pobytu, ponaglenie karta pobytu, karta pobytu status online, numer karty pobytu, legalizacja pobytu Polska"
   },
   "panel": {

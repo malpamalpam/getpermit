@@ -78,7 +78,9 @@
     "privacy": "Privacy policy",
     "terms": "Terms of service",
     "cookies": "Cookie policy",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "country": "Poland",
+    "contactCta": "Contact us"
   },
   "errors": {
     "required": "This field is required",

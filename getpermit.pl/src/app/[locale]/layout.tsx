@@ -64,7 +64,11 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
+  const t = await getTranslations({ locale, namespace: "faq" });
+
   // TODO: Dodac AggregateRating po integracji z Google Reviews
+  const faqKeys = ["cost", "duration", "documents", "workWhileWaiting", "worldwide", "rejected"] as const;
+
   const jsonLdGraph = [
     {
       "@type": "LegalService",
@@ -73,11 +77,8 @@ export default async function LocaleLayout({
       url: siteConfig.url,
       logo: `${siteConfig.url}/logo.jpg`,
       email: siteConfig.contact.email,
-      telephone: siteConfig.contact.phone,
       address: {
         "@type": "PostalAddress",
-        streetAddress: siteConfig.contact.address.street,
-        postalCode: siteConfig.contact.address.postal,
         addressLocality: siteConfig.contact.address.city,
         addressCountry: "PL",
       },
@@ -97,6 +98,17 @@ export default async function LocaleLayout({
       inLanguage: ["pl", "en", "ru", "uk"],
       description: "Profesjonalna pomoc w legalizacji pobytu i pracy cudzoziemcow w Polsce",
     },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqKeys.map((key) => ({
+        "@type": "Question",
+        name: t(`items.${key}.q`),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: t(`items.${key}.a`),
+        },
+      })),
+    },
   ];
   const jsonLd = { "@context": "https://schema.org", "@graph": jsonLdGraph };
 
@@ -107,8 +119,14 @@ export default async function LocaleLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="flex min-h-screen flex-col">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:shadow-lg"
+        >
+          Przejdź do treści
+        </a>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1">{children}</main>
         <Footer />
       </div>
       <CookieConsent />
