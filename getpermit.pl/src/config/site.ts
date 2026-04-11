@@ -34,6 +34,7 @@ export const siteConfig = {
   social: {
     facebook: "https://facebook.com/getpermit",
     instagram: "https://instagram.com/getpermit",
+    telegram: "https://t.me/getpermit",
     linkedin: "https://linkedin.com/company/getpermit",
   },
 
