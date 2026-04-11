@@ -122,7 +122,7 @@ export function Header() {
             </Link>
             <a
               href="/panel/login"
-              className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
+              className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
             >
               {t("clientPanel")}
             </a>
@@ -178,7 +178,7 @@ export function Header() {
                   </Link>
                   <a
                     href="/panel/login"
-                    className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
+                    className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
                     onClick={() => setMobileOpen(false)}
                   >
                     {t("clientPanel")}
