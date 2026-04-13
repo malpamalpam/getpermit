@@ -38,10 +38,8 @@ export function Footer() {
               <br />
               NIP: {siteConfig.company.nip}
             </p>
-            <p className="mt-2 text-sm text-white/70">
-              {siteConfig.contact.address.street}
-              <br />
-              {siteConfig.contact.address.postal} {siteConfig.contact.address.city}
+            <p className="mt-2 text-sm font-medium text-white">
+              {siteConfig.contact.address.street}, {siteConfig.contact.address.postal} {siteConfig.contact.address.city}
             </p>
           </div>
 

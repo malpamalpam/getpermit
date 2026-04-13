@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:firmadlakazdego.pl)",
+      "Bash(git add:*)",
+      "Bash(git -C /c/Users/gstep/getpermit.pl add src/components/home/ServicesGrid.tsx)",
+      "Bash(git -C /c/Users/gstep/getpermit.pl status)",
+      "Bash(git -C \"c:/laragon/www/UTM\" status)",
+      "Bash(mysql -u root utm -e \"SELECT id, name, date FROM article ORDER BY date DESC LIMIT 10;\")",
+      "Bash(findstr 9000)",
+      "Bash(find /c/laragon/www/UTM/application/cache -type f ! -name 'index.html' ! -name '.htaccess' -delete)",
+      "WebFetch(domain:getpermit.pl)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}
