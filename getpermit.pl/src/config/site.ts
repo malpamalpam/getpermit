@@ -20,8 +20,8 @@ export const siteConfig = {
     whatsapp: "48XXXXXXXXX",
     telegram: "getpermit",
     address: {
-      street: "ul. XXXXXXXX 00",
-      postal: "00-000",
+      street: "ul. Lwowska 17/4",
+      postal: "00-660",
       city: "Warszawa",
       country: "Polska",
     },

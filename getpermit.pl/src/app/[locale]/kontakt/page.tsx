@@ -50,7 +50,7 @@ export default async function ContactPage({
               <ContactInfoItem
                 icon={<MapPin className="h-5 w-5" />}
                 label={tInfo("address")}
-                value={`${siteConfig.contact.address.city}`}
+                value={`${siteConfig.contact.address.street}, ${siteConfig.contact.address.postal} ${siteConfig.contact.address.city}`}
               />
               <ContactInfoItem
                 icon={<Clock className="h-5 w-5" />}
