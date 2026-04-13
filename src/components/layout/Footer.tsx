@@ -33,12 +33,15 @@ export function Footer() {
             <p className="mt-4 text-sm leading-relaxed text-white/70">
               {t("tagline")}
             </p>
-            <p className="mt-4 text-xs text-white/50">
+            <p className="mt-4 text-sm text-white/70">
               {siteConfig.legalName}
               <br />
               NIP: {siteConfig.company.nip}
+            </p>
+            <p className="mt-2 text-sm text-white/70">
+              {siteConfig.contact.address.street}
               <br />
-              {siteConfig.contact.address.street}, {siteConfig.contact.address.postal} {siteConfig.contact.address.city}
+              {siteConfig.contact.address.postal} {siteConfig.contact.address.city}
             </p>
           </div>
 
