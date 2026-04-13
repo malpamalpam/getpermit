@@ -37,6 +37,8 @@ export function Footer() {
               {siteConfig.legalName}
               <br />
               NIP: {siteConfig.company.nip}
+              <br />
+              {siteConfig.contact.address.street}, {siteConfig.contact.address.postal} {siteConfig.contact.address.city}
             </p>
           </div>
 
