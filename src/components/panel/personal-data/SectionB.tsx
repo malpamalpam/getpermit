@@ -18,25 +18,14 @@ export function SectionB({ values, onChange, t }: Props) {
           <input type="text" value={v("passportNumber")} onChange={(e) => onChange("passportNumber", e.target.value)} className={inputBase} />
         </div>
         <div>
-          <label className={labelBase}>{t("passportSeries")}</label>
-          <input type="text" value={v("passportSeries")} onChange={(e) => onChange("passportSeries", e.target.value)} className={inputBase} />
-        </div>
-      </div>
-
-      <div className="grid gap-5 md:grid-cols-2">
-        <div>
           <label className={labelBase}>{t("passportIssueDate")} *</label>
           <input type="date" value={v("passportIssueDate")} onChange={(e) => onChange("passportIssueDate", e.target.value)} className={inputBase} />
-        </div>
-        <div>
-          <label className={labelBase}>{t("passportExpiryDate")} *</label>
-          <input type="date" value={v("passportExpiryDate")} onChange={(e) => onChange("passportExpiryDate", e.target.value)} className={inputBase} />
         </div>
       </div>
 
       <div>
-        <label className={labelBase}>{t("passportIssuingAuthority")} *</label>
-        <input type="text" value={v("passportIssuingAuthority")} onChange={(e) => onChange("passportIssuingAuthority", e.target.value)} className={inputBase} />
+        <label className={labelBase}>{t("passportExpiryDate")} *</label>
+        <input type="date" value={v("passportExpiryDate")} onChange={(e) => onChange("passportExpiryDate", e.target.value)} className={inputBase} />
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">

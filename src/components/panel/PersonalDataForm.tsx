@@ -10,6 +10,7 @@ import { SectionB } from "./personal-data/SectionB";
 import { SectionC } from "./personal-data/SectionC";
 import { SectionD } from "./personal-data/SectionD";
 import { SectionE } from "./personal-data/SectionE";
+import { SectionF } from "./personal-data/SectionF";
 import {
   ChevronDown,
   ChevronRight,
@@ -29,6 +30,8 @@ const DATE_KEYS = [
   "visaExpiry",
   "firstEntryDate",
   "lastEntryDate",
+  "contractFrom",
+  "contractTo",
 ];
 
 // Które pola należą do której sekcji
@@ -40,8 +43,8 @@ const SECTION_FIELDS: Record<string, string[]> = {
     "motherName", "motherMaidenName",
   ],
   B: [
-    "passportNumber", "passportSeries", "passportIssueDate", "passportExpiryDate",
-    "passportIssuingAuthority", "pesel", "residenceCardNumber", "residenceCardExpiry",
+    "passportNumber", "passportIssueDate", "passportExpiryDate",
+    "pesel", "residenceCardNumber", "residenceCardExpiry",
     "visaNumber", "visaType", "visaExpiry",
   ],
   C: [
@@ -54,6 +57,11 @@ const SECTION_FIELDS: Record<string, string[]> = {
     "pendingProceedings", "caseNumberAtOffice", "handlingOffice",
     "criminalRecord", "deportationProceedings", "plannedStayDuration", "occupation",
   ],
+  F: [
+    "employerName", "employerStreet", "employerHouseNumber", "employerApartmentNumber",
+    "employerPostalCode", "employerCity", "employerPhone", "employerEmail",
+    "contractType", "contractFrom", "contractTo", "contractIndefinite", "salary",
+  ],
 };
 
 // Wymagane pola per sekcja (do sprawdzania kompletności)
@@ -62,7 +70,8 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
   B: ["passportNumber", "passportIssueDate", "passportExpiryDate", "passportIssuingAuthority"],
   C: ["street", "houseNumber", "postalCode", "city", "voivodeship"],
   D: ["phoneNumber", "contactEmail", "preferredLanguage"],
-  E: ["firstEntryDate", "lastEntryDate", "purposeOfStay", "currentResidenceTitle", "pendingProceedings", "criminalRecord", "deportationProceedings"],
+  E: [],
+  F: [],
 };
 
 function initialValuesFromData(data: PersonalData | null): Record<string, string | boolean | null> {
@@ -79,7 +88,7 @@ function initialValuesFromData(data: PersonalData | null): Record<string, string
   return result;
 }
 
-const SECTIONS = ["A", "B", "C", "D", "E"] as const;
+const SECTIONS = ["A", "B", "C", "D", "E", "F"] as const;
 
 interface Props {
   initialData: PersonalData | null;
@@ -147,6 +156,7 @@ export function PersonalDataForm({ initialData }: Props) {
     C: SectionC,
     D: SectionD,
     E: SectionE,
+    F: SectionF,
   };
 
   return (

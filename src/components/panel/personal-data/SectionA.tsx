@@ -1,4 +1,5 @@
 import { inputBase, labelBase, GENDER_OPTIONS, MARITAL_STATUS_OPTIONS } from "./constants";
+import { CountrySearch } from "./CountrySearch";
 
 interface Props {
   values: Record<string, string | boolean | null>;
@@ -49,21 +50,26 @@ export function SectionA({ values, onChange, t }: Props) {
           <label className={labelBase}>{t("placeOfBirth")} *</label>
           <input type="text" value={v("placeOfBirth")} onChange={(e) => onChange("placeOfBirth", e.target.value)} className={inputBase} />
         </div>
-        <div>
-          <label className={labelBase}>{t("countryOfBirth")} *</label>
-          <input type="text" value={v("countryOfBirth")} onChange={(e) => onChange("countryOfBirth", e.target.value)} className={inputBase} />
-        </div>
+        <CountrySearch
+          value={v("countryOfBirth")}
+          onChange={(val) => onChange("countryOfBirth", val)}
+          label={t("countryOfBirth")}
+          required
+        />
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <label className={labelBase}>{t("citizenship")} *</label>
-          <input type="text" value={v("citizenship")} onChange={(e) => onChange("citizenship", e.target.value)} className={inputBase} />
-        </div>
-        <div>
-          <label className={labelBase}>{t("secondCitizenship")}</label>
-          <input type="text" value={v("secondCitizenship")} onChange={(e) => onChange("secondCitizenship", e.target.value)} className={inputBase} />
-        </div>
+        <CountrySearch
+          value={v("citizenship")}
+          onChange={(val) => onChange("citizenship", val)}
+          label={t("citizenship")}
+          required
+        />
+        <CountrySearch
+          value={v("secondCitizenship")}
+          onChange={(val) => onChange("secondCitizenship", val)}
+          label={t("secondCitizenship")}
+        />
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">

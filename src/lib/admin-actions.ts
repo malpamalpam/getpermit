@@ -274,6 +274,20 @@ export async function deleteDocumentAction(documentId: string, caseId: string) {
 }
 
 /* ============================================================================ */
+/*                          CLEAR MESSAGES                                      */
+/* ============================================================================ */
+
+export async function clearMessagesAction(caseId: string) {
+  await requireStaff();
+
+  await db.message.deleteMany({ where: { caseId } });
+
+  revalidatePath(`/admin/sprawa/${caseId}`);
+  revalidatePath(`/panel/sprawa/${caseId}`);
+  return { ok: true as const };
+}
+
+/* ============================================================================ */
 /*                          DOCUMENT VERIFICATION                               */
 /* ============================================================================ */
 

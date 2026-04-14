@@ -78,12 +78,29 @@ const sectionESchema = z.object({
   occupation: z.string().trim().max(300).optional().or(z.literal("")),
 });
 
+const sectionFSchema = z.object({
+  employerName: z.string().trim().max(200).optional().or(z.literal("")),
+  employerStreet: z.string().trim().max(200).optional().or(z.literal("")),
+  employerHouseNumber: z.string().trim().max(20).optional().or(z.literal("")),
+  employerApartmentNumber: z.string().trim().max(20).optional().or(z.literal("")),
+  employerPostalCode: z.string().regex(/^\d{2}-\d{3}$/).optional().or(z.literal("")),
+  employerCity: z.string().trim().max(100).optional().or(z.literal("")),
+  employerPhone: z.string().trim().max(20).optional().or(z.literal("")),
+  employerEmail: z.string().email().optional().or(z.literal("")),
+  contractType: z.enum(["EMPLOYMENT", "MANDATE", "SPECIFIC_TASK", "MANAGERIAL"]).optional().or(z.literal("")),
+  contractFrom: z.string().optional().or(z.literal("")),
+  contractTo: z.string().optional().or(z.literal("")),
+  contractIndefinite: z.boolean().optional(),
+  salary: z.string().trim().max(50).optional().or(z.literal("")),
+});
+
 const SECTION_SCHEMAS = {
   A: sectionASchema,
   B: sectionBSchema,
   C: sectionCSchema,
   D: sectionDSchema,
   E: sectionESchema,
+  F: sectionFSchema,
 } as const;
 
 type SectionKey = keyof typeof SECTION_SCHEMAS;
@@ -97,6 +114,8 @@ const DATE_FIELDS: Record<string, boolean> = {
   visaExpiry: true,
   firstEntryDate: true,
   lastEntryDate: true,
+  contractFrom: true,
+  contractTo: true,
 };
 
 export async function savePersonalDataAction(

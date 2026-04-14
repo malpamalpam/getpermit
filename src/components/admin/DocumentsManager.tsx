@@ -185,94 +185,107 @@ export function DocumentsManager({ caseId, documents }: Props) {
           Brak dokumentów
         </p>
       ) : (
-        <ul className="divide-y divide-primary/10 rounded-xl border border-primary/10 bg-white">
-          {documents.map((doc) => (
-            <li key={doc.id} className="p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                    <FileText className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-primary">
-                      {doc.fileName}
-                    </div>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-ink/40">
-                      <span>{formatBytes(doc.fileSize)}</span>
-                      <span>·</span>
-                      <span>{formatDate(doc.uploadedAt)}</span>
-                      {doc.documentType && (
-                        <>
-                          <span>·</span>
-                          <span className="text-ink/60">{t("docType")}: {doc.documentType}</span>
-                        </>
-                      )}
-                      <span>·</span>
-                      <span className="inline-flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        {isClientDoc(doc) ? t("client") : t("staff")}
-                      </span>
-                    </div>
-                    {doc.verificationStatus && (
-                      <div className="mt-1">
-                        <VerificationBadgeAdmin
-                          status={doc.verificationStatus}
-                          t={t}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-shrink-0 items-center gap-1">
-                  <a
-                    href={`/api/documents/${doc.id}/download`}
-                    className="flex h-8 w-8 items-center justify-center rounded-md text-primary/60 transition-colors hover:bg-primary/5 hover:text-primary"
-                    aria-label="Download"
-                  >
-                    <Download className="h-4 w-4" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(doc.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-md text-red-500 transition-colors hover:bg-red-50"
-                    aria-label="Delete"
-                    disabled={isPending}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+        <div className="space-y-6">
+          {/* Dokumenty konsultanta */}
+          {documents.filter((d) => !isClientDoc(d)).length > 0 && (
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/60">
+                {t("staff")} ({documents.filter((d) => !isClientDoc(d)).length})
+              </h3>
+              <ul className="divide-y divide-primary/10 rounded-xl border border-primary/10 bg-white">
+                {documents.filter((d) => !isClientDoc(d)).map((doc) => renderDoc(doc))}
+              </ul>
+            </div>
+          )}
 
-              {/* Verification actions for client-uploaded docs */}
-              {isClientDoc(doc) && (
-                <div className="mt-2 flex items-center gap-2 pl-[52px]">
-                  <button
-                    type="button"
-                    onClick={() => handleVerify(doc.id, "VERIFIED")}
-                    disabled={isPending || doc.verificationStatus === "VERIFIED"}
-                    className="inline-flex items-center gap-1 rounded-md border border-green-200 bg-white px-2 py-1 text-xs font-medium text-green-700 transition-colors hover:bg-green-50 disabled:opacity-40"
-                  >
-                    <ShieldCheck className="h-3 w-3" />
-                    {t("verify")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleVerify(doc.id, "NEEDS_CORRECTION")}
-                    disabled={
-                      isPending ||
-                      doc.verificationStatus === "NEEDS_CORRECTION"
-                    }
-                    className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-white px-2 py-1 text-xs font-medium text-orange-700 transition-colors hover:bg-orange-50 disabled:opacity-40"
-                  >
-                    <AlertTriangle className="h-3 w-3" />
-                    {t("needsCorrection")}
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+          {/* Dokumenty klienta */}
+          {documents.filter((d) => isClientDoc(d)).length > 0 && (
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/60">
+                {t("client")} ({documents.filter((d) => isClientDoc(d)).length})
+              </h3>
+              <ul className="divide-y divide-primary/10 rounded-xl border border-primary/10 bg-white">
+                {documents.filter((d) => isClientDoc(d)).map((doc) => renderDoc(doc))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
+
+  function renderDoc(doc: Document) {
+    return (
+      <li key={doc.id} className="p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium text-primary">
+                {doc.fileName}
+              </div>
+              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-ink/40">
+                <span>{formatBytes(doc.fileSize)}</span>
+                <span>·</span>
+                <span>{formatDate(doc.uploadedAt)}</span>
+                {doc.documentType && (
+                  <>
+                    <span>·</span>
+                    <span className="text-ink/60">{t("docType")}: {doc.documentType}</span>
+                  </>
+                )}
+              </div>
+              {doc.verificationStatus && (
+                <div className="mt-1">
+                  <VerificationBadgeAdmin status={doc.verificationStatus} t={t} />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-1">
+            <a
+              href={`/api/documents/${doc.id}/download`}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-primary/60 transition-colors hover:bg-primary/5 hover:text-primary"
+              aria-label="Download"
+            >
+              <Download className="h-4 w-4" />
+            </a>
+            <button
+              type="button"
+              onClick={() => handleDelete(doc.id)}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-red-500 transition-colors hover:bg-red-50"
+              aria-label="Delete"
+              disabled={isPending}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        {isClientDoc(doc) && (
+          <div className="mt-2 flex items-center gap-2 pl-[52px]">
+            <button
+              type="button"
+              onClick={() => handleVerify(doc.id, "VERIFIED")}
+              disabled={isPending || doc.verificationStatus === "VERIFIED"}
+              className="inline-flex items-center gap-1 rounded-md border border-green-200 bg-white px-2 py-1 text-xs font-medium text-green-700 transition-colors hover:bg-green-50 disabled:opacity-40"
+            >
+              <ShieldCheck className="h-3 w-3" />
+              {t("verify")}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleVerify(doc.id, "NEEDS_CORRECTION")}
+              disabled={isPending || doc.verificationStatus === "NEEDS_CORRECTION"}
+              className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-white px-2 py-1 text-xs font-medium text-orange-700 transition-colors hover:bg-orange-50 disabled:opacity-40"
+            >
+              <AlertTriangle className="h-3 w-3" />
+              {t("needsCorrection")}
+            </button>
+          </div>
+        )}
+      </li>
+    );
+  }
 }

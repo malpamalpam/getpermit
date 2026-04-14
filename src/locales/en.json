@@ -146,7 +146,7 @@
     },
     "header": {
       "dashboard": "My cases",
-      "questionnaire": "Questionnaire",
+      "questionnaire": "Personal data",
       "settings": "Settings",
       "backToSite": "Back to site"
     },
@@ -215,7 +215,7 @@
       }
     },
     "questionnaire": {
-      "title": "Questionnaire \u2014 personal data",
+      "title": "Personal data",
       "subtitle": "Fill in the information needed for your case. You can save progress and return later.",
       "saveButton": "Save section",
       "saving": "Saving...",
@@ -264,6 +264,8 @@
       "sectionC": {
         "title": "C. Address in Poland",
         "street": "Street",
+        "streetHint": "Enter street name",
+        "cityHint": "Enter city name",
         "houseNumber": "House no.",
         "apartmentNumber": "Apt. no.",
         "postalCode": "Postal code",
@@ -321,6 +323,31 @@
             "UW_SLASKIE": "Silesian VO", "UW_SWIETOKRZYSKIE": "Holy Cross VO",
             "UW_WARMINSKO_MAZURSKIE": "Warmian-Masurian VO", "UW_WIELKOPOLSKIE": "Greater Poland VO",
             "UW_ZACHODNIOPOMORSKIE": "West Pomeranian VO"
+          }
+        }
+      },
+      "sectionF": {
+        "title": "F. Employer details",
+        "employerName": "Employer name",
+        "employerStreet": "Street",
+        "employerHouseNumber": "House no.",
+        "employerApartmentNumber": "Suite no.",
+        "employerPostalCode": "Postal code",
+        "employerCity": "City",
+        "employerPhone": "Employer phone",
+        "employerEmail": "Employer email",
+        "contractType": "Contract type",
+        "contractFrom": "Contract from",
+        "contractTo": "Contract until",
+        "contractIndefinite": "Indefinite",
+        "salary": "Salary (gross)",
+        "salaryHint": "e.g. 5000 PLN",
+        "options": {
+          "contractType": {
+            "EMPLOYMENT": "Employment contract",
+            "MANDATE": "Mandate contract",
+            "SPECIFIC_TASK": "Specific task contract",
+            "MANAGERIAL": "Managerial contract"
           }
         }
       }
@@ -437,7 +464,9 @@
       "send": "Send",
       "sendButton": "Send",
       "sending": "Sending...",
-      "you": "You"
+      "you": "You",
+      "clear": "Clear chat",
+      "clearConfirm": "Delete all messages in this case?"
     },
     "clientsList": {
       "title": "Clients",

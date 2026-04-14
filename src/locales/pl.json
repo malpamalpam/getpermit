@@ -146,7 +146,7 @@
     },
     "header": {
       "dashboard": "Moje sprawy",
-      "questionnaire": "Ankieta",
+      "questionnaire": "Dane osobowe",
       "settings": "Ustawienia",
       "backToSite": "Wróć na stronę"
     },
@@ -215,7 +215,7 @@
       }
     },
     "questionnaire": {
-      "title": "Ankieta \u2014 dane osobowe",
+      "title": "Dane osobowe",
       "subtitle": "Wypełnij dane potrzebne do prowadzenia Twojej sprawy. Możesz zapisywać postęp i wracać później.",
       "saveButton": "Zapisz sekcję",
       "saving": "Zapisywanie...",
@@ -264,6 +264,8 @@
       "sectionC": {
         "title": "C. Adres zamieszkania w Polsce",
         "street": "Ulica",
+        "streetHint": "Wpisz nazwę ulicy",
+        "cityHint": "Wpisz nazwę miasta",
         "houseNumber": "Nr domu",
         "apartmentNumber": "Nr mieszkania",
         "postalCode": "Kod pocztowy",
@@ -321,6 +323,31 @@
             "UW_SLASKIE": "UW Śląski", "UW_SWIETOKRZYSKIE": "UW Świętokrzyski",
             "UW_WARMINSKO_MAZURSKIE": "UW Warmińsko-Mazurski", "UW_WIELKOPOLSKIE": "UW Wielkopolski",
             "UW_ZACHODNIOPOMORSKIE": "UW Zachodniopomorski"
+          }
+        }
+      },
+      "sectionF": {
+        "title": "F. Dane pracodawcy",
+        "employerName": "Nazwa pracodawcy",
+        "employerStreet": "Ulica",
+        "employerHouseNumber": "Nr domu",
+        "employerApartmentNumber": "Nr lokalu",
+        "employerPostalCode": "Kod pocztowy",
+        "employerCity": "Miasto",
+        "employerPhone": "Telefon pracodawcy",
+        "employerEmail": "Email pracodawcy",
+        "contractType": "Rodzaj umowy",
+        "contractFrom": "Umowa od",
+        "contractTo": "Umowa do",
+        "contractIndefinite": "Czas nieokreślony",
+        "salary": "Wynagrodzenie (brutto)",
+        "salaryHint": "np. 5000 PLN",
+        "options": {
+          "contractType": {
+            "EMPLOYMENT": "Umowa o pracę",
+            "MANDATE": "Umowa zlecenie",
+            "SPECIFIC_TASK": "Umowa o dzieło",
+            "MANAGERIAL": "Kontrakt menedżerski"
           }
         }
       }
@@ -437,7 +464,9 @@
       "send": "Wyślij",
       "sendButton": "Wyślij",
       "sending": "Wysyłanie...",
-      "you": "Ty"
+      "you": "Ty",
+      "clear": "Wyczyść czat",
+      "clearConfirm": "Usunąć wszystkie wiadomości w tej sprawie?"
     },
     "clientsList": {
       "title": "Klienci",

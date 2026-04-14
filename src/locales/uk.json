@@ -146,7 +146,7 @@
     },
     "header": {
       "dashboard": "Мої справи",
-      "questionnaire": "Анкета",
+      "questionnaire": "Особисті дані",
       "settings": "Налаштування",
       "backToSite": "На головну"
     },
@@ -291,6 +291,16 @@
             "UW_ZACHODNIOPOMORSKIE": "Західнопоморське ВУ"
           }
         }
+      },
+      "sectionF": {
+        "title": "F. Дані роботодавця",
+        "employerName": "Назва роботодавця", "employerStreet": "Вулиця",
+        "employerHouseNumber": "Будинок", "employerApartmentNumber": "Приміщення",
+        "employerPostalCode": "Індекс", "employerCity": "Місто",
+        "employerPhone": "Телефон роботодавця", "employerEmail": "Email роботодавця",
+        "contractType": "Тип договору", "contractFrom": "Договір з", "contractTo": "Договір до",
+        "contractIndefinite": "Безстроковий", "salary": "Зарплата (брутто)", "salaryHint": "напр. 5000 PLN",
+        "options": { "contractType": { "EMPLOYMENT": "Трудовий договір", "MANDATE": "Договір доручення", "SPECIFIC_TASK": "Договір підряду", "MANAGERIAL": "Управлінський контракт" } }
       }
     },
     "settings": {
@@ -405,7 +415,9 @@
       "send": "Надіслати",
       "sendButton": "Надіслати",
       "sending": "Надсилання...",
-      "you": "Ви"
+      "you": "Ви",
+      "clear": "Очистити чат",
+      "clearConfirm": "Видалити всі повідомлення у цій справі?"
     },
     "clientsList": {
       "title": "Клієнти",

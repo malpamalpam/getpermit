@@ -295,6 +295,21 @@ model PersonalData {
   plannedStayDuration     String?   @map("planned_stay_duration")
   occupation              String?   /// Zawód/stanowisko (kod KZIS + nazwa)
 
+  // --- Sekcja F: Dane pracodawcy ---
+  employerName            String?   @map("employer_name")
+  employerStreet          String?   @map("employer_street")
+  employerHouseNumber     String?   @map("employer_house_number")
+  employerApartmentNumber String?   @map("employer_apartment_number")
+  employerPostalCode      String?   @map("employer_postal_code")
+  employerCity            String?   @map("employer_city")
+  employerPhone           String?   @map("employer_phone")
+  employerEmail           String?   @map("employer_email")
+  contractType            String?   @map("contract_type") /// EMPLOYMENT, MANDATE, SPECIFIC_TASK, MANAGERIAL
+  contractFrom            DateTime? @map("contract_from")
+  contractTo              DateTime? @map("contract_to") /// null = czas nieokreślony
+  contractIndefinite      Boolean?  @map("contract_indefinite")
+  salary                  String?   /// kwota wynagrodzenia
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

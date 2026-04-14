@@ -146,7 +146,7 @@
     },
     "header": {
       "dashboard": "Мои дела",
-      "questionnaire": "Анкета",
+      "questionnaire": "Личные данные",
       "settings": "Настройки",
       "backToSite": "На главную"
     },
@@ -291,6 +291,16 @@
             "UW_ZACHODNIOPOMORSKIE": "Западнопоморское ВУ"
           }
         }
+      },
+      "sectionF": {
+        "title": "F. Данные работодателя",
+        "employerName": "Название работодателя", "employerStreet": "Улица",
+        "employerHouseNumber": "Дом", "employerApartmentNumber": "Помещение",
+        "employerPostalCode": "Индекс", "employerCity": "Город",
+        "employerPhone": "Телефон работодателя", "employerEmail": "Email работодателя",
+        "contractType": "Тип договора", "contractFrom": "Договор с", "contractTo": "Договор до",
+        "contractIndefinite": "Бессрочный", "salary": "Зарплата (брутто)", "salaryHint": "напр. 5000 PLN",
+        "options": { "contractType": { "EMPLOYMENT": "Трудовой договор", "MANDATE": "Договор поручения", "SPECIFIC_TASK": "Договор подряда", "MANAGERIAL": "Управленческий контракт" } }
       }
     },
     "settings": {
@@ -405,7 +415,9 @@
       "send": "Отправить",
       "sendButton": "Отправить",
       "sending": "Отправка...",
-      "you": "Вы"
+      "you": "Вы",
+      "clear": "Очистить чат",
+      "clearConfirm": "Удалить все сообщения в этом деле?"
     },
     "clientsList": {
       "title": "Клиенты",

@@ -197,6 +197,27 @@ export default async function ClientDetailPage({
                 <Field label={t("sectionE.occupation")} value={pd.occupation} />
               </dl>
             </section>
+
+            {/* Section F */}
+            <section className="rounded-2xl border border-primary/10 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 font-display text-lg font-bold text-primary">
+                {t("sectionF.title")}
+              </h2>
+              <dl className="grid gap-4 md:grid-cols-3">
+                <Field label={t("sectionF.employerName")} value={pd.employerName} />
+                <Field label={t("sectionF.employerStreet")} value={pd.employerStreet} />
+                <Field label={t("sectionF.employerHouseNumber")} value={pd.employerHouseNumber} />
+                <Field label={t("sectionF.employerApartmentNumber")} value={pd.employerApartmentNumber} />
+                <Field label={t("sectionF.employerPostalCode")} value={pd.employerPostalCode} />
+                <Field label={t("sectionF.employerCity")} value={pd.employerCity} />
+                <Field label={t("sectionF.employerPhone")} value={pd.employerPhone} />
+                <Field label={t("sectionF.employerEmail")} value={pd.employerEmail} />
+                <Field label={t("sectionF.contractType")} value={pd.contractType ? t(`sectionF.options.contractType.${pd.contractType}`) : null} />
+                <Field label={t("sectionF.contractFrom")} value={formatDate(pd.contractFrom)} />
+                <Field label={t("sectionF.contractTo")} value={pd.contractIndefinite ? t("sectionF.contractIndefinite") : formatDate(pd.contractTo)} />
+                <Field label={t("sectionF.salary")} value={pd.salary} />
+              </dl>
+            </section>
           </div>
         )}
       </Container>
