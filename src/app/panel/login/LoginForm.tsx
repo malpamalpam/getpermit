@@ -35,7 +35,7 @@ export function LoginForm({ locale, next, initialError }: Props) {
         );
         return;
       }
-      router.push(next ?? "/panel");
+      router.push(result.redirect ?? next ?? "/panel");
       router.refresh();
     });
   };

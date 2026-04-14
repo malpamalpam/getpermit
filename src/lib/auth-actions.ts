@@ -116,7 +116,7 @@ const loginSchema = z.object({
 });
 
 export type LoginResult =
-  | { ok: true }
+  | { ok: true; redirect?: string }
   | { ok: false; error: "validation" | "invalid_credentials" | "general" };
 
 export async function loginAction(input: {
@@ -142,15 +142,17 @@ export async function loginAction(input: {
   }
 
   // Sync user przy logowaniu (aktualizuje lastLoginAt, rolę w app_metadata)
+  let syncedUser;
   if (data.user) {
     try {
-      await syncUserFromAuth(data.user.id, data.user.email!, input.locale);
+      syncedUser = await syncUserFromAuth(data.user.id, data.user.email!, input.locale);
     } catch (e) {
       console.error("[login] sync failed:", e);
     }
   }
 
-  return { ok: true };
+  const isStaffOrAdmin = syncedUser && (syncedUser.role === "ADMIN" || syncedUser.role === "STAFF");
+  return { ok: true, redirect: isStaffOrAdmin ? "/admin" : "/panel" };
 }
 
 /* ============================================================================ */
