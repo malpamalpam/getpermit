@@ -61,7 +61,9 @@ export function HeroSection() {
                 preload="metadata"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="pointer-events-none absolute inset-0" style={{boxShadow: 'inset 0 0 80px 30px rgba(15,25,50,0.6)'}} />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary-800 via-primary-800/50 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-800 via-transparent to-primary-800/40" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-primary-800/30 to-transparent" />
             </div>
           </div>
         </div>
