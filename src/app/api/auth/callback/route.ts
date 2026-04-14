@@ -32,15 +32,17 @@ export async function GET(request: NextRequest) {
   }
 
   // Synchronizacja public.users (idempotentna)
+  let syncedUser;
   try {
-    await syncUserFromAuth(data.user.id, data.user.email!, locale);
+    syncedUser = await syncUserFromAuth(data.user.id, data.user.email!, locale);
   } catch (e) {
     console.error("[auth/callback] user sync failed:", e);
-    // Nie blokujemy logowania — sesja Supabase jest ważna; ponowimy sync
-    // przy następnym requeście (lib/auth.ts getCurrentUser).
   }
 
-  // Przekierowanie z prefiksem locale, jeśli inny niż domyślny (pl)
-  const redirectPath = locale === "pl" ? next : `/${locale}${next}`;
+  // Admin/Staff → /admin, klient → /panel
+  const targetPath = syncedUser && (syncedUser.role === "ADMIN" || syncedUser.role === "STAFF")
+    ? "/admin"
+    : next;
+  const redirectPath = locale === "pl" ? targetPath : `/${locale}${targetPath}`;
   return NextResponse.redirect(new URL(redirectPath, request.url));
 }
