@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { HeroStats } from "./HeroStats";
 import { siteConfig } from "@/config/site";
 import { ArrowRight } from "lucide-react";
+import { BookingButton } from "@/components/booking/BookingButton";
 
 const HERO_VIDEO_SRC =
   "/VIDEOS/hf_20260408_185746_f4ac7978-97b7-4ac9-ab4c-7b87612cea22.mp4";
@@ -37,12 +38,10 @@ export function HeroSection() {
             </p>
 
             <div className="mt-7">
-              <a href={`/${locale}/kontakt`}>
-                <Button variant="accent" size="xl" className="w-full sm:w-auto">
-                  {t("ctaPrimary")}
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </a>
+              <BookingButton variant="accent" size="xl" className="w-full sm:w-auto">
+                {t("ctaPrimary")}
+                <ArrowRight className="h-5 w-5" />
+              </BookingButton>
             </div>
 
             {/* Stats inline */}
@@ -51,7 +50,7 @@ export function HeroSection() {
 
           {/* Video */}
           <div className="relative hidden lg:block">
-            <div className="relative aspect-[5/4] w-full max-h-[460px] overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
+            <div className="relative aspect-[5/4] w-full max-h-[460px]" style={{mask: 'radial-gradient(ellipse 70% 70% at center, black 40%, transparent 100%)', WebkitMask: 'radial-gradient(ellipse 70% 70% at center, black 40%, transparent 100%)'}}>
               <video
                 src={HERO_VIDEO_SRC}
                 autoPlay
@@ -59,11 +58,8 @@ export function HeroSection() {
                 loop
                 playsInline
                 preload="metadata"
-                className="absolute inset-0 h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover rounded-2xl"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary-800 via-primary-800/50 to-transparent" />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-800 via-transparent to-primary-800/40" />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-primary-800/30 to-transparent" />
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Menu, X } from "lucide-react";
+import { BookingButton } from "@/components/booking/BookingButton";
 
 // Anchor sections that exist on the homepage. Localized labels for the
 // homepage section nav (other locales fall back to PL — multilingual labels
@@ -115,11 +116,9 @@ export function Header() {
 
           <div className="hidden items-center gap-4 md:flex">
             <LanguageSwitcher />
-            <Link href="/kontakt">
-              <Button variant="primary" size="sm">
-                {t("consultation")}
-              </Button>
-            </Link>
+            <BookingButton variant="primary" size="sm">
+              {t("consultation")}
+            </BookingButton>
             <a
               href="/panel/login"
               className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
@@ -171,11 +170,9 @@ export function Header() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-4">
                 <LanguageSwitcher />
                 <div className="flex items-center gap-2">
-                  <Link href="/kontakt" onClick={() => setMobileOpen(false)}>
-                    <Button variant="primary" size="sm">
-                      {t("consultation")}
-                    </Button>
-                  </Link>
+                  <BookingButton variant="primary" size="sm">
+                    {t("consultation")}
+                  </BookingButton>
                   <a
                     href="/panel/login"
                     className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
