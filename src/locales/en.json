@@ -146,6 +146,7 @@
     },
     "header": {
       "dashboard": "My cases",
+      "questionnaire": "Questionnaire",
       "settings": "Settings",
       "backToSite": "Back to site"
     },
@@ -211,6 +212,117 @@
         "HEALTH_INSURANCE": "Health insurance",
         "BIOMETRIC_PHOTO": "Biometric photo",
         "OTHER": "Other"
+      }
+    },
+    "questionnaire": {
+      "title": "Questionnaire \u2014 personal data",
+      "subtitle": "Fill in the information needed for your case. You can save progress and return later.",
+      "saveButton": "Save section",
+      "saving": "Saving...",
+      "saved": "Section saved",
+      "error": "Failed to save. Please try again.",
+      "yes": "Yes",
+      "no": "No",
+      "sectionA": {
+        "title": "A. Basic information",
+        "firstNameLatin": "First name (Latin)",
+        "lastNameLatin": "Last name (Latin)",
+        "nativeFullName": "Full name in native language",
+        "gender": "Gender",
+        "dateOfBirth": "Date of birth",
+        "placeOfBirth": "Place of birth",
+        "countryOfBirth": "Country of birth",
+        "citizenship": "Citizenship",
+        "secondCitizenship": "Second citizenship",
+        "nationality": "Nationality",
+        "maritalStatus": "Marital status",
+        "fatherName": "Father's name",
+        "motherName": "Mother's name",
+        "motherMaidenName": "Mother's maiden name",
+        "options": {
+          "gender": { "MALE": "Male", "FEMALE": "Female" },
+          "maritalStatus": { "SINGLE": "Single", "MARRIED": "Married", "DIVORCED": "Divorced", "WIDOWED": "Widowed" }
+        }
+      },
+      "sectionB": {
+        "title": "B. Identity documents and passport",
+        "passportNumber": "Passport number",
+        "passportSeries": "Passport series",
+        "passportIssueDate": "Passport issue date",
+        "passportExpiryDate": "Passport expiry date",
+        "passportIssuingAuthority": "Passport issuing authority",
+        "pesel": "PESEL",
+        "residenceCardNumber": "Residence card number",
+        "residenceCardExpiry": "Residence card expiry date",
+        "visaNumber": "Visa number",
+        "visaType": "Visa type",
+        "visaExpiry": "Visa expiry date",
+        "options": {
+          "visaType": { "C": "Type C", "D": "Type D", "NATIONAL": "National", "SCHENGEN": "Schengen" }
+        }
+      },
+      "sectionC": {
+        "title": "C. Address in Poland",
+        "street": "Street",
+        "houseNumber": "House no.",
+        "apartmentNumber": "Apt. no.",
+        "postalCode": "Postal code",
+        "city": "City",
+        "voivodeship": "Voivodeship",
+        "registrationAddress": "Registration address (if different)",
+        "registrationAddressHint": "Full registration address",
+        "correspondenceAddress": "Correspondence address (if different)",
+        "correspondenceAddressHint": "Full correspondence address",
+        "options": {
+          "voivodeship": {
+            "dolnoslaskie": "Lower Silesian", "kujawsko-pomorskie": "Kuyavian-Pomeranian",
+            "lubelskie": "Lublin", "lubuskie": "Lubusz", "lodzkie": "Lodz",
+            "malopolskie": "Lesser Poland", "mazowieckie": "Masovian", "opolskie": "Opole",
+            "podkarpackie": "Subcarpathian", "podlaskie": "Podlaskie", "pomorskie": "Pomeranian",
+            "slaskie": "Silesian", "swietokrzyskie": "Holy Cross",
+            "warminsko-mazurskie": "Warmian-Masurian", "wielkopolskie": "Greater Poland",
+            "zachodniopomorskie": "West Pomeranian"
+          }
+        }
+      },
+      "sectionD": {
+        "title": "D. Contact details",
+        "phoneNumber": "Phone number",
+        "contactEmail": "Email address",
+        "additionalPhone": "Additional phone number",
+        "preferredLanguage": "Preferred contact language",
+        "options": {
+          "preferredLanguage": { "PL": "Polish", "EN": "English", "RU": "Russian", "UA": "Ukrainian", "OTHER": "Other" }
+        }
+      },
+      "sectionE": {
+        "title": "E. Stay in Poland",
+        "firstEntryDate": "Date of first entry to Poland",
+        "lastEntryDate": "Date of last entry to Poland",
+        "purposeOfStay": "Purpose of stay",
+        "currentResidenceTitle": "Current residence title",
+        "pendingProceedings": "Are there pending permit proceedings?",
+        "caseNumberAtOffice": "Case number at office",
+        "handlingOffice": "Handling office",
+        "criminalRecord": "Criminal record in Poland or abroad?",
+        "deportationProceedings": "Were there deportation proceedings?",
+        "plannedStayDuration": "Planned stay duration",
+        "plannedStayDurationHint": "e.g. 12 months",
+        "occupation": "Occupation / position (KZIS)",
+        "occupationHint": "Type occupation name or code...",
+        "options": {
+          "purposeOfStay": { "WORK": "Work", "STUDY": "Study", "FAMILY": "Family reunification", "OTHER": "Other" },
+          "residenceTitle": { "VISA": "Visa", "RESIDENCE_CARD": "Residence card", "VISA_FREE": "Visa-free", "STAMP": "Stamp", "OTHER": "Other" },
+          "handlingOffice": {
+            "UW_DOLNOSLASKIE": "Lower Silesian Voivodeship Office", "UW_KUJAWSKO_POMORSKIE": "Kuyavian-Pomeranian VO",
+            "UW_LUBELSKIE": "Lublin VO", "UW_LUBUSKIE": "Lubusz VO", "UW_LODZKIE": "Lodz VO",
+            "UW_MALOPOLSKIE": "Lesser Poland VO", "UW_MAZOWIECKIE": "Masovian VO", "UW_OPOLSKIE": "Opole VO",
+            "UW_PODKARPACKIE": "Subcarpathian VO", "UW_PODLASKIE": "Podlaskie VO", "UW_POMORSKIE": "Pomeranian VO",
+            "UW_SLASKIE": "Silesian VO", "UW_SWIETOKRZYSKIE": "Holy Cross VO",
+            "UW_WARMINSKO_MAZURSKIE": "Warmian-Masurian VO", "UW_WIELKOPOLSKIE": "Greater Poland VO",
+            "UW_ZACHODNIOPOMORSKIE": "West Pomeranian VO"
+          }
+        }
       }
     },
     "settings": {

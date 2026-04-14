@@ -146,6 +146,7 @@
     },
     "header": {
       "dashboard": "Мои дела",
+      "questionnaire": "Анкета",
       "settings": "Настройки",
       "backToSite": "На главную"
     },
@@ -211,6 +212,85 @@
         "HEALTH_INSURANCE": "Медицинская страховка",
         "BIOMETRIC_PHOTO": "Биометрическое фото",
         "OTHER": "Другое"
+      }
+    },
+    "questionnaire": {
+      "title": "Анкета \u2014 личные данные",
+      "subtitle": "Заполните данные, необходимые для ведения вашего дела. Вы можете сохранить прогресс и вернуться позже.",
+      "saveButton": "Сохранить раздел",
+      "saving": "Сохранение...",
+      "saved": "Раздел сохранён",
+      "error": "Не удалось сохранить. Попробуйте ещё раз.",
+      "yes": "Да",
+      "no": "Нет",
+      "sectionA": {
+        "title": "A. Основные данные",
+        "firstNameLatin": "Имя (латиницей)", "lastNameLatin": "Фамилия (латиницей)",
+        "nativeFullName": "ФИО на родном языке", "gender": "Пол",
+        "dateOfBirth": "Дата рождения", "placeOfBirth": "Место рождения",
+        "countryOfBirth": "Страна рождения", "citizenship": "Гражданство",
+        "secondCitizenship": "Второе гражданство", "nationality": "Национальность",
+        "maritalStatus": "Семейное положение", "fatherName": "Имя отца",
+        "motherName": "Имя матери", "motherMaidenName": "Девичья фамилия матери",
+        "options": {
+          "gender": { "MALE": "Мужской", "FEMALE": "Женский" },
+          "maritalStatus": { "SINGLE": "Холост/Не замужем", "MARRIED": "Женат/Замужем", "DIVORCED": "Разведён/а", "WIDOWED": "Вдовец/Вдова" }
+        }
+      },
+      "sectionB": {
+        "title": "B. Документы и паспорт",
+        "passportNumber": "Номер паспорта", "passportSeries": "Серия паспорта",
+        "passportIssueDate": "Дата выдачи", "passportExpiryDate": "Срок действия",
+        "passportIssuingAuthority": "Орган выдачи", "pesel": "PESEL",
+        "residenceCardNumber": "Номер карты побыту", "residenceCardExpiry": "Срок действия карты",
+        "visaNumber": "Номер визы", "visaType": "Тип визы", "visaExpiry": "Срок действия визы",
+        "options": { "visaType": { "C": "Тип C", "D": "Тип D", "NATIONAL": "Национальная", "SCHENGEN": "Шенген" } }
+      },
+      "sectionC": {
+        "title": "C. Адрес проживания в Польше",
+        "street": "Улица", "houseNumber": "Дом", "apartmentNumber": "Квартира",
+        "postalCode": "Почтовый индекс", "city": "Город", "voivodeship": "Воеводство",
+        "registrationAddress": "Адрес прописки (если другой)", "registrationAddressHint": "Полный адрес прописки",
+        "correspondenceAddress": "Адрес для корреспонденции (если другой)", "correspondenceAddressHint": "Полный адрес для корреспонденции",
+        "options": { "voivodeship": {
+          "dolnoslaskie": "Нижнесилезское", "kujawsko-pomorskie": "Куявско-Поморское",
+          "lubelskie": "Люблинское", "lubuskie": "Любуское", "lodzkie": "Лодзинское",
+          "malopolskie": "Малопольское", "mazowieckie": "Мазовецкое", "opolskie": "Опольское",
+          "podkarpackie": "Подкарпатское", "podlaskie": "Подляское", "pomorskie": "Поморское",
+          "slaskie": "Силезское", "swietokrzyskie": "Свентокшиское",
+          "warminsko-mazurskie": "Варминско-Мазурское", "wielkopolskie": "Великопольское",
+          "zachodniopomorskie": "Западнопоморское"
+        }}
+      },
+      "sectionD": {
+        "title": "D. Контактные данные",
+        "phoneNumber": "Телефон", "contactEmail": "E-mail",
+        "additionalPhone": "Дополнительный телефон", "preferredLanguage": "Предпочитаемый язык",
+        "options": { "preferredLanguage": { "PL": "Польский", "EN": "Английский", "RU": "Русский", "UA": "Украинский", "OTHER": "Другой" } }
+      },
+      "sectionE": {
+        "title": "E. Пребывание в Польше",
+        "firstEntryDate": "Дата первого въезда", "lastEntryDate": "Дата последнего въезда",
+        "purposeOfStay": "Цель пребывания", "currentResidenceTitle": "Текущий титул пребывания",
+        "pendingProceedings": "Ведётся ли производство о предоставлении разрешения?",
+        "caseNumberAtOffice": "Номер дела в учреждении", "handlingOffice": "Учреждение, ведущее дело",
+        "criminalRecord": "Судимость в Польше или за рубежом?",
+        "deportationProceedings": "Было ли производство о выдворении?",
+        "plannedStayDuration": "Планируемый срок пребывания", "plannedStayDurationHint": "напр. 12 месяцев",
+        "occupation": "Профессия / должность (KZIS)", "occupationHint": "Введите название или код профессии...",
+        "options": {
+          "purposeOfStay": { "WORK": "Работа", "STUDY": "Учёба", "FAMILY": "Воссоединение семьи", "OTHER": "Другое" },
+          "residenceTitle": { "VISA": "Виза", "RESIDENCE_CARD": "Карта побыту", "VISA_FREE": "Безвизовый режим", "STAMP": "Штамп", "OTHER": "Другое" },
+          "handlingOffice": {
+            "UW_DOLNOSLASKIE": "Нижнесилезское ВУ", "UW_KUJAWSKO_POMORSKIE": "Куявско-Поморское ВУ",
+            "UW_LUBELSKIE": "Люблинское ВУ", "UW_LUBUSKIE": "Любуское ВУ", "UW_LODZKIE": "Лодзинское ВУ",
+            "UW_MALOPOLSKIE": "Малопольское ВУ", "UW_MAZOWIECKIE": "Мазовецкое ВУ", "UW_OPOLSKIE": "Опольское ВУ",
+            "UW_PODKARPACKIE": "Подкарпатское ВУ", "UW_PODLASKIE": "Подляское ВУ", "UW_POMORSKIE": "Поморское ВУ",
+            "UW_SLASKIE": "Силезское ВУ", "UW_SWIETOKRZYSKIE": "Свентокшиское ВУ",
+            "UW_WARMINSKO_MAZURSKIE": "Варминско-Мазурское ВУ", "UW_WIELKOPOLSKIE": "Великопольское ВУ",
+            "UW_ZACHODNIOPOMORSKIE": "Западнопоморское ВУ"
+          }
+        }
       }
     },
     "settings": {

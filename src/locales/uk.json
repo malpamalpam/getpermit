@@ -146,6 +146,7 @@
     },
     "header": {
       "dashboard": "Мої справи",
+      "questionnaire": "Анкета",
       "settings": "Налаштування",
       "backToSite": "На головну"
     },
@@ -211,6 +212,85 @@
         "HEALTH_INSURANCE": "Медичне страхування",
         "BIOMETRIC_PHOTO": "Біометричне фото",
         "OTHER": "Інше"
+      }
+    },
+    "questionnaire": {
+      "title": "Анкета \u2014 особисті дані",
+      "subtitle": "Заповніть дані, необхідні для ведення вашої справи. Ви можете зберегти прогрес і повернутися пізніше.",
+      "saveButton": "Зберегти розділ",
+      "saving": "Збереження...",
+      "saved": "Розділ збережено",
+      "error": "Не вдалося зберегти. Спробуйте ще раз.",
+      "yes": "Так",
+      "no": "Ні",
+      "sectionA": {
+        "title": "A. Основні дані",
+        "firstNameLatin": "Ім'я (латиницею)", "lastNameLatin": "Прізвище (латиницею)",
+        "nativeFullName": "ПІБ рідною мовою", "gender": "Стать",
+        "dateOfBirth": "Дата народження", "placeOfBirth": "Місце народження",
+        "countryOfBirth": "Країна народження", "citizenship": "Громадянство",
+        "secondCitizenship": "Друге громадянство", "nationality": "Національність",
+        "maritalStatus": "Сімейний стан", "fatherName": "Ім'я батька",
+        "motherName": "Ім'я матері", "motherMaidenName": "Дівоче прізвище матері",
+        "options": {
+          "gender": { "MALE": "Чоловіча", "FEMALE": "Жіноча" },
+          "maritalStatus": { "SINGLE": "Неодружений/Незаміжня", "MARRIED": "Одружений/Заміжня", "DIVORCED": "Розлучений/а", "WIDOWED": "Вдівець/Вдова" }
+        }
+      },
+      "sectionB": {
+        "title": "B. Документи та паспорт",
+        "passportNumber": "Номер паспорта", "passportSeries": "Серія паспорта",
+        "passportIssueDate": "Дата видачі", "passportExpiryDate": "Термін дії",
+        "passportIssuingAuthority": "Орган видачі", "pesel": "PESEL",
+        "residenceCardNumber": "Номер карти побиту", "residenceCardExpiry": "Термін дії карти",
+        "visaNumber": "Номер візи", "visaType": "Тип візи", "visaExpiry": "Термін дії візи",
+        "options": { "visaType": { "C": "Тип C", "D": "Тип D", "NATIONAL": "Національна", "SCHENGEN": "Шенген" } }
+      },
+      "sectionC": {
+        "title": "C. Адреса проживання в Польщі",
+        "street": "Вулиця", "houseNumber": "Будинок", "apartmentNumber": "Квартира",
+        "postalCode": "Поштовий індекс", "city": "Місто", "voivodeship": "Воєводство",
+        "registrationAddress": "Адреса реєстрації (якщо інша)", "registrationAddressHint": "Повна адреса реєстрації",
+        "correspondenceAddress": "Адреса для кореспонденції (якщо інша)", "correspondenceAddressHint": "Повна адреса для кореспонденції",
+        "options": { "voivodeship": {
+          "dolnoslaskie": "Нижньосілезьке", "kujawsko-pomorskie": "Куявсько-Поморське",
+          "lubelskie": "Люблінське", "lubuskie": "Любуське", "lodzkie": "Лодзинське",
+          "malopolskie": "Малопольське", "mazowieckie": "Мазовецьке", "opolskie": "Опольське",
+          "podkarpackie": "Підкарпатське", "podlaskie": "Підляське", "pomorskie": "Поморське",
+          "slaskie": "Сілезьке", "swietokrzyskie": "Свентокшиське",
+          "warminsko-mazurskie": "Вармінсько-Мазурське", "wielkopolskie": "Великопольське",
+          "zachodniopomorskie": "Західнопоморське"
+        }}
+      },
+      "sectionD": {
+        "title": "D. Контактні дані",
+        "phoneNumber": "Телефон", "contactEmail": "E-mail",
+        "additionalPhone": "Додатковий телефон", "preferredLanguage": "Бажана мова",
+        "options": { "preferredLanguage": { "PL": "Польська", "EN": "Англійська", "RU": "Російська", "UA": "Українська", "OTHER": "Інша" } }
+      },
+      "sectionE": {
+        "title": "E. Перебування в Польщі",
+        "firstEntryDate": "Дата першого в'їзду", "lastEntryDate": "Дата останнього в'їзду",
+        "purposeOfStay": "Мета перебування", "currentResidenceTitle": "Поточний титул перебування",
+        "pendingProceedings": "Чи ведеться провадження про надання дозволу?",
+        "caseNumberAtOffice": "Номер справи в установі", "handlingOffice": "Установа, що веде справу",
+        "criminalRecord": "Судимість в Польщі або за кордоном?",
+        "deportationProceedings": "Чи було провадження про видворення?",
+        "plannedStayDuration": "Запланований термін перебування", "plannedStayDurationHint": "напр. 12 місяців",
+        "occupation": "Професія / посада (KZIS)", "occupationHint": "Введіть назву або код професії...",
+        "options": {
+          "purposeOfStay": { "WORK": "Робота", "STUDY": "Навчання", "FAMILY": "Возз'єднання сім'ї", "OTHER": "Інше" },
+          "residenceTitle": { "VISA": "Віза", "RESIDENCE_CARD": "Карта побиту", "VISA_FREE": "Безвізовий режим", "STAMP": "Штамп", "OTHER": "Інше" },
+          "handlingOffice": {
+            "UW_DOLNOSLASKIE": "Нижньосілезьке ВУ", "UW_KUJAWSKO_POMORSKIE": "Куявсько-Поморське ВУ",
+            "UW_LUBELSKIE": "Люблінське ВУ", "UW_LUBUSKIE": "Любуське ВУ", "UW_LODZKIE": "Лодзинське ВУ",
+            "UW_MALOPOLSKIE": "Малопольське ВУ", "UW_MAZOWIECKIE": "Мазовецьке ВУ", "UW_OPOLSKIE": "Опольське ВУ",
+            "UW_PODKARPACKIE": "Підкарпатське ВУ", "UW_PODLASKIE": "Підляське ВУ", "UW_POMORSKIE": "Поморське ВУ",
+            "UW_SLASKIE": "Сілезьке ВУ", "UW_SWIETOKRZYSKIE": "Свентокшиське ВУ",
+            "UW_WARMINSKO_MAZURSKIE": "Вармінсько-Мазурське ВУ", "UW_WIELKOPOLSKIE": "Великопольське ВУ",
+            "UW_ZACHODNIOPOMORSKIE": "Західнопоморське ВУ"
+          }
+        }
       }
     },
     "settings": {

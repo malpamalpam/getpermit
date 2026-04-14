@@ -146,6 +146,7 @@
     },
     "header": {
       "dashboard": "Moje sprawy",
+      "questionnaire": "Ankieta",
       "settings": "Ustawienia",
       "backToSite": "Wróć na stronę"
     },
@@ -211,6 +212,117 @@
         "HEALTH_INSURANCE": "Ubezpieczenie zdrowotne",
         "BIOMETRIC_PHOTO": "Zdjęcie biometryczne",
         "OTHER": "Inne"
+      }
+    },
+    "questionnaire": {
+      "title": "Ankieta \u2014 dane osobowe",
+      "subtitle": "Wypełnij dane potrzebne do prowadzenia Twojej sprawy. Możesz zapisywać postęp i wracać później.",
+      "saveButton": "Zapisz sekcję",
+      "saving": "Zapisywanie...",
+      "saved": "Sekcja zapisana",
+      "error": "Nie udało się zapisać. Spróbuj ponownie.",
+      "yes": "Tak",
+      "no": "Nie",
+      "sectionA": {
+        "title": "A. Dane podstawowe",
+        "firstNameLatin": "Imię (łaciński)",
+        "lastNameLatin": "Nazwisko (łaciński)",
+        "nativeFullName": "Imię i nazwisko w języku ojczystym",
+        "gender": "Płeć",
+        "dateOfBirth": "Data urodzenia",
+        "placeOfBirth": "Miejsce urodzenia",
+        "countryOfBirth": "Kraj urodzenia",
+        "citizenship": "Obywatelstwo",
+        "secondCitizenship": "Drugie obywatelstwo",
+        "nationality": "Narodowość",
+        "maritalStatus": "Stan cywilny",
+        "fatherName": "Imię ojca",
+        "motherName": "Imię matki",
+        "motherMaidenName": "Nazwisko rodowe matki",
+        "options": {
+          "gender": { "MALE": "Mężczyzna", "FEMALE": "Kobieta" },
+          "maritalStatus": { "SINGLE": "Panna/Kawaler", "MARRIED": "Mężatka/Żonaty", "DIVORCED": "Rozwiedziona/y", "WIDOWED": "Wdowa/Wdowiec" }
+        }
+      },
+      "sectionB": {
+        "title": "B. Dokument tożsamości i paszport",
+        "passportNumber": "Numer paszportu",
+        "passportSeries": "Seria paszportu",
+        "passportIssueDate": "Data wydania paszportu",
+        "passportExpiryDate": "Data ważności paszportu",
+        "passportIssuingAuthority": "Organ wydający paszport",
+        "pesel": "PESEL",
+        "residenceCardNumber": "Numer karty pobytu",
+        "residenceCardExpiry": "Data ważności karty pobytu",
+        "visaNumber": "Numer wizy",
+        "visaType": "Typ wizy",
+        "visaExpiry": "Data ważności wizy",
+        "options": {
+          "visaType": { "C": "Typ C", "D": "Typ D", "NATIONAL": "Krajowa", "SCHENGEN": "Schengen" }
+        }
+      },
+      "sectionC": {
+        "title": "C. Adres zamieszkania w Polsce",
+        "street": "Ulica",
+        "houseNumber": "Nr domu",
+        "apartmentNumber": "Nr mieszkania",
+        "postalCode": "Kod pocztowy",
+        "city": "Miasto",
+        "voivodeship": "Województwo",
+        "registrationAddress": "Adres zameldowania (jeśli inny)",
+        "registrationAddressHint": "Podaj pełny adres zameldowania",
+        "correspondenceAddress": "Adres korespondencyjny (jeśli inny)",
+        "correspondenceAddressHint": "Podaj pełny adres do korespondencji",
+        "options": {
+          "voivodeship": {
+            "dolnoslaskie": "Dolnośląskie", "kujawsko-pomorskie": "Kujawsko-pomorskie",
+            "lubelskie": "Lubelskie", "lubuskie": "Lubuskie", "lodzkie": "Łódzkie",
+            "malopolskie": "Małopolskie", "mazowieckie": "Mazowieckie", "opolskie": "Opolskie",
+            "podkarpackie": "Podkarpackie", "podlaskie": "Podlaskie", "pomorskie": "Pomorskie",
+            "slaskie": "Śląskie", "swietokrzyskie": "Świętokrzyskie",
+            "warminsko-mazurskie": "Warmińsko-mazurskie", "wielkopolskie": "Wielkopolskie",
+            "zachodniopomorskie": "Zachodniopomorskie"
+          }
+        }
+      },
+      "sectionD": {
+        "title": "D. Dane kontaktowe",
+        "phoneNumber": "Numer telefonu",
+        "contactEmail": "Adres e-mail",
+        "additionalPhone": "Dodatkowy numer telefonu",
+        "preferredLanguage": "Preferowany język kontaktu",
+        "options": {
+          "preferredLanguage": { "PL": "Polski", "EN": "Angielski", "RU": "Rosyjski", "UA": "Ukraiński", "OTHER": "Inny" }
+        }
+      },
+      "sectionE": {
+        "title": "E. Informacje o pobycie w Polsce",
+        "firstEntryDate": "Data pierwszego wjazdu do Polski",
+        "lastEntryDate": "Data ostatniego wjazdu do Polski",
+        "purposeOfStay": "Cel pobytu",
+        "currentResidenceTitle": "Aktualny tytuł pobytowy",
+        "pendingProceedings": "Czy toczy się postępowanie o udzielenie zezwolenia?",
+        "caseNumberAtOffice": "Numer sprawy w urzędzie",
+        "handlingOffice": "Urząd prowadzący sprawę",
+        "criminalRecord": "Czy był karany w Polsce lub za granicą?",
+        "deportationProceedings": "Czy toczyło się postępowanie o wydalenie?",
+        "plannedStayDuration": "Planowany okres pobytu",
+        "plannedStayDurationHint": "np. 12 miesięcy",
+        "occupation": "Zawód / stanowisko (KZIS)",
+        "occupationHint": "Wpisz nazwę lub kod zawodu...",
+        "options": {
+          "purposeOfStay": { "WORK": "Praca", "STUDY": "Nauka", "FAMILY": "Łączenie z rodziną", "OTHER": "Inny" },
+          "residenceTitle": { "VISA": "Wiza", "RESIDENCE_CARD": "Karta pobytu", "VISA_FREE": "Ruch bezwizowy", "STAMP": "Stempel", "OTHER": "Inny" },
+          "handlingOffice": {
+            "UW_DOLNOSLASKIE": "UW Dolnośląski", "UW_KUJAWSKO_POMORSKIE": "UW Kujawsko-Pomorski",
+            "UW_LUBELSKIE": "UW Lubelski", "UW_LUBUSKIE": "UW Lubuski", "UW_LODZKIE": "UW Łódzki",
+            "UW_MALOPOLSKIE": "UW Małopolski", "UW_MAZOWIECKIE": "UW Mazowiecki", "UW_OPOLSKIE": "UW Opolski",
+            "UW_PODKARPACKIE": "UW Podkarpacki", "UW_PODLASKIE": "UW Podlaski", "UW_POMORSKIE": "UW Pomorski",
+            "UW_SLASKIE": "UW Śląski", "UW_SWIETOKRZYSKIE": "UW Świętokrzyski",
+            "UW_WARMINSKO_MAZURSKIE": "UW Warmińsko-Mazurski", "UW_WIELKOPOLSKIE": "UW Wielkopolski",
+            "UW_ZACHODNIOPOMORSKIE": "UW Zachodniopomorski"
+          }
+        }
       }
     },
     "settings": {

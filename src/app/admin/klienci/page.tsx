@@ -117,7 +117,12 @@ export default async function ClientsListPage({
                       className="transition-colors hover:bg-surface"
                     >
                       <td className="px-4 py-3 font-medium text-primary">
-                        {fullName}
+                        <Link
+                          href={`/admin/klienci/${c.id}`}
+                          className="hover:text-accent hover:underline"
+                        >
+                          {fullName}
+                        </Link>
                       </td>
                       <td className="px-4 py-3 text-primary/80">{c.email}</td>
                       <td className="px-4 py-3 text-primary/70">

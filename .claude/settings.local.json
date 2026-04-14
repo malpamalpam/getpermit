@@ -12,7 +12,9 @@
       "Bash(find /c/laragon/www/UTM/application/cache -type f ! -name 'index.html' ! -name '.htaccess' -delete)",
       "WebFetch(domain:getpermit.pl)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(npx prisma:*)"
+      "Bash(npx prisma:*)",
+      "WebFetch(domain:psz.praca.gov.pl)",
+      "WebFetch(domain:broker.praca.gov.pl)"
     ]
   }
 }

@@ -123,6 +123,8 @@ model User {
   sentMessages Message[] @relation("MessageSender")
   // logi dostępu
   accessLogs AccessLog[]
+  // dane osobowe (ankieta)
+  personalData PersonalData?
 
   @@index([role])
   @@map("users")
@@ -225,4 +227,78 @@ model AccessLog {
   @@index([caseId, timestamp])
   @@index([userId, timestamp])
   @@map("access_logs")
+}
+
+// =============================================================================
+// DANE OSOBOWE (ANKIETA)
+// =============================================================================
+
+model PersonalData {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @unique @map("user_id") @db.Uuid
+
+  // --- Sekcja A: Dane podstawowe ---
+  firstNameLatin   String?   @map("first_name_latin")
+  lastNameLatin    String?   @map("last_name_latin")
+  nativeFullName   String?   @map("native_full_name")
+  gender           String?
+  dateOfBirth      DateTime? @map("date_of_birth")
+  placeOfBirth     String?   @map("place_of_birth")
+  countryOfBirth   String?   @map("country_of_birth")
+  citizenship      String?
+  secondCitizenship String?  @map("second_citizenship")
+  nationality      String?
+  maritalStatus    String?   @map("marital_status")
+  fatherName       String?   @map("father_name")
+  motherName       String?   @map("mother_name")
+  motherMaidenName String?   @map("mother_maiden_name")
+
+  // --- Sekcja B: Dokument tożsamości i paszport ---
+  passportNumber          String?   @map("passport_number")
+  passportSeries          String?   @map("passport_series")
+  passportIssueDate       DateTime? @map("passport_issue_date")
+  passportExpiryDate      DateTime? @map("passport_expiry_date")
+  passportIssuingAuthority String?  @map("passport_issuing_authority")
+  pesel                   String?
+  residenceCardNumber     String?   @map("residence_card_number")
+  residenceCardExpiry     DateTime? @map("residence_card_expiry")
+  visaNumber              String?   @map("visa_number")
+  visaType                String?   @map("visa_type")
+  visaExpiry              DateTime? @map("visa_expiry")
+
+  // --- Sekcja C: Adres zamieszkania w Polsce ---
+  street                String?
+  houseNumber           String?   @map("house_number")
+  apartmentNumber       String?   @map("apartment_number")
+  postalCode            String?   @map("postal_code")
+  city                  String?
+  voivodeship           String?
+  registrationAddress   String?   @map("registration_address")
+  correspondenceAddress String?   @map("correspondence_address")
+
+  // --- Sekcja D: Dane kontaktowe ---
+  phoneNumber       String?  @map("phone_number")
+  contactEmail      String?  @map("contact_email")
+  additionalPhone   String?  @map("additional_phone")
+  preferredLanguage String?  @map("preferred_language")
+
+  // --- Sekcja E: Informacje o pobycie w Polsce ---
+  firstEntryDate          DateTime? @map("first_entry_date")
+  lastEntryDate           DateTime? @map("last_entry_date")
+  purposeOfStay           String?   @map("purpose_of_stay")
+  currentResidenceTitle   String?   @map("current_residence_title")
+  pendingProceedings      Boolean?  @map("pending_proceedings")
+  caseNumberAtOffice      String?   @map("case_number_at_office")
+  handlingOffice          String?   @map("handling_office")
+  criminalRecord          Boolean?  @map("criminal_record")
+  deportationProceedings  Boolean?  @map("deportation_proceedings")
+  plannedStayDuration     String?   @map("planned_stay_duration")
+  occupation              String?   /// Zawód/stanowisko (kod KZIS + nazwa)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("personal_data")
 }
