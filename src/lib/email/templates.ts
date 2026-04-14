@@ -18,7 +18,15 @@ interface EmailContent {
 }
 
 const T: Record<
-  "caseStatusChanged" | "newEvent" | "newDocument" | "clientInvitation",
+  | "caseStatusChanged"
+  | "newEvent"
+  | "newDocument"
+  | "clientInvitation"
+  | "newMessageFromAdmin"
+  | "newMessageFromClient"
+  | "documentVerified"
+  | "documentNeedsCorrection"
+  | "newClientDocument",
   Record<EmailLocale, EmailContent>
 > = {
   caseStatusChanged: {
@@ -109,6 +117,156 @@ const T: Record<
       heading: "Новий документ",
       body: "До справи «{caseTitle}» додано новий документ: <strong>{fileName}</strong>. Увійдіть, щоб завантажити.",
       ctaLabel: "Завантажити документ",
+    },
+  },
+  newMessageFromAdmin: {
+    pl: {
+      subject: "Nowa wiadomość od opiekuna — getpermit.pl",
+      preheader: "Otrzymałeś nową wiadomość od opiekuna Twojej sprawy.",
+      heading: "Nowa wiadomość",
+      body: "Otrzymałeś nową wiadomość od opiekuna Twojej sprawy \u201e{caseTitle}\u201d. Zaloguj się do panelu, aby ją przeczytać.",
+      ctaLabel: "Przeczytaj wiadomość",
+    },
+    en: {
+      subject: "New message from your case manager — getpermit.pl",
+      preheader: "You have a new message from your case manager.",
+      heading: "New message",
+      body: "You have a new message regarding your case \"{caseTitle}\". Sign in to your panel to read it.",
+      ctaLabel: "Read message",
+    },
+    ru: {
+      subject: "Новое сообщение от менеджера — getpermit.pl",
+      preheader: "Вы получили новое сообщение от менеджера вашего дела.",
+      heading: "Новое сообщение",
+      body: "Вы получили новое сообщение по делу «{caseTitle}». Войдите в панель, чтобы прочитать его.",
+      ctaLabel: "Прочитать сообщение",
+    },
+    uk: {
+      subject: "Нове повідомлення від менеджера — getpermit.pl",
+      preheader: "Ви отримали нове повідомлення від менеджера вашої справи.",
+      heading: "Нове повідомлення",
+      body: "Ви отримали нове повідомлення щодо справи «{caseTitle}». Увійдіть до панелі, щоб прочитати.",
+      ctaLabel: "Прочитати повідомлення",
+    },
+  },
+  newMessageFromClient: {
+    pl: {
+      subject: "Nowa wiadomość od klienta — getpermit.pl",
+      preheader: "Klient wysłał nową wiadomość w sprawie.",
+      heading: "Nowa wiadomość od klienta",
+      body: "Klient <strong>{clientName}</strong> wysłał nową wiadomość w sprawie \u201e{caseTitle}\u201d. Zaloguj się do panelu administratora, aby odpowiedzieć.",
+      ctaLabel: "Odpowiedz",
+    },
+    en: {
+      subject: "New message from client — getpermit.pl",
+      preheader: "A client sent a new message in a case.",
+      heading: "New message from client",
+      body: "Client <strong>{clientName}</strong> sent a new message in case \"{caseTitle}\". Sign in to the admin panel to reply.",
+      ctaLabel: "Reply",
+    },
+    ru: {
+      subject: "Новое сообщение от клиента — getpermit.pl",
+      preheader: "Клиент отправил новое сообщение по делу.",
+      heading: "Новое сообщение от клиента",
+      body: "Клиент <strong>{clientName}</strong> отправил новое сообщение по делу «{caseTitle}». Войдите в панель администратора, чтобы ответить.",
+      ctaLabel: "Ответить",
+    },
+    uk: {
+      subject: "Нове повідомлення від клієнта — getpermit.pl",
+      preheader: "Клієнт надіслав нове повідомлення у справі.",
+      heading: "Нове повідомлення від клієнта",
+      body: "Клієнт <strong>{clientName}</strong> надіслав нове повідомлення у справі «{caseTitle}». Увійдіть до панелі адміністратора, щоб відповісти.",
+      ctaLabel: "Відповісти",
+    },
+  },
+  documentVerified: {
+    pl: {
+      subject: "Dokument zweryfikowany — getpermit.pl",
+      preheader: "Twój dokument został zweryfikowany.",
+      heading: "Dokument zweryfikowany",
+      body: "Administrator sprawdził Twój dokument <strong>{fileName}</strong> w sprawie \u201e{caseTitle}\u201d. Status: <strong>zweryfikowany</strong>.",
+      ctaLabel: "Zobacz sprawę",
+    },
+    en: {
+      subject: "Document verified — getpermit.pl",
+      preheader: "Your document has been verified.",
+      heading: "Document verified",
+      body: "Your document <strong>{fileName}</strong> in case \"{caseTitle}\" has been verified.",
+      ctaLabel: "View case",
+    },
+    ru: {
+      subject: "Документ проверен — getpermit.pl",
+      preheader: "Ваш документ прошёл проверку.",
+      heading: "Документ проверен",
+      body: "Ваш документ <strong>{fileName}</strong> в деле «{caseTitle}» прошёл проверку.",
+      ctaLabel: "Открыть дело",
+    },
+    uk: {
+      subject: "Документ перевірено — getpermit.pl",
+      preheader: "Ваш документ пройшов перевірку.",
+      heading: "Документ перевірено",
+      body: "Ваш документ <strong>{fileName}</strong> у справі «{caseTitle}» пройшов перевірку.",
+      ctaLabel: "Відкрити справу",
+    },
+  },
+  documentNeedsCorrection: {
+    pl: {
+      subject: "Dokument wymaga poprawy — getpermit.pl",
+      preheader: "Twój dokument wymaga poprawy.",
+      heading: "Dokument wymaga poprawy",
+      body: "Administrator sprawdził Twój dokument <strong>{fileName}</strong> w sprawie \u201e{caseTitle}\u201d. Status: <strong>wymaga poprawy</strong>. Zaloguj się, aby zobaczyć szczegóły i przesłać poprawiony dokument.",
+      ctaLabel: "Zobacz sprawę",
+    },
+    en: {
+      subject: "Document needs correction — getpermit.pl",
+      preheader: "Your document needs correction.",
+      heading: "Document needs correction",
+      body: "Your document <strong>{fileName}</strong> in case \"{caseTitle}\" needs correction. Sign in to see details and upload a corrected version.",
+      ctaLabel: "View case",
+    },
+    ru: {
+      subject: "Документ требует исправления — getpermit.pl",
+      preheader: "Ваш документ требует исправления.",
+      heading: "Документ требует исправления",
+      body: "Ваш документ <strong>{fileName}</strong> в деле «{caseTitle}» требует исправления. Войдите, чтобы увидеть подробности и загрузить исправленную версию.",
+      ctaLabel: "Открыть дело",
+    },
+    uk: {
+      subject: "Документ потребує виправлення — getpermit.pl",
+      preheader: "Ваш документ потребує виправлення.",
+      heading: "Документ потребує виправлення",
+      body: "Ваш документ <strong>{fileName}</strong> у справі «{caseTitle}» потребує виправлення. Увійдіть, щоб переглянути деталі та завантажити виправлену версію.",
+      ctaLabel: "Відкрити справу",
+    },
+  },
+  newClientDocument: {
+    pl: {
+      subject: "Nowy dokument od klienta — getpermit.pl",
+      preheader: "Klient załączył nowy dokument do sprawy.",
+      heading: "Nowy dokument od klienta",
+      body: "Klient <strong>{clientName}</strong> załączył nowy dokument do sprawy \u201e{caseTitle}\u201d: <strong>{fileName}</strong> ({documentType}).",
+      ctaLabel: "Zobacz dokumenty",
+    },
+    en: {
+      subject: "New document from client — getpermit.pl",
+      preheader: "A client uploaded a new document to a case.",
+      heading: "New document from client",
+      body: "Client <strong>{clientName}</strong> uploaded a new document to case \"{caseTitle}\": <strong>{fileName}</strong> ({documentType}).",
+      ctaLabel: "View documents",
+    },
+    ru: {
+      subject: "Новый документ от клиента — getpermit.pl",
+      preheader: "Клиент загрузил новый документ в дело.",
+      heading: "Новый документ от клиента",
+      body: "Клиент <strong>{clientName}</strong> загрузил новый документ в дело «{caseTitle}»: <strong>{fileName}</strong> ({documentType}).",
+      ctaLabel: "Посмотреть документы",
+    },
+    uk: {
+      subject: "Новий документ від клієнта — getpermit.pl",
+      preheader: "Клієнт завантажив новий документ до справи.",
+      heading: "Новий документ від клієнта",
+      body: "Клієнт <strong>{clientName}</strong> завантажив новий документ до справи «{caseTitle}»: <strong>{fileName}</strong> ({documentType}).",
+      ctaLabel: "Переглянути документи",
     },
   },
   clientInvitation: {
@@ -250,6 +408,110 @@ export function buildNewDocumentEmail(params: BaseParams & {
       }),
       ctaLabel: t.ctaLabel,
       ctaUrl: params.caseUrl,
+    }),
+  };
+}
+
+export function buildNewMessageFromAdminEmail(params: BaseParams & {
+  caseTitle: string;
+}) {
+  const t = T.newMessageFromAdmin[pickLocale(params.locale)];
+  return {
+    subject: t.subject,
+    html: wrapHtml({
+      preheader: t.preheader,
+      heading: t.heading,
+      body: interpolate(t.body, { caseTitle: params.caseTitle }),
+      ctaLabel: t.ctaLabel,
+      ctaUrl: params.caseUrl,
+    }),
+  };
+}
+
+export function buildNewMessageFromClientEmail(params: {
+  locale: string;
+  caseTitle: string;
+  clientName: string;
+  adminUrl: string;
+}) {
+  const t = T.newMessageFromClient[pickLocale(params.locale)];
+  return {
+    subject: t.subject,
+    html: wrapHtml({
+      preheader: t.preheader,
+      heading: t.heading,
+      body: interpolate(t.body, {
+        caseTitle: params.caseTitle,
+        clientName: params.clientName,
+      }),
+      ctaLabel: t.ctaLabel,
+      ctaUrl: params.adminUrl,
+    }),
+  };
+}
+
+export function buildDocumentVerifiedEmail(params: BaseParams & {
+  caseTitle: string;
+  fileName: string;
+}) {
+  const t = T.documentVerified[pickLocale(params.locale)];
+  return {
+    subject: t.subject,
+    html: wrapHtml({
+      preheader: t.preheader,
+      heading: t.heading,
+      body: interpolate(t.body, {
+        caseTitle: params.caseTitle,
+        fileName: params.fileName,
+      }),
+      ctaLabel: t.ctaLabel,
+      ctaUrl: params.caseUrl,
+    }),
+  };
+}
+
+export function buildDocumentNeedsCorrectionEmail(params: BaseParams & {
+  caseTitle: string;
+  fileName: string;
+}) {
+  const t = T.documentNeedsCorrection[pickLocale(params.locale)];
+  return {
+    subject: t.subject,
+    html: wrapHtml({
+      preheader: t.preheader,
+      heading: t.heading,
+      body: interpolate(t.body, {
+        caseTitle: params.caseTitle,
+        fileName: params.fileName,
+      }),
+      ctaLabel: t.ctaLabel,
+      ctaUrl: params.caseUrl,
+    }),
+  };
+}
+
+export function buildNewClientDocumentEmail(params: {
+  locale: string;
+  caseTitle: string;
+  clientName: string;
+  fileName: string;
+  documentType: string;
+  adminUrl: string;
+}) {
+  const t = T.newClientDocument[pickLocale(params.locale)];
+  return {
+    subject: t.subject,
+    html: wrapHtml({
+      preheader: t.preheader,
+      heading: t.heading,
+      body: interpolate(t.body, {
+        caseTitle: params.caseTitle,
+        clientName: params.clientName,
+        fileName: params.fileName,
+        documentType: params.documentType,
+      }),
+      ctaLabel: t.ctaLabel,
+      ctaUrl: params.adminUrl,
     }),
   };
 }

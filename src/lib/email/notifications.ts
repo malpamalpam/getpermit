@@ -5,6 +5,11 @@ import {
   buildCaseStatusChangedEmail,
   buildNewEventEmail,
   buildNewDocumentEmail,
+  buildNewMessageFromAdminEmail,
+  buildNewMessageFromClientEmail,
+  buildDocumentVerifiedEmail,
+  buildDocumentNeedsCorrectionEmail,
+  buildNewClientDocumentEmail,
 } from "./templates";
 import type { CaseStatus } from "@prisma/client";
 
@@ -13,6 +18,27 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const FROM = process.env.CONTACT_EMAIL_FROM ?? "noreply@getpermit.pl";
+
+/**
+ * Prosty debounce — blokuje duplikaty emaili dla tego samego klucza w oknie 30s.
+ * Klucz = `${action}-${id}`. In-memory, resetuje się przy restarcie serwera.
+ */
+const recentlySent = new Map<string, number>();
+const DEBOUNCE_MS = 30_000;
+
+function shouldDebounce(key: string): boolean {
+  const now = Date.now();
+  const last = recentlySent.get(key);
+  if (last && now - last < DEBOUNCE_MS) return true;
+  recentlySent.set(key, now);
+  // Czyść stare wpisy co jakiś czas
+  if (recentlySent.size > 500) {
+    for (const [k, v] of recentlySent) {
+      if (now - v > DEBOUNCE_MS) recentlySent.delete(k);
+    }
+  }
+  return false;
+}
 
 /**
  * Tłumaczenia statusów do emaili — duplikat z locales/*.json (server-side
@@ -139,4 +165,148 @@ export async function notifyNewDocument(
   });
 
   await send(c.user.email, subject, html);
+}
+
+/* ============================================================================ */
+/*                          NOWE POWIADOMIENIA                                  */
+/* ============================================================================ */
+
+function buildAdminCaseUrl(caseId: string): string {
+  return `${siteConfig.url}/admin/sprawa/${caseId}`;
+}
+
+function buildClientCaseUrl(caseId: string): string {
+  return `${siteConfig.url}/panel/sprawa/${caseId}`;
+}
+
+/**
+ * Powiadom klienta o nowej wiadomości od admina/staff.
+ */
+export async function notifyClientNewMessage(
+  caseId: string,
+  _messageSummary: string
+): Promise<void> {
+  if (shouldDebounce(`msg-client-${caseId}`)) return;
+
+  const c = await db.case.findUnique({
+    where: { id: caseId },
+    include: { user: true },
+  });
+  if (!c) return;
+
+  const { subject, html } = buildNewMessageFromAdminEmail({
+    locale: c.user.locale,
+    caseTitle: c.title,
+    caseUrl: buildClientCaseUrl(caseId),
+  });
+
+  await send(c.user.email, subject, html);
+}
+
+/**
+ * Powiadom admina/staff o nowej wiadomości od klienta.
+ */
+export async function notifyAdminNewMessage(
+  caseId: string,
+  clientName: string,
+  _messageSummary: string
+): Promise<void> {
+  if (shouldDebounce(`msg-admin-${caseId}`)) return;
+
+  const c = await db.case.findUnique({
+    where: { id: caseId },
+    include: { assignedStaff: true },
+  });
+  if (!c) return;
+
+  const recipientEmail =
+    c.assignedStaff?.email ?? process.env.ADMIN_EMAIL ?? FROM;
+  const locale = c.assignedStaff?.locale ?? "pl";
+
+  const { subject, html } = buildNewMessageFromClientEmail({
+    locale,
+    caseTitle: c.title,
+    clientName,
+    adminUrl: buildAdminCaseUrl(caseId),
+  });
+
+  await send(recipientEmail, subject, html);
+}
+
+/**
+ * Powiadom klienta że dokument został zweryfikowany.
+ */
+export async function notifyDocumentVerified(
+  documentId: string
+): Promise<void> {
+  const doc = await db.document.findUnique({
+    where: { id: documentId },
+    include: { case: { include: { user: true } } },
+  });
+  if (!doc) return;
+
+  const { subject, html } = buildDocumentVerifiedEmail({
+    locale: doc.case.user.locale,
+    caseTitle: doc.case.title,
+    fileName: doc.fileName,
+    caseUrl: buildClientCaseUrl(doc.caseId),
+  });
+
+  await send(doc.case.user.email, subject, html);
+}
+
+/**
+ * Powiadom klienta że dokument wymaga poprawy.
+ */
+export async function notifyDocumentNeedsCorrection(
+  documentId: string
+): Promise<void> {
+  const doc = await db.document.findUnique({
+    where: { id: documentId },
+    include: { case: { include: { user: true } } },
+  });
+  if (!doc) return;
+
+  const { subject, html } = buildDocumentNeedsCorrectionEmail({
+    locale: doc.case.user.locale,
+    caseTitle: doc.case.title,
+    fileName: doc.fileName,
+    caseUrl: buildClientCaseUrl(doc.caseId),
+  });
+
+  await send(doc.case.user.email, subject, html);
+}
+
+/**
+ * Powiadom admina/staff o nowym dokumencie od klienta.
+ */
+export async function notifyAdminNewClientDocument(
+  caseId: string,
+  fileName: string,
+  documentType: string
+): Promise<void> {
+  if (shouldDebounce(`doc-admin-${caseId}`)) return;
+
+  const c = await db.case.findUnique({
+    where: { id: caseId },
+    include: { user: true, assignedStaff: true },
+  });
+  if (!c) return;
+
+  const clientName =
+    `${c.user.firstName ?? ""} ${c.user.lastName ?? ""}`.trim() || c.user.email;
+  const recipientEmail =
+    c.assignedStaff?.email ?? process.env.ADMIN_EMAIL ?? FROM;
+  const locale = c.assignedStaff?.locale ?? "pl";
+
+  const { subject, html } = buildNewClientDocumentEmail({
+    locale,
+    caseTitle: c.title,
+    clientName,
+    fileName,
+    documentType,
+    adminUrl: buildAdminCaseUrl(caseId),
+  });
+
+  await send(recipientEmail, subject, html);
 }

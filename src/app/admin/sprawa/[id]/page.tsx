@@ -6,11 +6,12 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { CaseForm } from "@/components/admin/CaseForm";
 import { EventsManager } from "@/components/admin/EventsManager";
 import { DocumentsManager } from "@/components/admin/DocumentsManager";
+import { AdminCaseMessages } from "@/components/admin/AdminCaseMessages";
 import { requireStaff } from "@/lib/auth";
 import { getPanelLocale } from "@/lib/panel-locale";
 import { db } from "@/lib/db";
 import { logAccess } from "@/lib/access-log";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageSquare } from "lucide-react";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -24,6 +25,7 @@ export default async function EditCasePage({
   const { id } = await params;
   const locale = await getPanelLocale();
   const t = await getTranslations({ locale, namespace: "admin.caseForm" });
+  const tMsg = await getTranslations({ locale, namespace: "admin.messages" });
   const user = await requireStaff();
 
   const [caseRecord, clients, staff] = await Promise.all([
@@ -32,6 +34,17 @@ export default async function EditCasePage({
       include: {
         events: { orderBy: { eventDate: "desc" } },
         documents: { orderBy: { uploadedAt: "desc" } },
+        messages: {
+          orderBy: { createdAt: "asc" },
+          include: {
+            sender: {
+              select: { id: true, firstName: true, lastName: true, role: true },
+            },
+          },
+        },
+        user: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
       },
     }),
     db.user.findMany({
@@ -89,6 +102,18 @@ export default async function EditCasePage({
                 {t("section.events")}
               </h2>
               <EventsManager caseId={caseRecord.id} events={caseRecord.events} />
+            </section>
+
+            <section className="rounded-2xl border border-primary/10 bg-white p-8 shadow-sm">
+              <h2 className="mb-6 flex items-center gap-2 font-display text-lg font-bold text-primary">
+                <MessageSquare className="h-5 w-5 text-accent" />
+                {tMsg("title")}
+              </h2>
+              <AdminCaseMessages
+                caseId={caseRecord.id}
+                messages={caseRecord.messages}
+                currentUserId={user.id}
+              />
             </section>
           </div>
 

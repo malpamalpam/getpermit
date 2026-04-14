@@ -10,11 +10,19 @@ const STATUS_STYLES: Record<CaseStatus, string> = {
   APPEAL: "bg-purple-100 text-purple-800 border-purple-200",
 };
 
-export function StatusBadge({ status }: { status: CaseStatus }) {
+export function StatusBadge({
+  status,
+  size = "sm",
+}: {
+  status: CaseStatus;
+  size?: "sm" | "lg";
+}) {
   const t = useTranslations("caseStatus");
+  const sizeClass =
+    size === "lg" ? "px-4 py-2 text-sm" : "px-3 py-1 text-xs";
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLES[status]}`}
+      className={`inline-flex items-center rounded-full border font-semibold ${sizeClass} ${STATUS_STYLES[status]}`}
     >
       {t(status)}
     </span>

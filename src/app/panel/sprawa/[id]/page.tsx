@@ -5,12 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { PanelHeader } from "@/components/panel/PanelHeader";
 import { StatusBadge } from "@/components/panel/StatusBadge";
 import { CaseTimeline } from "@/components/panel/CaseTimeline";
-import { DocumentList } from "@/components/panel/DocumentList";
+import { ClientDocumentList } from "@/components/panel/ClientDocumentList";
+import { ClientDocumentUpload } from "@/components/panel/ClientDocumentUpload";
+import { CaseMessages } from "@/components/panel/CaseMessages";
 import { requireUser } from "@/lib/auth";
 import { getPanelLocale } from "@/lib/panel-locale";
 import { db } from "@/lib/db";
 import { logAccess } from "@/lib/access-log";
-import { ArrowLeft, Calendar, User as UserIcon, Mail, Phone } from "lucide-react";
+import { ArrowLeft, Calendar, User as UserIcon, Mail, Phone, MessageSquare } from "lucide-react";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -43,6 +45,14 @@ export default async function CaseDetailPage({
     include: {
       events: { orderBy: { eventDate: "desc" } },
       documents: { orderBy: { uploadedAt: "desc" } },
+      messages: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          sender: {
+            select: { id: true, firstName: true, lastName: true, role: true },
+          },
+        },
+      },
       assignedStaff: true,
     },
   });
@@ -84,7 +94,6 @@ export default async function CaseDetailPage({
                 {caseRecord.title}
               </h1>
             </div>
-            <StatusBadge status={caseRecord.status} />
           </div>
 
           {caseRecord.description && (
@@ -92,10 +101,20 @@ export default async function CaseDetailPage({
               {caseRecord.description}
             </p>
           )}
+
+          {/* Prominent case status */}
+          <div className="mt-6 rounded-2xl border border-primary/10 bg-white p-6 shadow-sm">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-primary/60">
+              {t("currentStatus")}
+            </h2>
+            <div className="mt-2">
+              <StatusBadge status={caseRecord.status} size="lg" />
+            </div>
+          </div>
         </div>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_1fr]">
-          {/* Left: timeline + documents */}
+          {/* Left: timeline + documents + messages */}
           <div className="space-y-10">
             <section>
               <h2 className="mb-5 font-display text-xl font-bold text-primary">
@@ -108,7 +127,26 @@ export default async function CaseDetailPage({
               <h2 className="mb-5 font-display text-xl font-bold text-primary">
                 {t("documents")}
               </h2>
-              <DocumentList documents={caseRecord.documents} />
+              <div className="space-y-6">
+                <ClientDocumentUpload caseId={caseRecord.id} />
+                <ClientDocumentList
+                  documents={caseRecord.documents}
+                  currentUserId={user.id}
+                  caseId={caseRecord.id}
+                />
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-5 flex items-center gap-2 font-display text-xl font-bold text-primary">
+                <MessageSquare className="h-5 w-5 text-accent" />
+                {t("messages")}
+              </h2>
+              <CaseMessages
+                caseId={caseRecord.id}
+                messages={caseRecord.messages}
+                currentUserId={user.id}
+              />
             </section>
           </div>
 

@@ -6,12 +6,14 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { CaseType, CaseStatus, EventType } from "@prisma/client";
+import { CaseType, CaseStatus, EventType, VerificationStatus } from "@prisma/client";
 import { siteConfig } from "@/config/site";
 import {
   notifyCaseStatusChanged,
   notifyNewEvent,
   notifyNewDocument,
+  notifyDocumentVerified,
+  notifyDocumentNeedsCorrection,
 } from "@/lib/email/notifications";
 import { logAccess } from "@/lib/access-log";
 
@@ -268,6 +270,45 @@ export async function deleteDocumentAction(documentId: string, caseId: string) {
 
   revalidatePath(`/admin/sprawa/${caseId}`);
   revalidatePath(`/panel/sprawa/${caseId}`);
+  return { ok: true as const };
+}
+
+/* ============================================================================ */
+/*                          DOCUMENT VERIFICATION                               */
+/* ============================================================================ */
+
+export async function updateDocumentVerificationAction(
+  documentId: string,
+  status: VerificationStatus
+) {
+  const staff = await requireStaff();
+
+  const doc = await db.document.findUnique({
+    where: { id: documentId },
+    include: { case: true },
+  });
+  if (!doc) return { ok: false as const, error: "not_found" };
+
+  await db.document.update({
+    where: { id: documentId },
+    data: { verificationStatus: status },
+  });
+
+  void logAccess({
+    userId: staff.id,
+    caseId: doc.caseId,
+    action: "VERIFY_DOCUMENT",
+    metadata: { documentId, status, fileName: doc.fileName },
+  });
+
+  if (status === "VERIFIED") {
+    void notifyDocumentVerified(documentId);
+  } else if (status === "NEEDS_CORRECTION") {
+    void notifyDocumentNeedsCorrection(documentId);
+  }
+
+  revalidatePath(`/admin/sprawa/${doc.caseId}`);
+  revalidatePath(`/panel/sprawa/${doc.caseId}`);
   return { ok: true as const };
 }
 

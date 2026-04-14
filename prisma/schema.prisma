@@ -58,6 +58,27 @@ enum EventType {
   OTHER
 }
 
+enum DocumentType {
+  PASSPORT
+  RESIDENCE_CARD
+  DIPLOMA
+  WORK_CERTIFICATE
+  EMPLOYMENT_CONTRACT
+  REGISTRATION_CERTIFICATE
+  MARRIAGE_CERTIFICATE
+  BIRTH_CERTIFICATE
+  RESIDENCE_PROOF
+  HEALTH_INSURANCE
+  BIOMETRIC_PHOTO
+  OTHER
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  NEEDS_CORRECTION
+}
+
 enum AccessAction {
   VIEW_CASE
   VIEW_DOCUMENT
@@ -66,6 +87,10 @@ enum AccessAction {
   UPDATE_CASE
   CREATE_EVENT
   UPLOAD_DOCUMENT
+  UPLOAD_CLIENT_DOCUMENT
+  DELETE_CLIENT_DOCUMENT
+  VERIFY_DOCUMENT
+  SEND_MESSAGE
 }
 
 // =============================================================================
@@ -92,6 +117,10 @@ model User {
   createdEvents CaseEvent[] @relation("EventCreator")
   // uploadowane dokumenty (staff)
   uploadedDocuments Document[] @relation("DocumentUploader")
+  // uploadowane dokumenty (klient)
+  uploadedClientDocuments Document[] @relation("ClientDocumentUploader")
+  // wysłane wiadomości
+  sentMessages Message[] @relation("MessageSender")
   // logi dostępu
   accessLogs AccessLog[]
 
@@ -116,6 +145,7 @@ model Case {
   assignedStaff User?       @relation("AssignedStaff", fields: [assignedStaffId], references: [id], onDelete: SetNull)
   events        CaseEvent[]
   documents     Document[]
+  messages      Message[]
   accessLogs    AccessLog[]
 
   @@index([userId])
@@ -143,22 +173,40 @@ model CaseEvent {
 }
 
 model Document {
-  id                String   @id @default(uuid()) @db.Uuid
-  caseId            String   @map("case_id") @db.Uuid
-  fileName          String   @map("file_name")
+  id                  String              @id @default(uuid()) @db.Uuid
+  caseId              String              @map("case_id") @db.Uuid
+  fileName            String              @map("file_name")
   /// Ścieżka w Supabase Storage (bucket: case-documents)
-  storagePath       String   @map("storage_path")
-  fileSize          Int      @map("file_size")
-  mimeType          String   @map("mime_type")
-  description       String?
-  uploadedByStaffId String?  @map("uploaded_by_staff_id") @db.Uuid
-  uploadedAt        DateTime @default(now()) @map("uploaded_at")
+  storagePath         String              @map("storage_path")
+  fileSize            Int                 @map("file_size")
+  mimeType            String              @map("mime_type")
+  description         String?
+  documentType        DocumentType?       @map("document_type")
+  uploadedByStaffId   String?             @map("uploaded_by_staff_id") @db.Uuid
+  uploadedByUserId    String?             @map("uploaded_by_user_id") @db.Uuid
+  verificationStatus  VerificationStatus? @map("verification_status")
+  uploadedAt          DateTime            @default(now()) @map("uploaded_at")
 
   case             Case  @relation(fields: [caseId], references: [id], onDelete: Cascade)
   uploadedByStaff  User? @relation("DocumentUploader", fields: [uploadedByStaffId], references: [id], onDelete: SetNull)
+  uploadedByUser   User? @relation("ClientDocumentUploader", fields: [uploadedByUserId], references: [id], onDelete: SetNull)
 
   @@index([caseId])
   @@map("documents")
+}
+
+model Message {
+  id        String   @id @default(uuid()) @db.Uuid
+  caseId    String   @map("case_id") @db.Uuid
+  senderId  String   @map("sender_id") @db.Uuid
+  body      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  case   Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  sender User @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, createdAt])
+  @@map("messages")
 }
 
 model AccessLog {
