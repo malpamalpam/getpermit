@@ -72,11 +72,10 @@ export default async function BlogPage({
                   <div className="mb-3 flex items-center gap-3 text-xs text-ink/50">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                      {new Intl.DateTimeFormat("pl-PL", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      }).format(new Date(post.date))}
+                      {new Intl.DateTimeFormat(
+                        locale === "en" ? "en-US" : locale === "ru" ? "ru-RU" : locale === "uk" ? "uk-UA" : "pl-PL",
+                        { day: "numeric", month: "long", year: "numeric" }
+                      ).format(new Date(post.date))}
                     </span>
                     <span>{post.author}</span>
                   </div>

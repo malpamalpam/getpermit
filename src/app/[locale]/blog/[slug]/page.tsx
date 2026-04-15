@@ -58,6 +58,16 @@ export default async function BlogPostPage({
 
   const readingTime = estimateReadingTime(post.sections);
 
+  const DATE_LOCALES: Record<string, string> = { pl: "pl-PL", en: "en-US", ru: "ru-RU", uk: "uk-UA" };
+  const LABELS: Record<string, { toc: string; backToBlog: string; minRead: string }> = {
+    pl: { toc: "Spis tre\u015bci", backToBlog: "Wr\u00f3\u0107 do bloga", minRead: "min czytania" },
+    en: { toc: "Table of contents", backToBlog: "Back to blog", minRead: "min read" },
+    ru: { toc: "\u0421\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435", backToBlog: "\u041d\u0430\u0437\u0430\u0434 \u043a \u0431\u043b\u043e\u0433\u0443", minRead: "\u043c\u0438\u043d \u0447\u0442\u0435\u043d\u0438\u044f" },
+    uk: { toc: "\u0417\u043c\u0456\u0441\u0442", backToBlog: "\u041d\u0430\u0437\u0430\u0434 \u0434\u043e \u0431\u043b\u043e\u0433\u0443", minRead: "\u0445\u0432 \u0447\u0438\u0442\u0430\u043d\u043d\u044f" },
+  };
+  const labels = LABELS[locale] ?? LABELS.pl;
+  const dateLocale = DATE_LOCALES[locale] ?? "pl-PL";
+
   return (
     <article className="bg-white">
       {/* Hero image */}
@@ -78,7 +88,7 @@ export default async function BlogPostPage({
               className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-white/70 transition-colors hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              Blog
+              {labels.backToBlog}
             </Link>
             <h1 className="font-display text-3xl font-extrabold leading-tight text-white md:text-4xl lg:text-5xl">
               {post.title}
@@ -86,7 +96,7 @@ export default async function BlogPostPage({
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-white/60">
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4" aria-hidden="true" />
-                {new Intl.DateTimeFormat("pl-PL", {
+                {new Intl.DateTimeFormat(dateLocale, {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -98,7 +108,7 @@ export default async function BlogPostPage({
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4" aria-hidden="true" />
-                {readingTime} min czytania
+                {readingTime} {labels.minRead}
               </span>
             </div>
           </div>
@@ -113,7 +123,7 @@ export default async function BlogPostPage({
             <details className="mb-10 rounded-2xl border border-primary/10 bg-surface p-5 lg:hidden">
               <summary className="flex cursor-pointer items-center gap-2 font-display text-sm font-bold uppercase tracking-wider text-primary/60">
                 <List className="h-4 w-4" aria-hidden="true" />
-                Spis treści
+                {labels.toc}
               </summary>
               <nav className="mt-4">
                 <ol className="space-y-2 text-sm">
@@ -150,7 +160,7 @@ export default async function BlogPostPage({
                 className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                Wróć do bloga
+                {labels.backToBlog}
               </Link>
             </div>
           </div>
@@ -160,7 +170,7 @@ export default async function BlogPostPage({
             <div className="sticky top-24 rounded-2xl border border-primary/10 bg-surface p-6">
               <h3 className="mb-4 flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wider text-primary/60">
                 <List className="h-4 w-4" aria-hidden="true" />
-                Spis treści
+                {labels.toc}
               </h3>
               <nav>
                 <ol className="space-y-2 text-sm">
