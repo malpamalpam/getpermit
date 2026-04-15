@@ -6,6 +6,7 @@ import {
   localized,
 } from "@/lib/services";
 import { CATEGORY_IMAGES } from "@/lib/service-images";
+import { SERVICE_BASE_PATH } from "@/lib/service-slugs";
 import {
   ArrowRight,
 } from "lucide-react";
@@ -37,7 +38,7 @@ export function ServicesGrid() {
             return (
               <a
                 key={category.slug}
-                href={`/${locale}/uslugi#${category.slug}`}
+                href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}#${category.slug}`}
                 className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-white shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl"
               >
                 <div className="relative overflow-hidden bg-primary px-8 py-6">
@@ -80,7 +81,7 @@ export function ServicesGrid() {
         </div>
 
         <div className="mt-12 text-center">
-          <a href={`/${locale}/uslugi`} className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-white px-6 py-3 text-base font-medium text-primary transition-colors hover:bg-primary/5">
+          <a href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}`} className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-white px-6 py-3 text-base font-medium text-primary transition-colors hover:bg-primary/5">
             {t("viewAll")}
             <ArrowRight className="h-4 w-4" />
           </a>
