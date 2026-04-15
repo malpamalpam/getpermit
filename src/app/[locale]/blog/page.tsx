@@ -51,14 +51,14 @@ export default async function BlogPage({
             </p>
           </div>
         ) : (
-          <div className="mx-auto mt-14 grid max-w-4xl gap-8">
+          <div className="mx-auto mt-14 grid max-w-5xl gap-8 md:grid-cols-2">
             {posts.map((post) => (
               <Link
                 key={post.slug}
                 href={`/${locale}/blog/${post.slug}`}
-                className="group overflow-hidden rounded-2xl border border-primary/10 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
               >
-                <div className="relative h-[220px] w-full overflow-hidden md:h-[280px]">
+                <div className="relative h-[180px] w-full overflow-hidden md:h-[200px]">
                   <Image
                     src={post.imageUrl}
                     alt={post.imageAlt}
