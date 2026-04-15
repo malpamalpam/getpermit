@@ -3,7 +3,7 @@ import { Link } from "@/i18n/routing";
 import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/config/site";
 import Image from "next/image";
-import { Mail, MapPin, ArrowRight } from "lucide-react";
+import { Mail, MapPin, Phone, ArrowRight } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("footer");
@@ -98,6 +98,15 @@ export function Footer() {
               {tContact("address")}
             </h3>
             <ul className="space-y-3 text-sm text-white/80">
+              <li className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-light" />
+                <a
+                  href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
+                  className="hover:text-white"
+                >
+                  {siteConfig.contact.phone}
+                </a>
+              </li>
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-light" />
                 <a

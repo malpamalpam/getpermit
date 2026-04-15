@@ -2,7 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { siteConfig } from "@/config/site";
-import { Mail, MapPin, Clock } from "lucide-react";
+import { Mail, MapPin, Clock, Phone } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -41,6 +41,12 @@ export default async function ContactPage({
           {/* Contact info */}
           <div className="lg:col-span-2">
             <div className="space-y-6">
+              <ContactInfoItem
+                icon={<Phone className="h-5 w-5" />}
+                label={tInfo("phone")}
+                value={siteConfig.contact.phone}
+                href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
+              />
               <ContactInfoItem
                 icon={<Mail className="h-5 w-5" />}
                 label={tInfo("email")}
