@@ -26,7 +26,7 @@ export default async function BlogPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("blog");
-  const posts = getAllBlogPosts();
+  const posts = getAllBlogPosts(locale);
 
   return (
     <section className="bg-surface py-16 md:py-24">
@@ -87,7 +87,7 @@ export default async function BlogPage({
                     {post.description}
                   </p>
                   <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
-                    Czytaj więcej
+                    {t("readMore")}
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </div>
                 </div>

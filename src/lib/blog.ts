@@ -1,5 +1,6 @@
 export interface BlogPost {
   slug: string;
+  locale?: string; // "pl" | "en" | "ru" | "uk" — default "pl"
   title: string;
   description: string;
   date: string;
@@ -15,9 +16,15 @@ export interface BlogPost {
 }
 
 import { NEW_BLOG_POSTS } from "./blog-posts-new";
+import { BLOG_POSTS_EN } from "./blog-posts-en";
+import { BLOG_POSTS_RU } from "./blog-posts-ru";
+import { BLOG_POSTS_UK } from "./blog-posts-uk";
 
 export const BLOG_POSTS: BlogPost[] = [
   ...NEW_BLOG_POSTS,
+  ...BLOG_POSTS_EN,
+  ...BLOG_POSTS_RU,
+  ...BLOG_POSTS_UK,
   {
     slug: "ochrona-czasowa-ukraincow-po-4-marca-2026",
     title: "Ochrona czasowa Ukraińców po 4 marca 2026 — co się zmienia?",
@@ -166,12 +173,38 @@ export const BLOG_POSTS: BlogPost[] = [
   },
 ];
 
-export function getBlogPostBySlug(slug: string): BlogPost | null {
-  return BLOG_POSTS.find((p) => p.slug === slug) ?? null;
+export function getBlogPostBySlug(slug: string, locale?: string): BlogPost | null {
+  const loc = locale ?? "pl";
+  // Szukaj po slug + locale; fallback na pl
+  return (
+    BLOG_POSTS.find((p) => p.slug === slug && (p.locale ?? "pl") === loc) ??
+    BLOG_POSTS.find((p) => p.slug === slug && (p.locale ?? "pl") === "pl") ??
+    null
+  );
 }
 
-export function getAllBlogPosts(): BlogPost[] {
-  return [...BLOG_POSTS].sort(
+export function getAllBlogPosts(locale?: string): BlogPost[] {
+  const loc = locale ?? "pl";
+  // Zbierz unikalne slugi — preferuj locale, fallback na pl
+  const slugs = new Set<string>();
+  const result: BlogPost[] = [];
+
+  // Najpierw posty w docelowym locale
+  for (const p of BLOG_POSTS) {
+    if ((p.locale ?? "pl") === loc) {
+      slugs.add(p.slug);
+      result.push(p);
+    }
+  }
+  // Potem uzupełnij brakujące slugi z pl
+  for (const p of BLOG_POSTS) {
+    if (!slugs.has(p.slug) && (p.locale ?? "pl") === "pl") {
+      slugs.add(p.slug);
+      result.push(p);
+    }
+  }
+
+  return result.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }

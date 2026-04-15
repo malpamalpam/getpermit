@@ -25,8 +25,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  const { locale, slug } = await params;
+  const post = getBlogPostBySlug(slug, locale);
   if (!post) return {};
   return {
     title: post.title,
@@ -53,7 +53,7 @@ export default async function BlogPostPage({
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const post = getBlogPostBySlug(slug);
+  const post = getBlogPostBySlug(slug, locale);
   if (!post) notFound();
 
   const readingTime = estimateReadingTime(post.sections);
