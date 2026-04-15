@@ -23,28 +23,13 @@ export default async function AboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const tNav = await getTranslations("nav");
+  const t = await getTranslations("about");
 
   const values = [
-    {
-      icon: Shield,
-      title: "Bezpieczeństwo",
-      desc: "Pełna ochrona Twoich danych i interesów na każdym etapie procedury.",
-    },
-    {
-      icon: Users,
-      title: "Doświadczenie",
-      desc: "Ponad 10 lat pracy z cudzoziemcami z całego świata.",
-    },
-    {
-      icon: Award,
-      title: "Skuteczność",
-      desc: "98% naszych spraw kończy się pozytywną decyzją urzędu.",
-    },
-    {
-      icon: Heart,
-      title: "Misja",
-      desc: "Działamy jako fundacja — pomagamy ludziom, nie tylko zarabiamy.",
-    },
+    { icon: Shield, title: t("safety"), desc: t("safetyDesc") },
+    { icon: Users, title: t("experience"), desc: t("experienceDesc") },
+    { icon: Award, title: t("effectiveness"), desc: t("effectivenessDesc") },
+    { icon: Heart, title: t("mission"), desc: t("missionDesc") },
   ];
 
   return (
@@ -56,10 +41,7 @@ export default async function AboutPage({
               {tNav("about")}
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-primary/70 md:text-xl">
-              {siteConfig.legalName} to organizacja, która od ponad dekady pomaga
-              cudzoziemcom legalnie żyć i pracować w Polsce. Łączymy doświadczenie
-              prawników, ekspertów imigracyjnych i tłumaczy — wszystko po to, by
-              proces legalizacji był dla Ciebie jasny, szybki i bezstresowy.
+              {t("subtitle", { company: siteConfig.legalName })}
             </p>
           </div>
         </Container>
@@ -88,12 +70,12 @@ export default async function AboutPage({
 
         <div className="mx-auto mt-16 max-w-3xl rounded-2xl border border-primary/10 bg-surface p-8 md:p-12">
           <h2 className="font-display text-2xl font-bold text-primary">
-            Dane firmy
+            {t("companyData")}
           </h2>
           <dl className="mt-6 grid gap-4 sm:grid-cols-2">
             <div>
               <dt className="text-xs uppercase tracking-wider text-primary/50">
-                Nazwa
+                {t("companyName")}
               </dt>
               <dd className="mt-1 font-medium text-primary">
                 {siteConfig.legalName}
@@ -101,7 +83,7 @@ export default async function AboutPage({
             </div>
             <div>
               <dt className="text-xs uppercase tracking-wider text-primary/50">
-                NIP
+                {t("companyNip")}
               </dt>
               <dd className="mt-1 font-medium text-primary">
                 {siteConfig.company.nip}

@@ -18,6 +18,20 @@
     "ctaPrimary": "Contact us!",
     "blogCta": "Read the blog"
   },
+  "about": {
+    "subtitle": "{company} is an organization that has been helping foreigners live and work legally in Poland for over a decade. We combine the expertise of lawyers, immigration specialists and translators \u2014 all to make the legalization process clear, fast and stress-free for you.",
+    "safety": "Security",
+    "safetyDesc": "Full protection of your data and interests at every stage of the procedure.",
+    "experience": "Experience",
+    "experienceDesc": "Over 10 years of working with foreigners from around the world.",
+    "effectiveness": "Effectiveness",
+    "effectivenessDesc": "98% of our cases end with a positive decision from the authorities.",
+    "mission": "Mission",
+    "missionDesc": "We help people with residence legalization \u2014 professionally and with dedication.",
+    "companyData": "Company details",
+    "companyName": "Name",
+    "companyNip": "Tax ID (NIP)"
+  },
   "stats": {
     "years": "Years of experience",
     "clients": "Happy clients",

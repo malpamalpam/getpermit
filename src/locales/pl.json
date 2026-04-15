@@ -18,6 +18,20 @@
     "ctaPrimary": "Skontaktuj się z nami!",
     "blogCta": "Czytaj blog"
   },
+  "about": {
+    "subtitle": "{company} to organizacja, kt\u00f3ra od ponad dekady pomaga cudzoziemcom legalnie \u017cy\u0107 i pracowa\u0107 w Polsce. \u0141\u0105czymy do\u015bwiadczenie prawnik\u00f3w, ekspert\u00f3w imigracyjnych i t\u0142umaczy \u2014 wszystko po to, by proces legalizacji by\u0142 dla Ciebie jasny, szybki i bezstresowy.",
+    "safety": "Bezpiecze\u0144stwo",
+    "safetyDesc": "Pe\u0142na ochrona Twoich danych i interes\u00f3w na ka\u017cdym etapie procedury.",
+    "experience": "Do\u015bwiadczenie",
+    "experienceDesc": "Ponad 10 lat pracy z cudzoziemcami z ca\u0142ego \u015bwiata.",
+    "effectiveness": "Skuteczno\u015b\u0107",
+    "effectivenessDesc": "98% naszych spraw ko\u0144czy si\u0119 pozytywn\u0105 decyzj\u0105 urz\u0119du.",
+    "mission": "Misja",
+    "missionDesc": "Pomagamy ludziom w legalizacji pobytu \u2014 profesjonalnie i z zaanga\u017cowaniem.",
+    "companyData": "Dane firmy",
+    "companyName": "Nazwa",
+    "companyNip": "NIP"
+  },
   "stats": {
     "years": "Lat doświadczenia",
     "clients": "Zadowolonych klientów",
