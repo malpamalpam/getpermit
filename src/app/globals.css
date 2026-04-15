@@ -44,6 +44,15 @@
   }
   .prose-content p {
     @apply mb-4;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 45ch) {
+    .prose-content p {
+      text-align: left;
+    }
   }
   .prose-content ul {
     @apply list-disc pl-6 mb-4 space-y-2;

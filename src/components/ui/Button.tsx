@@ -15,6 +15,8 @@ const buttonVariants = cva(
           "border border-primary/20 bg-white text-primary hover:bg-primary/5",
         ghost:
           "text-primary hover:bg-primary/5",
+        navy:
+          "bg-[#0a2540] text-white border-[3px] border-[#0a2540] shadow-[0_8px_24px_rgba(10,37,64,0.15)] hover:bg-[#08203a] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(10,37,64,0.25)] font-semibold rounded-lg transition-all",
       },
       size: {
         sm: "h-9 px-4 text-sm",

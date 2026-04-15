@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useLocale } from "next-intl";
 import { X } from "lucide-react";
@@ -21,7 +21,10 @@ export function BookingDialog({
   onClose: () => void;
 }) {
   const locale = useLocale();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Lock body scroll + Escape key
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -36,6 +39,28 @@ export function BookingDialog({
     };
   }, [open, onClose]);
 
+  // Listen for Cal.com dimension changes via postMessage
+  const handleMessage = useCallback((e: MessageEvent) => {
+    if (!containerRef.current) return;
+    try {
+      const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+      if (data?.type === "__dimensionChanged" || data?.action === "__dimensionChanged") {
+        const height = data.data?.height ?? data.height;
+        if (height && typeof height === "number" && height > 400) {
+          containerRef.current.style.height = `${Math.min(height + 80, window.innerHeight * 0.95)}px`;
+        }
+      }
+    } catch {
+      // ignore non-JSON messages
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [open, handleMessage]);
+
   if (!open) return null;
 
   const calLocale = CALCOM_LOCALE[locale] ?? "en";
@@ -47,12 +72,20 @@ export function BookingDialog({
       aria-modal="true"
       aria-label="Umów konsultację"
       style={{ position: "fixed", inset: 0, zIndex: 99999 }}
-      className="flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      className="flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm md:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-6xl rounded-2xl bg-white shadow-2xl" style={{ height: "95vh", maxHeight: "900px" }}>
+      <div
+        ref={containerRef}
+        className="relative w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        style={{
+          height: "95vh",
+          minHeight: "640px",
+          maxHeight: "960px",
+        }}
+      >
         <button
           type="button"
           onClick={onClose}
@@ -62,11 +95,13 @@ export function BookingDialog({
           <X className="h-5 w-5" />
         </button>
         <iframe
+          ref={iframeRef}
           src={embedUrl}
           title="Cal.com — umów konsultację"
           className="h-full w-full border-0"
           loading="lazy"
           allow="payment"
+          style={{ minHeight: "600px" }}
         />
       </div>
     </div>

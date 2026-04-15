@@ -84,9 +84,10 @@ export default async function ServiceDetailPage({
           alt={heroAlt}
           width={1440}
           height={480}
-          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
           priority
           sizes="100vw"
+          fetchPriority="high"
         />
         <div className="relative z-10 py-16 md:py-20">
           <Container>
@@ -208,13 +209,15 @@ export default async function ServiceDetailPage({
 
           {/* Sidebar with form */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-24 rounded-xl border border-primary/10 bg-white p-6 shadow-card">
-              <h3 className="font-display text-lg font-bold text-primary">
-                {tNav("consultation")}
-              </h3>
-              <p className="mt-2 text-sm text-primary/60">{t("subtitle")}</p>
-              <div className="mt-6">
-                <ContactForm defaultService={service.slug} compact />
+            <div className="sticky top-24 space-y-4">
+              <div className="rounded-xl border-[3px] border-[#0a2540] bg-white p-6 shadow-[0_8px_24px_rgba(10,37,64,0.15)]">
+                <h3 className="font-display text-lg font-bold text-primary">
+                  {tNav("consultation")}
+                </h3>
+                <p className="mt-2 text-sm text-primary/60">{t("subtitle")}</p>
+                <div className="mt-6">
+                  <ContactForm defaultService={service.slug} compact />
+                </div>
               </div>
             </div>
           </aside>

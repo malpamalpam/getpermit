@@ -48,7 +48,8 @@ export function ServicesGrid() {
                       alt={CATEGORY_IMAGES[category.slug].alt[locale] ?? CATEGORY_IMAGES[category.slug].alt.pl}
                       width={800}
                       height={300}
-                      className="absolute inset-0 h-full w-full object-cover opacity-25"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                      className="absolute inset-0 h-full w-full object-cover opacity-40"
                       loading="lazy"
                     />
                   )}
