@@ -14,6 +14,7 @@ import {
 import { routing } from "@/i18n/routing";
 import Image from "next/image";
 import { getServiceHeroImage } from "@/lib/service-images";
+import { getLocalizedSlug, resolveInternalSlug } from "@/lib/service-slugs";
 import {
   Clock,
   Wallet,
@@ -26,7 +27,7 @@ import {
 export async function generateStaticParams() {
   const services = await getAllServices();
   return routing.locales.flatMap((locale) =>
-    services.map((s) => ({ locale, slug: s.slug }))
+    services.map((s) => ({ locale, slug: getLocalizedSlug(s.slug, locale) }))
   );
 }
 
@@ -36,9 +37,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const service = await getServiceBySlug(slug);
+  const internalSlug = resolveInternalSlug(slug, locale);
+  const service = await getServiceBySlug(internalSlug);
   if (!service) return {};
-  const heroImg = getServiceHeroImage(slug);
+  const heroImg = getServiceHeroImage(internalSlug);
   return {
     title: localized(service.title, locale),
     description: localized(service.shortDescription, locale),
@@ -56,7 +58,8 @@ export default async function ServiceDetailPage({
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const service = await getServiceBySlug(slug);
+  const internalSlug = resolveInternalSlug(slug, locale);
+  const service = await getServiceBySlug(internalSlug);
   if (!service) notFound();
 
   const category = await getServiceCategoryBySlug(service.categorySlug);

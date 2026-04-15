@@ -1,0 +1,106 @@
+/**
+ * Mapa slugów usług per locale.
+ * Klucz = internal slug (używany w services.ts).
+ * Wartości = zlokalizowane slugi per język.
+ */
+export const SERVICE_SLUG_MAP: Record<string, Record<string, string>> = {
+  // Legalizacja pracy
+  "zezwolenie-na-prace": {
+    pl: "zezwolenie-na-prace",
+    en: "work-permit",
+    ru: "razreshenie-na-rabotu",
+    uk: "dozvil-na-robotu",
+  },
+  "oswiadczenie-o-powierzeniu-pracy": {
+    pl: "oswiadczenie-o-powierzeniu-pracy",
+    en: "employer-declaration",
+    ru: "zayavlenie-o-poruchenii-raboty",
+    uk: "oswiadchennia-pro-doruchennia-roboty",
+  },
+
+  // Legalizacja pobytu
+  "karta-pobytu-czasowego": {
+    pl: "karta-pobytu-czasowego",
+    en: "temporary-residence-permit",
+    ru: "vremennyj-vid-na-zhitelstvo",
+    uk: "karta-tymchasovogo-pobutu",
+  },
+  "zezwolenie-na-pobyt-czasowy-i-prace": {
+    pl: "zezwolenie-na-pobyt-czasowy-i-prace",
+    en: "residence-and-work-permit",
+    ru: "razreshenie-na-prozhivanie-i-rabotu",
+    uk: "dozvil-na-prozyvannia-ta-robotu",
+  },
+  "eu-blue-card": {
+    pl: "eu-blue-card",
+    en: "eu-blue-card",
+    ru: "golubaya-karta-es",
+    uk: "blakytna-karta-es",
+  },
+  "wymiana-karty-pobytu": {
+    pl: "wymiana-karty-pobytu",
+    en: "residence-card-replacement",
+    ru: "zamena-karty-pobytu",
+    uk: "zamina-karty-pobutu",
+  },
+
+  // Pobyty długoterminowe
+  "rezydent-dlugoterminowy-ue": {
+    pl: "rezydent-dlugoterminowy-ue",
+    en: "eu-long-term-resident",
+    ru: "dolgosrochnyj-rezident-es",
+    uk: "dovgostrokovyj-rezydent-es",
+  },
+  "karta-stalego-pobytu": {
+    pl: "karta-stalego-pobytu",
+    en: "permanent-residence-permit",
+    ru: "postoyannyj-vid-na-zhitelstvo",
+    uk: "karta-postijnogo-pobutu",
+  },
+
+  // Procedura odwoławcza
+  "ponaglenia-i-odwolania": {
+    pl: "ponaglenia-i-odwolania",
+    en: "appeals-and-complaints",
+    ru: "zhaloby-i-apellyatsii",
+    uk: "skargy-ta-apeliatsii",
+  },
+
+  // Tłumaczenia
+  "tlumaczenia-przysiegle": {
+    pl: "tlumaczenia-przysiegle",
+    en: "sworn-translations",
+    ru: "prisyazhnye-perevody",
+    uk: "prysyazhni-pereklady",
+  },
+};
+
+/** Ścieżka bazowa usług per locale */
+export const SERVICE_BASE_PATH: Record<string, string> = {
+  pl: "uslugi",
+  en: "services",
+  ru: "uslugi",
+  uk: "poslugy",
+};
+
+/** Zwraca zlokalizowany slug usługi */
+export function getLocalizedSlug(internalSlug: string, locale: string): string {
+  return SERVICE_SLUG_MAP[internalSlug]?.[locale] ?? SERVICE_SLUG_MAP[internalSlug]?.pl ?? internalSlug;
+}
+
+/** Rozwiązuje zlokalizowany slug na internal slug */
+export function resolveInternalSlug(localizedSlug: string, locale: string): string {
+  for (const [internal, slugs] of Object.entries(SERVICE_SLUG_MAP)) {
+    if (slugs[locale] === localizedSlug || slugs.pl === localizedSlug) {
+      return internal;
+    }
+  }
+  return localizedSlug; // fallback
+}
+
+/** Generuje pełną ścieżkę usługi dla danego locale (bez prefiksu locale) */
+export function getServicePath(internalSlug: string, locale: string): string {
+  const base = SERVICE_BASE_PATH[locale] ?? "uslugi";
+  const slug = getLocalizedSlug(internalSlug, locale);
+  return `/${base}/${slug}`;
+}

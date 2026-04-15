@@ -4,6 +4,7 @@ import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
 import { type Service, localized } from "@/lib/services";
 import { getServiceHeroImage } from "@/lib/service-images";
+import { getLocalizedSlug } from "@/lib/service-slugs";
 
 export function ServiceCard({ service }: { service: Service }) {
   const t = useTranslations("services");
@@ -16,7 +17,7 @@ export function ServiceCard({ service }: { service: Service }) {
 
   return (
     <Link
-      href={{ pathname: "/uslugi/[slug]", params: { slug: service.slug } }}
+      href={{ pathname: "/uslugi/[slug]", params: { slug: getLocalizedSlug(service.slug, locale) } }}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-primary transition-all hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_12px_40px_rgba(37,99,235,0.25)]"
     >
       {/* Background image */}

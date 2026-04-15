@@ -30,8 +30,8 @@ export const routing = defineRouting({
     "/kontakt": {
       pl: "/kontakt",
       en: "/contact",
-      ru: "/kontakt",
-      uk: "/kontakt",
+      ru: "/kontakty",
+      uk: "/kontakty",
     },
     "/blog": {
       pl: "/blog",
@@ -48,14 +48,14 @@ export const routing = defineRouting({
     "/polityka-prywatnosci": {
       pl: "/polityka-prywatnosci",
       en: "/privacy-policy",
-      ru: "/polityka-prywatnosci",
-      uk: "/polityka-prywatnosci",
+      ru: "/politika-konfidentsialnosti",
+      uk: "/polityka-konfidentsijnosti",
     },
     "/regulamin": {
       pl: "/regulamin",
       en: "/terms",
-      ru: "/regulamin",
-      uk: "/regulamin",
+      ru: "/pravila",
+      uk: "/pravyla",
     },
     "/cookies": {
       pl: "/cookies",

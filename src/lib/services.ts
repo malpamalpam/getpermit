@@ -105,7 +105,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     ),
     services: [
       {
-        slug: "zezwolenia-na-prace",
+        slug: "zezwolenie-na-prace",
         categorySlug: "legalizacja-pracy",
         order: 1,
         title: pl("Zezwolenia na pracę"),
@@ -130,7 +130,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         price: null,
       },
       {
-        slug: "oswiadczenia-o-powierzeniu-pracy",
+        slug: "oswiadczenie-o-powierzeniu-pracy",
         categorySlug: "legalizacja-pracy",
         order: 2,
         title: pl("Oświadczenia o powierzeniu pracy"),
@@ -167,7 +167,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     ),
     services: [
       {
-        slug: "zezwolenie-na-pobyt-czasowy",
+        slug: "karta-pobytu-czasowego",
         categorySlug: "legalizacja-pobytu",
         order: 1,
         title: pl("Zezwolenie na pobyt czasowy"),
@@ -310,7 +310,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         price: null,
       },
       {
-        slug: "pobyt-staly",
+        slug: "karta-stalego-pobytu",
         categorySlug: "pobyty-dlugoterminowe",
         order: 2,
         title: pl("Pobyt stały"),
@@ -385,7 +385,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     ),
     services: [
       {
-        slug: "tlumaczenia-przysiegle-dokumentow",
+        slug: "tlumaczenia-przysiegle",
         categorySlug: "tlumaczenia-przysiegle",
         order: 1,
         title: pl("Tłumaczenia przysięgłe dokumentów"),

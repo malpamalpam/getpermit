@@ -14,7 +14,7 @@ export interface ServiceImage {
 
 export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
   // Legalizacja pracy
-  "zezwolenia-na-prace": {
+  "zezwolenie-na-prace": {
     src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
     alt: {
       pl: "Zezwolenie na pracę w Polsce — dokumenty i konsultacja prawna",
@@ -24,7 +24,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     },
     credit: "Unsplash / Cytonn Photography",
   },
-  "oswiadczenia-o-powierzeniu-pracy": {
+  "oswiadczenie-o-powierzeniu-pracy": {
     src: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1440&q=80&auto=format",
     alt: {
       pl: "Oświadczenie o powierzeniu pracy cudzoziemcowi — pomoc prawna",
@@ -36,7 +36,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
   },
 
   // Legalizacja pobytu
-  "zezwolenie-na-pobyt-czasowy": {
+  "karta-pobytu-czasowego": {
     src: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=1440&q=80&auto=format",
     alt: {
       pl: "Karta pobytu czasowego w Polsce — profesjonalna pomoc prawna getpermit.pl",
@@ -88,7 +88,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     },
     credit: "Unsplash / Dylan Gillis",
   },
-  "pobyt-staly": {
+  "karta-stalego-pobytu": {
     src: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1440&q=80&auto=format",
     alt: {
       pl: "Pobyt stały w Polsce — karta stałego pobytu dla cudzoziemców",
@@ -119,17 +119,6 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
       en: "Sworn document translations — certified translator",
       ru: "Присяжный перевод документов — сертифицированный переводчик",
       uk: "Присяжний переклад документів — сертифікований перекладач",
-    },
-    credit: "Unsplash / Patrick Tomasso",
-  },
-
-  "tlumaczenia-przysiegle-dokumentow": {
-    src: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1440&q=80&auto=format",
-    alt: {
-      pl: "Tłumaczenia przysięgłe dokumentów urzędowych",
-      en: "Sworn translations of official documents",
-      ru: "Присяжный перевод официальных документов",
-      uk: "Присяжний переклад офіційних документів",
     },
     credit: "Unsplash / Patrick Tomasso",
   },
