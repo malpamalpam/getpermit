@@ -142,17 +142,24 @@ export default async function BlogPostPage({
               </nav>
             </details>
 
-            {post.sections.map((section) => (
-              <section key={section.id} id={section.id} className="mb-10 scroll-mt-24">
-                <h2 className="mb-4 font-display text-2xl font-extrabold text-primary md:text-3xl">
-                  {section.heading}
-                </h2>
-                <div
-                  className="prose-content text-base leading-relaxed text-ink/80 [&_a]:text-accent [&_a]:underline [&_details]:my-3 [&_details]:rounded-xl [&_details]:border [&_details]:border-primary/10 [&_details]:bg-surface [&_details]:p-4 [&_h3]:mb-3 [&_h3]:mt-6 [&_h3]:font-display [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-primary [&_li]:ml-5 [&_li]:list-disc [&_li]:py-1 [&_p]:mb-4 [&_strong]:font-semibold [&_strong]:text-primary [&_summary]:cursor-pointer [&_summary]:font-medium [&_summary]:text-primary [&_ul]:mb-4"
-                  dangerouslySetInnerHTML={{ __html: section.content }}
-                />
-              </section>
-            ))}
+            {post.sections.map((section) => {
+              // Zamień /pl/, /en/, /ru/, /uk/ na /${locale}/ w linkach wewnętrznych
+              const localizedContent = section.content.replace(
+                /href="\/(pl|en|ru|uk)\//g,
+                `href="/${locale}/`
+              );
+              return (
+                <section key={section.id} id={section.id} className="mb-10 scroll-mt-24">
+                  <h2 className="mb-4 font-display text-2xl font-extrabold text-primary md:text-3xl">
+                    {section.heading}
+                  </h2>
+                  <div
+                    className="prose-content text-base leading-relaxed text-ink/80 [&_a]:text-accent [&_a]:underline [&_details]:my-3 [&_details]:rounded-xl [&_details]:border [&_details]:border-primary/10 [&_details]:bg-surface [&_details]:p-4 [&_h3]:mb-3 [&_h3]:mt-6 [&_h3]:font-display [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-primary [&_li]:ml-5 [&_li]:list-disc [&_li]:py-1 [&_p]:mb-4 [&_strong]:font-semibold [&_strong]:text-primary [&_summary]:cursor-pointer [&_summary]:font-medium [&_summary]:text-primary [&_ul]:mb-4"
+                    dangerouslySetInnerHTML={{ __html: localizedContent }}
+                  />
+                </section>
+              );
+            })}
 
             <div className="mt-12 border-t border-primary/10 pt-8">
               <Link
