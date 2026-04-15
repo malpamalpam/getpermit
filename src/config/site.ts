@@ -16,8 +16,8 @@ export const siteConfig = {
   // === DANE DO PODMIANY ===
   contact: {
     email: "kontakt@getpermit.pl",
-    phone: "+48 XXX XXX XXX",
-    whatsapp: "48XXXXXXXXX",
+    phone: "+48 515 229 783",
+    whatsapp: "48515229783",
     telegram: "getpermit",
     address: {
       street: "ul. Lwowska 17/4",
