@@ -24,7 +24,7 @@ export function ServicesGrid() {
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-accent">
             <span className="inline-block h-0.5 w-6 bg-accent" />
-            Oferta
+            {t("sectionLabel")}
           </span>
           <h2 className="mt-3 font-display text-3xl font-extrabold text-primary md:text-4xl">
             {t("title")}

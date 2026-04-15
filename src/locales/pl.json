@@ -6,7 +6,10 @@
     "blog": "Blog",
     "contact": "Kontakt",
     "consultation": "Umów konsultację",
-    "clientPanel": "Panel Klienta"
+    "clientPanel": "Panel Klienta",
+    "section_uslugi": "Usługi",
+    "section_proces": "Jak działamy",
+    "menuToggle": "Otwórz menu"
   },
   "hero": {
     "badge": "Pomoc prawna dla cudzoziemców",
@@ -23,6 +26,7 @@
   "services": {
     "title": "Legalizacja pobytu i pracy — karta pobytu, zezwolenie na pracę",
     "subtitle": "Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę typu A, EU Blue Card. Kompleksowa pomoc w legalizacji cudzoziemców w Polsce.",
+    "sectionLabel": "Oferta",
     "viewAll": "Zobacz wszystkie usługi",
     "viewDetails": "Dowiedz się więcej",
     "from": "od",
@@ -526,6 +530,14 @@
     "DECISION": "Decyzja",
     "APPEAL": "Odwołanie",
     "OTHER": "Inne"
+  },
+  "process": {
+    "label": "Jak działamy",
+    "title": "3 proste kroki",
+    "subtitle": "Każdy przypadek traktujemy indywidualnie, oferując dopasowane rozwiązania.",
+    "step1": { "title": "Bezpłatna konsultacja", "desc": "Opowiedz o swojej sytuacji \u2014 nasi eksperci ocenią sprawę i zaproponują optymalną strategię." },
+    "step2": { "title": "Opracowanie dokumentacji", "desc": "Podpisanie umowy, kompletowanie i przygotowanie wszystkich wymaganych dokumentów." },
+    "step3": { "title": "Pozytywna decyzja", "desc": "Reprezentujemy Cię przed urzędem aż do otrzymania dokumentów potwierdzających Twój status." }
   },
   "faq": {
     "title": "Najczęściej zadawane pytania",

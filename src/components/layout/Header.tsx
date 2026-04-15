@@ -13,10 +13,7 @@ import { BookingButton } from "@/components/booking/BookingButton";
 // Anchor sections that exist on the homepage. Localized labels for the
 // homepage section nav (other locales fall back to PL — multilingual labels
 // can be added to /src/locales/*.json under nav.* later).
-const SECTIONS = [
-  { id: "uslugi", label: "Usługi" },
-  { id: "proces", label: "Jak działamy" },
-] as const;
+const SECTION_IDS = ["uslugi", "proces"] as const;
 
 export function Header() {
   const t = useTranslations("nav");
@@ -34,7 +31,7 @@ export function Header() {
       return;
     }
     const observers: IntersectionObserver[] = [];
-    SECTIONS.forEach(({ id }) => {
+    SECTION_IDS.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
       const obs = new IntersectionObserver(
@@ -79,19 +76,19 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-8 md:flex">
-            {SECTIONS.map((s) => {
-              const isActive = active === s.id;
+            {SECTION_IDS.map((id) => {
+              const isActive = active === id;
               return (
                 <a
-                  key={s.id}
-                  href={sectionHref(s.id)}
+                  key={id}
+                  href={sectionHref(id)}
                   className={`relative text-sm font-medium transition-colors ${
                     isActive
                       ? "text-primary"
                       : "text-primary/70 hover:text-primary"
                   }`}
                 >
-                  {s.label}
+                  {t(`section_${id}`)}
                   <span
                     className={`absolute -bottom-1.5 left-0 h-0.5 bg-accent transition-all duration-300 ${
                       isActive ? "w-full" : "w-0"
@@ -132,7 +129,7 @@ export function Header() {
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-md text-primary md:hidden"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Otwórz menu nawigacji"
+            aria-label={t("menuToggle")}
             aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -143,14 +140,14 @@ export function Header() {
         {mobileOpen && (
           <div className="border-t border-primary/10 py-4 md:hidden">
             <nav className="flex flex-col gap-4">
-              {SECTIONS.map((s) => (
+              {SECTION_IDS.map((id) => (
                 <a
-                  key={s.id}
-                  href={sectionHref(s.id)}
+                  key={id}
+                  href={sectionHref(id)}
                   className="text-base font-medium text-primary"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {s.label}
+                  {t(`section_${id}`)}
                 </a>
               ))}
               <Link

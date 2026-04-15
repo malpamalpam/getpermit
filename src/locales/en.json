@@ -6,7 +6,10 @@
     "blog": "Blog",
     "contact": "Contact",
     "consultation": "Book consultation",
-    "clientPanel": "Client Panel"
+    "clientPanel": "Client Panel",
+    "section_uslugi": "Services",
+    "section_proces": "How we work",
+    "menuToggle": "Open menu"
   },
   "hero": {
     "badge": "Legal help for foreigners",
@@ -23,6 +26,7 @@
   "services": {
     "title": "Immigration Services — Poland Visa, Work Permit, EU Blue Card",
     "subtitle": "Poland visa application, work permit, EU Blue Card, residence permits. Professional immigration services for foreigners in Poland.",
+    "sectionLabel": "Our offer",
     "viewAll": "View all services",
     "viewDetails": "Learn more",
     "from": "from",
@@ -526,6 +530,14 @@
     "DECISION": "Decision",
     "APPEAL": "Appeal",
     "OTHER": "Other"
+  },
+  "process": {
+    "label": "How we work",
+    "title": "3 simple steps",
+    "subtitle": "We treat every case individually, offering tailored solutions.",
+    "step1": { "title": "Free consultation", "desc": "Tell us about your situation \u2014 our experts will assess your case and propose an optimal strategy." },
+    "step2": { "title": "Document preparation", "desc": "Signing the agreement, collecting and preparing all required documents." },
+    "step3": { "title": "Positive decision", "desc": "We represent you before the office until you receive the documents confirming your status." }
   },
   "faq": {
     "title": "Frequently asked questions",
