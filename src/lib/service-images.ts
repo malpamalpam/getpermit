@@ -123,6 +123,17 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Patrick Tomasso",
   },
 
+  "tlumaczenia-przysiegle-dokumentow": {
+    src: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1440&q=80&auto=format",
+    alt: {
+      pl: "Tłumaczenia przysięgłe dokumentów urzędowych",
+      en: "Sworn translations of official documents",
+      ru: "Присяжный перевод официальных документов",
+      uk: "Присяжний переклад офіційних документів",
+    },
+    credit: "Unsplash / Patrick Tomasso",
+  },
+
   // Dodatkowe
   "obywatelstwo-polskie": {
     src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1440&q=80&auto=format",
