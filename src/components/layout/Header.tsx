@@ -9,10 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Menu, X } from "lucide-react";
 import { BookingButton } from "@/components/booking/BookingButton";
+import { SERVICE_BASE_PATH } from "@/lib/service-slugs";
 
-// Anchor sections that exist on the homepage. Localized labels for the
-// homepage section nav (other locales fall back to PL — multilingual labels
-// can be added to /src/locales/*.json under nav.* later).
 const SECTION_IDS = ["uslugi", "proces"] as const;
 
 export function Header() {
@@ -47,9 +45,16 @@ export function Header() {
     return () => observers.forEach((o) => o.disconnect());
   }, [onHome]);
 
-  // Build the right href for a section anchor depending on current page
-  const sectionHref = (id: string) =>
-    onHome ? `#${id}` : `/${locale}/#${id}`;
+  // Zlokalizowane ID kotwic na homepage
+  const SECTION_ANCHORS: Record<string, Record<string, string>> = {
+    uslugi: { pl: "uslugi", en: "services", ru: "uslugi", uk: "poslugy" },
+    proces: { pl: "proces", en: "process", ru: "process", uk: "process" },
+  };
+
+  const sectionHref = (id: string) => {
+    const anchor = SECTION_ANCHORS[id]?.[locale] ?? id;
+    return onHome ? `#${anchor}` : `/${locale}/#${anchor}`;
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-primary/10 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
