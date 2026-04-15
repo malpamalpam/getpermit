@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CookieConsent } from "@/components/layout/CookieConsent";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { siteConfig } from "@/config/site";
 
 export function generateStaticParams() {
@@ -130,6 +131,7 @@ export default async function LocaleLayout({
         <Footer />
       </div>
       <CookieConsent />
+      <ChatWidget />
     </NextIntlClientProvider>
   );
 }

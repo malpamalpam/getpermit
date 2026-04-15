@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.89.0",
     "@hookform/resolvers": "3.10.0",
     "@prisma/client": "^6.19.3",
     "@supabase/ssr": "^0.10.0",
