@@ -9,13 +9,21 @@ interface Props {
 }
 
 export function AnimatedCounter({ target, suffix = "", duration = 2000 }: Props) {
-  const [count, setCount] = useState(0);
+  // SSR: renderuj docelową wartość, JS nadpisze animacją
+  const [count, setCount] = useState(target);
   const [started, setStarted] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+
+  // Po hydratacji resetuj do 0 żeby animacja mogła startować
+  useEffect(() => {
+    setHydrated(true);
+    setCount(0);
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !hydrated) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -28,7 +36,7 @@ export function AnimatedCounter({ target, suffix = "", duration = 2000 }: Props)
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [started]);
+  }, [started, hydrated]);
 
   useEffect(() => {
     if (!started) return;
@@ -54,7 +62,7 @@ export function AnimatedCounter({ target, suffix = "", duration = 2000 }: Props)
   }, [started, target, duration]);
 
   return (
-    <span ref={ref}>
+    <span ref={ref} suppressHydrationWarning>
       {count.toLocaleString("pl-PL")}{suffix}
     </span>
   );

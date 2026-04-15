@@ -40,9 +40,9 @@ export const siteConfig = {
 
   // Statystyki na stronie głównej
   stats: {
-    yearsOfExperience: 7,
-    clientsServed: 1000,
-    successRate: 92,
+    yearsOfExperience: 10,
+    clientsServed: 5000,
+    successRate: 98,
   },
 
   // Cal.com — adres event-typu pokazywany w modalu "Umów konsultację".
