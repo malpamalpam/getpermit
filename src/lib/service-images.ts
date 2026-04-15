@@ -164,15 +164,55 @@ export function getServiceHeroImage(slug: string): ServiceImage {
 }
 
 /** Mapa obrazów dla kategorii na stronie głównej */
-export const CATEGORY_IMAGES: Record<string, string> = {
-  "legalizacja-pracy":
-    "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80&auto=format",
-  "legalizacja-pobytu":
-    "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800&q=80&auto=format",
-  "pobyty-dlugoterminowe":
-    "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80&auto=format",
-  "procedura-odwolawcza":
-    "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80&auto=format",
-  "tlumaczenia-przysiegle":
-    "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80&auto=format",
+export interface CategoryImage {
+  src: string;
+  alt: Record<string, string>;
+}
+
+export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
+  "legalizacja-pracy": {
+    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80",
+    alt: {
+      pl: "Zezwolenie na prac\u0119 typu A i o\u015bwiadczenie dla cudzoziemc\u00f3w w Polsce",
+      en: "Type A work permit and declaration for foreigners in Poland",
+      ru: "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u043d\u0430 \u0440\u0430\u0431\u043e\u0442\u0443 \u0442\u0438\u043f\u0430 A \u0438 \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u0438\u0435 \u0434\u043b\u044f \u0438\u043d\u043e\u0441\u0442\u0440\u0430\u043d\u0446\u0435\u0432 \u0432 \u041f\u043e\u043b\u044c\u0448\u0435",
+      uk: "\u0414\u043e\u0437\u0432\u0456\u043b \u043d\u0430 \u0440\u043e\u0431\u043e\u0442\u0443 \u0442\u0438\u043f\u0443 A \u0442\u0430 \u0437\u0430\u044f\u0432\u0430 \u0434\u043b\u044f \u0456\u043d\u043e\u0437\u0435\u043c\u0446\u0456\u0432 \u0443 \u041f\u043e\u043b\u044c\u0449\u0456",
+    },
+  },
+  "legalizacja-pobytu": {
+    src: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800&q=80",
+    alt: {
+      pl: "Karta pobytu czasowego i EU Blue Card dla cudzoziemc\u00f3w w Polsce",
+      en: "Temporary residence card and EU Blue Card for foreigners in Poland",
+      ru: "\u041a\u0430\u0440\u0442\u0430 \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f \u0438 EU Blue Card \u0434\u043b\u044f \u0438\u043d\u043e\u0441\u0442\u0440\u0430\u043d\u0446\u0435\u0432 \u0432 \u041f\u043e\u043b\u044c\u0448\u0435",
+      uk: "\u041a\u0430\u0440\u0442\u0430 \u0442\u0438\u043c\u0447\u0430\u0441\u043e\u0432\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0442\u0430 EU Blue Card \u0434\u043b\u044f \u0456\u043d\u043e\u0437\u0435\u043c\u0446\u0456\u0432 \u0443 \u041f\u043e\u043b\u044c\u0449\u0456",
+    },
+  },
+  "pobyty-dlugoterminowe": {
+    src: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80",
+    alt: {
+      pl: "Status rezydenta d\u0142ugoterminowego UE i pobyt sta\u0142y w Polsce",
+      en: "EU long-term resident status and permanent residence in Poland",
+      ru: "\u0421\u0442\u0430\u0442\u0443\u0441 \u0434\u043e\u043b\u0433\u043e\u0441\u0440\u043e\u0447\u043d\u043e\u0433\u043e \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u0430 \u0415\u0421 \u0438 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0432 \u041f\u043e\u043b\u044c\u0448\u0435",
+      uk: "\u0421\u0442\u0430\u0442\u0443\u0441 \u0434\u043e\u0432\u0433\u043e\u0441\u0442\u0440\u043e\u043a\u043e\u0432\u043e\u0433\u043e \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u0430 \u0404\u0421 \u0442\u0430 \u043f\u043e\u0441\u0442\u0456\u0439\u043d\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0432 \u041f\u043e\u043b\u044c\u0449\u0456",
+    },
+  },
+  "procedura-odwolawcza": {
+    src: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
+    alt: {
+      pl: "Ponaglenia i odwo\u0142ania od decyzji w sprawach pobytowych",
+      en: "Urgency complaints and appeals in residence cases",
+      ru: "\u041e\u0431\u0436\u0430\u043b\u043e\u0432\u0430\u043d\u0438\u0435 \u0438 \u0443\u0441\u043a\u043e\u0440\u0435\u043d\u0438\u0435 \u0432 \u0434\u0435\u043b\u0430\u0445 \u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0438",
+      uk: "\u041e\u0441\u043a\u0430\u0440\u0436\u0435\u043d\u043d\u044f \u0442\u0430 \u043f\u0440\u0438\u0441\u043a\u043e\u0440\u0435\u043d\u043d\u044f \u0443 \u0441\u043f\u0440\u0430\u0432\u0430\u0445 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f",
+    },
+  },
+  "tlumaczenia-przysiegle": {
+    src: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
+    alt: {
+      pl: "T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w do legalizacji pobytu",
+      en: "Sworn translations of documents for residence legalization",
+      ru: "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0432\u043e\u0434 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u043e\u0432 \u0434\u043b\u044f \u043b\u0435\u0433\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u0438",
+      uk: "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u0438\u0439 \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0456\u0432 \u0434\u043b\u044f \u043b\u0435\u0433\u0430\u043b\u0456\u0437\u0430\u0446\u0456\u0457",
+    },
+  },
 };

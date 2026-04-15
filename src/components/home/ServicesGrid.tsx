@@ -44,9 +44,8 @@ export function ServicesGrid() {
                   {/* TODO: replace with authentic photos */}
                   {CATEGORY_IMAGES[category.slug] && (
                     <Image
-                      src={CATEGORY_IMAGES[category.slug]}
-                      alt=""
-                      role="presentation"
+                      src={CATEGORY_IMAGES[category.slug].src}
+                      alt={CATEGORY_IMAGES[category.slug].alt[locale] ?? CATEGORY_IMAGES[category.slug].alt.pl}
                       width={800}
                       height={300}
                       className="absolute inset-0 h-full w-full object-cover opacity-25"
