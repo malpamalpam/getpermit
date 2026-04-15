@@ -53,6 +53,32 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    const rewrites = [];
+
+    // EN: zlokalizowane ścieżki → fizyczne foldery
+    rewrites.push({ source: "/en/services", destination: "/en/uslugi" });
+    rewrites.push({ source: "/en/services/:slug", destination: "/en/uslugi/:slug" });
+    rewrites.push({ source: "/en/about", destination: "/en/o-nas" });
+    rewrites.push({ source: "/en/contact", destination: "/en/kontakt" });
+    rewrites.push({ source: "/en/privacy-policy", destination: "/en/polityka-prywatnosci" });
+    rewrites.push({ source: "/en/terms", destination: "/en/regulamin" });
+
+    // RU: zlokalizowane ścieżki
+    rewrites.push({ source: "/ru/kontakty", destination: "/ru/kontakt" });
+    rewrites.push({ source: "/ru/politika-konfidentsialnosti", destination: "/ru/polityka-prywatnosci" });
+    rewrites.push({ source: "/ru/pravila", destination: "/ru/regulamin" });
+
+    // UK: zlokalizowane ścieżki
+    rewrites.push({ source: "/uk/poslugy", destination: "/uk/uslugi" });
+    rewrites.push({ source: "/uk/poslugy/:slug", destination: "/uk/uslugi/:slug" });
+    rewrites.push({ source: "/uk/pro-nas", destination: "/uk/o-nas" });
+    rewrites.push({ source: "/uk/kontakty", destination: "/uk/kontakt" });
+    rewrites.push({ source: "/uk/polityka-konfidentsijnosti", destination: "/uk/polityka-prywatnosci" });
+    rewrites.push({ source: "/uk/pravyla", destination: "/uk/regulamin" });
+
+    return rewrites;
+  },
   async redirects() {
     const redirects: Array<{
       source: string;
@@ -108,20 +134,9 @@ const nextConfig: NextConfig = {
         permanent: true,
       });
     }
-    // EN: redirect /en/uslugi → /en/services
-    redirects.push({ source: "/en/uslugi", destination: "/en/services", permanent: true });
-    redirects.push({ source: "/en/o-nas", destination: "/en/about", permanent: true });
-    redirects.push({ source: "/en/kontakt", destination: "/en/contact", permanent: true });
-    redirects.push({ source: "/en/polityka-prywatnosci", destination: "/en/privacy-policy", permanent: true });
-    redirects.push({ source: "/en/regulamin", destination: "/en/terms", permanent: true });
-
-    // UK: redirect /uk/uslugi → /uk/poslugy
-    redirects.push({ source: "/uk/uslugi", destination: "/uk/poslugy", permanent: true });
-    redirects.push({ source: "/uk/o-nas", destination: "/uk/pro-nas", permanent: true });
-    redirects.push({ source: "/uk/kontakt", destination: "/uk/kontakty", permanent: true });
-
-    // RU: redirect
-    redirects.push({ source: "/ru/kontakt", destination: "/ru/kontakty", permanent: true });
+    // UWAGA: redirecty EN/RU/UK ścieżek bazowych (uslugi→services, o-nas→about itd.)
+    // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
+    // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
 
     // localePrefix: "always" — ścieżki bez /pl muszą redirectować
     const noLocalePaths = [

@@ -15,7 +15,8 @@
       "Bash(npx prisma:*)",
       "WebFetch(domain:psz.praca.gov.pl)",
       "WebFetch(domain:broker.praca.gov.pl)",
-      "Bash(node -e \"try { JSON.parse\\(require\\('fs'\\).readFileSync\\('c:/Users/gstep/getpermit.pl/src/locales/pl.json','utf8'\\)\\); console.log\\('pl.json: VALID'\\); } catch\\(e\\) { console.log\\('pl.json: ERROR -', e.message\\); }\")"
+      "Bash(node -e \"try { JSON.parse\\(require\\('fs'\\).readFileSync\\('c:/Users/gstep/getpermit.pl/src/locales/pl.json','utf8'\\)\\); console.log\\('pl.json: VALID'\\); } catch\\(e\\) { console.log\\('pl.json: ERROR -', e.message\\); }\")",
+      "WebFetch(domain:next-intl.dev)"
     ]
   }
 }
