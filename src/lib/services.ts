@@ -72,6 +72,11 @@ const pl = (text: string): LocalizedString => ({
   uk: text,
 });
 
+/** Tworzy `LocalizedString` z tekstów per locale. */
+const loc = (pl_: string, en_: string, ru_: string, uk_: string): LocalizedString => ({
+  pl: pl_, en: en_, ru: ru_, uk: uk_,
+});
+
 /** Tworzy `LocalizedList` z polskiej listy (kopia we wszystkich lokalach). */
 const plList = (items: string[]): LocalizedList => ({
   pl: items,
@@ -99,18 +104,24 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     slug: "legalizacja-pracy",
     icon: "Briefcase",
     order: 1,
-    title: pl("Legalizacja pracy"),
-    description: pl(
-      "Zezwolenia na pracę i oświadczenia dla cudzoziemców oraz pracodawców."
+    title: loc("Legalizacja pracy", "Work legalization", "\u041b\u0435\u0433\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u044f \u0440\u0430\u0431\u043e\u0442\u044b", "\u041b\u0435\u0433\u0430\u043b\u0456\u0437\u0430\u0446\u0456\u044f \u0440\u043e\u0431\u043e\u0442\u0438"),
+    description: loc(
+      "Zezwolenia na prac\u0119 i o\u015bwiadczenia dla cudzoziemc\u00f3w oraz pracodawc\u00f3w.",
+      "Work permits and declarations for foreigners and employers.",
+      "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u044f \u043d\u0430 \u0440\u0430\u0431\u043e\u0442\u0443 \u0438 \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u0434\u043b\u044f \u0438\u043d\u043e\u0441\u0442\u0440\u0430\u043d\u0446\u0435\u0432 \u0438 \u0440\u0430\u0431\u043e\u0442\u043e\u0434\u0430\u0442\u0435\u043b\u0435\u0439.",
+      "\u0414\u043e\u0437\u0432\u043e\u043b\u0438 \u043d\u0430 \u0440\u043e\u0431\u043e\u0442\u0443 \u0442\u0430 \u0437\u0430\u044f\u0432\u0438 \u0434\u043b\u044f \u0456\u043d\u043e\u0437\u0435\u043c\u0446\u0456\u0432 \u0442\u0430 \u0440\u043e\u0431\u043e\u0442\u043e\u0434\u0430\u0432\u0446\u0456\u0432."
     ),
     services: [
       {
         slug: "zezwolenie-na-prace",
         categorySlug: "legalizacja-pracy",
         order: 1,
-        title: pl("Zezwolenia na pracę"),
-        shortDescription: pl(
-          "Zezwolenie wydawane przez wojewodę dla cudzoziemców spoza UE — wszystkie typy A, B, C, D, E."
+        title: loc("Zezwolenie na prac\u0119", "Work permit", "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u043d\u0430 \u0440\u0430\u0431\u043e\u0442\u0443", "\u0414\u043e\u0437\u0432\u0456\u043b \u043d\u0430 \u0440\u043e\u0431\u043e\u0442\u0443"),
+        shortDescription: loc(
+          "Zezwolenie wydawane przez wojewod\u0119 dla cudzoziemc\u00f3w spoza UE \u2014 wszystkie typy A, B, C, D, E.",
+          "Permit issued by the voivode for non-EU foreigners \u2014 all types A, B, C, D, E.",
+          "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0432\u044b\u0434\u0430\u0432\u0430\u0435\u043c\u043e\u0435 \u0432\u043e\u0435\u0432\u043e\u0434\u043e\u0439 \u0434\u043b\u044f \u0438\u043d\u043e\u0441\u0442\u0440\u0430\u043d\u0446\u0435\u0432 \u0438\u0437-\u0437\u0430 \u043f\u0440\u0435\u0434\u0435\u043b\u043e\u0432 \u0415\u0421 \u2014 \u0432\u0441\u0435 \u0442\u0438\u043f\u044b A, B, C, D, E.",
+          "\u0414\u043e\u0437\u0432\u0456\u043b, \u0449\u043e \u0432\u0438\u0434\u0430\u0454\u0442\u044c\u0441\u044f \u0432\u043e\u0454\u0432\u043e\u0434\u043e\u044e \u0434\u043b\u044f \u0456\u043d\u043e\u0437\u0435\u043c\u0446\u0456\u0432 \u0437-\u043f\u043e\u0437\u0430 \u0404\u0421 \u2014 \u0432\u0441\u0456 \u0442\u0438\u043f\u0438 A, B, C, D, E."
         ),
         fullDescription: pl(
           "Zezwolenie na pracę jest dokumentem wydawanym przez wojewodę dla cudzoziemców spoza Unii Europejskiej, którzy podejmują pracę w Polsce. Obejmuje wszystkie typy zezwoleń: A (praca na podstawie umowy z polskim pracodawcą), B (członek zarządu spółki), C (oddelegowanie wewnątrz korporacji), D (oddelegowanie do realizacji usług eksportowych), E (inne przypadki oddelegowania). Pomagamy zarówno w przygotowaniu kompletnej dokumentacji, jak i w reprezentacji przed urzędem wojewódzkim — od testu rynku pracy po odbiór decyzji."
@@ -133,9 +144,12 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "oswiadczenie-o-powierzeniu-pracy",
         categorySlug: "legalizacja-pracy",
         order: 2,
-        title: pl("Oświadczenia o powierzeniu pracy"),
-        shortDescription: pl(
-          "Uproszczona procedura dla obywateli Ukrainy, Białorusi, Rosji, Mołdawii, Gruzji i Armenii — praca do 24 miesięcy."
+        title: loc("O\u015bwiadczenie o powierzeniu pracy", "Employer declaration", "\u0417\u0430\u044f\u0432\u043b\u0435\u043d\u0438\u0435 \u043e \u043f\u043e\u0440\u0443\u0447\u0435\u043d\u0438\u0438 \u0440\u0430\u0431\u043e\u0442\u044b", "\u0417\u0430\u044f\u0432\u0430 \u043f\u0440\u043e \u0434\u043e\u0440\u0443\u0447\u0435\u043d\u043d\u044f \u0440\u043e\u0431\u043e\u0442\u0438"),
+        shortDescription: loc(
+          "Uproszczona procedura dla obywateli Ukrainy, Bia\u0142orusi, Rosji, Mo\u0142dawii, Gruzji i Armenii \u2014 praca do 24 miesi\u0119cy.",
+          "Simplified procedure for citizens of Ukraine, Belarus, Russia, Moldova, Georgia and Armenia \u2014 work up to 24 months.",
+          "\u0423\u043f\u0440\u043e\u0449\u0451\u043d\u043d\u0430\u044f \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0430 \u0434\u043b\u044f \u0433\u0440\u0430\u0436\u0434\u0430\u043d \u0423\u043a\u0440\u0430\u0438\u043d\u044b, \u0411\u0435\u043b\u0430\u0440\u0443\u0441\u0438, \u0420\u043e\u0441\u0441\u0438\u0438, \u041c\u043e\u043b\u0434\u043e\u0432\u044b, \u0413\u0440\u0443\u0437\u0438\u0438 \u0438 \u0410\u0440\u043c\u0435\u043d\u0438\u0438 \u2014 \u0440\u0430\u0431\u043e\u0442\u0430 \u0434\u043e 24 \u043c\u0435\u0441\u044f\u0446\u0435\u0432.",
+          "\u0421\u043f\u0440\u043e\u0449\u0435\u043d\u0430 \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0430 \u0434\u043b\u044f \u0433\u0440\u043e\u043c\u0430\u0434\u044f\u043d \u0423\u043a\u0440\u0430\u0457\u043d\u0438, \u0411\u0456\u043b\u043e\u0440\u0443\u0441\u0456, \u0420\u043e\u0441\u0456\u0457, \u041c\u043e\u043b\u0434\u043e\u0432\u0438, \u0413\u0440\u0443\u0437\u0456\u0457 \u0442\u0430 \u0412\u0456\u0440\u043c\u0435\u043d\u0456\u0457 \u2014 \u0440\u043e\u0431\u043e\u0442\u0430 \u0434\u043e 24 \u043c\u0456\u0441\u044f\u0446\u0456\u0432."
         ),
         fullDescription: pl(
           "Oświadczenie o powierzeniu wykonywania pracy cudzoziemcowi to uproszczona procedura, przeznaczona dla obywateli sześciu państw: Ukrainy, Białorusi, Rosji, Mołdawii, Gruzji i Armenii. Oświadczenie rejestrowane jest w Powiatowym Urzędzie Pracy właściwym dla siedziby pracodawcy i pozwala cudzoziemcowi pracować w Polsce do 24 miesięcy. Procedura jest znacząco szybsza niż klasyczne zezwolenie na pracę. Pomagamy pracodawcom w prawidłowym wypełnieniu wniosku, zgłoszeniu rozpoczęcia pracy i obsłudze wszelkich formalności po stronie urzędu."
@@ -161,16 +175,19 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     slug: "legalizacja-pobytu",
     icon: "Home",
     order: 2,
-    title: pl("Legalizacja pobytu"),
-    description: pl(
-      "Karty pobytu czasowego, zezwolenia łączone, EU Blue Card i wymiana dokumentów."
+    title: loc("Legalizacja pobytu", "Residence legalization", "\u041b\u0435\u0433\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u044f \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f", "\u041b\u0435\u0433\u0430\u043b\u0456\u0437\u0430\u0446\u0456\u044f \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f"),
+    description: loc(
+      "Karty pobytu czasowego, zezwolenia \u0142\u0105czone, EU Blue Card i wymiana dokument\u00f3w.",
+      "Temporary residence cards, combined permits, EU Blue Card and document exchange.",
+      "\u041a\u0430\u0440\u0442\u044b \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f, \u043a\u043e\u043c\u0431\u0438\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u044f, EU Blue Card \u0438 \u0437\u0430\u043c\u0435\u043d\u0430 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u043e\u0432.",
+      "\u041a\u0430\u0440\u0442\u0438 \u0442\u0438\u043c\u0447\u0430\u0441\u043e\u0432\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f, \u043a\u043e\u043c\u0431\u0456\u043d\u043e\u0432\u0430\u043d\u0456 \u0434\u043e\u0437\u0432\u043e\u043b\u0438, EU Blue Card \u0442\u0430 \u0437\u0430\u043c\u0456\u043d\u0430 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0456\u0432."
     ),
     services: [
       {
         slug: "karta-pobytu-czasowego",
         categorySlug: "legalizacja-pobytu",
         order: 1,
-        title: pl("Zezwolenie na pobyt czasowy"),
+        title: loc("Karta pobytu czasowego", "Temporary residence card", "\u041a\u0430\u0440\u0442\u0430 \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f", "\u041a\u0430\u0440\u0442\u0430 \u0442\u0438\u043c\u0447\u0430\u0441\u043e\u0432\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f"),
         shortDescription: pl(
           "Karta pobytu wydawana przez wojewodę na okres do 3 lat — dla studiów, rodziny, działalności i innych celów."
         ),
@@ -196,7 +213,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "zezwolenie-na-pobyt-czasowy-i-prace",
         categorySlug: "legalizacja-pobytu",
         order: 2,
-        title: pl("Zezwolenie na pobyt czasowy i pracę"),
+        title: loc("Zezwolenie na pobyt czasowy i prac\u0119", "Residence and work permit", "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u043d\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0438 \u0440\u0430\u0431\u043e\u0442\u0443", "\u0414\u043e\u0437\u0432\u0456\u043b \u043d\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0442\u0430 \u0440\u043e\u0431\u043e\u0442\u0443"),
         shortDescription: pl(
           "Tzw. „jedno zezwolenie\u201d — łączy pobyt z prawem do pracy u konkretnego pracodawcy. Najpopularniejsza ścieżka."
         ),
@@ -222,7 +239,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "eu-blue-card",
         categorySlug: "legalizacja-pobytu",
         order: 3,
-        title: pl("Wysokie kwalifikacje — EU Blue Card"),
+        title: loc("EU Blue Card", "EU Blue Card", "EU Blue Card", "EU Blue Card"),
         shortDescription: pl(
           "Zezwolenie dla wysoko wykwalifikowanych specjalistów — ułatwiony dostęp do rynku pracy w całej UE."
         ),
@@ -248,7 +265,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "wymiana-karty-pobytu",
         categorySlug: "legalizacja-pobytu",
         order: 4,
-        title: pl("Wymiana Karty Pobytu"),
+        title: loc("Wymiana karty pobytu", "Residence card replacement", "\u0417\u0430\u043c\u0435\u043d\u0430 \u043a\u0430\u0440\u0442\u044b \u043f\u043e\u0431\u044b\u0442\u0443", "\u0417\u0430\u043c\u0456\u043d\u0430 \u043a\u0430\u0440\u0442\u0438 \u043f\u043e\u0431\u0443\u0442\u0443"),
         shortDescription: pl(
           "Procedura wymiany karty pobytu w razie utraty, zniszczenia, zmiany danych lub upływu terminu ważności."
         ),
@@ -277,16 +294,19 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     slug: "pobyty-dlugoterminowe",
     icon: "MapPin",
     order: 3,
-    title: pl("Pobyty długoterminowe"),
-    description: pl(
-      "Status rezydenta długoterminowego UE oraz pobyt stały w Polsce."
+    title: loc("Pobyty d\u0142ugoterminowe", "Long-term residence", "\u0414\u043e\u043b\u0433\u043e\u0441\u0440\u043e\u0447\u043d\u043e\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435", "\u0414\u043e\u0432\u0433\u043e\u0441\u0442\u0440\u043e\u043a\u043e\u0432\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f"),
+    description: loc(
+      "Status rezydenta d\u0142ugoterminowego UE oraz pobyt sta\u0142y w Polsce.",
+      "EU long-term resident status and permanent residence in Poland.",
+      "\u0421\u0442\u0430\u0442\u0443\u0441 \u0434\u043e\u043b\u0433\u043e\u0441\u0440\u043e\u0447\u043d\u043e\u0433\u043e \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u0430 \u0415\u0421 \u0438 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0432 \u041f\u043e\u043b\u044c\u0448\u0435.",
+      "\u0421\u0442\u0430\u0442\u0443\u0441 \u0434\u043e\u0432\u0433\u043e\u0441\u0442\u0440\u043e\u043a\u043e\u0432\u043e\u0433\u043e \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442\u0430 \u0404\u0421 \u0442\u0430 \u043f\u043e\u0441\u0442\u0456\u0439\u043d\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0432 \u041f\u043e\u043b\u044c\u0449\u0456."
     ),
     services: [
       {
         slug: "rezydent-dlugoterminowy-ue",
         categorySlug: "pobyty-dlugoterminowe",
         order: 1,
-        title: pl("Rezydent długoterminowy UE"),
+        title: loc("Rezydent d\u0142ugoterminowy UE", "EU long-term resident", "\u0414\u043e\u043b\u0433\u043e\u0441\u0440\u043e\u0447\u043d\u044b\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442 \u0415\u0421", "\u0414\u043e\u0432\u0433\u043e\u0441\u0442\u0440\u043e\u043a\u043e\u0432\u0438\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442 \u0404\u0421"),
         shortDescription: pl(
           "Status dający prawo stałego pobytu w Polsce i ułatwienia w przemieszczaniu się w UE — wymaga 5 lat legalnego pobytu."
         ),
@@ -313,7 +333,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "karta-stalego-pobytu",
         categorySlug: "pobyty-dlugoterminowe",
         order: 2,
-        title: pl("Pobyt stały"),
+        title: loc("Karta sta\u0142ego pobytu", "Permanent residence card", "\u041a\u0430\u0440\u0442\u0430 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f", "\u041a\u0430\u0440\u0442\u0430 \u043f\u043e\u0441\u0442\u0456\u0439\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f"),
         shortDescription: pl(
           "Bezterminowe zezwolenie na pobyt w Polsce — krok przed wnioskiem o obywatelstwo."
         ),
@@ -342,16 +362,19 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     slug: "procedura-odwolawcza",
     icon: "Scale",
     order: 4,
-    title: pl("Procedura odwoławcza"),
-    description: pl(
-      "Reprezentacja w przypadku przewlekłości postępowania lub negatywnej decyzji urzędu."
+    title: loc("Procedura odwo\u0142awcza", "Appeals procedure", "\u041f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0430 \u043e\u0431\u0436\u0430\u043b\u043e\u0432\u0430\u043d\u0438\u044f", "\u041f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0430 \u043e\u0441\u043a\u0430\u0440\u0436\u0435\u043d\u043d\u044f"),
+    description: loc(
+      "Reprezentacja w przypadku przewlek\u0142o\u015bci post\u0119powania lub negatywnej decyzji urz\u0119du.",
+      "Representation in case of procedural delays or negative decisions from authorities.",
+      "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e \u043f\u0440\u0438 \u0437\u0430\u0442\u044f\u0433\u0438\u0432\u0430\u043d\u0438\u0438 \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u044b \u0438\u043b\u0438 \u043e\u0442\u0440\u0438\u0446\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u043c \u0440\u0435\u0448\u0435\u043d\u0438\u0438.",
+      "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043d\u0438\u0446\u0442\u0432\u043e \u043f\u0440\u0438 \u0437\u0430\u0442\u044f\u0433\u0443\u0432\u0430\u043d\u043d\u0456 \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0438 \u0430\u0431\u043e \u043d\u0435\u0433\u0430\u0442\u0438\u0432\u043d\u043e\u043c\u0443 \u0440\u0456\u0448\u0435\u043d\u043d\u0456."
     ),
     services: [
       {
         slug: "ponaglenia-i-odwolania",
         categorySlug: "procedura-odwolawcza",
         order: 1,
-        title: pl("Ponaglenia i odwołania w sprawach pobytowych"),
+        title: loc("Ponaglenia i odwo\u0142ania", "Appeals and complaints", "\u0416\u0430\u043b\u043e\u0431\u044b \u0438 \u0430\u043f\u0435\u043b\u043b\u044f\u0446\u0438\u0438", "\u0421\u043a\u0430\u0440\u0433\u0438 \u0442\u0430 \u0430\u043f\u0435\u043b\u044f\u0446\u0456\u0457"),
         shortDescription: pl(
           "Reprezentacja w przypadku przewlekłości postępowania (ponaglenie) lub negatywnej decyzji wojewody (odwołanie)."
         ),
@@ -379,16 +402,19 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     slug: "tlumaczenia-przysiegle",
     icon: "Languages",
     order: 5,
-    title: pl("Tłumaczenia przysięgłe"),
-    description: pl(
-      "Pomoc w uzyskaniu tłumaczeń przysięgłych dokumentów wymaganych w procedurach legalizacyjnych."
+    title: loc("T\u0142umaczenia przysi\u0119g\u0142e", "Sworn translations", "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u044b\u0435 \u043f\u0435\u0440\u0435\u0432\u043e\u0434\u044b", "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u0456 \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434\u0438"),
+    description: loc(
+      "Pomoc w uzyskaniu t\u0142umacze\u0144 przysi\u0119g\u0142ych dokument\u00f3w wymaganych w procedurach legalizacyjnych.",
+      "Help with obtaining sworn translations of documents required in legalization procedures.",
+      "\u041f\u043e\u043c\u043e\u0449\u044c \u0432 \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u0438 \u043f\u0440\u0438\u0441\u044f\u0436\u043d\u044b\u0445 \u043f\u0435\u0440\u0435\u0432\u043e\u0434\u043e\u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u043e\u0432 \u0434\u043b\u044f \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440 \u043b\u0435\u0433\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u0438.",
+      "\u0414\u043e\u043f\u043e\u043c\u043e\u0433\u0430 \u0432 \u043e\u0442\u0440\u0438\u043c\u0430\u043d\u043d\u0456 \u043f\u0440\u0438\u0441\u044f\u0436\u043d\u0438\u0445 \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434\u0456\u0432 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0456\u0432 \u0434\u043b\u044f \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440 \u043b\u0435\u0433\u0430\u043b\u0456\u0437\u0430\u0446\u0456\u0457."
     ),
     services: [
       {
         slug: "tlumaczenia-przysiegle",
         categorySlug: "tlumaczenia-przysiegle",
         order: 1,
-        title: pl("Tłumaczenia przysięgłe dokumentów"),
+        title: loc("T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w", "Sworn document translations", "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0432\u043e\u0434 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u043e\u0432", "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u0438\u0439 \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0456\u0432"),
         shortDescription: pl(
           "Tłumaczenia uwierzytelnione dokumentów potrzebnych w procedurach pobytowych i pracowniczych."
         ),
