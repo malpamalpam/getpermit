@@ -14,7 +14,10 @@ export interface BlogPost {
   }>;
 }
 
+import { NEW_BLOG_POSTS } from "./blog-posts-new";
+
 export const BLOG_POSTS: BlogPost[] = [
+  ...NEW_BLOG_POSTS,
   {
     slug: "ochrona-czasowa-ukraincow-po-4-marca-2026",
     title: "Ochrona czasowa Ukraińców po 4 marca 2026 — co się zmienia?",
