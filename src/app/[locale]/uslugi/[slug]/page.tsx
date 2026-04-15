@@ -12,6 +12,8 @@ import {
   localizedList,
 } from "@/lib/services";
 import { routing } from "@/i18n/routing";
+import Image from "next/image";
+import { getServiceHeroImage } from "@/lib/service-images";
 import {
   Clock,
   Wallet,
@@ -36,9 +38,13 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const service = await getServiceBySlug(slug);
   if (!service) return {};
+  const heroImg = getServiceHeroImage(slug);
   return {
     title: localized(service.title, locale),
     description: localized(service.shortDescription, locale),
+    openGraph: {
+      images: [{ url: heroImg.src, width: 1440, height: 480 }],
+    },
   };
 }
 
@@ -65,71 +71,86 @@ export default async function ServiceDetailPage({
   const documents = localizedList(service.requiredDocuments, locale);
   const estimatedTime = localized(service.estimatedTime, locale);
 
+  // TODO: replace Unsplash URLs with authentic photos in /public/images/services/
+  const heroImage = getServiceHeroImage(service.slug);
+  const heroAlt = heroImage.alt[locale] ?? heroImage.alt.pl;
+
   return (
     <article>
-      {/* Header */}
-      <div className="bg-gradient-to-b from-surface to-white py-12 md:py-16">
-        <Container>
-          <nav
-            aria-label="Breadcrumb"
-            className="mb-6 flex items-center gap-2 text-sm text-primary/60"
-          >
-            <Link href="/" className="hover:text-primary">
-              {tNav("home")}
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/uslugi" className="hover:text-primary">
-              {tNav("services")}
-            </Link>
-            {category && (
-              <>
-                <ChevronRight className="h-4 w-4" />
-                <Link
-                  href={{
-                    pathname: "/uslugi",
-                  }}
-                  className="hover:text-primary"
-                >
-                  {localized(category.title, locale)}
-                </Link>
-              </>
-            )}
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-primary">{title}</span>
-          </nav>
+      {/* Hero with image */}
+      <div className="relative overflow-hidden bg-primary">
+        <Image
+          src={heroImage.src}
+          alt={heroAlt}
+          width={1440}
+          height={480}
+          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          priority
+          sizes="100vw"
+        />
+        <div className="relative z-10 py-16 md:py-20">
+          <Container>
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-6 flex items-center gap-2 text-sm text-white/60"
+            >
+              <Link href="/" className="hover:text-white">
+                {tNav("home")}
+              </Link>
+              <ChevronRight className="h-4 w-4" />
+              <Link href="/uslugi" className="hover:text-white">
+                {tNav("services")}
+              </Link>
+              {category && (
+                <>
+                  <ChevronRight className="h-4 w-4" />
+                  <Link
+                    href={{
+                      pathname: "/uslugi",
+                    }}
+                    className="hover:text-white"
+                  >
+                    {localized(category.title, locale)}
+                  </Link>
+                </>
+              )}
+              <ChevronRight className="h-4 w-4" />
+              <span className="text-white">{title}</span>
+            </nav>
 
-          <h1 className="font-display text-4xl font-bold text-primary md:text-5xl">
-            {title}
-          </h1>
-          <p className="mt-4 max-w-3xl text-lg text-primary/70">{shortDesc}</p>
+            <h1 className="font-display text-4xl font-bold text-white md:text-5xl">
+              {title}
+            </h1>
+            <p className="mt-4 max-w-3xl text-lg text-white/80">{shortDesc}</p>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            {service.price && (
-              <div className="flex items-center gap-2 rounded-lg border border-primary/10 bg-white px-4 py-2.5 shadow-sm">
-                <Wallet className="h-5 w-5 text-accent" />
+            <div className="mt-8 flex flex-wrap gap-4">
+              {service.price && (
+                <div className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm">
+                  <Wallet className="h-5 w-5 text-brand" />
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-white/60">
+                      {t("price")}
+                    </div>
+                    <div className="font-semibold text-white">
+                      {service.price}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm">
+                <Clock className="h-5 w-5 text-brand" />
                 <div>
-                  <div className="text-xs uppercase tracking-wider text-primary/50">
-                    {t("price")}
+                  <div className="text-xs uppercase tracking-wider text-white/60">
+                    {t("duration")}
                   </div>
-                  <div className="font-semibold text-primary">
-                    {service.price}
+                  <div className="font-semibold text-white">
+                    {estimatedTime}
                   </div>
-                </div>
-              </div>
-            )}
-            <div className="flex items-center gap-2 rounded-lg border border-primary/10 bg-white px-4 py-2.5 shadow-sm">
-              <Clock className="h-5 w-5 text-accent" />
-              <div>
-                <div className="text-xs uppercase tracking-wider text-primary/50">
-                  {t("duration")}
-                </div>
-                <div className="font-semibold text-primary">
-                  {estimatedTime}
                 </div>
               </div>
             </div>
-          </div>
-        </Container>
+          </Container>
+        </div>
       </div>
 
       {/* Body */}
@@ -199,6 +220,31 @@ export default async function ServiceDetailPage({
           </aside>
         </div>
       </Container>
+
+      {/* Schema.org JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: title,
+            description: shortDesc,
+            provider: {
+              "@type": "Organization",
+              name: "UTM Group Grzegorz Stępień",
+              url: "https://getpermit.pl",
+            },
+            areaServed: { "@type": "Country", name: "Poland" },
+            image: {
+              "@type": "ImageObject",
+              url: heroImage.src,
+              width: 1440,
+              height: 480,
+            },
+          }),
+        }}
+      />
     </article>
   );
 }

@@ -1,9 +1,11 @@
+import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import {
   SERVICE_CATEGORIES,
   localized,
 } from "@/lib/services";
+import { CATEGORY_IMAGES } from "@/lib/service-images";
 import {
   ArrowRight,
 } from "lucide-react";
@@ -38,8 +40,20 @@ export function ServicesGrid() {
                 href={`/${locale}/uslugi#${category.slug}`}
                 className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-white shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl"
               >
-                <div className="bg-gradient-to-br from-primary-800 via-primary-700 to-[#1a2f5a] px-8 py-4">
-                  <h3 className="font-display text-xl font-extrabold text-white">
+                <div className="relative overflow-hidden bg-primary px-8 py-6">
+                  {/* TODO: replace with authentic photos */}
+                  {CATEGORY_IMAGES[category.slug] && (
+                    <Image
+                      src={CATEGORY_IMAGES[category.slug]}
+                      alt=""
+                      role="presentation"
+                      width={800}
+                      height={300}
+                      className="absolute inset-0 h-full w-full object-cover opacity-25"
+                      loading="lazy"
+                    />
+                  )}
+                  <h3 className="relative z-10 font-display text-xl font-extrabold text-white">
                     {localized(category.title, locale)}
                   </h3>
                 </div>
