@@ -52,7 +52,7 @@ export function BookingDialog({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl" style={{ height: "90vh" }}>
+      <div className="relative w-full max-w-6xl rounded-2xl bg-white shadow-2xl" style={{ height: "95vh", maxHeight: "900px" }}>
         <button
           type="button"
           onClick={onClose}

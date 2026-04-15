@@ -2,8 +2,16 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { contactFormSchema } from "@/lib/validations";
 import { siteConfig } from "@/config/site";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limiting na IP
+  const forwarded = request.headers.get("x-forwarded-for");
+  const ip = forwarded?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? "unknown";
+  const rl = checkRateLimit(`contact:${ip}`, RATE_LIMITS.contact);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
   let body: unknown;
   try {
     body = await request.json();

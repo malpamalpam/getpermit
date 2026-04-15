@@ -9,6 +9,19 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { routing } from "@/i18n/routing";
 import { syncUserFromAuth } from "@/lib/sync-user";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { headers } from "next/headers";
+
+async function getClientIp(): Promise<string> {
+  try {
+    const hdrs = await headers();
+    const forwarded = hdrs.get("x-forwarded-for");
+    if (forwarded) return forwarded.split(",")[0].trim();
+    return hdrs.get("x-real-ip") ?? "unknown";
+  } catch {
+    return "unknown";
+  }
+}
 
 /* ============================================================================ */
 /*                              REJESTRACJA                                     */
@@ -41,6 +54,13 @@ export async function registerAction(input: {
   const parsed = registerSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "validation" };
+  }
+
+  // Rate limiting na IP
+  const ip = await getClientIp();
+  const rl = checkRateLimit(`register:${ip}`, RATE_LIMITS.register);
+  if (!rl.allowed) {
+    return { ok: false, error: "general" };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -129,6 +149,14 @@ export async function loginAction(input: {
     return { ok: false, error: "validation" };
   }
 
+  // Rate limiting na IP
+  const ip = await getClientIp();
+  const rl = checkRateLimit(`login:${ip}`, RATE_LIMITS.login);
+  if (!rl.allowed) {
+    console.warn(`[login] Rate limited IP=${ip}, retry in ${rl.retryAfterSeconds}s`);
+    return { ok: false, error: "general" };
+  }
+
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -138,6 +166,14 @@ export async function loginAction(input: {
 
   if (error) {
     console.error("[login] Supabase error:", error.message);
+    // Loguj nieudaną próbę
+    void db.accessLog.create({
+      data: {
+        action: "VIEW_CASE", // reuse existing enum — closest match
+        ipAddress: ip,
+        metadata: { event: "login_failed", email: parsed.data.email },
+      },
+    }).catch(() => {});
     return { ok: false, error: "invalid_credentials" };
   }
 
@@ -170,6 +206,13 @@ export async function resetPasswordAction(input: {
   const parsed = z.object({ email: z.string().trim().toLowerCase().email() }).safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "validation" };
+  }
+
+  // Rate limiting na IP
+  const ip = await getClientIp();
+  const rl = checkRateLimit(`reset:${ip}`, RATE_LIMITS.resetPassword);
+  if (!rl.allowed) {
+    return { ok: true }; // nie ujawniaj rate limitu — zwróć "ok" jak zwykle
   }
 
   const supabase = await createSupabaseServerClient();

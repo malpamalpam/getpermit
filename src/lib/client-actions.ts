@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { DocumentType } from "@prisma/client";
 import { logAccess } from "@/lib/access-log";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import {
   notifyAdminNewClientDocument,
   notifyClientNewMessage,
@@ -25,8 +26,37 @@ const ALLOWED_MIME_TYPES = [
 ];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
+// Magic bytes dla walidacji prawdziwego typu pliku
+const MAGIC_BYTES: Record<string, number[]> = {
+  "image/png": [0x89, 0x50, 0x4e, 0x47],       // PNG
+  "image/jpeg": [0xff, 0xd8, 0xff],             // JPEG
+  "application/pdf": [0x25, 0x50, 0x44, 0x46],  // %PDF
+};
+
+function validateMagicBytes(buffer: Buffer, mimeType: string): boolean {
+  const expected = MAGIC_BYTES[mimeType] ?? MAGIC_BYTES["image/jpeg"];
+  if (!expected) return true; // nieznany typ — przepuść
+  if (buffer.length < expected.length) return false;
+  return expected.every((byte, i) => buffer[i] === byte);
+}
+
+/** Usuwa znaki niebezpieczne z nazwy pliku */
+function sanitizeFileName(name: string): string {
+  return name
+    .replace(/[/\\:*?"<>|]/g, "_")  // znaki niedozwolone
+    .replace(/\.\./g, "_")          // path traversal
+    .replace(/^\./g, "_")           // ukryte pliki
+    .slice(0, 200);                 // limit długości
+}
+
 export async function uploadClientDocumentAction(formData: FormData) {
   const user = await requireUser();
+
+  // Rate limiting
+  const rl = checkRateLimit(`upload:${user.id}`, RATE_LIMITS.upload);
+  if (!rl.allowed) {
+    return { ok: false as const, error: "rate_limited" };
+  }
 
   const caseId = formData.get("caseId") as string;
   const file = formData.get("file") as File | null;
@@ -58,10 +88,16 @@ export async function uploadClientDocumentAction(formData: FormData) {
     return { ok: false as const, error: "invalid_document_type" };
   }
 
+  // Walidacja magic bytes — sprawdź prawdziwy typ pliku
+  const buffer = Buffer.from(await file.arrayBuffer());
+  if (!validateMagicBytes(buffer, file.type)) {
+    return { ok: false as const, error: "invalid_file_type" };
+  }
+
   // Upload do Supabase Storage
   const supabase = createSupabaseAdminClient();
-  const storagePath = `${caseId}/client/${crypto.randomUUID()}-${file.name}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const safeName = sanitizeFileName(file.name);
+  const storagePath = `${caseId}/client/${crypto.randomUUID()}-${safeName}`;
 
   const { error: uploadError } = await supabase.storage
     .from("case-documents")
@@ -83,7 +119,7 @@ export async function uploadClientDocumentAction(formData: FormData) {
   await db.document.create({
     data: {
       caseId,
-      fileName: file.name,
+      fileName: safeName,
       storagePath,
       fileSize: file.size,
       mimeType: file.type,
@@ -153,6 +189,12 @@ const messageSchema = z.object({
 
 export async function sendMessageAction(input: z.infer<typeof messageSchema>) {
   const user = await requireUser();
+
+  // Rate limiting
+  const rl = checkRateLimit(`message:${user.id}`, RATE_LIMITS.message);
+  if (!rl.allowed) {
+    return { ok: false as const, error: "rate_limited" };
+  }
 
   const parsed = messageSchema.safeParse(input);
   if (!parsed.success) {

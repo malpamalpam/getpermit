@@ -216,7 +216,12 @@ export async function uploadDocumentAction(formData: FormData) {
 
   // Wgranie pliku do Supabase Storage przez admin client (omija RLS)
   const supabase = createSupabaseAdminClient();
-  const storagePath = `${caseId}/${crypto.randomUUID()}-${file.name}`;
+  const safeName = file.name
+    .replace(/[/\\:*?"<>|]/g, "_")
+    .replace(/\.\./g, "_")
+    .replace(/^\./g, "_")
+    .slice(0, 200);
+  const storagePath = `${caseId}/${crypto.randomUUID()}-${safeName}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const { error: uploadError } = await supabase.storage
@@ -234,7 +239,7 @@ export async function uploadDocumentAction(formData: FormData) {
   await db.document.create({
     data: {
       caseId,
-      fileName: file.name,
+      fileName: safeName,
       storagePath,
       fileSize: file.size,
       mimeType: file.type || "application/octet-stream",
