@@ -79,18 +79,16 @@ export function BookingDialog({
     >
       <div
         ref={containerRef}
-        className="relative w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="relative w-full max-w-5xl rounded-2xl bg-white shadow-2xl"
         style={{
-          height: "95vh",
-          minHeight: "640px",
-          maxHeight: "960px",
+          height: "min(90vh, 780px)",
         }}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Zamknij"
-          className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-lg transition hover:bg-gray-100"
+          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-lg transition hover:bg-gray-100"
         >
           <X className="h-5 w-5" />
         </button>
@@ -98,10 +96,10 @@ export function BookingDialog({
           ref={iframeRef}
           src={embedUrl}
           title="Cal.com — umów konsultację"
-          className="h-full w-full border-0"
+          className="h-full w-full rounded-2xl border-0"
           loading="lazy"
           allow="payment"
-          style={{ minHeight: "600px" }}
+          scrolling="no"
         />
       </div>
     </div>
