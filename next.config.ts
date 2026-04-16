@@ -58,7 +58,12 @@ const nextConfig: NextConfig = {
 
     // EN: zlokalizowane ścieżki → fizyczne foldery
     rewrites.push({ source: "/en/services", destination: "/en/uslugi" });
+    rewrites.push({ source: "/en/services/for-employers", destination: "/en/uslugi/dla-pracodawcow" });
     rewrites.push({ source: "/en/services/:slug", destination: "/en/uslugi/:slug" });
+
+    // Dla pracodawców — zlokalizowane slugi dla dedykowanej podstrony
+    rewrites.push({ source: "/ru/uslugi/dlya-rabotodatelej", destination: "/ru/uslugi/dla-pracodawcow" });
+    rewrites.push({ source: "/uk/poslugy/dlya-robotodavciv", destination: "/uk/uslugi/dla-pracodawcow" });
     rewrites.push({ source: "/en/about", destination: "/en/o-nas" });
     rewrites.push({ source: "/en/contact", destination: "/en/kontakt" });
     rewrites.push({ source: "/en/privacy-policy", destination: "/en/polityka-prywatnosci" });

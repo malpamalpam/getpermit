@@ -73,6 +73,13 @@ export const SERVICE_SLUG_MAP: Record<string, Record<string, string>> = {
     ru: "prisyazhnye-perevody",
     uk: "prysyazhni-pereklady",
   },
+  // Dla pracodawców — dedykowany landing
+  "dla-pracodawcow": {
+    pl: "dla-pracodawcow",
+    en: "for-employers",
+    ru: "dlya-rabotodatelej",
+    uk: "dlya-robotodavciv",
+  },
 };
 
 /** Ścieżka bazowa usług per locale */
@@ -114,6 +121,12 @@ export const CATEGORY_SLUG_MAP: Record<string, Record<string, string>> = {
     en: "sworn-translations",
     ru: "prisyazhnye-perevody",
     uk: "prysyazhni-pereklady",
+  },
+  "dla-pracodawcow": {
+    pl: "dla-pracodawcow",
+    en: "for-employers",
+    ru: "dlya-rabotodatelej",
+    uk: "dlya-robotodavciv",
   },
 };
 

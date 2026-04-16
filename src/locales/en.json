@@ -589,6 +589,68 @@
     "accept": "Got it",
     "privacyLink": "Privacy policy"
   },
+  "employers": {
+    "metaTitle": "For Employers \u2014 Hiring Foreigners | getpermit.pl",
+    "metaDescription": "Complete service for companies employing foreigners in Poland. Work permits, declarations, audit, HR support. Free consultation.",
+    "heroTitle": "Hiring foreigners? Ensure legality and peace of mind",
+    "heroSubtitle": "Complete service for employers: work permits, declarations, document audits, HR support. 10+ years of experience, 98% success rate.",
+    "heroAlt": "Services for employers hiring foreigners in Poland",
+    "ctaPrimary": "Book a free consultation",
+    "servicesTitle": "Our services for companies",
+    "servicesSubtitle": "Everything you need to legally employ foreign workers.",
+    "services": {
+      "workPermits": {
+        "title": "Work permits",
+        "desc": "Handling of type A, B, C, D, E work permits for your non-EU employees."
+      },
+      "declarations": {
+        "title": "Employment declarations",
+        "desc": "Simplified procedure for citizens of Ukraine, Belarus, Russia, Moldova, Georgia, and Armenia."
+      },
+      "audit": {
+        "title": "Employment legality audit",
+        "desc": "Verification of foreign employees' documents \u2014 minimize the risk of labor inspection penalties."
+      },
+      "recruitment": {
+        "title": "Recruitment support",
+        "desc": "Help with hiring non-EU specialists \u2014 EU Blue Card, secondment, intra-corporate transfer."
+      },
+      "support": {
+        "title": "Ongoing HR support",
+        "desc": "Subscription: current handling of employee documents, applications, notifications to authorities."
+      },
+      "training": {
+        "title": "HR training",
+        "desc": "Training and workshops for HR teams on legally hiring foreigners."
+      }
+    },
+    "benefitsTitle": "Why work with us?",
+    "benefitsSubtitle": "We give employers the confidence that hiring foreigners is safe and compliant with the law.",
+    "benefits": {
+      "benefit1": {
+        "title": "10+ years of experience",
+        "desc": "We serve companies from small businesses to large corporations across various industries."
+      },
+      "benefit2": {
+        "title": "98% success rate",
+        "desc": "The vast majority of cases end with a positive decision from the authorities."
+      },
+      "benefit3": {
+        "title": "Save time",
+        "desc": "We handle the formalities \u2014 you can focus on your business."
+      },
+      "benefit4": {
+        "title": "Dedicated account manager",
+        "desc": "One point of contact for all matters \u2014 fast communication and continuity."
+      },
+      "benefit5": {
+        "title": "Labor inspection ready",
+        "desc": "Your documents are always in order, ready for State Labor Inspectorate (PIP) audits."
+      }
+    },
+    "ctaTitle": "Want to learn more?",
+    "ctaSubtitle": "Fill out the form \u2014 we'll contact you within 24 hours with a quote and cooperation proposal."
+  },
   "blog": {
     "metaTitle": "Blog — getpermit.pl",
     "metaDescription": "News, guides and analysis on residence and work legalization for foreigners in Poland.",

@@ -6,13 +6,15 @@ import {
   localized,
   type ServiceCategoryIcon,
 } from "@/lib/services";
-import { getLocalizedCategorySlug } from "@/lib/service-slugs";
+import { getLocalizedCategorySlug, getLocalizedSlug, SERVICE_BASE_PATH } from "@/lib/service-slugs";
+import { Link } from "@/i18n/routing";
 import {
   Briefcase,
   Home,
   MapPin,
   Scale,
   Languages,
+  ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 
@@ -80,6 +82,17 @@ export default async function ServicesPage({
                     <ServiceCard key={service.slug} service={service} />
                   ))}
                 </div>
+                {category.slug === "dla-pracodawcow" && (
+                  <div className="mt-6">
+                    <a
+                      href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}/${getLocalizedSlug("dla-pracodawcow", locale)}`}
+                      className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                    >
+                      {localized(category.title, locale)} \u2014 {t("viewDetails")}
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </div>
+                )}
               </section>
             );
           })}

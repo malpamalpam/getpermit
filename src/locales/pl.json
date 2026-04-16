@@ -589,6 +589,68 @@
     "accept": "Rozumiem",
     "privacyLink": "Polityka prywatności"
   },
+  "employers": {
+    "metaTitle": "Dla Pracodawc\u00f3w \u2014 zatrudnianie cudzoziemc\u00f3w | getpermit.pl",
+    "metaDescription": "Kompleksowa obs\u0142uga firm zatrudniaj\u0105cych cudzoziemc\u00f3w w Polsce. Zezwolenia na prac\u0119, o\u015bwiadczenia, audyt legalno\u015bci, wsparcie HR. Bezp\u0142atna konsultacja.",
+    "heroTitle": "Zatrudniasz cudzoziemc\u00f3w? Zadbaj o legalno\u015b\u0107 i spok\u00f3j ducha",
+    "heroSubtitle": "Kompleksowa obs\u0142uga pracodawc\u00f3w: zezwolenia na prac\u0119, o\u015bwiadczenia, audyt dokument\u00f3w, wsparcie HR. 10+ lat do\u015bwiadczenia, 98% skuteczno\u015bci.",
+    "heroAlt": "Us\u0142ugi dla pracodawc\u00f3w zatrudniaj\u0105cych cudzoziemc\u00f3w w Polsce",
+    "ctaPrimary": "Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119",
+    "servicesTitle": "Nasze us\u0142ugi dla firm",
+    "servicesSubtitle": "Wszystko czego potrzebujesz, aby legalnie zatrudnia\u0107 pracownik\u00f3w zza granicy.",
+    "services": {
+      "workPermits": {
+        "title": "Zezwolenia na prac\u0119",
+        "desc": "Obs\u0142uga zezwole\u0144 typu A, B, C, D, E dla Twoich pracownik\u00f3w spoza UE."
+      },
+      "declarations": {
+        "title": "O\u015bwiadczenia o powierzeniu pracy",
+        "desc": "Uproszczona procedura dla obywateli Ukrainy, Bia\u0142orusi, Rosji, Mo\u0142dawii, Gruzji i Armenii."
+      },
+      "audit": {
+        "title": "Audyt legalno\u015bci zatrudnienia",
+        "desc": "Sprawdzenie dokument\u00f3w cudzoziemc\u00f3w w Twojej firmie \u2014 minimalizacja ryzyka kar PIP."
+      },
+      "recruitment": {
+        "title": "Wsparcie rekrutacji",
+        "desc": "Pomoc w zatrudnianiu specjalist\u00f3w spoza UE \u2014 EU Blue Card, delegowanie, transfer wewn\u0105trzkorporacyjny."
+      },
+      "support": {
+        "title": "Sta\u0142a obs\u0142uga HR",
+        "desc": "Abonament: bie\u017c\u0105ca obs\u0142uga dokument\u00f3w pracowniczych, wnioski, powiadomienia do urz\u0119d\u00f3w."
+      },
+      "training": {
+        "title": "Szkolenia dla HR",
+        "desc": "Szkolenia i warsztaty dla zespo\u0142\u00f3w HR z zakresu zatrudniania cudzoziemc\u00f3w zgodnie z prawem."
+      }
+    },
+    "benefitsTitle": "Dlaczego warto z nami wsp\u00f3\u0142pracowa\u0107?",
+    "benefitsSubtitle": "Dajemy pracodawcom pewno\u015b\u0107, \u017ce zatrudnianie cudzoziemc\u00f3w jest bezpieczne i zgodne z prawem.",
+    "benefits": {
+      "benefit1": {
+        "title": "10+ lat do\u015bwiadczenia",
+        "desc": "Obs\u0142ugujemy firmy od ma\u0142ych przedsi\u0119biorstw po du\u017ce korporacje z r\u00f3\u017cnych bran\u017c."
+      },
+      "benefit2": {
+        "title": "98% skuteczno\u015bci",
+        "desc": "Znakomita wi\u0119kszo\u015b\u0107 spraw ko\u0144czy si\u0119 pozytywn\u0105 decyzj\u0105 urz\u0119du."
+      },
+      "benefit3": {
+        "title": "Oszcz\u0119dno\u015b\u0107 czasu",
+        "desc": "Bierzemy na siebie formalno\u015bci \u2014 Ty mo\u017cesz si\u0119 skupi\u0107 na biznesie."
+      },
+      "benefit4": {
+        "title": "Dedykowany opiekun",
+        "desc": "Jedna osoba kontaktowa dla wszystkich spraw \u2014 szybka komunikacja i ci\u0105g\u0142o\u015b\u0107."
+      },
+      "benefit5": {
+        "title": "Gotowo\u015b\u0107 kontrolna PIP",
+        "desc": "Twoje dokumenty zawsze w porz\u0105dku, gotowe do kontroli Pa\u0144stwowej Inspekcji Pracy."
+      }
+    },
+    "ctaTitle": "Chcesz dowiedzie\u0107 si\u0119 wi\u0119cej?",
+    "ctaSubtitle": "Wype\u0142nij formularz \u2014 skontaktujemy si\u0119 w ci\u0105gu 24 godzin z wycen\u0105 i propozycj\u0105 wsp\u00f3\u0142pracy."
+  },
   "blog": {
     "metaTitle": "Blog — getpermit.pl",
     "metaDescription": "Aktualności, poradniki i analizy dotyczące legalizacji pobytu i pracy cudzoziemców w Polsce.",

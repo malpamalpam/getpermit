@@ -65,6 +65,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
+    // Dedykowana podstrona "Dla pracodawców"
+    entries.push({
+      url: `${base}/${locale}/${basePath}/${getLocalizedSlug("dla-pracodawcow", locale)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    });
+
     // Blog posts
     const localePosts = getAllBlogPosts(locale);
     for (const post of localePosts) {

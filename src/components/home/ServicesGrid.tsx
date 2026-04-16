@@ -6,7 +6,7 @@ import {
   localized,
 } from "@/lib/services";
 import { CATEGORY_IMAGES } from "@/lib/service-images";
-import { SERVICE_BASE_PATH, getLocalizedCategorySlug } from "@/lib/service-slugs";
+import { SERVICE_BASE_PATH, getLocalizedCategorySlug, getLocalizedSlug } from "@/lib/service-slugs";
 import {
   ArrowRight,
 } from "lucide-react";
@@ -35,10 +35,17 @@ export function ServicesGrid() {
 
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {sortedCategories.map((category) => {
+            // Dla kategorii "dla-pracodawcow" link prowadzi do dedykowanej podstrony
+            const base = SERVICE_BASE_PATH[locale] ?? "uslugi";
+            const href =
+              category.slug === "dla-pracodawcow"
+                ? `/${locale}/${base}/${getLocalizedSlug("dla-pracodawcow", locale)}`
+                : `/${locale}/${base}#${getLocalizedCategorySlug(category.slug, locale)}`;
+
             return (
               <a
                 key={category.slug}
-                href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}#${getLocalizedCategorySlug(category.slug, locale)}`}
+                href={href}
                 className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-white shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl"
               >
                 <div className="relative overflow-hidden bg-primary px-8 py-6">
