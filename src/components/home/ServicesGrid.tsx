@@ -6,7 +6,7 @@ import {
   localized,
 } from "@/lib/services";
 import { CATEGORY_IMAGES } from "@/lib/service-images";
-import { SERVICE_BASE_PATH } from "@/lib/service-slugs";
+import { SERVICE_BASE_PATH, getLocalizedCategorySlug } from "@/lib/service-slugs";
 import {
   ArrowRight,
 } from "lucide-react";
@@ -38,7 +38,7 @@ export function ServicesGrid() {
             return (
               <a
                 key={category.slug}
-                href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}#${category.slug}`}
+                href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}#${getLocalizedCategorySlug(category.slug, locale)}`}
                 className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-white shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl"
               >
                 <div className="relative overflow-hidden bg-primary px-8 py-6">

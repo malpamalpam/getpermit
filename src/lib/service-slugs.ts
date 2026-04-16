@@ -83,6 +83,44 @@ export const SERVICE_BASE_PATH: Record<string, string> = {
   uk: "poslugy",
 };
 
+/** Slugi kategorii per locale (używane jako kotwice na /uslugi) */
+export const CATEGORY_SLUG_MAP: Record<string, Record<string, string>> = {
+  "legalizacja-pracy": {
+    pl: "legalizacja-pracy",
+    en: "work-legalization",
+    ru: "legalizaciya-raboty",
+    uk: "legalizaciya-roboty",
+  },
+  "legalizacja-pobytu": {
+    pl: "legalizacja-pobytu",
+    en: "residence-legalization",
+    ru: "legalizaciya-prozhivaniya",
+    uk: "legalizaciya-prozyvannia",
+  },
+  "pobyty-dlugoterminowe": {
+    pl: "pobyty-dlugoterminowe",
+    en: "long-term-residence",
+    ru: "dolgosrochnoe-prozhivanie",
+    uk: "dovgostrokove-prozyvannia",
+  },
+  "procedura-odwolawcza": {
+    pl: "procedura-odwolawcza",
+    en: "appeals-procedure",
+    ru: "procedura-obzhalovaniya",
+    uk: "procedura-oskarzhennia",
+  },
+  "tlumaczenia-przysiegle": {
+    pl: "tlumaczenia-przysiegle",
+    en: "sworn-translations",
+    ru: "prisyazhnye-perevody",
+    uk: "prysyazhni-pereklady",
+  },
+};
+
+export function getLocalizedCategorySlug(internalSlug: string, locale: string): string {
+  return CATEGORY_SLUG_MAP[internalSlug]?.[locale] ?? internalSlug;
+}
+
 /** Zwraca zlokalizowany slug usługi */
 export function getLocalizedSlug(internalSlug: string, locale: string): string {
   return SERVICE_SLUG_MAP[internalSlug]?.[locale] ?? SERVICE_SLUG_MAP[internalSlug]?.pl ?? internalSlug;

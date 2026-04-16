@@ -188,8 +188,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "legalizacja-pobytu",
         order: 1,
         title: loc("Karta pobytu czasowego", "Temporary residence card", "\u041a\u0430\u0440\u0442\u0430 \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f", "\u041a\u0430\u0440\u0442\u0430 \u0442\u0438\u043c\u0447\u0430\u0441\u043e\u0432\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f"),
-        shortDescription: pl(
-          "Karta pobytu wydawana przez wojewodę na okres do 3 lat — dla studiów, rodziny, działalności i innych celów."
+        shortDescription: loc(
+          "Karta pobytu wydawana przez wojewod\u0119 na okres do 3 lat \u2014 dla studi\u00f3w, rodziny, dzia\u0142alno\u015bci i innych cel\u00f3w.",
+          "Residence card issued by the voivode for up to 3 years \u2014 for studies, family, business and other purposes.",
+          "\u041a\u0430\u0440\u0442\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f, \u0432\u044b\u0434\u0430\u0432\u0430\u0435\u043c\u0430\u044f \u0432\u043e\u0435\u0432\u043e\u0434\u043e\u0439 \u043d\u0430 \u0441\u0440\u043e\u043a \u0434\u043e 3 \u043b\u0435\u0442 \u2014 \u0434\u043b\u044f \u0443\u0447\u0451\u0431\u044b, \u0441\u0435\u043c\u044c\u0438, \u0431\u0438\u0437\u043d\u0435\u0441\u0430 \u0438 \u0434\u0440\u0443\u0433\u0438\u0445 \u0446\u0435\u043b\u0435\u0439.",
+          "\u041a\u0430\u0440\u0442\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f, \u0449\u043e \u0432\u0438\u0434\u0430\u0454\u0442\u044c\u0441\u044f \u0432\u043e\u0454\u0432\u043e\u0434\u043e\u044e \u043d\u0430 \u0442\u0435\u0440\u043c\u0456\u043d \u0434\u043e 3 \u0440\u043e\u043a\u0456\u0432 \u2014 \u0434\u043b\u044f \u043d\u0430\u0432\u0447\u0430\u043d\u043d\u044f, \u0441\u0456\u043c'\u0457, \u0431\u0456\u0437\u043d\u0435\u0441\u0443 \u0442\u0430 \u0456\u043d\u0448\u0438\u0445 \u0446\u0456\u043b\u0435\u0439."
         ),
         fullDescription: pl(
           "Zezwolenie na pobyt czasowy to karta pobytu wydawana przez wojewodę na okres do 3 lat, przeznaczona dla cudzoziemców, którzy mają konkretny cel pobytu w Polsce: studia, łączenie rodzin, prowadzenie działalności gospodarczej, prowadzenie badań naukowych lub inne uzasadnione okoliczności. Pomagamy w skompletowaniu pełnej dokumentacji wymaganej przez wojewodę, przygotowaniu uzasadnienia wniosku oraz reprezentacji klienta na każdym etapie postępowania administracyjnego."
@@ -214,8 +217,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "legalizacja-pobytu",
         order: 2,
         title: loc("Zezwolenie na pobyt czasowy i prac\u0119", "Residence and work permit", "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u043d\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0438 \u0440\u0430\u0431\u043e\u0442\u0443", "\u0414\u043e\u0437\u0432\u0456\u043b \u043d\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0442\u0430 \u0440\u043e\u0431\u043e\u0442\u0443"),
-        shortDescription: pl(
-          "Tzw. „jedno zezwolenie\u201d — łączy pobyt z prawem do pracy u konkretnego pracodawcy. Najpopularniejsza ścieżka."
+        shortDescription: loc(
+          "Tzw. \u201ejedno zezwolenie\u201d \u2014 \u0142\u0105czy pobyt z prawem do pracy u konkretnego pracodawcy. Najpopularniejsza \u015bcie\u017cka.",
+          "The \"single permit\" \u2014 combines residence with the right to work for a specific employer. The most popular path.",
+          "\u00ab\u0415\u0434\u0438\u043d\u043e\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435\u00bb \u2014 \u043e\u0431\u044a\u0435\u0434\u0438\u043d\u044f\u0435\u0442 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0441 \u043f\u0440\u0430\u0432\u043e\u043c \u0440\u0430\u0431\u043e\u0442\u044b \u0443 \u043a\u043e\u043d\u043a\u0440\u0435\u0442\u043d\u043e\u0433\u043e \u0440\u0430\u0431\u043e\u0442\u043e\u0434\u0430\u0442\u0435\u043b\u044f.",
+          "\u00ab\u0404\u0434\u0438\u043d\u0438\u0439 \u0434\u043e\u0437\u0432\u0456\u043b\u00bb \u2014 \u043f\u043e\u0454\u0434\u043d\u0443\u0454 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0437 \u043f\u0440\u0430\u0432\u043e\u043c \u043d\u0430 \u0440\u043e\u0431\u043e\u0442\u0443 \u0443 \u043a\u043e\u043d\u043a\u0440\u0435\u0442\u043d\u043e\u0433\u043e \u0440\u043e\u0431\u043e\u0442\u043e\u0434\u0430\u0432\u0446\u044f."
         ),
         fullDescription: pl(
           "Zezwolenie na pobyt czasowy i pracę, znane jako „jedno zezwolenie\u201d, to najpopularniejsza ścieżka dla cudzoziemców spoza UE pracujących w Polsce. Łączy w sobie zezwolenie pobytowe i prawo do wykonywania pracy u konkretnego pracodawcy — eliminuje konieczność prowadzenia dwóch równoległych postępowań. Reprezentujemy zarówno cudzoziemca, jak i pracodawcę przed wojewodą, dbając o pełną zgodność dokumentacji z aktualnymi wymogami prawnymi."
@@ -240,8 +246,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "legalizacja-pobytu",
         order: 3,
         title: loc("EU Blue Card", "EU Blue Card", "EU Blue Card", "EU Blue Card"),
-        shortDescription: pl(
-          "Zezwolenie dla wysoko wykwalifikowanych specjalistów — ułatwiony dostęp do rynku pracy w całej UE."
+        shortDescription: loc(
+          "Zezwolenie dla wysoko wykwalifikowanych specjalist\u00f3w \u2014 u\u0142atwiony dost\u0119p do rynku pracy w ca\u0142ej UE.",
+          "Permit for highly qualified specialists \u2014 easier access to the EU labor market.",
+          "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u0434\u043b\u044f \u0432\u044b\u0441\u043e\u043a\u043e\u043a\u0432\u0430\u043b\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0445 \u0441\u043f\u0435\u0446\u0438\u0430\u043b\u0438\u0441\u0442\u043e\u0432 \u2014 \u0443\u043f\u0440\u043e\u0449\u0451\u043d\u043d\u044b\u0439 \u0434\u043e\u0441\u0442\u0443\u043f \u043a \u0440\u044b\u043d\u043a\u0443 \u0442\u0440\u0443\u0434\u0430 \u0432 \u0415\u0421.",
+          "\u0414\u043e\u0437\u0432\u0456\u043b \u0434\u043b\u044f \u0432\u0438\u0441\u043e\u043a\u043e\u043a\u0432\u0430\u043b\u0456\u0444\u0456\u043a\u043e\u0432\u0430\u043d\u0438\u0445 \u0441\u043f\u0435\u0446\u0456\u0430\u043b\u0456\u0441\u0442\u0456\u0432 \u2014 \u0441\u043f\u0440\u043e\u0449\u0435\u043d\u0438\u0439 \u0434\u043e\u0441\u0442\u0443\u043f \u0434\u043e \u0440\u0438\u043d\u043a\u0443 \u043f\u0440\u0430\u0446\u0456 \u0404\u0421."
         ),
         fullDescription: pl(
           "EU Blue Card to zezwolenie na pobyt i pracę dedykowane wysoko wykwalifikowanym specjalistom — wymaga wykształcenia wyższego oraz wynagrodzenia powyżej określonego progu. Posiadanie Niebieskiej Karty UE daje istotne ułatwienia: szybsze uzyskanie zezwolenia na pobyt rezydenta długoterminowego, krótsze wymagane okresy pobytu przy łączeniu rodzin oraz ułatwiony dostęp do rynku pracy w innych państwach członkowskich UE. Pomagamy w pełnym procesie aplikacyjnym, od weryfikacji uprawnień po reprezentację przed urzędem."
@@ -266,8 +275,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "legalizacja-pobytu",
         order: 4,
         title: loc("Wymiana karty pobytu", "Residence card replacement", "\u0417\u0430\u043c\u0435\u043d\u0430 \u043a\u0430\u0440\u0442\u044b \u043f\u043e\u0431\u044b\u0442\u0443", "\u0417\u0430\u043c\u0456\u043d\u0430 \u043a\u0430\u0440\u0442\u0438 \u043f\u043e\u0431\u0443\u0442\u0443"),
-        shortDescription: pl(
-          "Procedura wymiany karty pobytu w razie utraty, zniszczenia, zmiany danych lub upływu terminu ważności."
+        shortDescription: loc(
+          "Procedura wymiany karty pobytu w razie utraty, zniszczenia, zmiany danych lub up\u0142ywu terminu wa\u017cno\u015bci.",
+          "Residence card replacement procedure in case of loss, damage, data change or expiration.",
+          "\u041f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0430 \u0437\u0430\u043c\u0435\u043d\u044b \u043a\u0430\u0440\u0442\u044b \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f \u0432 \u0441\u043b\u0443\u0447\u0430\u0435 \u0443\u0442\u0435\u0440\u0438, \u043f\u043e\u0432\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u044f, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0434\u0430\u043d\u043d\u044b\u0445 \u0438\u043b\u0438 \u0438\u0441\u0442\u0435\u0447\u0435\u043d\u0438\u044f \u0441\u0440\u043e\u043a\u0430.",
+          "\u041f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0430 \u0437\u0430\u043c\u0456\u043d\u0438 \u043a\u0430\u0440\u0442\u0438 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0443 \u0440\u0430\u0437\u0456 \u0432\u0442\u0440\u0430\u0442\u0438, \u043f\u043e\u0448\u043a\u043e\u0434\u0436\u0435\u043d\u043d\u044f, \u0437\u043c\u0456\u043d\u0438 \u0434\u0430\u043d\u0438\u0445 \u0430\u0431\u043e \u0437\u0430\u043a\u0456\u043d\u0447\u0435\u043d\u043d\u044f \u0442\u0435\u0440\u043c\u0456\u043d\u0443."
         ),
         fullDescription: pl(
           "Wymiana karty pobytu jest konieczna w sytuacjach takich jak utrata dokumentu, jego uszkodzenie lub zniszczenie, zmiana danych osobowych (np. nazwiska po zawarciu małżeństwa), zmiana wizerunku oraz upływ terminu ważności samej karty (przy utrzymującym się zezwoleniu na pobyt). Pomagamy szybko skompletować wniosek i dokumenty, aby cudzoziemiec uniknął luki w posiadaniu ważnego dokumentu pobytowego."
@@ -307,8 +319,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "pobyty-dlugoterminowe",
         order: 1,
         title: loc("Rezydent d\u0142ugoterminowy UE", "EU long-term resident", "\u0414\u043e\u043b\u0433\u043e\u0441\u0440\u043e\u0447\u043d\u044b\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442 \u0415\u0421", "\u0414\u043e\u0432\u0433\u043e\u0441\u0442\u0440\u043e\u043a\u043e\u0432\u0438\u0439 \u0440\u0435\u0437\u0438\u0434\u0435\u043d\u0442 \u0404\u0421"),
-        shortDescription: pl(
-          "Status dający prawo stałego pobytu w Polsce i ułatwienia w przemieszczaniu się w UE — wymaga 5 lat legalnego pobytu."
+        shortDescription: loc(
+          "Status daj\u0105cy prawo sta\u0142ego pobytu w Polsce i u\u0142atwienia w przemieszczaniu si\u0119 w UE \u2014 wymaga 5 lat legalnego pobytu.",
+          "Status granting permanent residence in Poland and facilitating movement within the EU \u2014 requires 5 years of legal residence.",
+          "\u0421\u0442\u0430\u0442\u0443\u0441, \u0434\u0430\u044e\u0449\u0438\u0439 \u043f\u0440\u0430\u0432\u043e \u043d\u0430 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0432 \u041f\u043e\u043b\u044c\u0448\u0435 \u2014 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 5 \u043b\u0435\u0442 \u043b\u0435\u0433\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f.",
+          "\u0421\u0442\u0430\u0442\u0443\u0441, \u0449\u043e \u0434\u0430\u0454 \u043f\u0440\u0430\u0432\u043e \u043d\u0430 \u043f\u043e\u0441\u0442\u0456\u0439\u043d\u0435 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0432 \u041f\u043e\u043b\u044c\u0449\u0456 \u2014 \u043f\u043e\u0442\u0440\u0456\u0431\u043d\u043e 5 \u0440\u043e\u043a\u0456\u0432 \u043b\u0435\u0433\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f."
         ),
         fullDescription: pl(
           "Status rezydenta długoterminowego UE jest dokumentem pobytowym dającym posiadaczowi szerokie uprawnienia: prawo stałego pobytu w Polsce oraz znaczne ułatwienia w przemieszczaniu się i osiedlaniu w innych państwach członkowskich UE. Wymaga spełnienia kilku warunków: 5 lat nieprzerwanego legalnego pobytu w Polsce, stabilnego i regularnego źródła dochodu wystarczającego na utrzymanie siebie i rodziny, ubezpieczenia zdrowotnego oraz zapewnionego miejsca zamieszkania. Reprezentujemy klienta na każdym etapie postępowania."
@@ -334,8 +349,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "pobyty-dlugoterminowe",
         order: 2,
         title: loc("Karta sta\u0142ego pobytu", "Permanent residence card", "\u041a\u0430\u0440\u0442\u0430 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f", "\u041a\u0430\u0440\u0442\u0430 \u043f\u043e\u0441\u0442\u0456\u0439\u043d\u043e\u0433\u043e \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f"),
-        shortDescription: pl(
-          "Bezterminowe zezwolenie na pobyt w Polsce — krok przed wnioskiem o obywatelstwo."
+        shortDescription: loc(
+          "Bezterminowe zezwolenie na pobyt w Polsce \u2014 krok przed wnioskiem o obywatelstwo.",
+          "Indefinite residence permit in Poland \u2014 a step before applying for citizenship.",
+          "\u0411\u0435\u0441\u0441\u0440\u043e\u0447\u043d\u043e\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u043d\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0432 \u041f\u043e\u043b\u044c\u0448\u0435 \u2014 \u0448\u0430\u0433 \u043f\u0435\u0440\u0435\u0434 \u0437\u0430\u044f\u0432\u043b\u0435\u043d\u0438\u0435\u043c \u043d\u0430 \u0433\u0440\u0430\u0436\u0434\u0430\u043d\u0441\u0442\u0432\u043e.",
+          "\u0411\u0435\u0437\u0441\u0442\u0440\u043e\u043a\u043e\u0432\u0438\u0439 \u0434\u043e\u0437\u0432\u0456\u043b \u043d\u0430 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0432 \u041f\u043e\u043b\u044c\u0449\u0456 \u2014 \u043a\u0440\u043e\u043a \u043f\u0435\u0440\u0435\u0434 \u0437\u0430\u044f\u0432\u043e\u044e \u043d\u0430 \u0433\u0440\u043e\u043c\u0430\u0434\u044f\u043d\u0441\u0442\u0432\u043e."
         ),
         fullDescription: pl(
           "Zezwolenie na pobyt stały to bezterminowe zezwolenie pobytowe — ostatni krok przed złożeniem wniosku o obywatelstwo polskie. Aby je uzyskać, cudzoziemiec musi spełniać określone warunki: pochodzenie polskie, małżeństwo z obywatelem Polski (po określonym okresie), posiadanie Karty Polaka, status uchodźcy lub ochrony uzupełniającej, albo określony okres legalnego pobytu w Polsce na podstawie wcześniejszego zezwolenia. Pomagamy zweryfikować podstawę prawną wniosku i prowadzimy klienta przez cały proces aż do otrzymania karty pobytu stałego."
@@ -375,8 +393,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "procedura-odwolawcza",
         order: 1,
         title: loc("Ponaglenia i odwo\u0142ania", "Appeals and complaints", "\u0416\u0430\u043b\u043e\u0431\u044b \u0438 \u0430\u043f\u0435\u043b\u043b\u044f\u0446\u0438\u0438", "\u0421\u043a\u0430\u0440\u0433\u0438 \u0442\u0430 \u0430\u043f\u0435\u043b\u044f\u0446\u0456\u0457"),
-        shortDescription: pl(
-          "Reprezentacja w przypadku przewlekłości postępowania (ponaglenie) lub negatywnej decyzji wojewody (odwołanie)."
+        shortDescription: loc(
+          "Reprezentacja w przypadku przewlek\u0142o\u015bci post\u0119powania (ponaglenie) lub negatywnej decyzji wojewody (odwo\u0142anie).",
+          "Representation in case of procedural delays (urgency complaint) or negative voivode decisions (appeal).",
+          "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e \u043f\u0440\u0438 \u0437\u0430\u0442\u044f\u0436\u043a\u0435 \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u044b (\u0443\u0441\u043a\u043e\u0440\u0435\u043d\u0438\u0435) \u0438\u043b\u0438 \u043e\u0442\u0440\u0438\u0446\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u043c \u0440\u0435\u0448\u0435\u043d\u0438\u0438 (\u0430\u043f\u0435\u043b\u043b\u044f\u0446\u0438\u044f).",
+          "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043d\u0438\u0446\u0442\u0432\u043e \u043f\u0440\u0438 \u0437\u0430\u0442\u044f\u0433\u0443\u0432\u0430\u043d\u043d\u0456 \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440\u0438 (\u043f\u0440\u0438\u0441\u043a\u043e\u0440\u0435\u043d\u043d\u044f) \u0430\u0431\u043e \u043d\u0435\u0433\u0430\u0442\u0438\u0432\u043d\u043e\u043c\u0443 \u0440\u0456\u0448\u0435\u043d\u043d\u0456 (\u0430\u043f\u0435\u043b\u044f\u0446\u0456\u044f)."
         ),
         fullDescription: pl(
           "Reprezentujemy klienta w dwóch sytuacjach krytycznych: gdy postępowanie pobytowe się przedłuża (ponaglenie kierowane do organu wyższego stopnia) oraz gdy wojewoda wydał decyzję odmowną (odwołanie do Szefa Urzędu do Spraw Cudzoziemców). Przygotowujemy profesjonalne pisma procesowe wraz z argumentacją prawną, kompletujemy dodatkowe dowody w sprawie i reprezentujemy klienta przed organem na każdym etapie. W wielu przypadkach skuteczne odwołanie zmienia decyzję odmowną na pozytywną."
@@ -415,8 +436,11 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         categorySlug: "tlumaczenia-przysiegle",
         order: 1,
         title: loc("T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w", "Sworn document translations", "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0432\u043e\u0434 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u043e\u0432", "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u0438\u0439 \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0456\u0432"),
-        shortDescription: pl(
-          "Tłumaczenia uwierzytelnione dokumentów potrzebnych w procedurach pobytowych i pracowniczych."
+        shortDescription: loc(
+          "T\u0142umaczenia uwierzytelnione dokument\u00f3w potrzebnych w procedurach pobytowych i pracowniczych.",
+          "Certified translations of documents required for residence and employment procedures.",
+          "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u044b\u0435 \u043f\u0435\u0440\u0435\u0432\u043e\u0434\u044b \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u043e\u0432 \u0434\u043b\u044f \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u0438\u044f \u0438 \u0442\u0440\u0443\u0434\u043e\u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0430.",
+          "\u041f\u0440\u0438\u0441\u044f\u0436\u043d\u0456 \u043f\u0435\u0440\u0435\u043a\u043b\u0430\u0434\u0438 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0456\u0432 \u0434\u043b\u044f \u043f\u0440\u043e\u0446\u0435\u0434\u0443\u0440 \u043f\u0440\u043e\u0436\u0438\u0432\u0430\u043d\u043d\u044f \u0442\u0430 \u043f\u0440\u0430\u0446\u0435\u0432\u043b\u0430\u0448\u0442\u0443\u0432\u0430\u043d\u043d\u044f."
         ),
         fullDescription: pl(
           "Współpracujemy z tłumaczami przysięgłymi różnych języków — pomagamy klientowi szybko uzyskać tłumaczenia przysięgłe dokumentów potrzebnych w procedurach legalizacyjnych: aktów urodzenia, aktów małżeństwa, zaświadczeń o niekaralności, dyplomów ukończenia studiów, świadectw pracy, umów o pracę, wyciągów z rejestrów handlowych i innych dokumentów wydanych za granicą. Bierzemy na siebie cały proces komunikacji z tłumaczem — klient otrzymuje gotowe, prawidłowo uwierzytelnione tłumaczenia gotowe do złożenia w urzędzie."

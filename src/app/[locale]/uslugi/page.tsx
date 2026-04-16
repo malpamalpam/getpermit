@@ -6,6 +6,7 @@ import {
   localized,
   type ServiceCategoryIcon,
 } from "@/lib/services";
+import { getLocalizedCategorySlug } from "@/lib/service-slugs";
 import {
   Briefcase,
   Home,
@@ -60,7 +61,7 @@ export default async function ServicesPage({
           {categories.map((category) => {
             const Icon = CATEGORY_ICONS[category.icon];
             return (
-              <section key={category.slug} id={category.slug}>
+              <section key={category.slug} id={getLocalizedCategorySlug(category.slug, locale)}>
                 <div className="mb-8 flex items-start gap-4">
                   <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent">
                     <Icon className="h-7 w-7" />
