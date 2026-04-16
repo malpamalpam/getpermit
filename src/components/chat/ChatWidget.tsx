@@ -56,7 +56,8 @@ export function ChatWidget() {
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          throw new Error(err.error ?? "B\u0142\u0105d serwera");
+          console.error("[chat] API error:", err);
+          throw new Error(err.detail ?? err.error ?? "B\u0142\u0105d serwera");
         }
 
         const reader = res.body?.getReader();
@@ -99,12 +100,15 @@ export function ChatWidget() {
           }
         }
       } catch (err) {
+        const detail = err instanceof Error ? err.message : "";
+        console.error("[chat] send error:", detail);
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
             content:
-              "Przepraszam, wyst\u0105pi\u0142 b\u0142\u0105d. Spr\u00f3buj ponownie lub zadzwo\u0144: +48 515 229 783",
+              "Przepraszam, wyst\u0105pi\u0142 b\u0142\u0105d. Spr\u00f3buj ponownie lub zadzwo\u0144: +48 515 229 783" +
+              (detail ? `\n\n[Debug: ${detail}]` : ""),
           },
         ]);
       } finally {

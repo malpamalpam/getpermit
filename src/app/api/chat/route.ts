@@ -121,13 +121,14 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (err) {
-    console.error("[chat] API error:", err);
-    const message =
-      err instanceof Error ? err.message : "Unknown error";
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
+    console.error("[chat] API error:", message);
+    if (stack) console.error(stack);
     return NextResponse.json(
       {
         error: "Przepraszam, wystąpił błąd. Spróbuj ponownie.",
-        detail: process.env.NODE_ENV === "development" ? message : undefined,
+        detail: message,
       },
       { status: 500 }
     );
