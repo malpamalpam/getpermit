@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocale } from "next-intl";
 import { MessageCircle, X } from "lucide-react";
 import { ChatBubble } from "./ChatBubble";
 import { ChatInput } from "./ChatInput";
@@ -19,6 +20,7 @@ const QUICK_REPLIES = [
 ];
 
 export function ChatWidget() {
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +50,7 @@ export function ChatWidget() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             messages: newMessages.filter((m) => m !== WELCOME_MESSAGE),
+            locale,
           }),
         });
 

@@ -3,14 +3,32 @@ import Anthropic from "@anthropic-ai/sdk";
 import { SYSTEM_PROMPT } from "@/lib/chat/system-prompt";
 import type { ChatRequest } from "@/lib/chat/types";
 import { checkRateLimit } from "@/lib/rate-limit";
+import {
+  buildKnowledgeBase,
+  searchKnowledge,
+  buildContextSnippet,
+} from "@/lib/chat/knowledge";
+
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const RATE_LIMIT_CONFIG = { maxRequests: 20, windowSeconds: 60 };
 const MAX_MESSAGES = 10;
 
+/** Wykryj locale z Content-Language lub body, fallback pl */
+function detectLocale(body: ChatRequest & { locale?: string }): string {
+  const loc = body.locale;
+  if (loc === "pl" || loc === "en" || loc === "ru" || loc === "uk") return loc;
+  return "pl";
+}
+
 export async function POST(request: NextRequest) {
   // Rate limiting
   const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? "unknown";
+  const ip =
+    forwarded?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
   const rl = checkRateLimit(`chat:${ip}`, RATE_LIMIT_CONFIG);
   if (!rl.allowed) {
     return NextResponse.json(
@@ -20,7 +38,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Parse body
-  let body: ChatRequest;
+  let body: ChatRequest & { locale?: string };
   try {
     body = await request.json();
   } catch {
@@ -39,16 +57,33 @@ export async function POST(request: NextRequest) {
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+    console.error("[chat] ANTHROPIC_API_KEY missing");
+    return NextResponse.json(
+      { error: "API key not configured" },
+      { status: 500 }
+    );
   }
 
   try {
+    const locale = detectLocale(body);
+
+    // RAG: znajdź relevantne fragmenty wiedzy
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+    let contextSnippet = "";
+    if (lastUserMsg) {
+      const kb = buildKnowledgeBase(locale);
+      const relevantChunks = searchKnowledge(lastUserMsg.content, kb, 3);
+      contextSnippet = buildContextSnippet(relevantChunks);
+    }
+
+    const fullSystemPrompt = SYSTEM_PROMPT + contextSnippet;
+
     const client = new Anthropic({ apiKey });
 
     const stream = await client.messages.stream({
-      model: "claude-sonnet-4-6-20250514",
-      max_tokens: 512,
-      system: SYSTEM_PROMPT,
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 600,
+      system: fullSystemPrompt,
       messages,
     });
 
@@ -69,7 +104,11 @@ export async function POST(request: NextRequest) {
           controller.close();
         } catch (err) {
           console.error("[chat] stream error:", err);
-          controller.error(err);
+          try {
+            controller.error(err);
+          } catch {
+            // ignore
+          }
         }
       },
     });
@@ -83,8 +122,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (err) {
     console.error("[chat] API error:", err);
+    const message =
+      err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { error: "Przepraszam, wystąpił błąd. Spróbuj ponownie." },
+      {
+        error: "Przepraszam, wystąpił błąd. Spróbuj ponownie.",
+        detail: process.env.NODE_ENV === "development" ? message : undefined,
+      },
       { status: 500 }
     );
   }
