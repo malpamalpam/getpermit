@@ -23,6 +23,10 @@ function detectLocale(body: ChatRequest & { locale?: string }): string {
 }
 
 export async function POST(request: NextRequest) {
+  console.log("[chat] POST received");
+  console.log("[chat] API key present:", !!process.env.ANTHROPIC_API_KEY);
+  console.log("[chat] API key length:", process.env.ANTHROPIC_API_KEY?.length ?? 0);
+
   // Rate limiting
   const forwarded = request.headers.get("x-forwarded-for");
   const ip =
@@ -67,18 +71,26 @@ export async function POST(request: NextRequest) {
   try {
     const locale = detectLocale(body);
 
-    // RAG: znajdź relevantne fragmenty wiedzy
+    // RAG: znajdź relevantne fragmenty wiedzy (try-catch bo może failować)
     const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
     let contextSnippet = "";
-    if (lastUserMsg) {
-      const kb = buildKnowledgeBase(locale);
-      const relevantChunks = searchKnowledge(lastUserMsg.content, kb, 3);
-      contextSnippet = buildContextSnippet(relevantChunks);
+    try {
+      if (lastUserMsg) {
+        const kb = buildKnowledgeBase(locale);
+        console.log("[chat] KB size:", kb.length);
+        const relevantChunks = searchKnowledge(lastUserMsg.content, kb, 3);
+        console.log("[chat] relevant chunks:", relevantChunks.length);
+        contextSnippet = buildContextSnippet(relevantChunks);
+      }
+    } catch (kbErr) {
+      console.error("[chat] KB error:", kbErr);
+      // Kontynuuj bez RAG
     }
 
     const fullSystemPrompt = SYSTEM_PROMPT + contextSnippet;
 
     const client = new Anthropic({ apiKey });
+    console.log("[chat] calling Anthropic API, messages:", messages.length);
 
     const stream = await client.messages.stream({
       model: "claude-haiku-4-5-20251001",
