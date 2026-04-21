@@ -505,15 +505,29 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "powiadomienia-o-powierzeniu-pracy",
         categorySlug: "dla-pracodawcow",
         order: 3,
-        title: pl("Powiadomienia o powierzeniu pracy cudzoziemcowi"),
-        shortDescription: pl(
-          "Obowi\u0105zek powiadomienia PUP o powierzeniu pracy cudzoziemcowi \u2014 pomoc w terminowym zg\u0142oszeniu i dokumentacji."
+        title: loc(
+          "Powiadomienia o powierzeniu pracy cudzoziemcowi",
+          "Notifications of entrusting work to a foreigner",
+          "Уведомления о поручении работы иностранцу",
+          "Повідомлення про доручення роботи іноземцю"
         ),
-        fullDescription: pl(
-          "Pracodawca zatrudniający cudzoziemca ma obowiązek powiadomienia Powiatowego Urzędu Pracy o powierzeniu pracy w określonym terminie. Brak terminowego powiadomienia może skutkować sankcjami. Pomagamy w prawidłowym przygotowaniu i złożeniu powiadomienia, monitorujemy terminy i dbamy o kompletność dokumentacji po stronie pracodawcy."
+        shortDescription: loc(
+          "Obowiązek powiadomienia PUP o powierzeniu pracy cudzoziemcowi — pomoc w terminowym zgłoszeniu i dokumentacji.",
+          "Obligation to notify the District Labor Office about entrusting work to a foreigner — help with timely filing and documentation.",
+          "Обязанность уведомить районное управление труда о поручении работы иностранцу — помощь в своевременной подаче и документации.",
+          "Обов'язок повідомити районне управління праці про доручення роботи іноземцю — допомога у своєчасній подачі та документації."
         ),
-        forWhom: pl(
-          "Pracodawcy zatrudniający cudzoziemców, którzy muszą spełnić obowiązek powiadomienia PUP."
+        fullDescription: loc(
+          "Pracodawca zatrudniający cudzoziemca ma obowiązek powiadomienia Powiatowego Urzędu Pracy o powierzeniu pracy w określonym terminie. Brak terminowego powiadomienia może skutkować sankcjami. Pomagamy w prawidłowym przygotowaniu i złożeniu powiadomienia, monitorujemy terminy i dbamy o kompletność dokumentacji po stronie pracodawcy.",
+          "An employer hiring a foreigner is obliged to notify the District Labor Office about entrusting work within a specified deadline. Failure to notify on time may result in sanctions. We help with proper preparation and submission of the notification, monitor deadlines, and ensure complete documentation on the employer's side.",
+          "Работодатель, нанимающий иностранца, обязан уведомить районное управление труда о поручении работы в установленный срок. Несвоевременное уведомление может повлечь санкции. Помогаем с правильной подготовкой и подачей уведомления, отслеживаем сроки и обеспечиваем полноту документации.",
+          "Роботодавець, що наймає іноземця, зобов'язаний повідомити районне управління праці про доручення роботи у визначений термін. Несвоєчасне повідомлення може спричинити санкції. Допомагаємо з правильною підготовкою та подачею повідомлення, відстежуємо терміни та забезпечуємо повноту документації."
+        ),
+        forWhom: loc(
+          "Pracodawcy zatrudniający cudzoziemców, którzy muszą spełnić obowiązek powiadomienia PUP.",
+          "Employers hiring foreigners who must fulfill the obligation to notify the District Labor Office.",
+          "Работодатели, нанимающие иностранцев и обязанные уведомить районное управление труда.",
+          "Роботодавці, що наймають іноземців та зобов'язані повідомити районне управління праці."
         ),
         requiredDocuments: plList([
           "Dane cudzoziemca (kopia paszportu)",

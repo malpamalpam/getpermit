@@ -58,8 +58,26 @@
     "faq": "Najczęściej zadawane pytania"
   },
   "testimonials": {
+    "label": "Opinie",
     "title": "Co mówią nasi klienci",
-    "subtitle": "Setki cudzoziemców otrzymały już swoje dokumenty dzięki naszej pomocy"
+    "subtitle": "Setki cudzoziemców otrzymały już swoje dokumenty dzięki naszej pomocy",
+    "items": {
+      "olena": {
+        "name": "Olena K.",
+        "role": "Ukraina → Warszawa",
+        "quote": "Otrzymałam kartę pobytu w 4 miesiące. Cały proces był jasny, dokumenty przygotowane bezbłędnie. Polecam każdemu cudzoziemcowi."
+      },
+      "aleksey": {
+        "name": "Aleksey V.",
+        "role": "Białoruś → Kraków",
+        "quote": "Pomogli mi załatwić zezwolenie na pracę typu A i kartę pobytu czasowego. Profesjonalnie i szybko, mimo skomplikowanej sytuacji."
+      },
+      "rajesh": {
+        "name": "Rajesh P.",
+        "role": "Indie → Wrocław",
+        "quote": "Thanks to the team I got my permanent residence card. They explained every step in English and handled all the bureaucracy."
+      }
+    }
   },
   "ctaBanner": {
     "title": "Potrzebujesz karty pobytu lub zezwolenia na pracę?",

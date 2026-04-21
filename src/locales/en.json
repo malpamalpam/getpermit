@@ -58,8 +58,26 @@
     "faq": "Frequently asked questions"
   },
   "testimonials": {
+    "label": "TESTIMONIALS",
     "title": "What our clients say",
-    "subtitle": "Hundreds of foreigners have already received their documents thanks to our help"
+    "subtitle": "Hundreds of foreigners have already received their documents thanks to our help",
+    "items": {
+      "olena": {
+        "name": "Olena K.",
+        "role": "Ukraine → Warsaw",
+        "quote": "I received my residence card in 4 months. The whole process was clear, documents prepared flawlessly. I recommend it to every foreigner."
+      },
+      "aleksey": {
+        "name": "Aleksey V.",
+        "role": "Belarus → Kraków",
+        "quote": "They helped me obtain a type A work permit and a temporary residence card. Professional and fast, despite a complicated situation."
+      },
+      "rajesh": {
+        "name": "Rajesh P.",
+        "role": "India → Wrocław",
+        "quote": "Thanks to the team I got my permanent residence card. They explained every step in English and handled all the bureaucracy."
+      }
+    }
   },
   "ctaBanner": {
     "title": "Have questions about your situation?",
