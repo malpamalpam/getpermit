@@ -34,13 +34,7 @@ export default async function middleware(request: NextRequest) {
 
   // Strony marketingowe (w tym `/`) → next-intl middleware
   if (!isPanelRoute && !isAdminRoute) {
-    const response = intlMiddleware(request);
-    // Pass resolved locale to root layout via header
-    const localeMatch = pathname.match(/^\/(pl|en|ru|uk)(\/|$)/);
-    if (localeMatch) {
-      response.headers.set("x-locale", localeMatch[1]);
-    }
-    return response;
+    return intlMiddleware(request);
   }
 
   // Public auth pages → przepuść bez auth check
