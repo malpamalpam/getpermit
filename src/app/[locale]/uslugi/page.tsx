@@ -88,7 +88,7 @@ export default async function ServicesPage({
                       href={`/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}/${getLocalizedSlug("dla-pracodawcow", locale)}`}
                       className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
                     >
-                      {localized(category.title, locale)} \u2014 {t("viewDetails")}
+                      {localized(category.title, locale)} {t("viewDetails")}
                       <ArrowRight className="h-4 w-4" />
                     </a>
                   </div>
