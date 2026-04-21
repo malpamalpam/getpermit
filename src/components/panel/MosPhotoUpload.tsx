@@ -51,7 +51,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
   }, []);
 
   const cropAndFinalize = useCallback(
-    (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
+    async (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -76,10 +76,47 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      // White background first
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
+      // Draw original cropped image first
       ctx.drawImage(source, sx, sy, sw, sh, 0, 0, MOS_WIDTH, MOS_HEIGHT);
+
+      // Try to remove background and replace with white
+      setProcessing(true);
+      try {
+        const croppedBlob = await new Promise<Blob>((resolve) =>
+          canvas.toBlob((b) => resolve(b!), "image/png")
+        );
+
+        // Dynamic import from CDN to avoid webpack bundling issues
+        const { removeBackground } = await import(
+          /* webpackIgnore: true */
+          "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs"
+        );
+
+        const noBgBlob: Blob = await removeBackground(croppedBlob, {
+          output: { format: "image/png" },
+        });
+
+        const noBgImg = new Image();
+        const noBgUrl = URL.createObjectURL(noBgBlob);
+
+        await new Promise<void>((resolve, reject) => {
+          noBgImg.onload = () => resolve();
+          noBgImg.onerror = () => reject(new Error("Failed to load processed image"));
+          noBgImg.src = noBgUrl;
+        });
+
+        // White background + transparent foreground
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
+        ctx.drawImage(noBgImg, 0, 0, MOS_WIDTH, MOS_HEIGHT);
+        URL.revokeObjectURL(noBgUrl);
+        console.log("[MosPhoto] Background removed successfully");
+      } catch (err) {
+        console.warn("[MosPhoto] Background removal failed, using original:", err);
+        // Keep the original cropped image as-is
+      } finally {
+        setProcessing(false);
+      }
 
       const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
       setPreview(dataUrl);
