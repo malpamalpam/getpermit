@@ -2,24 +2,21 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Camera, Upload, X, Check, CircleDot, Loader2 } from "lucide-react";
-// Loaded dynamically to avoid onnxruntime-web webpack issues
-const loadRemoveBackground = () =>
-  import("@imgly/background-removal").then((m) => m.removeBackground);
 
 const MOS_WIDTH = 684;
 const MOS_HEIGHT = 883;
 
 interface Props {
-  onPhotoReady?: (blob: Blob) => void;
+  initialPhoto?: string | null;
+  onPhotoReady?: (dataUrl: string) => void;
 }
 
 /**
- * Component for capturing or uploading a photo for the MOS system.
- * Automatically validates and crops to 684×883 px.
- * Supports live camera capture on desktop and mobile.
+ * Component for capturing or uploading a biometric photo.
+ * Automatically crops to 684×883 px with white background.
  */
-export function MosPhotoUpload({ onPhotoReady }: Props) {
-  const [preview, setPreview] = useState<string | null>(null);
+export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
+  const [preview, setPreview] = useState<string | null>(initialPhoto ?? null);
   const [error, setError] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -35,7 +32,7 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
     setCameraActive(false);
   }, []);
 
-  // Attach stream to <video> once it's rendered after cameraActive flips to true
+  // Attach stream to <video> once rendered
   useEffect(() => {
     if (cameraActive && videoRef.current && streamRef.current) {
       const video = videoRef.current;
@@ -54,7 +51,7 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
   }, []);
 
   const cropAndFinalize = useCallback(
-    async (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
+    (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -74,60 +71,19 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
         sy = (sourceHeight - sh) / 2;
       }
 
-      // Step 1: Crop to MOS dimensions
       canvas.width = MOS_WIDTH;
       canvas.height = MOS_HEIGHT;
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // White background first
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
       ctx.drawImage(source, sx, sy, sw, sh, 0, 0, MOS_WIDTH, MOS_HEIGHT);
-
-      // Step 2: Remove background and replace with white
-      setProcessing(true);
-      try {
-        const croppedBlob = await new Promise<Blob>((resolve) =>
-          canvas.toBlob((b) => resolve(b!), "image/png")
-        );
-
-        const removeBackground = await loadRemoveBackground();
-        const noBgBlob = await removeBackground(croppedBlob, {
-          output: { format: "image/png" },
-        });
-
-        const noBgImg = new Image();
-        const noBgUrl = URL.createObjectURL(noBgBlob);
-
-        await new Promise<void>((resolve, reject) => {
-          noBgImg.onload = () => resolve();
-          noBgImg.onerror = () => reject(new Error("Failed to load processed image"));
-          noBgImg.src = noBgUrl;
-        });
-
-        // Draw white background + foreground
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
-        ctx.drawImage(noBgImg, 0, 0, MOS_WIDTH, MOS_HEIGHT);
-        URL.revokeObjectURL(noBgUrl);
-      } catch (err) {
-        console.error("[MosPhoto] Background removal failed, using original:", err);
-        // Fallback: redraw original with white bg
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
-        ctx.drawImage(source, sx, sy, sw, sh, 0, 0, MOS_WIDTH, MOS_HEIGHT);
-      } finally {
-        setProcessing(false);
-      }
 
       const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
       setPreview(dataUrl);
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob && onPhotoReady) {
-            onPhotoReady(blob);
-          }
-        },
-        "image/jpeg",
-        0.92
-      );
+      onPhotoReady?.(dataUrl);
     },
     [onPhotoReady]
   );
@@ -180,8 +136,9 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
   const capturePhoto = useCallback(() => {
     const video = videoRef.current;
     if (!video || video.readyState < 2) return;
-
+    setProcessing(true);
     cropAndFinalize(video, video.videoWidth, video.videoHeight);
+    setProcessing(false);
     stopCamera();
   }, [cropAndFinalize, stopCamera]);
 
@@ -193,17 +150,20 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
         return;
       }
 
+      setProcessing(true);
       const img = new Image();
       const url = URL.createObjectURL(file);
 
       img.onload = () => {
         URL.revokeObjectURL(url);
         cropAndFinalize(img, img.width, img.height);
+        setProcessing(false);
       };
 
       img.onerror = () => {
         URL.revokeObjectURL(url);
         setError("Nie udało się przetworzyć zdjęcia.");
+        setProcessing(false);
       };
 
       img.src = url;
@@ -219,24 +179,17 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
   const handleClear = () => {
     setPreview(null);
     setError(null);
+    onPhotoReady?.("");
   };
 
   return (
-    <div className="space-y-3 rounded-xl border border-primary/10 bg-white p-5">
-      <h3 className="font-display text-base font-bold text-primary">
-        Zdjęcie do systemu MOS
-      </h3>
-      <p className="text-xs text-primary/60">
-        Wymagany format: {MOS_WIDTH} &times; {MOS_HEIGHT} px. Zdjęcie zostanie
-        automatycznie przycięte do wymaganego formatu.
-      </p>
-
+    <div className="space-y-3">
       <canvas ref={canvasRef} className="hidden" />
 
       {processing ? (
         <div className="flex flex-col items-center gap-3 py-8">
           <Loader2 className="h-8 w-8 animate-spin text-accent" />
-          <p className="text-sm font-medium text-primary/70">Usuwanie tła i przygotowanie zdjęcia...</p>
+          <p className="text-sm font-medium text-primary/70">Przetwarzanie zdjęcia...</p>
         </div>
       ) : cameraActive ? (
         <div className="space-y-3">
@@ -272,7 +225,7 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
         <div className="relative inline-block">
           <img
             src={preview}
-            alt="Podgląd zdjęcia MOS"
+            alt="Zdjęcie biometryczne"
             className="h-44 w-auto rounded-lg border border-primary/10 shadow-sm"
           />
           <button
@@ -289,7 +242,6 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
         </div>
       ) : (
         <div className="flex flex-wrap gap-3">
-          {/* Camera capture — opens live webcam */}
           <button
             type="button"
             onClick={startCamera}
@@ -299,7 +251,6 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
             Zrób zdjęcie
           </button>
 
-          {/* File upload */}
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-primary/15 bg-surface px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-accent hover:bg-accent/5">
             <Upload className="h-4 w-4" />
             Wybierz plik

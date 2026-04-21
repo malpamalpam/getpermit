@@ -247,6 +247,10 @@
       "error": "Nie udało się zapisać. Spróbuj ponownie.",
       "yes": "Tak",
       "no": "Nie",
+      "photo": {
+        "title": "Zdjęcie biometryczne",
+        "description": "Zdjęcie zostanie automatycznie przycięte do formatu 684×883 px z białym tłem. Możesz zrobić zdjęcie kamerą lub wybrać plik."
+      },
       "sectionA": {
         "title": "A. Dane podstawowe",
         "firstNameLatin": "Imię (łaciński)",

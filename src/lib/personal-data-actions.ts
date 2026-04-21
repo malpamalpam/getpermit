@@ -155,3 +155,16 @@ export async function savePersonalDataAction(
   revalidatePath("/panel/ankieta");
   return { ok: true as const };
 }
+
+export async function saveBiometricPhotoAction(dataUrl: string) {
+  const user = await requireUser();
+
+  await db.personalData.upsert({
+    where: { userId: user.id },
+    create: { userId: user.id, biometricPhoto: dataUrl || null },
+    update: { biometricPhoto: dataUrl || null },
+  });
+
+  revalidatePath("/panel/ankieta");
+  return { ok: true as const };
+}

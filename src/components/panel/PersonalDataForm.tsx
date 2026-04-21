@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { savePersonalDataAction } from "@/lib/personal-data-actions";
+import { savePersonalDataAction, saveBiometricPhotoAction } from "@/lib/personal-data-actions";
+import { MosPhotoUpload } from "./MosPhotoUpload";
 import { dateToInput } from "./personal-data/constants";
 import { SectionA } from "./personal-data/SectionA";
 import { SectionB } from "./personal-data/SectionB";
@@ -102,6 +103,8 @@ export function PersonalDataForm({ initialData }: Props) {
   const [isPending, startTransition] = useTransition();
   const [savedSection, setSavedSection] = useState<string | null>(null);
   const [errorSection, setErrorSection] = useState<string | null>(null);
+  const [photoSaving, setPhotoSaving] = useState(false);
+  const [photoSaved, setPhotoSaved] = useState(false);
 
   const handleChange = (field: string, value: string | boolean) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -159,8 +162,40 @@ export function PersonalDataForm({ initialData }: Props) {
     F: SectionF,
   };
 
+  const handlePhotoReady = async (dataUrl: string) => {
+    setPhotoSaving(true);
+    setPhotoSaved(false);
+    await saveBiometricPhotoAction(dataUrl);
+    setPhotoSaving(false);
+    setPhotoSaved(true);
+    setTimeout(() => setPhotoSaved(false), 3000);
+  };
+
   return (
     <div className="space-y-4">
+      {/* Biometric photo */}
+      <div className="rounded-2xl border border-primary/10 bg-white p-5 shadow-sm">
+        <h3 className="mb-1 font-display text-base font-bold text-primary">
+          {t("photo.title")}
+        </h3>
+        <p className="mb-4 text-xs text-primary/60">
+          {t("photo.description")}
+        </p>
+        <MosPhotoUpload
+          initialPhoto={initialData?.biometricPhoto}
+          onPhotoReady={handlePhotoReady}
+        />
+        {photoSaving && (
+          <p className="mt-2 text-xs text-primary/50">{t("saving")}</p>
+        )}
+        {photoSaved && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-2 text-xs text-green-700">
+            <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+            <span>{t("saved")}</span>
+          </div>
+        )}
+      </div>
+
       {SECTIONS.map((section) => {
         const isOpen = openSections.has(section);
         const complete = isSectionComplete(section);

@@ -247,6 +247,10 @@
       "error": "Failed to save. Please try again.",
       "yes": "Yes",
       "no": "No",
+      "photo": {
+        "title": "Biometric photo",
+        "description": "The photo will be automatically cropped to 684×883 px with a white background. You can take a photo with the camera or choose a file."
+      },
       "sectionA": {
         "title": "A. Basic information",
         "firstNameLatin": "First name (Latin)",

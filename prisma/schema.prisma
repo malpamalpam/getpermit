@@ -237,6 +237,9 @@ model PersonalData {
   id     String @id @default(uuid()) @db.Uuid
   userId String @unique @map("user_id") @db.Uuid
 
+  // --- Zdjęcie biometryczne (base64 data URL) ---
+  biometricPhoto String? @map("biometric_photo") @db.Text
+
   // --- Sekcja A: Dane podstawowe ---
   firstNameLatin   String?   @map("first_name_latin")
   lastNameLatin    String?   @map("last_name_latin")
