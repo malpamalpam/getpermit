@@ -31,6 +31,15 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
     setCameraActive(false);
   }, []);
 
+  // Attach stream to <video> once it's rendered after cameraActive flips to true
+  useEffect(() => {
+    if (cameraActive && videoRef.current && streamRef.current) {
+      const video = videoRef.current;
+      video.srcObject = streamRef.current;
+      video.play().catch((err) => console.error("Video play() failed:", err));
+    }
+  }, [cameraActive]);
+
   // Clean up camera on unmount
   useEffect(() => {
     return () => {
@@ -85,11 +94,15 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
 
   const startCamera = useCallback(async () => {
     setError(null);
+    console.log("[MosPhoto] Starting camera...");
 
     if (typeof window !== "undefined" && window.location.protocol !== "https:" && window.location.hostname !== "localhost") {
       setError("Kamera wymaga połączenia HTTPS.");
       return;
     }
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    console.log("[MosPhoto] Video devices:", devices.filter((d) => d.kind === "videoinput"));
 
     let stream: MediaStream;
     try {
@@ -102,14 +115,9 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       }
 
+      console.log("[MosPhoto] Stream obtained:", stream.getVideoTracks().map((t) => t.label));
       streamRef.current = stream;
       setCameraActive(true);
-
-      requestAnimationFrame(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      });
     } catch (err) {
       console.error("Camera error:", err);
       const name = err instanceof DOMException ? err.name : "";
