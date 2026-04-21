@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Camera, Upload, X, Check, CircleDot, Loader2 } from "lucide-react";
+import { Camera, Upload, X, Check, CircleDot } from "lucide-react";
 
 const MOS_WIDTH = 684;
 const MOS_HEIGHT = 883;
@@ -13,13 +13,12 @@ interface Props {
 
 /**
  * Component for capturing or uploading a biometric photo.
- * Automatically crops to 684×883 px with white background.
+ * Automatically crops to 684×883 px. Face guide overlay on camera view.
  */
 export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
   const [preview, setPreview] = useState<string | null>(initialPhoto ?? null);
   const [error, setError] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
-  const [processing, setProcessing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -51,7 +50,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
   }, []);
 
   const cropAndFinalize = useCallback(
-    async (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
+    (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -76,43 +75,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      // Draw original cropped image first
       ctx.drawImage(source, sx, sy, sw, sh, 0, 0, MOS_WIDTH, MOS_HEIGHT);
-
-      // Try to remove background and replace with white
-      setProcessing(true);
-      try {
-        const croppedBlob = await new Promise<Blob>((resolve) =>
-          canvas.toBlob((b) => resolve(b!), "image/png")
-        );
-
-        const { removeBackground } = await import("@imgly/background-removal");
-
-        const noBgBlob: Blob = await removeBackground(croppedBlob, {
-          output: { format: "image/png" },
-        });
-
-        const noBgImg = new Image();
-        const noBgUrl = URL.createObjectURL(noBgBlob);
-
-        await new Promise<void>((resolve, reject) => {
-          noBgImg.onload = () => resolve();
-          noBgImg.onerror = () => reject(new Error("Failed to load processed image"));
-          noBgImg.src = noBgUrl;
-        });
-
-        // White background + transparent foreground
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
-        ctx.drawImage(noBgImg, 0, 0, MOS_WIDTH, MOS_HEIGHT);
-        URL.revokeObjectURL(noBgUrl);
-        console.log("[MosPhoto] Background removed successfully");
-      } catch (err) {
-        console.warn("[MosPhoto] Background removal failed, using original:", err);
-        // Keep the original cropped image as-is
-      } finally {
-        setProcessing(false);
-      }
 
       const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
       setPreview(dataUrl);
@@ -169,9 +132,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
   const capturePhoto = useCallback(() => {
     const video = videoRef.current;
     if (!video || video.readyState < 2) return;
-    setProcessing(true);
     cropAndFinalize(video, video.videoWidth, video.videoHeight);
-    setProcessing(false);
     stopCamera();
   }, [cropAndFinalize, stopCamera]);
 
@@ -183,20 +144,17 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
         return;
       }
 
-      setProcessing(true);
       const img = new Image();
       const url = URL.createObjectURL(file);
 
       img.onload = () => {
         URL.revokeObjectURL(url);
         cropAndFinalize(img, img.width, img.height);
-        setProcessing(false);
       };
 
       img.onerror = () => {
         URL.revokeObjectURL(url);
         setError("Nie udało się przetworzyć zdjęcia.");
-        setProcessing(false);
       };
 
       img.src = url;
@@ -219,12 +177,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
     <div className="space-y-3">
       <canvas ref={canvasRef} className="hidden" />
 
-      {processing ? (
-        <div className="flex flex-col items-center gap-3 py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
-          <p className="text-sm font-medium text-primary/70">Przetwarzanie zdjęcia...</p>
-        </div>
-      ) : cameraActive ? (
+      {cameraActive ? (
         <div className="space-y-3">
           <div className="relative overflow-hidden rounded-lg border border-primary/10 bg-black">
             <video
@@ -232,8 +185,24 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
               autoPlay
               playsInline
               muted
-              className="h-64 w-full object-cover"
+              className="h-80 w-full object-cover"
             />
+            {/* Face guide overlay */}
+            <svg
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              viewBox="0 0 400 320"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <mask id="faceMask">
+                  <rect width="400" height="320" fill="white" />
+                  <ellipse cx="200" cy="140" rx="72" ry="95" fill="black" />
+                </mask>
+              </defs>
+              <rect width="400" height="320" fill="rgba(0,0,0,0.4)" mask="url(#faceMask)" />
+              <ellipse cx="200" cy="140" rx="72" ry="95" fill="none" stroke="white" strokeWidth="2" strokeDasharray="8 4" opacity="0.8" />
+              <text x="200" y="260" textAnchor="middle" fill="white" fontSize="12" opacity="0.7">Umieść twarz w ramce</text>
+            </svg>
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-3 bg-gradient-to-t from-black/60 to-transparent p-4">
               <button
                 type="button"
