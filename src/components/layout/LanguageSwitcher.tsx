@@ -1,9 +1,8 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useTransition } from "react";
-import { useRouter, usePathname, routing } from "@/i18n/routing";
-import { useParams } from "next/navigation";
+import { usePathname as useNextPathname } from "next/navigation";
+import { routing } from "@/i18n/routing";
 import { Globe } from "lucide-react";
 
 const LOCALE_LABELS: Record<string, string> = {
@@ -15,21 +14,12 @@ const LOCALE_LABELS: Record<string, string> = {
 
 export function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-  const params = useParams();
-  const [isPending, startTransition] = useTransition();
+  const fullPathname = useNextPathname();
 
   const onChange = (nextLocale: string) => {
-    startTransition(() => {
-      // Strip locale from params to prevent /en/ru paths
-      const { locale: _locale, ...restParams } = params as Record<string, string>;
-      router.replace(
-        // @ts-expect-error -- pathnames mapping handled at runtime
-        { pathname, params: restParams },
-        { locale: nextLocale }
-      );
-    });
+    // Remove current locale prefix and add new one
+    const pathWithoutLocale = fullPathname.replace(/^\/(pl|en|ru|uk)/, "") || "/";
+    window.location.href = `/${nextLocale}${pathWithoutLocale}`;
   };
 
   return (
@@ -40,7 +30,6 @@ export function LanguageSwitcher() {
           <button
             key={loc}
             onClick={() => onChange(loc)}
-            disabled={isPending}
             aria-current={loc === locale ? "true" : undefined}
             className={`px-2 py-1 text-xs font-semibold transition-colors ${
               loc === locale
