@@ -18,7 +18,6 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL("https://getpermit.pl"),
   robots: { index: true, follow: true },
-  // TODO: Stworzyc og:image 1200x630 i umiescic w /public/og-image.jpg
   openGraph: {
     type: "website",
     siteName: "getpermit.pl",
@@ -34,13 +33,24 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const lang = await getLocale();
+  let lang = "pl";
+  try {
+    lang = await getLocale();
+  } catch {
+    // Panel/admin routes don't have intl context — fallback to pl
+  }
 
   return (
     <html lang={lang} className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        {/* Ensure lang is correct even if SSR falls back to pl */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.lang=location.pathname.match(/^\\/(pl|en|ru|uk)/)?.[1]||'pl'`,
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
