@@ -41,6 +41,8 @@ export default async function RootLayout({
   return (
     <html lang={lang} className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
