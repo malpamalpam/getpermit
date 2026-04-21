@@ -28,6 +28,12 @@
     "effectivenessDesc": "98% of our cases end with a positive decision from the authorities.",
     "mission": "Mission",
     "missionDesc": "We help people with residence legalization \u2014 professionally and with dedication.",
+    "teamTitle": "Our team",
+    "team": {
+      "person1": { "name": "Michalina", "role": "Immigration Manager" },
+      "person2": { "name": "Alina", "role": "Immigration Specialist" },
+      "person3": { "name": "Solomiia", "role": "Immigration Specialist" }
+    },
     "companyData": "Company details",
     "companyName": "Name",
     "companyNip": "Tax ID (NIP)"
@@ -393,7 +399,7 @@
     },
     "casesList": {
       "title": "All cases",
-      "subtitle": "Manage foundation client cases.",
+      "subtitle": "Manage client cases.",
       "filters": {
         "search": "Search by client or title",
         "status": "Status",
@@ -488,7 +494,7 @@
     },
     "clientsList": {
       "title": "Clients",
-      "subtitle": "All foundation clients.",
+      "subtitle": "All clients.",
       "search": "Search by name or email",
       "columns": {
         "name": "Name",

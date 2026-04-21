@@ -16,7 +16,6 @@ import Image from "next/image";
 import { getServiceHeroImage } from "@/lib/service-images";
 import { getLocalizedSlug, resolveInternalSlug } from "@/lib/service-slugs";
 import {
-  Clock,
   Wallet,
   CheckCircle2,
   ChevronRight,
@@ -72,8 +71,6 @@ export default async function ServiceDetailPage({
   const fullDesc = localized(service.fullDescription, locale);
   const forWhom = localized(service.forWhom, locale);
   const documents = localizedList(service.requiredDocuments, locale);
-  const estimatedTime = localized(service.estimatedTime, locale);
-
   // TODO: replace Unsplash URLs with authentic photos in /public/images/services/
   const heroImage = getServiceHeroImage(service.slug);
   const heroAlt = heroImage.alt[locale] ?? heroImage.alt.pl;
@@ -141,17 +138,6 @@ export default async function ServiceDetailPage({
                   </div>
                 </div>
               )}
-              <div className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm">
-                <Clock className="h-5 w-5 text-brand" />
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-white/60">
-                    {t("duration")}
-                  </div>
-                  <div className="font-semibold text-white">
-                    {estimatedTime}
-                  </div>
-                </div>
-              </div>
             </div>
           </Container>
         </div>

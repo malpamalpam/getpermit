@@ -4,7 +4,7 @@
  * Wartości = zlokalizowane slugi per język.
  */
 export const SERVICE_SLUG_MAP: Record<string, Record<string, string>> = {
-  // Legalizacja pracy
+  // Dla pracodawców (legalizacja pracy)
   "zezwolenie-na-prace": {
     pl: "zezwolenie-na-prace",
     en: "work-permit",
@@ -73,6 +73,25 @@ export const SERVICE_SLUG_MAP: Record<string, Record<string, string>> = {
     ru: "prisyazhnye-perevody",
     uk: "prysyazhni-pereklady",
   },
+  // Nowe usługi
+  "powiadomienia-o-powierzeniu-pracy": {
+    pl: "powiadomienia-o-powierzeniu-pracy",
+    en: "work-entrustment-notifications",
+    ru: "uvedomleniya-o-poruchenii-raboty",
+    uk: "povdomlennya-pro-doruchennya-roboty",
+  },
+  "legalizacja-fdk": {
+    pl: "legalizacja-fdk",
+    en: "fdk-legalization",
+    ru: "legalizaciya-fdk",
+    uk: "legalizaciya-fdk",
+  },
+  "legalizacja-pracy-fdk": {
+    pl: "legalizacja-pracy-fdk",
+    en: "work-legalization-fdk",
+    ru: "legalizaciya-raboty-fdk",
+    uk: "legalizaciya-roboty-fdk",
+  },
   // Dla pracodawców — dedykowany landing
   "dla-pracodawcow": {
     pl: "dla-pracodawcow",
@@ -93,10 +112,10 @@ export const SERVICE_BASE_PATH: Record<string, string> = {
 /** Slugi kategorii per locale (używane jako kotwice na /uslugi) */
 export const CATEGORY_SLUG_MAP: Record<string, Record<string, string>> = {
   "legalizacja-pracy": {
-    pl: "legalizacja-pracy",
-    en: "work-legalization",
-    ru: "legalizaciya-raboty",
-    uk: "legalizaciya-roboty",
+    pl: "dla-pracodawcow",
+    en: "for-employers",
+    ru: "dlya-rabotodatelej",
+    uk: "dlya-robotodavciv",
   },
   "legalizacja-pobytu": {
     pl: "legalizacja-pobytu",

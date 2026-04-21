@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/panel/StatusBadge";
 import { CaseTimeline } from "@/components/panel/CaseTimeline";
 import { ClientDocumentList } from "@/components/panel/ClientDocumentList";
 import { ClientDocumentUpload } from "@/components/panel/ClientDocumentUpload";
+import { MosPhotoUpload } from "@/components/panel/MosPhotoUpload";
 import { CaseMessages } from "@/components/panel/CaseMessages";
 import { requireUser } from "@/lib/auth";
 import { getPanelLocale } from "@/lib/panel-locale";
@@ -128,6 +129,7 @@ export default async function CaseDetailPage({
                 {t("documents")}
               </h2>
               <div className="space-y-6">
+                <MosPhotoUpload />
                 <ClientDocumentUpload caseId={caseRecord.id} />
                 <ClientDocumentList
                   documents={caseRecord.documents}

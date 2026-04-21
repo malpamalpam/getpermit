@@ -1,5 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/pl/uslugi#legalizacja-pracy", "destination": "/pl/uslugi/dla-pracodawcow", "statusCode": 301 },
+    { "source": "/en/services#work-legalization", "destination": "/en/services/for-employers", "statusCode": 301 }
+  ],
   "crons": [
     {
       "path": "/api/cron/anonymize-old-cases",

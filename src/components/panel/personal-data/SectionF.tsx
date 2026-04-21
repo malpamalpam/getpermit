@@ -1,4 +1,5 @@
 import { inputBase, labelBase } from "./constants";
+import { OccupationSearch } from "./OccupationSearch";
 
 const CONTRACT_TYPES = ["EMPLOYMENT", "MANDATE", "SPECIFIC_TASK", "MANAGERIAL"] as const;
 
@@ -107,6 +108,25 @@ export function SectionF({ values, onChange, t }: Props) {
         <label className={labelBase}>{t("salary")}</label>
         <input type="text" value={v("salary")} onChange={(e) => onChange("salary", e.target.value)} placeholder={t("salaryHint")} className={inputBase} />
       </div>
+
+      <OccupationSearch
+        value={v("kzisCode")}
+        onChange={(val) => onChange("kzisCode", val)}
+        label={t("kzisCode")}
+        placeholder={t("kzisCodeHint")}
+      />
+
+      <div>
+        <label className={labelBase}>{t("jobTitle")}</label>
+        <input type="text" value={v("jobTitle")} onChange={(e) => onChange("jobTitle", e.target.value)} placeholder={t("jobTitleHint")} className={inputBase} />
+      </div>
+
+      {v("contractType") === "SPECIFIC_TASK" && (
+        <div>
+          <label className={labelBase}>{t("workSubject")}</label>
+          <input type="text" value={v("workSubject")} onChange={(e) => onChange("workSubject", e.target.value)} placeholder={t("workSubjectHint")} className={inputBase} />
+        </div>
+      )}
     </div>
   );
 }

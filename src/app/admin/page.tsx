@@ -168,40 +168,51 @@ export default async function AdminCasesListPage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-primary/5">
-                {cases.map((c) => (
+                {cases.map((c) => {
+                  const caseUrl = `/admin/sprawa/${c.id}`;
+                  const cellCls = "px-4 py-3";
+                  return (
                   <tr
                     key={c.id}
-                    className="cursor-pointer transition-colors hover:bg-surface"
+                    className="group cursor-pointer transition-colors hover:bg-surface"
                   >
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/admin/sprawa/${c.id}`}
-                        className="font-medium text-primary hover:text-accent"
-                      >
+                    <td className={cellCls}>
+                      <Link href={caseUrl} className="font-medium text-primary group-hover:text-accent">
                         {c.title}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-primary/80">
+                    <td className={cellCls}>
+                      <Link href={caseUrl} className="block text-primary/80">
                       {c.user.firstName || c.user.lastName
                         ? `${c.user.firstName ?? ""} ${c.user.lastName ?? ""}`.trim()
                         : c.user.email}
+                      </Link>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className={cellCls}>
+                      <Link href={caseUrl} className="block">
                       <StatusBadge status={c.status} />
+                      </Link>
                     </td>
-                    <td className="px-4 py-3 text-xs text-primary/70">
+                    <td className={`${cellCls} text-xs text-primary/70`}>
+                      <Link href={caseUrl} className="block">
                       {tType(c.type)}
+                      </Link>
                     </td>
-                    <td className="px-4 py-3 text-xs text-primary/70">
+                    <td className={`${cellCls} text-xs text-primary/70`}>
+                      <Link href={caseUrl} className="block">
                       {c.assignedStaff
                         ? c.assignedStaff.firstName ?? c.assignedStaff.email
                         : "—"}
+                      </Link>
                     </td>
-                    <td className="px-4 py-3 text-xs text-primary/50">
+                    <td className={`${cellCls} text-xs text-primary/50`}>
+                      <Link href={caseUrl} className="block">
                       {formatDate(c.updatedAt)}
+                      </Link>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

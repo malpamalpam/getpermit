@@ -123,6 +123,38 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Patrick Tomasso",
   },
 
+  // FDK
+  "legalizacja-fdk": {
+    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
+    alt: {
+      pl: "Legalizacja na podstawie Fundacji Firma Dla Każdego",
+      en: "Legalization via Firma Dla Każdego Foundation",
+      ru: "Легализация через Фонд Firma Dla Każdego",
+      uk: "Легалізація через Фонд Firma Dla Każdego",
+    },
+    credit: "Unsplash / Cytonn Photography",
+  },
+  "legalizacja-pracy-fdk": {
+    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
+    alt: {
+      pl: "Legalizacja pracy na podstawie Fundacji Firma Dla Każdego",
+      en: "Work legalization via Firma Dla Każdego Foundation",
+      ru: "Легализация работы через Фонд Firma Dla Każdego",
+      uk: "Легалізація роботи через Фонд Firma Dla Każdego",
+    },
+    credit: "Unsplash / Cytonn Photography",
+  },
+  "powiadomienia-o-powierzeniu-pracy": {
+    src: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1440&q=80&auto=format",
+    alt: {
+      pl: "Powiadomienia o powierzeniu pracy cudzoziemcowi",
+      en: "Notifications of entrusting work to a foreigner",
+      ru: "Уведомления о поручении работы иностранцу",
+      uk: "Повідомлення про доручення роботи іноземцю",
+    },
+    credit: "Unsplash / Scott Graham",
+  },
+
   // Dodatkowe
   "obywatelstwo-polskie": {
     src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1440&q=80&auto=format",

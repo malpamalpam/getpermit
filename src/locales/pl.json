@@ -28,6 +28,12 @@
     "effectivenessDesc": "98% naszych spraw ko\u0144czy si\u0119 pozytywn\u0105 decyzj\u0105 urz\u0119du.",
     "mission": "Misja",
     "missionDesc": "Pomagamy ludziom w legalizacji pobytu \u2014 profesjonalnie i z zaanga\u017cowaniem.",
+    "teamTitle": "Nasz zespół",
+    "team": {
+      "person1": { "name": "Michalina", "role": "Immigration Manager" },
+      "person2": { "name": "Alina", "role": "Immigration Specialist" },
+      "person3": { "name": "Solomiia", "role": "Immigration Specialist" }
+    },
     "companyData": "Dane firmy",
     "companyName": "Nazwa",
     "companyNip": "NIP"
@@ -173,7 +179,7 @@
       "greetingFallback": "Witaj",
       "subtitle": "Tu znajdziesz wszystkie swoje sprawy legalizacyjne, ich aktualny status oraz dokumenty przygotowane przez naszych konsultantów.",
       "noCases": "Nie masz jeszcze żadnych spraw",
-      "noCasesDescription": "Po podpisaniu umowy z naszą fundacją Twój opiekun utworzy sprawę i będziesz ją tu widzieć.",
+      "noCasesDescription": "Po podpisaniu umowy Twój opiekun utworzy sprawę i będziesz ją tu widzieć.",
       "contactButton": "Skontaktuj się z opiekunem",
       "submittedAt": "Złożono",
       "expectedDecision": "Planowana decyzja",
@@ -360,6 +366,12 @@
         "contractIndefinite": "Czas nieokreślony",
         "salary": "Wynagrodzenie (brutto)",
         "salaryHint": "np. 5000 PLN",
+        "kzisCode": "Kod zawodu KZiS",
+        "kzisCodeHint": "Wpisz nazwę lub kod zawodu...",
+        "jobTitle": "Stanowisko",
+        "jobTitleHint": "np. Programista, Kierownik magazynu",
+        "workSubject": "Przedmiot dzieła",
+        "workSubjectHint": "Opisz przedmiot umowy o dzieło...",
         "options": {
           "contractType": {
             "EMPLOYMENT": "Umowa o pracę",
@@ -393,7 +405,7 @@
     },
     "casesList": {
       "title": "Wszystkie sprawy",
-      "subtitle": "Zarządzaj sprawami klientów fundacji.",
+      "subtitle": "Zarządzaj sprawami klientów.",
       "filters": {
         "search": "Szukaj po kliencie lub tytule",
         "status": "Status",
@@ -488,7 +500,7 @@
     },
     "clientsList": {
       "title": "Klienci",
-      "subtitle": "Wszyscy klienci fundacji.",
+      "subtitle": "Wszyscy klienci.",
       "search": "Szukaj po imieniu, nazwisku lub email",
       "columns": {
         "name": "Imię i nazwisko",

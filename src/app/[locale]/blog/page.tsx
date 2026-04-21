@@ -68,7 +68,7 @@ export default async function BlogPage({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-900/50 to-transparent" />
                 </div>
-                <div className="p-6 md:p-8">
+                <div className="flex flex-1 flex-col p-6 md:p-8">
                   <div className="mb-3 flex items-center gap-3 text-xs text-ink/50">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
@@ -82,10 +82,10 @@ export default async function BlogPage({
                   <h2 className="font-display text-xl font-extrabold text-primary md:text-2xl">
                     {post.title}
                   </h2>
-                  <p className="mt-3 text-sm leading-relaxed text-ink/60">
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-ink/60">
                     {post.description}
                   </p>
-                  <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
+                  <div className="mt-auto pt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent transition-transform group-hover:translate-x-1">
                     {t("readMore")}
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </div>

@@ -272,7 +272,7 @@ const T: Record<
   clientInvitation: {
     pl: {
       subject: "Zaproszenie do panelu klienta — getpermit.pl",
-      preheader: "Zostałeś zaproszony do panelu klienta fundacji.",
+      preheader: "Zostałeś zaproszony do panelu klienta.",
       heading: "Witamy w getpermit.pl",
       body: "{firstName}, zostałeś zaproszony do panelu klienta. Kliknij przycisk poniżej, aby się zalogować i zobaczyć swoje sprawy.",
       ctaLabel: "Zaloguj się do panelu",
