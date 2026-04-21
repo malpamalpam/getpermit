@@ -9,6 +9,7 @@ import {
   FileCheck,
   Shield,
   Bell,
+  Building2,
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
@@ -49,6 +50,7 @@ export default async function EmployersPage({
     { icon: Briefcase, key: "declarations" },
     { icon: Shield, key: "audit" },
     { icon: Bell, key: "notifications" },
+    { icon: Building2, key: "b2bIncubator" },
   ];
 
   const benefits = ["benefit1", "benefit2", "benefit3", "benefit4", "benefit5"];
@@ -101,7 +103,7 @@ export default async function EmployersPage({
           <p className="mt-4 text-lg text-ink/60">{t("servicesSubtitle")}</p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((s) => {
             const Icon = s.icon;
             return (

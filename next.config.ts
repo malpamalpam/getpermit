@@ -20,6 +20,8 @@ const LEGACY_SERVICE_REDIRECTS: Array<{ from: string; to: string }> = [
   { from: "pobyt-staly", to: "karta-stalego-pobytu" },
   { from: "tlumaczenia-przysiegle-dokumentow", to: "tlumaczenia-przysiegle" },
   { from: "karta-pobytu-stalego", to: "karta-stalego-pobytu" },
+  { from: "legalizacja-fdk", to: "legalizacja-b2b-inkubator" },
+  { from: "legalizacja-pracy-fdk", to: "legalizacja-pracy-b2b-inkubator" },
 ];
 
 const LOCALES = ["pl", "en", "ru", "uk"] as const;

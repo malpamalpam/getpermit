@@ -13,9 +13,10 @@ const NOTIFY_EMAIL = "legalizacja@firmadlakazdego.pl";
 const FROM = process.env.CONTACT_EMAIL_FROM ?? "noreply@getpermit.pl";
 
 export async function GET(req: NextRequest) {
-  // Verify cron secret
+  // Verify cron secret (header or query param for testing)
   const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = req.nextUrl.searchParams.get("secret");
+  if (auth !== `Bearer ${process.env.CRON_SECRET}` && secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

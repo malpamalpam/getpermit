@@ -686,6 +686,10 @@
       "notifications": {
         "title": "Powiadomienia o powierzeniu pracy cudzoziemcowi",
         "desc": "Sk\u0142adanie powiadomie\u0144 do Powiatowego Urz\u0119du Pracy o powierzeniu pracy cudzoziemcowi \u2014 nowy obowi\u0105zek pracodawcy od 2025 r."
+      },
+      "b2bIncubator": {
+        "title": "Legalizacja pracy B2B w inkubatorze",
+        "desc": "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsi\u0119biorczo\u015bci \u2014 dedykowana \u015bcie\u017cka dla pracodawc\u00f3w i cudzoziemc\u00f3w."
       }
     },
     "benefitsTitle": "Dlaczego warto z nami wsp\u00f3\u0142pracowa\u0107?",

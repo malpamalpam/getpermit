@@ -80,17 +80,17 @@ export const SERVICE_SLUG_MAP: Record<string, Record<string, string>> = {
     ru: "uvedomleniya-o-poruchenii-raboty",
     uk: "povdomlennya-pro-doruchennya-roboty",
   },
-  "legalizacja-fdk": {
-    pl: "legalizacja-fdk",
-    en: "fdk-legalization",
-    ru: "legalizaciya-fdk",
-    uk: "legalizaciya-fdk",
+  "legalizacja-b2b-inkubator": {
+    pl: "legalizacja-b2b-inkubator",
+    en: "b2b-incubator-legalization",
+    ru: "legalizaciya-b2b-inkubator",
+    uk: "legalizaciya-b2b-inkubator",
   },
-  "legalizacja-pracy-fdk": {
-    pl: "legalizacja-pracy-fdk",
-    en: "work-legalization-fdk",
-    ru: "legalizaciya-raboty-fdk",
-    uk: "legalizaciya-roboty-fdk",
+  "legalizacja-pracy-b2b-inkubator": {
+    pl: "legalizacja-pracy-b2b-inkubator",
+    en: "work-legalization-b2b-incubator",
+    ru: "legalizaciya-raboty-b2b-inkubator",
+    uk: "legalizaciya-roboty-b2b-inkubator",
   },
   // Dla pracodawców — dedykowany landing
   "dla-pracodawcow": {

@@ -123,24 +123,24 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Patrick Tomasso",
   },
 
-  // FDK
-  "legalizacja-fdk": {
+  // B2B Inkubator
+  "legalizacja-b2b-inkubator": {
     src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
     alt: {
-      pl: "Legalizacja na podstawie Fundacji Firma Dla Każdego",
-      en: "Legalization via Firma Dla Każdego Foundation",
-      ru: "Легализация через Фонд Firma Dla Każdego",
-      uk: "Легалізація через Фонд Firma Dla Każdego",
+      pl: "Legalizacja na podstawie umowy B2B w inkubatorze przedsiębiorczości",
+      en: "Legalization via B2B contract in a business incubator",
+      ru: "Легализация на основе договора B2B в бизнес-инкубаторе",
+      uk: "Легалізація на основі договору B2B у бізнес-інкубаторі",
     },
     credit: "Unsplash / Cytonn Photography",
   },
-  "legalizacja-pracy-fdk": {
+  "legalizacja-pracy-b2b-inkubator": {
     src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
     alt: {
-      pl: "Legalizacja pracy na podstawie Fundacji Firma Dla Każdego",
-      en: "Work legalization via Firma Dla Każdego Foundation",
-      ru: "Легализация работы через Фонд Firma Dla Każdego",
-      uk: "Легалізація роботи через Фонд Firma Dla Każdego",
+      pl: "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości",
+      en: "Work legalization via B2B contract in a business incubator",
+      ru: "Легализация работы на основе договора B2B в бизнес-инкубаторе",
+      uk: "Легалізація роботи на основі договору B2B у бізнес-інкубаторі",
     },
     credit: "Unsplash / Cytonn Photography",
   },

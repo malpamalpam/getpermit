@@ -171,23 +171,23 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         price: null,
       },
       {
-        slug: "legalizacja-fdk",
+        slug: "legalizacja-b2b-inkubator",
         categorySlug: "legalizacja-pobytu",
         order: 5,
-        title: pl("Legalizacja na podstawie Fundacji Firma Dla Każdego"),
+        title: pl("Legalizacja na podstawie umowy B2B w inkubatorze przedsiębiorczości"),
         shortDescription: pl(
-          "Legalizacja pobytu i pracy za pośrednictwem Fundacji Firma Dla Każdego — dedykowana ścieżka dla cudzoziemców prowadzących działalność."
+          "Legalizacja pobytu i pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla cudzoziemców prowadzących działalność."
         ),
         fullDescription: pl(
-          "Legalizacja pobytu i pracy na podstawie współpracy z Fundacją Firma Dla Każdego. Fundacja wspiera cudzoziemców w zakładaniu i prowadzeniu działalności gospodarczej w Polsce, co stanowi jedną ze ścieżek uzyskania zezwolenia na pobyt czasowy. Pomagamy w przygotowaniu kompletnej dokumentacji, reprezentacji przed urzędem i koordynacji z fundacją."
+          "Legalizacja pobytu i pracy na podstawie umowy B2B zawartej w ramach inkubatora przedsiębiorczości. Inkubator wspiera cudzoziemców w zakładaniu i prowadzeniu działalności gospodarczej w Polsce, co stanowi jedną ze ścieżek uzyskania zezwolenia na pobyt czasowy. Pomagamy w przygotowaniu kompletnej dokumentacji, reprezentacji przed urzędem i koordynacji z inkubatorem."
         ),
         forWhom: pl(
-          "Cudzoziemcy chcący zalegalizować pobyt poprzez prowadzenie działalności gospodarczej we współpracy z Fundacją Firma Dla Każdego."
+          "Cudzoziemcy chcący zalegalizować pobyt poprzez prowadzenie działalności gospodarczej w ramach umowy B2B w inkubatorze przedsiębiorczości."
         ),
         requiredDocuments: plList([
           "Wniosek o udzielenie zezwolenia na pobyt czasowy",
           "Dokumenty rejestrowe działalności",
-          "Dokumenty potwierdzające współpracę z Fundacją Firma Dla Każdego",
+          "Umowa B2B z inkubatorem przedsiębiorczości",
           "Cztery fotografie",
           "Kopia ważnego dokumentu podróży",
           "Potwierdzenie ubezpieczenia zdrowotnego",
@@ -511,23 +511,23 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         price: null,
       },
       {
-        slug: "legalizacja-pracy-fdk",
+        slug: "legalizacja-pracy-b2b-inkubator",
         categorySlug: "dla-pracodawcow",
         order: 4,
-        title: pl("Legalizacja na podstawie Fundacji Firma Dla Każdego"),
+        title: pl("Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości"),
         shortDescription: pl(
-          "Legalizacja pracy za po\u015brednictwem Fundacji Firma Dla Ka\u017cdego \u2014 dedykowana \u015bcie\u017cka dla pracodawc\u00f3w i cudzoziemc\u00f3w."
+          "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla pracodawców i cudzoziemców."
         ),
         fullDescription: pl(
-          "Legalizacja pracy na podstawie współpracy z Fundacją Firma Dla Każdego. Fundacja wspiera pracodawców i cudzoziemców w procesie legalizacji zatrudnienia, oferując dedykowane ścieżki proceduralne. Pomagamy w koordynacji z fundacją, przygotowaniu dokumentacji i reprezentacji przed urzędami."
+          "Legalizacja pracy na podstawie umowy B2B zawartej w ramach inkubatora przedsiębiorczości. Inkubator wspiera pracodawców i cudzoziemców w procesie legalizacji zatrudnienia, oferując dedykowane ścieżki proceduralne. Pomagamy w koordynacji z inkubatorem, przygotowaniu dokumentacji i reprezentacji przed urzędami."
         ),
         forWhom: pl(
-          "Pracodawcy i cudzoziemcy korzystający ze wsparcia Fundacji Firma Dla Każdego."
+          "Pracodawcy i cudzoziemcy korzystający z umowy B2B w inkubatorze przedsiębiorczości."
         ),
         requiredDocuments: plList([
           "Dokumenty rejestrowe pracodawcy",
           "Kopia paszportu cudzoziemca",
-          "Dokumenty potwierdzające współpracę z Fundacją Firma Dla Każdego",
+          "Umowa B2B z inkubatorem przedsiębiorczości",
           "Umowa o pracę lub umowa cywilnoprawna",
         ]),
         estimatedTime: pl("Od 1 do 3 miesięcy"),

@@ -656,6 +656,10 @@
       "notifications": {
         "title": "Notifications of entrusting work to a foreigner",
         "desc": "Filing notifications to the District Labor Office about entrusting work to a foreigner \u2014 a new employer obligation from 2025."
+      },
+      "b2bIncubator": {
+        "title": "B2B work legalization in business incubator",
+        "desc": "Work legalization via B2B contract in a business incubator \u2014 dedicated path for employers and foreigners."
       }
     },
     "benefitsTitle": "Why work with us?",
