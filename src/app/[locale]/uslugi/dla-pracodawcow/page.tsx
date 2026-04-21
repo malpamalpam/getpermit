@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/routing";
 import { ContactForm } from "@/components/forms/ContactForm";
+import { getLocalizedSlug, SERVICE_BASE_PATH } from "@/lib/service-slugs";
 import {
   Briefcase,
   FileCheck,
@@ -46,11 +47,11 @@ export default async function EmployersPage({
   const t = await getTranslations("employers");
 
   const services = [
-    { icon: FileCheck, key: "workPermits" },
-    { icon: Briefcase, key: "declarations" },
-    { icon: Shield, key: "audit" },
-    { icon: Bell, key: "notifications" },
-    { icon: Building2, key: "b2bIncubator" },
+    { icon: FileCheck, key: "workPermits", slug: "zezwolenie-na-prace" },
+    { icon: Briefcase, key: "declarations", slug: "oswiadczenie-o-powierzeniu-pracy" },
+    { icon: Shield, key: "audit", slug: "" },
+    { icon: Bell, key: "notifications", slug: "powiadomienia-o-powierzeniu-pracy" },
+    { icon: Building2, key: "b2bIncubator", slug: "legalizacja-pracy-b2b-inkubator" },
   ];
 
   const benefits = ["benefit1", "benefit2", "benefit3", "benefit4", "benefit5"];
@@ -106,10 +107,14 @@ export default async function EmployersPage({
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((s) => {
             const Icon = s.icon;
+            const href = s.slug
+              ? `/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}/${getLocalizedSlug(s.slug, locale)}`
+              : undefined;
             return (
-              <div
+              <a
                 key={s.key}
-                className="rounded-2xl border border-primary/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                href={href ?? `/${locale}/kontakt`}
+                className="block rounded-2xl border border-primary/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
                   <Icon className="h-6 w-6" />
@@ -120,7 +125,11 @@ export default async function EmployersPage({
                 <p className="mt-2 text-sm leading-relaxed text-ink/65">
                   {t(`services.${s.key}.desc`)}
                 </p>
-              </div>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent">
+                  Dowiedz się więcej
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              </a>
             );
           })}
         </div>
