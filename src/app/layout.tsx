@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,8 +34,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const hdrs = await headers();
   const cookieStore = await cookies();
-  const lang = cookieStore.get("NEXT_LOCALE")?.value ?? "pl";
+  const lang = hdrs.get("x-locale") ?? cookieStore.get("NEXT_LOCALE")?.value ?? "pl";
 
   return (
     <html lang={lang} className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
