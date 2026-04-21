@@ -45,6 +45,7 @@ export default async function EmployersPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("employers");
+  const tServices = await getTranslations("services");
 
   const services = [
     { icon: FileCheck, key: "workPermits", slug: "zezwolenie-na-prace" },
@@ -126,7 +127,7 @@ export default async function EmployersPage({
                   {t(`services.${s.key}.desc`)}
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent">
-                  Dowiedz się więcej
+                  {tServices("viewDetails")}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </a>
