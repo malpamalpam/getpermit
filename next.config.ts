@@ -26,6 +26,21 @@ const LOCALES = ["pl", "en", "ru", "uk"] as const;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      };
+    }
+    config.externals = [
+      ...(Array.isArray(config.externals) ? config.externals : []),
+      { "onnxruntime-web": "commonjs onnxruntime-web" },
+      { "onnxruntime-web/webgpu": "commonjs onnxruntime-web/webgpu" },
+    ];
+    return config;
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

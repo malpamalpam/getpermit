@@ -2,7 +2,9 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Camera, Upload, X, Check, CircleDot, Loader2 } from "lucide-react";
-import { removeBackground } from "@imgly/background-removal";
+// Loaded dynamically to avoid onnxruntime-web webpack issues
+const loadRemoveBackground = () =>
+  import("@imgly/background-removal").then((m) => m.removeBackground);
 
 const MOS_WIDTH = 684;
 const MOS_HEIGHT = 883;
@@ -85,6 +87,7 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
           canvas.toBlob((b) => resolve(b!), "image/png")
         );
 
+        const removeBackground = await loadRemoveBackground();
         const noBgBlob = await removeBackground(croppedBlob, {
           output: { format: "image/png" },
         });
