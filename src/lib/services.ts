@@ -174,15 +174,29 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "legalizacja-b2b-inkubator",
         categorySlug: "legalizacja-pobytu",
         order: 5,
-        title: pl("Legalizacja na podstawie umowy B2B w inkubatorze przedsiębiorczości"),
-        shortDescription: pl(
-          "Legalizacja pobytu i pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla cudzoziemców prowadzących działalność."
+        title: loc(
+          "Legalizacja na podstawie umowy B2B w inkubatorze przedsiębiorczości",
+          "Legalization via B2B contract in a business incubator",
+          "Легализация на основе договора B2B в бизнес-инкубаторе",
+          "Легалізація на основі договору B2B у бізнес-інкубаторі"
         ),
-        fullDescription: pl(
-          "Legalizacja pobytu i pracy na podstawie umowy B2B zawartej w ramach inkubatora przedsiębiorczości. Inkubator wspiera cudzoziemców w zakładaniu i prowadzeniu działalności gospodarczej w Polsce, co stanowi jedną ze ścieżek uzyskania zezwolenia na pobyt czasowy. Pomagamy w przygotowaniu kompletnej dokumentacji, reprezentacji przed urzędem i koordynacji z inkubatorem."
+        shortDescription: loc(
+          "Legalizacja pobytu i pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla cudzoziemców prowadzących działalność.",
+          "Residence and work legalization via a B2B contract in a business incubator — a dedicated path for foreigners running a business.",
+          "Легализация пребывания и работы на основе договора B2B в бизнес-инкубаторе — выделенный путь для иностранцев, ведущих бизнес.",
+          "Легалізація перебування та роботи на основі договору B2B у бізнес-інкубаторі — виділений шлях для іноземців, що ведуть бізнес."
         ),
-        forWhom: pl(
-          "Cudzoziemcy chcący zalegalizować pobyt poprzez prowadzenie działalności gospodarczej w ramach umowy B2B w inkubatorze przedsiębiorczości."
+        fullDescription: loc(
+          "Legalizacja pobytu i pracy na podstawie umowy B2B zawartej w ramach inkubatora przedsiębiorczości. Inkubator wspiera cudzoziemców w zakładaniu i prowadzeniu działalności gospodarczej w Polsce, co stanowi jedną ze ścieżek uzyskania zezwolenia na pobyt czasowy. Pomagamy w przygotowaniu kompletnej dokumentacji, reprezentacji przed urzędem i koordynacji z inkubatorem.",
+          "Residence and work legalization based on a B2B contract within a business incubator. The incubator supports foreigners in establishing and running a business in Poland, which is one of the paths to obtaining a temporary residence permit. We help with preparing complete documentation, representation before authorities, and coordination with the incubator.",
+          "Легализация пребывания и работы на основе договора B2B в рамках бизнес-инкубатора. Инкубатор поддерживает иностранцев в создании и ведении бизнеса в Польше, что является одним из путей получения разрешения на временное пребывание. Помогаем с подготовкой документации, представительством перед органами и координацией с инкубатором.",
+          "Легалізація перебування та роботи на основі договору B2B у рамках бізнес-інкубатора. Інкубатор підтримує іноземців у створенні та веденні бізнесу в Польщі, що є одним зі шляхів отримання дозволу на тимчасове перебування. Допомагаємо з підготовкою документації, представництвом перед органами та координацією з інкубатором."
+        ),
+        forWhom: loc(
+          "Cudzoziemcy chcący zalegalizować pobyt poprzez prowadzenie działalności gospodarczej w ramach umowy B2B w inkubatorze przedsiębiorczości.",
+          "Foreigners wishing to legalize their stay by running a business under a B2B contract in a business incubator.",
+          "Иностранцы, желающие легализовать пребывание через ведение бизнеса по договору B2B в бизнес-инкубаторе.",
+          "Іноземці, що бажають легалізувати перебування через ведення бізнесу за договором B2B у бізнес-інкубаторі."
         ),
         requiredDocuments: plList([
           "Wniosek o udzielenie zezwolenia na pobyt czasowy",
@@ -193,7 +207,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           "Potwierdzenie ubezpieczenia zdrowotnego",
           "Potwierdzenie miejsca zamieszkania",
         ]),
-        estimatedTime: pl("Od 3 do 6 miesięcy"),
+        estimatedTime: loc("Od 3 do 6 miesięcy", "3 to 6 months", "От 3 до 6 месяцев", "Від 3 до 6 місяців"),
         price: null,
       },
       {
@@ -514,15 +528,29 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         slug: "legalizacja-pracy-b2b-inkubator",
         categorySlug: "dla-pracodawcow",
         order: 4,
-        title: pl("Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości"),
-        shortDescription: pl(
-          "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla pracodawców i cudzoziemców."
+        title: loc(
+          "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości",
+          "Work legalization via B2B contract in a business incubator",
+          "Легализация работы на основе договора B2B в бизнес-инкубаторе",
+          "Легалізація роботи на основі договору B2B у бізнес-інкубаторі"
         ),
-        fullDescription: pl(
-          "Legalizacja pracy na podstawie umowy B2B zawartej w ramach inkubatora przedsiębiorczości. Inkubator wspiera pracodawców i cudzoziemców w procesie legalizacji zatrudnienia, oferując dedykowane ścieżki proceduralne. Pomagamy w koordynacji z inkubatorem, przygotowaniu dokumentacji i reprezentacji przed urzędami."
+        shortDescription: loc(
+          "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla pracodawców i cudzoziemców.",
+          "Work legalization via a B2B contract in a business incubator — a dedicated path for employers and foreigners.",
+          "Легализация работы на основе договора B2B в бизнес-инкубаторе — выделенный путь для работодателей и иностранцев.",
+          "Легалізація роботи на основі договору B2B у бізнес-інкубаторі — виділений шлях для роботодавців та іноземців."
         ),
-        forWhom: pl(
-          "Pracodawcy i cudzoziemcy korzystający z umowy B2B w inkubatorze przedsiębiorczości."
+        fullDescription: loc(
+          "Legalizacja pracy na podstawie umowy B2B zawartej w ramach inkubatora przedsiębiorczości. Inkubator wspiera pracodawców i cudzoziemców w procesie legalizacji zatrudnienia, oferując dedykowane ścieżki proceduralne. Pomagamy w koordynacji z inkubatorem, przygotowaniu dokumentacji i reprezentacji przed urzędami.",
+          "Work legalization based on a B2B contract within a business incubator. The incubator supports employers and foreigners in the employment legalization process, offering dedicated procedural paths. We help with coordination with the incubator, documentation preparation, and representation before authorities.",
+          "Легализация работы на основе договора B2B в рамках бизнес-инкубатора. Инкубатор поддерживает работодателей и иностранцев в процессе легализации трудоустройства. Помогаем с координацией с инкубатором, подготовкой документации и представительством перед органами.",
+          "Легалізація роботи на основі договору B2B у рамках бізнес-інкубатора. Інкубатор підтримує роботодавців та іноземців у процесі легалізації працевлаштування. Допомагаємо з координацією з інкубатором, підготовкою документації та представництвом перед органами."
+        ),
+        forWhom: loc(
+          "Pracodawcy i cudzoziemcy korzystający z umowy B2B w inkubatorze przedsiębiorczości.",
+          "Employers and foreigners using a B2B contract in a business incubator.",
+          "Работодатели и иностранцы, использующие договор B2B в бизнес-инкубаторе.",
+          "Роботодавці та іноземці, що використовують договір B2B у бізнес-інкубаторі."
         ),
         requiredDocuments: plList([
           "Dokumenty rejestrowe pracodawcy",
@@ -530,7 +558,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           "Umowa B2B z inkubatorem przedsiębiorczości",
           "Umowa o pracę lub umowa cywilnoprawna",
         ]),
-        estimatedTime: pl("Od 1 do 3 miesięcy"),
+        estimatedTime: loc("Od 1 do 3 miesięcy", "1 to 3 months", "От 1 до 3 месяцев", "Від 1 до 3 місяців"),
         price: null,
       },
     ],
