@@ -89,7 +89,6 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
         const { removeBackground } = await import("@imgly/background-removal");
 
         const noBgBlob: Blob = await removeBackground(croppedBlob, {
-          publicPath: "https://unpkg.com/@imgly/background-removal@1.5.5/dist/",
           output: { format: "image/png" },
         });
 
