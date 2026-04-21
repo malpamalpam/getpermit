@@ -12,6 +12,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.89.0",
     "@hookform/resolvers": "3.10.0",
+    "@imgly/background-removal": "^1.7.0",
     "@prisma/client": "^6.19.3",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.102.1",
@@ -25,6 +26,7 @@
     "next": "^15.3.6",
     "next-intl": "3.26.3",
     "next-mdx-remote": "^6.0.0",
+    "onnxruntime-web": "^1.24.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-dropzone": "^15.0.0",

@@ -26,6 +26,22 @@ const LOCALES = ["pl", "en", "ru", "uk"] as const;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = [
+        ...(Array.isArray(config.externals) ? config.externals : []),
+        "@imgly/background-removal",
+        "onnxruntime-web",
+        "onnxruntime-web/webgpu",
+      ];
+    } else {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "onnxruntime-web/webgpu": false,
+      };
+    }
+    return config;
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

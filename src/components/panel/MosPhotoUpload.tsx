@@ -86,11 +86,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
           canvas.toBlob((b) => resolve(b!), "image/png")
         );
 
-        // Dynamic import from CDN to avoid webpack bundling issues
-        const cdnUrl = "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs";
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mod: any = await (new Function("url", "return import(url)"))(cdnUrl);
-        const removeBackground = mod.removeBackground;
+        const { removeBackground } = await import("@imgly/background-removal");
 
         const noBgBlob: Blob = await removeBackground(croppedBlob, {
           output: { format: "image/png" },
