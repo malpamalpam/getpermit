@@ -7,10 +7,8 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import {
   Briefcase,
   FileCheck,
-  Users,
   Shield,
-  Clock,
-  TrendingUp,
+  Bell,
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
@@ -50,9 +48,7 @@ export default async function EmployersPage({
     { icon: FileCheck, key: "workPermits" },
     { icon: Briefcase, key: "declarations" },
     { icon: Shield, key: "audit" },
-    { icon: Users, key: "recruitment" },
-    { icon: Clock, key: "support" },
-    { icon: TrendingUp, key: "training" },
+    { icon: Bell, key: "notifications" },
   ];
 
   const benefits = ["benefit1", "benefit2", "benefit3", "benefit4", "benefit5"];
@@ -105,7 +101,7 @@ export default async function EmployersPage({
           <p className="mt-4 text-lg text-ink/60">{t("servicesSubtitle")}</p>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
           {services.map((s) => {
             const Icon = s.icon;
             return (

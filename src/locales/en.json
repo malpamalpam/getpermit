@@ -617,17 +617,9 @@
         "title": "Employment legality audit",
         "desc": "Verification of foreign employees' documents \u2014 minimize the risk of labor inspection penalties."
       },
-      "recruitment": {
-        "title": "Recruitment support",
-        "desc": "Help with hiring non-EU specialists \u2014 EU Blue Card, secondment, intra-corporate transfer."
-      },
-      "support": {
-        "title": "Ongoing HR support",
-        "desc": "Subscription: current handling of employee documents, applications, notifications to authorities."
-      },
-      "training": {
-        "title": "HR training",
-        "desc": "Training and workshops for HR teams on legally hiring foreigners."
+      "notifications": {
+        "title": "Notifications of entrusting work to a foreigner",
+        "desc": "Filing notifications to the District Labor Office about entrusting work to a foreigner \u2014 a new employer obligation from 2025."
       }
     },
     "benefitsTitle": "Why work with us?",

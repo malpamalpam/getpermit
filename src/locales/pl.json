@@ -623,17 +623,9 @@
         "title": "Audyt legalno\u015bci zatrudnienia",
         "desc": "Sprawdzenie dokument\u00f3w cudzoziemc\u00f3w w Twojej firmie \u2014 minimalizacja ryzyka kar PIP."
       },
-      "recruitment": {
-        "title": "Wsparcie rekrutacji",
-        "desc": "Pomoc w zatrudnianiu specjalist\u00f3w spoza UE \u2014 EU Blue Card, delegowanie, transfer wewn\u0105trzkorporacyjny."
-      },
-      "support": {
-        "title": "Sta\u0142a obs\u0142uga HR",
-        "desc": "Abonament: bie\u017c\u0105ca obs\u0142uga dokument\u00f3w pracowniczych, wnioski, powiadomienia do urz\u0119d\u00f3w."
-      },
-      "training": {
-        "title": "Szkolenia dla HR",
-        "desc": "Szkolenia i warsztaty dla zespo\u0142\u00f3w HR z zakresu zatrudniania cudzoziemc\u00f3w zgodnie z prawem."
+      "notifications": {
+        "title": "Powiadomienia o powierzeniu pracy cudzoziemcowi",
+        "desc": "Sk\u0142adanie powiadomie\u0144 do Powiatowego Urz\u0119du Pracy o powierzeniu pracy cudzoziemcowi \u2014 nowy obowi\u0105zek pracodawcy od 2025 r."
       }
     },
     "benefitsTitle": "Dlaczego warto z nami wsp\u00f3\u0142pracowa\u0107?",
