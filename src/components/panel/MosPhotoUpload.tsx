@@ -1,24 +1,33 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Camera, Upload, X, Check, CircleDot } from "lucide-react";
+import { Camera, Upload, X, Check, CircleDot, Loader2 } from "lucide-react";
 
 const MOS_WIDTH = 684;
 const MOS_HEIGHT = 883;
+
+// Load background-removal entirely from CDN (esm.sh resolves all deps including onnxruntime-web)
+// This bypasses webpack completely — no bundling issues with WASM
+async function removeBg(blob: Blob): Promise<Blob> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mod: any = await (new Function(
+    "return import('https://esm.sh/@imgly/background-removal@1.5.5')"
+  ))();
+  return mod.removeBackground(blob, {
+    output: { format: "image/png" },
+  });
+}
 
 interface Props {
   initialPhoto?: string | null;
   onPhotoReady?: (dataUrl: string) => void;
 }
 
-/**
- * Component for capturing or uploading a biometric photo.
- * Automatically crops to 684×883 px. Face guide overlay on camera view.
- */
 export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
   const [preview, setPreview] = useState<string | null>(initialPhoto ?? null);
   const [error, setError] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -31,7 +40,6 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
     setCameraActive(false);
   }, []);
 
-  // Attach stream to <video> once rendered
   useEffect(() => {
     if (cameraActive && videoRef.current && streamRef.current) {
       const video = videoRef.current;
@@ -40,7 +48,6 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
     }
   }, [cameraActive]);
 
-  // Clean up camera on unmount
   useEffect(() => {
     return () => {
       if (streamRef.current) {
@@ -50,7 +57,7 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
   }, []);
 
   const cropAndFinalize = useCallback(
-    (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
+    async (source: HTMLVideoElement | HTMLImageElement, sourceWidth: number, sourceHeight: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -72,10 +79,41 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
 
       canvas.width = MOS_WIDTH;
       canvas.height = MOS_HEIGHT;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      const ctx = canvas.getContext("2d")!;
 
+      // Step 1: Crop to MOS dimensions
       ctx.drawImage(source, sx, sy, sw, sh, 0, 0, MOS_WIDTH, MOS_HEIGHT);
+
+      // Step 2: Remove background and add white
+      setProcessing(true);
+      try {
+        const croppedBlob = await new Promise<Blob>((resolve) =>
+          canvas.toBlob((b) => resolve(b!), "image/png")
+        );
+
+        console.log("[MosPhoto] Starting background removal...");
+        const noBgBlob = await removeBg(croppedBlob);
+        console.log("[MosPhoto] Background removed OK");
+
+        const noBgImg = new Image();
+        const noBgUrl = URL.createObjectURL(noBgBlob);
+
+        await new Promise<void>((resolve, reject) => {
+          noBgImg.onload = () => resolve();
+          noBgImg.onerror = () => reject(new Error("img load failed"));
+          noBgImg.src = noBgUrl;
+        });
+
+        // White bg + transparent person on top
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, MOS_WIDTH, MOS_HEIGHT);
+        ctx.drawImage(noBgImg, 0, 0, MOS_WIDTH, MOS_HEIGHT);
+        URL.revokeObjectURL(noBgUrl);
+      } catch (err) {
+        console.warn("[MosPhoto] Background removal failed, keeping original:", err);
+      } finally {
+        setProcessing(false);
+      }
 
       const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
       setPreview(dataUrl);
@@ -86,15 +124,11 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
 
   const startCamera = useCallback(async () => {
     setError(null);
-    console.log("[MosPhoto] Starting camera...");
 
     if (typeof window !== "undefined" && window.location.protocol !== "https:" && window.location.hostname !== "localhost") {
       setError("Kamera wymaga połączenia HTTPS.");
       return;
     }
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    console.log("[MosPhoto] Video devices:", devices.filter((d) => d.kind === "videoinput"));
 
     let stream: MediaStream;
     try {
@@ -107,7 +141,6 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       }
 
-      console.log("[MosPhoto] Stream obtained:", stream.getVideoTracks().map((t) => t.label));
       streamRef.current = stream;
       setCameraActive(true);
     } catch (err) {
@@ -177,7 +210,14 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
     <div className="space-y-3">
       <canvas ref={canvasRef} className="hidden" />
 
-      {cameraActive ? (
+      {processing ? (
+        <div className="flex flex-col items-center gap-3 py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <p className="text-sm font-medium text-primary/70">
+            Usuwanie tła — za pierwszym razem może to potrwać ok. 30 s...
+          </p>
+        </div>
+      ) : cameraActive ? (
         <div className="space-y-3">
           <div className="relative overflow-hidden rounded-lg border border-primary/10 bg-black">
             <video
