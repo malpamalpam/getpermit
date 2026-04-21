@@ -22,9 +22,11 @@ export function LanguageSwitcher() {
 
   const onChange = (nextLocale: string) => {
     startTransition(() => {
+      // Strip locale from params to prevent /en/ru paths
+      const { locale: _locale, ...restParams } = params as Record<string, string>;
       router.replace(
         // @ts-expect-error -- pathnames mapping handled at runtime
-        { pathname, params },
+        { pathname, params: restParams },
         { locale: nextLocale }
       );
     });

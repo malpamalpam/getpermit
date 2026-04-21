@@ -35,7 +35,8 @@ export default async function RootLayout({
 }) {
   let lang = "pl";
   try {
-    lang = await getLocale();
+    const locale = await getLocale();
+    lang = locale === "uk" ? "ua" : locale;
   } catch {
     // Panel/admin routes don't have intl context — fallback to pl
   }
@@ -48,7 +49,7 @@ export default async function RootLayout({
         {/* Ensure lang is correct even if SSR falls back to pl */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.lang=location.pathname.match(/^\\/(pl|en|ru|uk)/)?.[1]||'pl'`,
+            __html: `var m=location.pathname.match(/^\\/(pl|en|ru|uk)/);document.documentElement.lang=m?m[1]==='uk'?'ua':m[1]:'pl'`,
           }}
         />
         <script
