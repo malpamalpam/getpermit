@@ -85,22 +85,47 @@ export function MosPhotoUpload({ onPhotoReady }: Props) {
 
   const startCamera = useCallback(async () => {
     setError(null);
+
+    if (typeof window !== "undefined" && window.location.protocol !== "https:" && window.location.hostname !== "localhost") {
+      setError("Kamera wymaga połączenia HTTPS.");
+      return;
+    }
+
+    let stream: MediaStream;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 1024 } },
-        audio: false,
-      });
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 1024 } },
+          audio: false,
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
+
       streamRef.current = stream;
       setCameraActive(true);
 
-      // Wait for the video element to be rendered
       requestAnimationFrame(() => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
       });
-    } catch {
-      setError("Nie udało się uruchomić kamery. Sprawdź uprawnienia w przeglądarce.");
+    } catch (err) {
+      console.error("Camera error:", err);
+      const name = err instanceof DOMException ? err.name : "";
+      switch (name) {
+        case "NotAllowedError":
+          setError("Dostęp do kamery został zablokowany. Kliknij ikonkę kłódki w pasku adresu i zezwól na dostęp do kamery.");
+          break;
+        case "NotFoundError":
+          setError("Nie wykryto kamery w tym urządzeniu.");
+          break;
+        case "NotReadableError":
+          setError("Kamera jest używana przez inną aplikację.");
+          break;
+        default:
+          setError("Nie udało się uruchomić kamery. Sprawdź uprawnienia w przeglądarce.");
+      }
     }
   }, []);
 
