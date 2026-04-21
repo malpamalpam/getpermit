@@ -248,7 +248,13 @@
       "sectionA": {
         "title": "A. Основні дані",
         "firstNameLatin": "Ім'я (латиницею)", "lastNameLatin": "Прізвище (латиницею)",
-        "nativeFullName": "ПІБ рідною мовою", "gender": "Стать",
+        "nativeFullName": "ПІБ рідною мовою",
+        "previousName": "Попереднє ім'я / прізвище",
+        "education": "Освіта",
+        "height": "Зріст (см)",
+        "eyeColor": "Колір очей",
+        "specialFeatures": "Особливі прикмети (шрами, татуювання)",
+        "gender": "Стать",
         "dateOfBirth": "Дата народження", "placeOfBirth": "Місце народження",
         "countryOfBirth": "Країна народження", "citizenship": "Громадянство",
         "secondCitizenship": "Друге громадянство", "nationality": "Національність",
@@ -256,7 +262,9 @@
         "motherName": "Ім'я матері", "motherMaidenName": "Дівоче прізвище матері",
         "options": {
           "gender": { "MALE": "Чоловіча", "FEMALE": "Жіноча" },
-          "maritalStatus": { "SINGLE": "Неодружений/Незаміжня", "MARRIED": "Одружений/Заміжня", "DIVORCED": "Розлучений/а", "WIDOWED": "Вдівець/Вдова" }
+          "maritalStatus": { "SINGLE": "Неодружений/Незаміжня", "MARRIED": "Одружений/Заміжня", "DIVORCED": "Розлучений/а", "WIDOWED": "Вдівець/Вдова" },
+          "education": { "PRIMARY": "Початкова", "SECONDARY": "Середня", "HIGHER": "Вища", "VOCATIONAL": "Професійна" },
+          "eyeColor": { "BROWN": "Карі", "BLUE": "Блакитні", "GREEN": "Зелені", "GREY": "Сірі", "HAZEL": "Горіхові", "BLACK": "Чорні", "OTHER": "Інші" }
         }
       },
       "sectionB": {
@@ -323,6 +331,18 @@
         "contractType": "Тип договору", "contractFrom": "Договір з", "contractTo": "Договір до",
         "contractIndefinite": "Безстроковий", "salary": "Зарплата (брутто)", "salaryHint": "напр. 5000 PLN",
         "options": { "contractType": { "EMPLOYMENT": "Трудовий договір", "MANDATE": "Договір доручення", "SPECIFIC_TASK": "Договір підряду", "MANAGERIAL": "Управлінський контракт" } }
+      },
+      "sectionG": {
+        "title": "G. Історія перебування та додаткові дані",
+        "familyMembersInPoland": "Члени сім'ї в Польщі",
+        "familyMembersInPolandHint": "Ім'я, прізвище, дата народження, місто, чи подавав на ВНП",
+        "lastEntryDetails": "Останній в'їзд до Польщі (дата та правова підстава)",
+        "lastEntryDetailsHint": "напр. 2024-01-15, віза типу D",
+        "previousVisitsPoland": "Попередні візити до Польщі (дати)",
+        "travelsOutsidePoland": "Подорожі за межі Польщі за останні 5 років",
+        "travelsOutsidePolandHint": "Країна, період перебування",
+        "addressCountryOfOrigin": "Адреса проживання в країні походження",
+        "previousAddressesPoland": "Попередні адреси в Польщі"
       }
     },
     "settings": {
@@ -344,7 +364,8 @@
       "cases": "Справи",
       "clients": "Клієнти",
       "newCase": "Нова справа",
-      "newClient": "Новий клієнт"
+      "newClient": "Новий клієнт",
+      "fdk": "Справи FDK"
     },
     "casesList": {
       "title": "Усі справи",
@@ -455,6 +476,18 @@
       "noResults": "Клієнтів не знайдено.",
       "addCaseButton": "Додати справу",
       "createButton": "Новий клієнт"
+    },
+    "fdk": {
+      "title": "Справи FDK",
+      "subtitle": "Дозволи на роботу, заяви та Blue Card.",
+      "tabs": { "permits": "Дозволи", "declarations": "Заяви", "blueCard": "Blue Card", "calendar": "Календар" },
+      "columns": { "id": "ID", "nazwisko": "Прізвище", "imie": "Ім'я", "dataOd": "Діє з", "dataDo": "Діє до", "decyzjaOdebrana": "Рішення отримано", "waznaDo": "Діє до", "status": "Статус", "daysLeft": "Днів залишилось" },
+      "status": { "active": "Активне", "expired": "Закінчилось", "expiring": "Скоро закінчується" },
+      "filters": { "all": "Усі", "active": "Активні", "expired": "Закінчені", "search": "Пошук за прізвищем" },
+      "export": "Експорт CSV",
+      "noResults": "Немає записів.",
+      "totalRecords": "Всього: {count}",
+      "calendarTitle": "Календар закінчення дозволів"
     },
     "clientForm": {
       "title": "Новий клієнт",

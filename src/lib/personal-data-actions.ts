@@ -19,6 +19,7 @@ const sectionASchema = z.object({
   firstNameLatin: z.string().trim().min(1).max(100).optional().or(z.literal("")),
   lastNameLatin: z.string().trim().min(1).max(100).optional().or(z.literal("")),
   nativeFullName: z.string().trim().max(200).optional().or(z.literal("")),
+  previousName: z.string().trim().max(200).optional().or(z.literal("")),
   gender: z.enum(["MALE", "FEMALE"]).optional().or(z.literal("")),
   dateOfBirth: z.string().optional().or(z.literal("")),
   placeOfBirth: z.string().trim().max(100).optional().or(z.literal("")),
@@ -27,6 +28,10 @@ const sectionASchema = z.object({
   secondCitizenship: z.string().trim().max(100).optional().or(z.literal("")),
   nationality: z.string().trim().max(100).optional().or(z.literal("")),
   maritalStatus: z.enum(["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"]).optional().or(z.literal("")),
+  education: z.enum(["PRIMARY", "SECONDARY", "HIGHER", "VOCATIONAL"]).optional().or(z.literal("")),
+  height: z.union([z.number().int().min(100).max(250), z.string()]).optional(),
+  eyeColor: z.enum(["BROWN", "BLUE", "GREEN", "GREY", "HAZEL", "BLACK", "OTHER"]).optional().or(z.literal("")),
+  specialFeatures: z.string().trim().max(1000).optional().or(z.literal("")),
   fatherName: z.string().trim().max(100).optional().or(z.literal("")),
   motherName: z.string().trim().max(100).optional().or(z.literal("")),
   motherMaidenName: z.string().trim().max(100).optional().or(z.literal("")),
@@ -94,6 +99,15 @@ const sectionFSchema = z.object({
   salary: z.string().trim().max(50).optional().or(z.literal("")),
 });
 
+const sectionGSchema = z.object({
+  familyMembersInPoland: z.string().trim().max(2000).optional().or(z.literal("")),
+  lastEntryDetails: z.string().trim().max(1000).optional().or(z.literal("")),
+  previousVisitsPoland: z.string().trim().max(2000).optional().or(z.literal("")),
+  travelsOutsidePoland: z.string().trim().max(2000).optional().or(z.literal("")),
+  addressCountryOfOrigin: z.string().trim().max(1000).optional().or(z.literal("")),
+  previousAddressesPoland: z.string().trim().max(2000).optional().or(z.literal("")),
+});
+
 const SECTION_SCHEMAS = {
   A: sectionASchema,
   B: sectionBSchema,
@@ -101,6 +115,7 @@ const SECTION_SCHEMAS = {
   D: sectionDSchema,
   E: sectionESchema,
   F: sectionFSchema,
+  G: sectionGSchema,
 } as const;
 
 type SectionKey = keyof typeof SECTION_SCHEMAS;
@@ -141,6 +156,9 @@ export async function savePersonalDataAction(
       data[key] = null;
     } else if (DATE_FIELDS[key] && typeof value === "string") {
       data[key] = parseDate(value);
+    } else if (key === "height") {
+      const n = typeof value === "string" ? parseInt(value, 10) : value;
+      data[key] = Number.isNaN(n as number) ? null : n;
     } else {
       data[key] = value;
     }

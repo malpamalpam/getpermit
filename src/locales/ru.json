@@ -248,7 +248,13 @@
       "sectionA": {
         "title": "A. Основные данные",
         "firstNameLatin": "Имя (латиницей)", "lastNameLatin": "Фамилия (латиницей)",
-        "nativeFullName": "ФИО на родном языке", "gender": "Пол",
+        "nativeFullName": "ФИО на родном языке",
+        "previousName": "Предыдущее имя / фамилия",
+        "education": "Образование",
+        "height": "Рост (см)",
+        "eyeColor": "Цвет глаз",
+        "specialFeatures": "Особые приметы (шрамы, татуировки)",
+        "gender": "Пол",
         "dateOfBirth": "Дата рождения", "placeOfBirth": "Место рождения",
         "countryOfBirth": "Страна рождения", "citizenship": "Гражданство",
         "secondCitizenship": "Второе гражданство", "nationality": "Национальность",
@@ -256,7 +262,9 @@
         "motherName": "Имя матери", "motherMaidenName": "Девичья фамилия матери",
         "options": {
           "gender": { "MALE": "Мужской", "FEMALE": "Женский" },
-          "maritalStatus": { "SINGLE": "Холост/Не замужем", "MARRIED": "Женат/Замужем", "DIVORCED": "Разведён/а", "WIDOWED": "Вдовец/Вдова" }
+          "maritalStatus": { "SINGLE": "Холост/Не замужем", "MARRIED": "Женат/Замужем", "DIVORCED": "Разведён/а", "WIDOWED": "Вдовец/Вдова" },
+          "education": { "PRIMARY": "Начальное", "SECONDARY": "Среднее", "HIGHER": "Высшее", "VOCATIONAL": "Профессиональное" },
+          "eyeColor": { "BROWN": "Карие", "BLUE": "Голубые", "GREEN": "Зеленые", "GREY": "Серые", "HAZEL": "Ореховые", "BLACK": "Черные", "OTHER": "Другие" }
         }
       },
       "sectionB": {
@@ -323,6 +331,18 @@
         "contractType": "Тип договора", "contractFrom": "Договор с", "contractTo": "Договор до",
         "contractIndefinite": "Бессрочный", "salary": "Зарплата (брутто)", "salaryHint": "напр. 5000 PLN",
         "options": { "contractType": { "EMPLOYMENT": "Трудовой договор", "MANDATE": "Договор поручения", "SPECIFIC_TASK": "Договор подряда", "MANAGERIAL": "Управленческий контракт" } }
+      },
+      "sectionG": {
+        "title": "G. История пребывания и дополнительные данные",
+        "familyMembersInPoland": "Члены семьи в Польше",
+        "familyMembersInPolandHint": "Имя, фамилия, дата рождения, город, подавал ли на ВНЖ",
+        "lastEntryDetails": "Последний въезд в Польшу (дата и правовое основание)",
+        "lastEntryDetailsHint": "напр. 2024-01-15, виза типа D",
+        "previousVisitsPoland": "Предыдущие визиты в Польшу (даты)",
+        "travelsOutsidePoland": "Поездки за пределы Польши за последние 5 лет",
+        "travelsOutsidePolandHint": "Страна, период пребывания",
+        "addressCountryOfOrigin": "Адрес проживания в стране происхождения",
+        "previousAddressesPoland": "Предыдущие адреса в Польше"
       }
     },
     "settings": {
@@ -344,7 +364,8 @@
       "cases": "Дела",
       "clients": "Клиенты",
       "newCase": "Новое дело",
-      "newClient": "Новый клиент"
+      "newClient": "Новый клиент",
+      "fdk": "Дела FDK"
     },
     "casesList": {
       "title": "Все дела",
@@ -455,6 +476,18 @@
       "noResults": "Клиентов не найдено.",
       "addCaseButton": "Добавить дело",
       "createButton": "Новый клиент"
+    },
+    "fdk": {
+      "title": "Дела FDK",
+      "subtitle": "Разрешения на работу, заявления и Blue Card.",
+      "tabs": { "permits": "Разрешения", "declarations": "Заявления", "blueCard": "Blue Card", "calendar": "Календарь" },
+      "columns": { "id": "ID", "nazwisko": "Фамилия", "imie": "Имя", "dataOd": "Действует с", "dataDo": "Действует до", "decyzjaOdebrana": "Решение получено", "waznaDo": "Действует до", "status": "Статус", "daysLeft": "Дней осталось" },
+      "status": { "active": "Активное", "expired": "Истекшее", "expiring": "Скоро истекает" },
+      "filters": { "all": "Все", "active": "Активные", "expired": "Истекшие", "search": "Поиск по фамилии" },
+      "export": "Экспорт CSV",
+      "noResults": "Нет записей.",
+      "totalRecords": "Всего: {count}",
+      "calendarTitle": "Календарь окончания разрешений"
     },
     "clientForm": {
       "title": "Новый клиент",

@@ -256,6 +256,11 @@
         "firstNameLatin": "First name (Latin)",
         "lastNameLatin": "Last name (Latin)",
         "nativeFullName": "Full name in native language",
+        "previousName": "Previous name / surname",
+        "education": "Education",
+        "height": "Height (cm)",
+        "eyeColor": "Colour of eyes",
+        "specialFeatures": "Special features (scars, tattoos)",
         "gender": "Gender",
         "dateOfBirth": "Date of birth",
         "placeOfBirth": "Place of birth",
@@ -269,7 +274,9 @@
         "motherMaidenName": "Mother's maiden name",
         "options": {
           "gender": { "MALE": "Male", "FEMALE": "Female" },
-          "maritalStatus": { "SINGLE": "Single", "MARRIED": "Married", "DIVORCED": "Divorced", "WIDOWED": "Widowed" }
+          "maritalStatus": { "SINGLE": "Single", "MARRIED": "Married", "DIVORCED": "Divorced", "WIDOWED": "Widowed" },
+          "education": { "PRIMARY": "Primary", "SECONDARY": "Secondary", "HIGHER": "Higher", "VOCATIONAL": "Vocational" },
+          "eyeColor": { "BROWN": "Brown", "BLUE": "Blue", "GREEN": "Green", "GREY": "Grey", "HAZEL": "Hazel", "BLACK": "Black", "OTHER": "Other" }
         }
       },
       "sectionB": {
@@ -378,6 +385,18 @@
             "MANAGERIAL": "Managerial contract"
           }
         }
+      },
+      "sectionG": {
+        "title": "G. Stay history and additional data",
+        "familyMembersInPoland": "Family members in Poland",
+        "familyMembersInPolandHint": "Name, surname, date of birth, city, whether applying for residence",
+        "lastEntryDetails": "Last entry to Poland (date and legal basis)",
+        "lastEntryDetailsHint": "e.g. 2024-01-15, type D visa",
+        "previousVisitsPoland": "Previous visits to Poland (dates)",
+        "travelsOutsidePoland": "Travels outside Poland in the last 5 years",
+        "travelsOutsidePolandHint": "Country, period of stay",
+        "addressCountryOfOrigin": "Residential address in country of origin",
+        "previousAddressesPoland": "Previous addresses in Poland"
       }
     },
     "settings": {
@@ -399,7 +418,8 @@
       "cases": "Cases",
       "clients": "Clients",
       "newCase": "New case",
-      "newClient": "New client"
+      "newClient": "New client",
+      "fdk": "FDK Cases"
     },
     "casesList": {
       "title": "All cases",
@@ -510,6 +530,18 @@
       "noResults": "No clients found.",
       "addCaseButton": "Add case",
       "createButton": "New client"
+    },
+    "fdk": {
+      "title": "FDK Cases",
+      "subtitle": "Work permits, declarations and Blue Cards.",
+      "tabs": { "permits": "Work Permits", "declarations": "Declarations", "blueCard": "Blue Card", "calendar": "Calendar" },
+      "columns": { "id": "ID", "nazwisko": "Surname", "imie": "First name", "dataOd": "Valid from", "dataDo": "Valid to", "decyzjaOdebrana": "Decision collected", "waznaDo": "Valid until", "status": "Status", "daysLeft": "Days left" },
+      "status": { "active": "Active", "expired": "Expired", "expiring": "Expiring soon" },
+      "filters": { "all": "All", "active": "Active", "expired": "Expired", "search": "Search by surname" },
+      "export": "Export CSV",
+      "noResults": "No records.",
+      "totalRecords": "Total: {count}",
+      "calendarTitle": "Permit expiry calendar"
     },
     "clientForm": {
       "title": "New client",

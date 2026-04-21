@@ -31,6 +31,23 @@ export const MARITAL_STATUS_OPTIONS = [
   "WIDOWED",
 ] as const;
 
+export const EDUCATION_OPTIONS = [
+  "PRIMARY",
+  "SECONDARY",
+  "HIGHER",
+  "VOCATIONAL",
+] as const;
+
+export const EYE_COLOR_OPTIONS = [
+  "BROWN",
+  "BLUE",
+  "GREEN",
+  "GREY",
+  "HAZEL",
+  "BLACK",
+  "OTHER",
+] as const;
+
 export const VISA_TYPE_OPTIONS = ["C", "D", "NATIONAL", "SCHENGEN"] as const;
 
 export const PREFERRED_LANGUAGE_OPTIONS = [

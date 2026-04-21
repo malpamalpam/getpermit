@@ -244,6 +244,7 @@ model PersonalData {
   firstNameLatin   String?   @map("first_name_latin")
   lastNameLatin    String?   @map("last_name_latin")
   nativeFullName   String?   @map("native_full_name")
+  previousName     String?   @map("previous_name")
   gender           String?
   dateOfBirth      DateTime? @map("date_of_birth")
   placeOfBirth     String?   @map("place_of_birth")
@@ -252,6 +253,10 @@ model PersonalData {
   secondCitizenship String?  @map("second_citizenship")
   nationality      String?
   maritalStatus    String?   @map("marital_status")
+  education        String?
+  height           Int?
+  eyeColor         String?   @map("eye_color")
+  specialFeatures  String?   @map("special_features") @db.Text
   fatherName       String?   @map("father_name")
   motherName       String?   @map("mother_name")
   motherMaidenName String?   @map("mother_maiden_name")
@@ -313,10 +318,36 @@ model PersonalData {
   contractIndefinite      Boolean?  @map("contract_indefinite")
   salary                  String?   /// kwota wynagrodzenia
 
+  // --- Sekcja G: Historia pobytu i dane dodatkowe ---
+  familyMembersInPoland   String? @map("family_members_in_poland") @db.Text
+  lastEntryDetails        String? @map("last_entry_details") @db.Text
+  previousVisitsPoland    String? @map("previous_visits_poland") @db.Text
+  travelsOutsidePoland    String? @map("travels_outside_poland") @db.Text
+  addressCountryOfOrigin  String? @map("address_country_of_origin") @db.Text
+  previousAddressesPoland String? @map("previous_addresses_poland") @db.Text
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("personal_data")
+}
+
+model FdkPermit {
+  id              Int      @id @default(autoincrement())
+  nazwisko        String
+  imie            String
+  typDokumentu    String   @map("typ_dokumentu") /// ZEZWOLENIE, OSWIADCZENIE, BLUE_CARD
+  dataOd          DateTime? @map("data_od")
+  dataDo          DateTime? @map("data_do")
+  decyzjaOdebrana DateTime? @map("decyzja_odebrana")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([typDokumentu])
+  @@index([dataDo])
+  @@index([nazwisko])
+  @@map("fdk_permits")
 }

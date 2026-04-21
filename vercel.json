@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/anonymize-old-cases",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/fdk-expiry-notify",
+      "schedule": "0 7 * * *"
     }
   ]
 }

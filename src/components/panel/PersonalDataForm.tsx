@@ -12,6 +12,7 @@ import { SectionC } from "./personal-data/SectionC";
 import { SectionD } from "./personal-data/SectionD";
 import { SectionE } from "./personal-data/SectionE";
 import { SectionF } from "./personal-data/SectionF";
+import { SectionG } from "./personal-data/SectionG";
 import {
   ChevronDown,
   ChevronRight,
@@ -38,9 +39,10 @@ const DATE_KEYS = [
 // Które pola należą do której sekcji
 const SECTION_FIELDS: Record<string, string[]> = {
   A: [
-    "firstNameLatin", "lastNameLatin", "nativeFullName", "gender",
+    "firstNameLatin", "lastNameLatin", "nativeFullName", "previousName", "gender",
     "dateOfBirth", "placeOfBirth", "countryOfBirth", "citizenship",
-    "secondCitizenship", "nationality", "maritalStatus", "fatherName",
+    "secondCitizenship", "nationality", "maritalStatus", "education",
+    "height", "eyeColor", "specialFeatures", "fatherName",
     "motherName", "motherMaidenName",
   ],
   B: [
@@ -63,16 +65,21 @@ const SECTION_FIELDS: Record<string, string[]> = {
     "employerPostalCode", "employerCity", "employerPhone", "employerEmail",
     "contractType", "contractFrom", "contractTo", "contractIndefinite", "salary",
   ],
+  G: [
+    "familyMembersInPoland", "lastEntryDetails", "previousVisitsPoland",
+    "travelsOutsidePoland", "addressCountryOfOrigin", "previousAddressesPoland",
+  ],
 };
 
 // Wymagane pola per sekcja (do sprawdzania kompletności)
 const REQUIRED_FIELDS: Record<string, string[]> = {
-  A: ["firstNameLatin", "lastNameLatin", "gender", "dateOfBirth", "placeOfBirth", "countryOfBirth", "citizenship", "maritalStatus", "fatherName", "motherName"],
+  A: ["firstNameLatin", "lastNameLatin", "gender", "dateOfBirth", "placeOfBirth", "countryOfBirth", "citizenship", "maritalStatus", "education", "fatherName", "motherName"],
   B: ["passportNumber", "passportIssueDate", "passportExpiryDate", "passportIssuingAuthority"],
   C: ["street", "houseNumber", "postalCode", "city", "voivodeship"],
   D: ["phoneNumber", "contactEmail", "preferredLanguage"],
   E: [],
   F: [],
+  G: [],
 };
 
 function initialValuesFromData(data: PersonalData | null): Record<string, string | boolean | null> {
@@ -89,7 +96,7 @@ function initialValuesFromData(data: PersonalData | null): Record<string, string
   return result;
 }
 
-const SECTIONS = ["A", "B", "C", "D", "E", "F"] as const;
+const SECTIONS = ["A", "B", "C", "D", "E", "F", "G"] as const;
 
 interface Props {
   initialData: PersonalData | null;
@@ -160,6 +167,7 @@ export function PersonalDataForm({ initialData }: Props) {
     D: SectionD,
     E: SectionE,
     F: SectionF,
+    G: SectionG,
   };
 
   const handlePhotoReady = async (dataUrl: string) => {

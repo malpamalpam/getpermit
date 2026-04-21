@@ -3,19 +3,19 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { signOutAction } from "@/lib/auth-actions";
-import { Briefcase, Users, LogOut, ShieldCheck } from "lucide-react";
+import { Briefcase, Users, LogOut, ShieldCheck, FileStack } from "lucide-react";
 import type { User } from "@prisma/client";
 
 interface Props {
   user: User;
-  active?: "cases" | "clients";
+  active?: "cases" | "clients" | "fdk";
 }
 
 export function AdminHeader({ user, active }: Props) {
   const t = useTranslations("admin.header");
   const tAuth = useTranslations("panel.auth");
 
-  const linkClass = (key: "cases" | "clients") =>
+  const linkClass = (key: "cases" | "clients" | "fdk") =>
     `inline-flex items-center gap-2 text-sm font-medium transition-colors ${
       active === key ? "text-primary" : "text-primary/60 hover:text-primary"
     }`;
@@ -55,6 +55,10 @@ export function AdminHeader({ user, active }: Props) {
                 <Users className="h-4 w-4" />
                 {t("clients")}
               </Link>
+              <Link href="/admin/fdk" className={linkClass("fdk")}>
+                <FileStack className="h-4 w-4" />
+                {t("fdk")}
+              </Link>
             </nav>
           </div>
 
@@ -82,6 +86,10 @@ export function AdminHeader({ user, active }: Props) {
           <Link href="/admin/klienci" className={linkClass("clients")}>
             <Users className="h-4 w-4" />
             {t("clients")}
+          </Link>
+          <Link href="/admin/fdk" className={linkClass("fdk")}>
+            <FileStack className="h-4 w-4" />
+            {t("fdk")}
           </Link>
         </div>
       </Container>

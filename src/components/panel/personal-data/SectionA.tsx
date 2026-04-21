@@ -1,4 +1,4 @@
-import { inputBase, labelBase, GENDER_OPTIONS, MARITAL_STATUS_OPTIONS } from "./constants";
+import { inputBase, labelBase, GENDER_OPTIONS, MARITAL_STATUS_OPTIONS, EDUCATION_OPTIONS, EYE_COLOR_OPTIONS } from "./constants";
 import { CountrySearch } from "./CountrySearch";
 
 interface Props {
@@ -24,9 +24,15 @@ export function SectionA({ values, onChange, t }: Props) {
         </div>
       </div>
 
-      <div>
-        <label className={labelBase}>{t("nativeFullName")}</label>
-        <input type="text" value={v("nativeFullName")} onChange={(e) => onChange("nativeFullName", e.target.value)} className={inputBase} />
+      <div className="grid gap-5 md:grid-cols-2">
+        <div>
+          <label className={labelBase}>{t("nativeFullName")}</label>
+          <input type="text" value={v("nativeFullName")} onChange={(e) => onChange("nativeFullName", e.target.value)} className={inputBase} />
+        </div>
+        <div>
+          <label className={labelBase}>{t("previousName")}</label>
+          <input type="text" value={v("previousName")} onChange={(e) => onChange("previousName", e.target.value)} className={inputBase} />
+        </div>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
@@ -86,6 +92,40 @@ export function SectionA({ values, onChange, t }: Props) {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <div>
+          <label className={labelBase}>{t("education")} *</label>
+          <select value={v("education")} onChange={(e) => onChange("education", e.target.value)} className={inputBase}>
+            <option value="">—</option>
+            {EDUCATION_OPTIONS.map((e) => (
+              <option key={e} value={e}>{t(`options.education.${e}`)}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelBase}>{t("eyeColor")}</label>
+          <select value={v("eyeColor")} onChange={(e) => onChange("eyeColor", e.target.value)} className={inputBase}>
+            <option value="">—</option>
+            {EYE_COLOR_OPTIONS.map((c) => (
+              <option key={c} value={c}>{t(`options.eyeColor.${c}`)}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <div>
+          <label className={labelBase}>{t("height")}</label>
+          <input type="number" min={100} max={250} value={v("height")} onChange={(e) => onChange("height", e.target.value)} className={inputBase} placeholder="cm" />
+        </div>
+        <div />
+      </div>
+
+      <div>
+        <label className={labelBase}>{t("specialFeatures")}</label>
+        <textarea value={v("specialFeatures")} onChange={(e) => onChange("specialFeatures", e.target.value)} className={inputBase} rows={2} />
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">

@@ -256,6 +256,7 @@
         "firstNameLatin": "Imię (łaciński)",
         "lastNameLatin": "Nazwisko (łaciński)",
         "nativeFullName": "Imię i nazwisko w języku ojczystym",
+        "previousName": "Poprzednie imię / nazwisko",
         "gender": "Płeć",
         "dateOfBirth": "Data urodzenia",
         "placeOfBirth": "Miejsce urodzenia",
@@ -264,12 +265,18 @@
         "secondCitizenship": "Drugie obywatelstwo",
         "nationality": "Narodowość",
         "maritalStatus": "Stan cywilny",
+        "education": "Wykształcenie",
+        "height": "Wzrost (cm)",
+        "eyeColor": "Kolor oczu",
+        "specialFeatures": "Znaki szczególne (blizny, tatuaże)",
         "fatherName": "Imię ojca",
         "motherName": "Imię matki",
         "motherMaidenName": "Nazwisko rodowe matki",
         "options": {
           "gender": { "MALE": "Mężczyzna", "FEMALE": "Kobieta" },
-          "maritalStatus": { "SINGLE": "Panna/Kawaler", "MARRIED": "Mężatka/Żonaty", "DIVORCED": "Rozwiedziona/y", "WIDOWED": "Wdowa/Wdowiec" }
+          "maritalStatus": { "SINGLE": "Panna/Kawaler", "MARRIED": "Mężatka/Żonaty", "DIVORCED": "Rozwiedziona/y", "WIDOWED": "Wdowa/Wdowiec" },
+          "education": { "PRIMARY": "Podstawowe", "SECONDARY": "Średnie", "HIGHER": "Wyższe", "VOCATIONAL": "Zawodowe" },
+          "eyeColor": { "BROWN": "Brązowe", "BLUE": "Niebieskie", "GREEN": "Zielone", "GREY": "Szare", "HAZEL": "Piwne", "BLACK": "Czarne", "OTHER": "Inne" }
         }
       },
       "sectionB": {
@@ -384,6 +391,18 @@
             "MANAGERIAL": "Kontrakt menedżerski"
           }
         }
+      },
+      "sectionG": {
+        "title": "G. Historia pobytu i dane dodatkowe",
+        "familyMembersInPoland": "Członkowie rodziny w Polsce",
+        "familyMembersInPolandHint": "Imię, nazwisko, data urodzenia, miasto, czy stara się o pobyt",
+        "lastEntryDetails": "Ostatni wjazd do Polski (data i podstawa prawna)",
+        "lastEntryDetailsHint": "np. 2024-01-15, wiza typu D",
+        "previousVisitsPoland": "Poprzednie wizyty w Polsce (daty)",
+        "travelsOutsidePoland": "Podróże poza Polską w ostatnich 5 latach",
+        "travelsOutsidePolandHint": "Kraj, okres pobytu",
+        "addressCountryOfOrigin": "Adres zamieszkania w kraju pochodzenia",
+        "previousAddressesPoland": "Poprzednie adresy w Polsce"
       }
     },
     "settings": {
@@ -404,6 +423,7 @@
     "header": {
       "cases": "Sprawy",
       "clients": "Klienci",
+      "fdk": "Sprawy FDK",
       "newCase": "Nowa sprawa",
       "newClient": "Nowy klient"
     },
@@ -516,6 +536,42 @@
       "noResults": "Brak klientów.",
       "addCaseButton": "Dodaj sprawę",
       "createButton": "Nowy klient"
+    },
+    "fdk": {
+      "title": "Sprawy FDK",
+      "subtitle": "Zezwolenia na pracę, oświadczenia i Blue Card.",
+      "tabs": {
+        "permits": "Zezwolenia na pracę",
+        "declarations": "Oświadczenia",
+        "blueCard": "Blue Card",
+        "calendar": "Kalendarz"
+      },
+      "columns": {
+        "id": "ID",
+        "nazwisko": "Nazwisko",
+        "imie": "Imię",
+        "dataOd": "Ważność od",
+        "dataDo": "Ważność do",
+        "decyzjaOdebrana": "Decyzja odebrana",
+        "waznaDo": "Ważna do",
+        "status": "Status",
+        "daysLeft": "Dni do końca"
+      },
+      "status": {
+        "active": "Aktywne",
+        "expired": "Wygasłe",
+        "expiring": "Wygasa wkrótce"
+      },
+      "filters": {
+        "all": "Wszystkie",
+        "active": "Aktywne",
+        "expired": "Wygasłe",
+        "search": "Szukaj po nazwisku"
+      },
+      "export": "Eksportuj CSV",
+      "noResults": "Brak rekordów.",
+      "totalRecords": "Łącznie: {count}",
+      "calendarTitle": "Kalendarz wygasania zezwoleń"
     },
     "clientForm": {
       "title": "Nowy klient",
