@@ -87,10 +87,10 @@ export function MosPhotoUpload({ initialPhoto, onPhotoReady }: Props) {
         );
 
         // Dynamic import from CDN to avoid webpack bundling issues
-        const { removeBackground } = await import(
-          /* webpackIgnore: true */
-          "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs"
-        );
+        const cdnUrl = "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mod: any = await (new Function("url", "return import(url)"))(cdnUrl);
+        const removeBackground = mod.removeBackground;
 
         const noBgBlob: Blob = await removeBackground(croppedBlob, {
           output: { format: "image/png" },
