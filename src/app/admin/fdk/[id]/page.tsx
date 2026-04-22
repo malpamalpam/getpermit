@@ -327,21 +327,27 @@ export default async function FdkForeignerPage({
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
                           {f.opis && <p className="mt-0.5 text-xs text-primary/50">{f.opis}</p>}
-                          <div className="mt-2 flex gap-2">
-                            <a
-                              href={`/api/fdk/attachments/${f.id}?action=preview`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
-                            >
-                              <Eye className="h-3 w-3" /> Podgląd
-                            </a>
-                            <a
-                              href={`/api/fdk/attachments/${f.id}?action=download`}
-                              className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
-                            >
-                              <Download className="h-3 w-3" /> Pobierz
-                            </a>
+                          <div className="mt-2 flex items-center gap-2">
+                            {f.rozmiarBytes && Number(f.rozmiarBytes) > 0 ? (
+                              <>
+                                <a
+                                  href={`/api/fdk/attachments/${f.id}?action=preview`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
+                                >
+                                  <Eye className="h-3 w-3" /> Podgląd
+                                </a>
+                                <a
+                                  href={`/api/fdk/attachments/${f.id}?action=download`}
+                                  className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
+                                >
+                                  <Download className="h-3 w-3" /> Pobierz
+                                </a>
+                              </>
+                            ) : (
+                              <span className="text-[11px] text-primary/40">Brak pliku — prześlij ponownie</span>
+                            )}
                           </div>
                         </div>
                       </div>
