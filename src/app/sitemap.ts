@@ -9,7 +9,6 @@ import { getLocalizedSlug, SERVICE_BASE_PATH } from "@/lib/service-slugs";
 const STATIC_PAGE_PATHS: Record<string, Record<string, string>> = {
   "": { pl: "", en: "", ru: "", uk: "" },
   uslugi: { pl: "/uslugi", en: "/services", ru: "/uslugi", uk: "/poslugy" },
-  "o-nas": { pl: "/o-nas", en: "/about", ru: "/o-nas", uk: "/pro-nas" },
   kontakt: { pl: "/kontakt", en: "/contact", ru: "/kontakty", uk: "/kontakty" },
   blog: { pl: "/blog", en: "/blog", ru: "/blog", uk: "/blog" },
   "polityka-prywatnosci": {
@@ -25,7 +24,6 @@ const STATIC_PAGE_PATHS: Record<string, Record<string, string>> = {
 const STATIC_PRIORITIES: Record<string, number> = {
   "": 1.0,
   uslugi: 0.9,
-  "o-nas": 0.8,
   kontakt: 0.8,
   blog: 0.7,
   "polityka-prywatnosci": 0.3,

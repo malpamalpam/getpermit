@@ -39,6 +39,15 @@ export default async function middleware(request: NextRequest) {
 
   // Public auth pages → przepuść bez auth check
   if (isPanelRoute && isPublicPanelPath(pathname)) {
+    // Przekaż ?lang= jako header, bo layout nie ma dostępu do searchParams
+    const lang = request.nextUrl.searchParams.get("lang");
+    if (lang && routing.locales.includes(lang as never)) {
+      const headers = new Headers(request.headers);
+      headers.set("x-panel-locale", lang);
+      const response = NextResponse.next({ request: { headers } });
+      response.cookies.set("NEXT_LOCALE", lang, { path: "/", maxAge: 31536000, sameSite: "lax" });
+      return response;
+    }
     return NextResponse.next();
   }
 

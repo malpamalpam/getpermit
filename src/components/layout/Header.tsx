@@ -11,7 +11,7 @@ import { Menu, X } from "lucide-react";
 import { BookingButton } from "@/components/booking/BookingButton";
 import { SERVICE_BASE_PATH } from "@/lib/service-slugs";
 
-const SECTION_IDS = ["uslugi", "proces"] as const;
+const SECTION_IDS = ["cudzoziemcy", "pracodawcy", "proces"] as const;
 
 export function Header() {
   const t = useTranslations("nav");
@@ -47,7 +47,8 @@ export function Header() {
 
   // Zlokalizowane ID kotwic na homepage
   const SECTION_ANCHORS: Record<string, Record<string, string>> = {
-    uslugi: { pl: "uslugi", en: "services", ru: "uslugi", uk: "poslugy" },
+    cudzoziemcy: { pl: "cudzoziemcy", en: "cudzoziemcy", ru: "cudzoziemcy", uk: "cudzoziemcy" },
+    pracodawcy: { pl: "pracodawcy", en: "pracodawcy", ru: "pracodawcy", uk: "pracodawcy" },
     proces: { pl: "proces", en: "process", ru: "process", uk: "process" },
   };
 
@@ -103,12 +104,6 @@ export function Header() {
               );
             })}
             <Link
-              href="/o-nas"
-              className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
-            >
-              {t("about")}
-            </Link>
-            <Link
               href="/blog"
               className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
             >
@@ -155,13 +150,6 @@ export function Header() {
                   {t(`section_${id}`)}
                 </a>
               ))}
-              <Link
-                href="/o-nas"
-                className="text-base font-medium text-primary"
-                onClick={() => setMobileOpen(false)}
-              >
-                {t("about")}
-              </Link>
               <Link
                 href="/blog"
                 className="text-base font-medium text-primary"

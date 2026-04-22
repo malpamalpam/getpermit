@@ -7,7 +7,8 @@
     "contact": "Kontakt",
     "consultation": "Umów konsultację",
     "clientPanel": "Panel Klienta",
-    "section_uslugi": "Usługi",
+    "section_cudzoziemcy": "Dla Cudzoziemców",
+    "section_pracodawcy": "Dla Pracodawców",
     "section_proces": "Jak działamy",
     "menuToggle": "Otwórz menu"
   },
@@ -44,7 +45,9 @@
     "success": "Skuteczność spraw"
   },
   "services": {
-    "title": "Legalizacja pobytu i pracy — karta pobytu, zezwolenie na pracę",
+    "title": "Legalizacja pobytu i pracy",
+    "forForeigners": "Dla Cudzoziemców",
+    "forEmployers": "Dla Pracodawców",
     "subtitle": "Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę typu A, EU Blue Card. Kompleksowa pomoc w legalizacji cudzoziemców w Polsce.",
     "sectionLabel": "Oferta",
     "viewAll": "Zobacz wszystkie usługi",

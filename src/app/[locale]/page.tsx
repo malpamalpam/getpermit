@@ -25,9 +25,7 @@ export default async function HomePage({
   return (
     <>
       <HeroSection />
-      <div id={sid("uslugi")} className="scroll-mt-24">
-        <ServicesGrid />
-      </div>
+      <ServicesGrid />
       <div id={sid("proces")} className="scroll-mt-24">
         <ProcessSection />
       </div>

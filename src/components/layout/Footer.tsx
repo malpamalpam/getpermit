@@ -56,11 +56,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/o-nas" className="hover:text-white">
-                  {tNav("about")}
-                </Link>
-              </li>
-              <li>
                 <Link href="/kontakt" className="hover:text-white">
                   {tNav("contact")}
                 </Link>

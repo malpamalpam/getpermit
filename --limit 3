@@ -1,0 +1,20 @@
+[33m0cfacec[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: pass active site language to panel via ?lang= query param
+[33m0339945[m fix: middleware x-panel-locale header takes priority over DB locale
+[33mecdd0d8[m fix: panel defaults to pl when accessed directly, uses Referer for locale
+[33m495661a[m fix: sync panel language with active website locale
+[33mdcb8a9d[m feat: sync panel language with active website locale
+[33mf692409[m fix: language switcher - simple URL prefix swap instead of next-intl router
+[33m158865c[m fix: uk->ua in html lang, fix language switcher creating /en/ru paths
+[33m7b43679[m fix: dual approach for html lang - getLocale SSR + inline script fallback
+[33mbd22ddf[m fix: use getLocale() from next-intl for dynamic html lang attribute
+[33m3c02b44[m fix: add favicon using existing logo.png/svg
+[33m0cfacec[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: pass active site language to panel via ?lang= query param
+[33m0339945[m fix: middleware x-panel-locale header takes priority over DB locale
+[33mecdd0d8[m fix: panel defaults to pl when accessed directly, uses Referer for locale
+[33m495661a[m fix: sync panel language with active website locale
+[33mdcb8a9d[m feat: sync panel language with active website locale
+[33mf692409[m fix: language switcher - simple URL prefix swap instead of next-intl router
+[33m158865c[m fix: uk->ua in html lang, fix language switcher creating /en/ru paths
+[33m7b43679[m fix: dual approach for html lang - getLocale SSR + inline script fallback
+[33mbd22ddf[m fix: use getLocale() from next-intl for dynamic html lang attribute
+[33m3c02b44[m fix: add favicon using existing logo.png/svg

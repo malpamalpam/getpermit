@@ -7,7 +7,8 @@
     "contact": "Contact",
     "consultation": "Book consultation",
     "clientPanel": "Client Panel",
-    "section_uslugi": "Services",
+    "section_cudzoziemcy": "For Foreigners",
+    "section_pracodawcy": "For Employers",
     "section_proces": "How we work",
     "menuToggle": "Open menu"
   },
@@ -44,7 +45,9 @@
     "success": "Success rate"
   },
   "services": {
-    "title": "Immigration Services — Poland Visa, Work Permit, EU Blue Card",
+    "title": "Immigration Services",
+    "forForeigners": "For Foreigners",
+    "forEmployers": "For Employers",
     "subtitle": "Poland visa application, work permit, EU Blue Card, residence permits. Professional immigration services for foreigners in Poland.",
     "sectionLabel": "Our offer",
     "viewAll": "View all services",
