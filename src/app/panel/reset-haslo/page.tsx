@@ -3,20 +3,9 @@ import { Container } from "@/components/ui/Container";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { KeyRound } from "lucide-react";
 import { getPanelLocale } from "@/lib/panel-locale";
-import { routing } from "@/i18n/routing";
 
-async function resolveLocale(lang?: string): Promise<string> {
-  if (lang && routing.locales.includes(lang as never)) return lang;
-  return getPanelLocale();
-}
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ lang?: string }>;
-}) {
-  const sp = await searchParams;
-  const locale = await resolveLocale(sp.lang);
+export async function generateMetadata() {
+  const locale = await getPanelLocale();
   const t = await getTranslations({ locale, namespace: "panel.auth" });
   return {
     title: t("resetTitle"),
@@ -24,13 +13,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ lang?: string }>;
-}) {
-  const sp = await searchParams;
-  const locale = await resolveLocale(sp.lang);
+export default async function ResetPasswordPage() {
+  const locale = await getPanelLocale();
   const t = await getTranslations({ locale, namespace: "panel.auth" });
 
   return (
