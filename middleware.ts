@@ -37,18 +37,15 @@ export default async function middleware(request: NextRequest) {
     return intlMiddleware(request);
   }
 
-  // Public auth pages → przepuść bez auth check
+  // Public auth pages → przepuść bez auth check, ustaw locale
   if (isPanelRoute && isPublicPanelPath(pathname)) {
-    // Przekaż ?lang= jako header, bo layout nie ma dostępu do searchParams
     const lang = request.nextUrl.searchParams.get("lang");
-    if (lang && routing.locales.includes(lang as never)) {
-      const headers = new Headers(request.headers);
-      headers.set("x-panel-locale", lang);
-      const response = NextResponse.next({ request: { headers } });
-      response.cookies.set("NEXT_LOCALE", lang, { path: "/", maxAge: 31536000, sameSite: "lax" });
-      return response;
-    }
-    return NextResponse.next();
+    const locale = (lang && routing.locales.includes(lang as never)) ? lang : routing.defaultLocale;
+    const headers = new Headers(request.headers);
+    headers.set("x-panel-locale", locale);
+    const response = NextResponse.next({ request: { headers } });
+    response.cookies.set("NEXT_LOCALE", locale, { path: "/", maxAge: 31536000, sameSite: "lax" });
+    return response;
   }
 
   // Panel/admin chroniony — sprawdź sesję Supabase
