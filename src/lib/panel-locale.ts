@@ -1,6 +1,10 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { routing } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/auth";
+
+function isValidLocale(v: string | null | undefined): v is string {
+  return !!v && routing.locales.includes(v as never);
+}
 
 /**
  * Zwraca aktywny locale dla panelu klienta.
@@ -8,15 +12,15 @@ import { getCurrentUser } from "@/lib/auth";
  * Priorytet:
  * 1. Locale zalogowanego użytkownika z bazy danych (ustawiany przy logowaniu
  *    na podstawie aktywnego języka strony oraz w ustawieniach profilu)
- * 2. Cookie `NEXT_LOCALE` (ustawiane przez next-intl middleware na stronach
- *    marketingowych — fallback dla niezalogowanych stron panelu)
+ * 2. Cookie `NEXT_LOCALE` (ustawiane przez middleware — synchronizowane
+ *    z aktywnym językiem strony marketingowej przez Referer)
  * 3. Domyślny locale (pl)
  */
 export async function getPanelLocale(): Promise<string> {
   // Dla zalogowanych użytkowników — locale z bazy danych
   try {
     const user = await getCurrentUser();
-    if (user?.locale && routing.locales.includes(user.locale as never)) {
+    if (isValidLocale(user?.locale)) {
       return user.locale;
     }
   } catch {
@@ -26,7 +30,7 @@ export async function getPanelLocale(): Promise<string> {
   // Fallback na cookie (strony publiczne panelu: login, rejestracja itp.)
   const cookieStore = await cookies();
   const fromCookie = cookieStore.get("NEXT_LOCALE")?.value;
-  if (fromCookie && routing.locales.includes(fromCookie as never)) {
+  if (isValidLocale(fromCookie)) {
     return fromCookie;
   }
 

@@ -16,6 +16,27 @@ function isPublicPanelPath(pathname: string): boolean {
   );
 }
 
+/**
+ * Wyciąga locale z URL Referer (np. /pl/kontakt → pl, /en/services → en).
+ * Zwraca null jeśli nie da się wykryć.
+ */
+function extractLocaleFromReferer(request: NextRequest): string | null {
+  const referer = request.headers.get("referer");
+  if (!referer) return null;
+  try {
+    const refUrl = new URL(referer);
+    // Referer musi być z tego samego hosta
+    if (refUrl.host !== request.nextUrl.host) return null;
+    const firstSegment = refUrl.pathname.split("/")[1];
+    if (firstSegment && LOCALES.includes(firstSegment as never)) {
+      return firstSegment;
+    }
+  } catch {
+    // Niepoprawny URL
+  }
+  return null;
+}
+
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const code = request.nextUrl.searchParams.get("code");
@@ -37,8 +58,18 @@ export default async function middleware(request: NextRequest) {
     return intlMiddleware(request);
   }
 
-  // Public auth pages → przepuść bez auth check
+  // Public auth pages → przepuść bez auth check, ale zsynchronizuj locale
   if (isPanelRoute && isPublicPanelPath(pathname)) {
+    const refLocale = extractLocaleFromReferer(request);
+    if (refLocale) {
+      const res = NextResponse.next();
+      res.cookies.set("NEXT_LOCALE", refLocale, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: "lax",
+      });
+      return res;
+    }
     return NextResponse.next();
   }
 
@@ -78,6 +109,16 @@ export default async function middleware(request: NextRequest) {
     const loginUrl = new URL("/panel/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Zsynchronizuj cookie NEXT_LOCALE z aktywnym językiem strony (Referer)
+  const refLocale = extractLocaleFromReferer(request);
+  if (refLocale) {
+    response.cookies.set("NEXT_LOCALE", refLocale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
   }
 
   return response;
