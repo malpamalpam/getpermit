@@ -10,11 +10,11 @@ function isValidLocale(v: string | null | undefined): v is string {
  * Zwraca aktywny locale dla panelu klienta.
  *
  * Priorytet:
- * 1. Locale zalogowanego użytkownika z bazy danych (ustawiany przy logowaniu
- *    na podstawie aktywnego języka strony oraz w ustawieniach profilu)
- * 2. Cookie `NEXT_LOCALE` (ustawiane przez middleware — synchronizowane
- *    z aktywnym językiem strony marketingowej przez Referer)
- * 3. Domyślny locale (pl)
+ * 1. Locale zalogowanego użytkownika z bazy danych
+ * 2. Header `x-panel-locale` ustawiany przez middleware (natychmiastowy,
+ *    w tym samym request — rozwiązuje problem opóźnienia cookie)
+ * 3. Cookie `NEXT_LOCALE` (fallback)
+ * 4. Domyślny locale (pl)
  */
 export async function getPanelLocale(): Promise<string> {
   // Dla zalogowanych użytkowników — locale z bazy danych
@@ -27,7 +27,18 @@ export async function getPanelLocale(): Promise<string> {
     // Ignoruj — użytkownik niezalogowany lub błąd sesji
   }
 
-  // Fallback na cookie (strony publiczne panelu: login, rejestracja itp.)
+  // Header ustawiany przez middleware — natychmiastowy w tym samym request
+  try {
+    const hdrs = await headers();
+    const fromHeader = hdrs.get("x-panel-locale");
+    if (isValidLocale(fromHeader)) {
+      return fromHeader;
+    }
+  } catch {
+    // Ignoruj
+  }
+
+  // Fallback na cookie
   const cookieStore = await cookies();
   const fromCookie = cookieStore.get("NEXT_LOCALE")?.value;
   if (isValidLocale(fromCookie)) {
