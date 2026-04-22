@@ -5,6 +5,7 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ArrowLeft, Eye, Download, FileText } from "lucide-react";
+import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -349,6 +350,7 @@ export default async function FdkForeignerPage({
                 </div>
               ));
             })()}
+            <FdkUploadForm foreignerId={foreigner.id} />
           </div>
         )}
       </Container>
