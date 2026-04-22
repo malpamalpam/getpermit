@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
-import { getLocale } from "next-intl/server";
 import "./globals.css";
 
 const inter = Inter({
@@ -33,16 +32,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let lang = "pl";
-  try {
-    const locale = await getLocale();
-    lang = locale === "uk" ? "ua" : locale;
-  } catch {
-    // Panel/admin routes don't have intl context — fallback to pl
-  }
-
   return (
-    <html lang={lang} className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
+    <html lang="pl" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
