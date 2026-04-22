@@ -12,7 +12,7 @@ async function main() {
   console.log("=== Seeding FDK v2 module ===\n");
 
   // -----------------------------------------------------------------------
-  // KROK 1: Wyczyść istniejące dane FDK v2
+  // KROK 1: Wyczyść i zmigruj dane
   // -----------------------------------------------------------------------
   console.log("Step 1: Cleaning existing FDK v2 data...");
   await db.fdkAttachment.deleteMany();
@@ -22,6 +22,55 @@ async function main() {
   await db.fdkEmploymentBase.deleteMany();
   await db.fdkForeigner.deleteMany();
   console.log("  Done.\n");
+
+  // -----------------------------------------------------------------------
+  // KROK 1b: Migracja z fdk_permits (stara tabela) → nowe tabele
+  // -----------------------------------------------------------------------
+  console.log("Step 1b: Migrating from fdk_permits...");
+  let migratedCount = 0;
+  try {
+    const existingPermits = await db.fdkPermit.findMany();
+    const foreignerMap = new Map<string, number>();
+
+    for (const p of existingPermits) {
+      const key = `${p.nazwisko.trim().toUpperCase()}|${(p.imie ?? "").trim().toUpperCase()}`;
+
+      if (!foreignerMap.has(key)) {
+        const foreigner = await db.fdkForeigner.create({
+          data: {
+            nazwisko: p.nazwisko.trim(),
+            imie: p.imie?.trim() || null,
+          },
+        });
+        foreignerMap.set(key, foreigner.id);
+      }
+
+      const foreignerId = foreignerMap.get(key)!;
+      const typMap: Record<string, "ZEZWOLENIE" | "OSWIADCZENIE" | "BLUE_CARD"> = {
+        ZEZWOLENIE: "ZEZWOLENIE",
+        OSWIADCZENIE: "OSWIADCZENIE",
+        BLUE_CARD: "BLUE_CARD",
+      };
+      const typ = typMap[p.typDokumentu] ?? "ZEZWOLENIE";
+      const now = new Date();
+      const isExpired = p.dataDo && p.dataDo < now;
+
+      await db.fdkEmploymentBase.create({
+        data: {
+          foreignerId,
+          typ,
+          status: isExpired ? "WYGASLE" : "AKTYWNE",
+          dataOd: p.dataOd,
+          dataDo: p.dataDo,
+          decyzjaOdebrana: p.decyzjaOdebrana,
+        },
+      });
+    }
+    migratedCount = foreignerMap.size;
+    console.log(`  Migrated ${existingPermits.length} permits → ${migratedCount} foreigners\n`);
+  } catch {
+    console.log("  fdk_permits table not found, skipping migration.\n");
+  }
 
   // -----------------------------------------------------------------------
   // KROK 2: Dane testowe — Joseph Saul Regan

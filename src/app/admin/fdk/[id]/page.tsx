@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, Download, FileText } from "lucide-react";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -209,6 +209,16 @@ export default async function FdkForeignerPage({
 
         {activeTab === "hr" && (
           <div className="space-y-6">
+            {foreigner.hrContracts.length > 0 && (
+              <div className="flex justify-end">
+                <a
+                  href="/api/fdk/export-hr"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-primary/15 bg-white px-3 py-1.5 text-xs font-medium text-primary shadow-sm hover:bg-primary/5"
+                >
+                  <FileText className="h-3.5 w-3.5" /> Eksport CSV
+                </a>
+              </div>
+            )}
             {foreigner.hrContracts.length === 0 && (
               <p className="py-12 text-center text-primary/40">Brak danych HR</p>
             )}
@@ -316,6 +326,22 @@ export default async function FdkForeignerPage({
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
                           {f.opis && <p className="mt-0.5 text-xs text-primary/50">{f.opis}</p>}
+                          <div className="mt-2 flex gap-2">
+                            <a
+                              href={`/api/fdk/attachments/${f.id}?action=preview`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
+                            >
+                              <Eye className="h-3 w-3" /> Podgląd
+                            </a>
+                            <a
+                              href={`/api/fdk/attachments/${f.id}?action=download`}
+                              className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
+                            >
+                              <Download className="h-3 w-3" /> Pobierz
+                            </a>
+                          </div>
                         </div>
                       </div>
                     ))}

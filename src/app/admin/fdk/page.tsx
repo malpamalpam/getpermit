@@ -3,7 +3,7 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight, Users, Paperclip } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "lucide-react";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -92,14 +92,23 @@ export default async function FdkPage({
       <AdminHeader user={user} active="fdk" />
       <Container className="py-8">
         {/* Stats */}
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
-            <Users className="h-6 w-6" />
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <Users className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl font-extrabold text-primary">Sprawy FDK</h1>
+              <p className="text-sm text-ink/60">{total} cudzoziemców w bazie</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-display text-2xl font-extrabold text-primary">Sprawy FDK</h1>
-            <p className="text-sm text-ink/60">{total} cudzoziemców w bazie</p>
-          </div>
+          <a
+            href="/api/fdk/export-hr"
+            className="inline-flex items-center gap-2 rounded-lg border border-primary/15 bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm transition-colors hover:bg-primary/5"
+          >
+            <Download className="h-4 w-4" />
+            Eksport HR (CSV)
+          </a>
         </div>
 
         {/* Filters */}
@@ -114,8 +123,58 @@ export default async function FdkPage({
               className="w-full rounded-lg border border-primary/15 bg-white py-2 pl-10 pr-4 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
             />
           </form>
+
+          {/* Type filter */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs text-primary/50">Typ:</label>
+            {[
+              { value: "", label: "Wszystkie" },
+              { value: "ZEZWOLENIE", label: "Zezwolenie" },
+              { value: "OSWIADCZENIE", label: "Oświadczenie" },
+              { value: "KARTA_POBYTU", label: "Karta pobytu" },
+              { value: "BLUE_CARD", label: "Blue Card" },
+              { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
+            ].map((opt) => (
+              <a
+                key={opt.value}
+                href={buildUrl({ type: opt.value, page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  typeFilter === opt.value
+                    ? "bg-accent text-white"
+                    : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                }`}
+              >
+                {opt.label}
+              </a>
+            ))}
+          </div>
+
+          {/* Status filter */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs text-primary/50">Status:</label>
+            {[
+              { value: "", label: "Wszystkie" },
+              { value: "AKTYWNE", label: "Aktywne" },
+              { value: "WYGASLE", label: "Wygasłe" },
+              { value: "ZAKONCZONE", label: "Zakończone" },
+              { value: "W_TRAKCIE", label: "W trakcie" },
+            ].map((opt) => (
+              <a
+                key={opt.value}
+                href={buildUrl({ status: opt.value, page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  statusFilter === opt.value
+                    ? "bg-accent text-white"
+                    : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                }`}
+              >
+                {opt.label}
+              </a>
+            ))}
+          </div>
+
           <a
-            href={buildUrl({ type: "", status: "", page: "1" })}
+            href={buildUrl({ type: "", status: "", q: "", page: "1" })}
             className="text-xs text-accent hover:underline"
           >
             Wyczyść filtry
