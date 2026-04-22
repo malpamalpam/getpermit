@@ -122,7 +122,7 @@ export function Header() {
               {t("consultation")}
             </BookingButton>
             <a
-              href="/panel/login"
+              href={`/panel/login?lang=${locale}`}
               className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
             >
               {t("clientPanel")}
@@ -176,7 +176,7 @@ export function Header() {
                     {t("consultation")}
                   </BookingButton>
                   <a
-                    href="/panel/login"
+                    href={`/panel/login?lang=${locale}`}
                     className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
                     onClick={() => setMobileOpen(false)}
                   >

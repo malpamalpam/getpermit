@@ -203,7 +203,7 @@ export function RegisterForm({ locale }: Props) {
 
       <p className="text-center text-sm text-ink/60">
         {t("hasAccount")}{" "}
-        <a href="/panel/login" className="font-medium text-accent hover:underline">
+        <a href={`/panel/login?lang=${locale}`} className="font-medium text-accent hover:underline">
           {t("loginLink")}
         </a>
       </p>

@@ -98,14 +98,14 @@ export function LoginForm({ locale, next, initialError }: Props) {
       </Button>
 
       <p className="text-center text-sm text-ink/60">
-        <a href="/panel/reset-haslo" className="font-medium text-accent hover:underline">
+        <a href={`/panel/reset-haslo?lang=${locale}`} className="font-medium text-accent hover:underline">
           {t("forgotPassword")}
         </a>
       </p>
 
       <p className="text-center text-sm text-ink/60">
         {t("noAccount")}{" "}
-        <a href="/panel/rejestracja" className="font-medium text-accent hover:underline">
+        <a href={`/panel/rejestracja?lang=${locale}`} className="font-medium text-accent hover:underline">
           {t("registerLink")}
         </a>
       </p>

@@ -44,7 +44,7 @@ export function ResetPasswordForm({ locale }: Props) {
           {t("resetSent")}
         </p>
         <a
-          href="/panel/login"
+          href={`/panel/login?lang=${locale}`}
           className="inline-block text-sm font-medium text-accent hover:underline"
         >
           {t("resetBackToLogin")}
@@ -91,7 +91,7 @@ export function ResetPasswordForm({ locale }: Props) {
       </Button>
 
       <p className="text-center text-sm text-ink/60">
-        <a href="/panel/login" className="font-medium text-accent hover:underline">
+        <a href={`/panel/login?lang=${locale}`} className="font-medium text-accent hover:underline">
           {t("resetBackToLogin")}
         </a>
       </p>

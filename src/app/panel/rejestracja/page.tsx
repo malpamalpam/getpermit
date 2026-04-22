@@ -3,9 +3,20 @@ import { Container } from "@/components/ui/Container";
 import { RegisterForm } from "./RegisterForm";
 import { UserPlus } from "lucide-react";
 import { getPanelLocale } from "@/lib/panel-locale";
+import { routing } from "@/i18n/routing";
 
-export async function generateMetadata() {
-  const locale = await getPanelLocale();
+async function resolveLocale(lang?: string): Promise<string> {
+  if (lang && routing.locales.includes(lang as never)) return lang;
+  return getPanelLocale();
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const sp = await searchParams;
+  const locale = await resolveLocale(sp.lang);
   const t = await getTranslations({ locale, namespace: "panel.auth" });
   return {
     title: t("registerTitle"),
@@ -13,8 +24,13 @@ export async function generateMetadata() {
   };
 }
 
-export default async function RegisterPage() {
-  const locale = await getPanelLocale();
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const sp = await searchParams;
+  const locale = await resolveLocale(sp.lang);
   const t = await getTranslations({ locale, namespace: "panel.auth" });
 
   return (

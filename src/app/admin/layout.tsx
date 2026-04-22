@@ -1,14 +1,24 @@
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { getPanelLocale } from "@/lib/panel-locale";
+import { routing } from "@/i18n/routing";
+
+async function getCurrentLocale(): Promise<string> {
+  const cookieStore = await cookies();
+  const fromCookie = cookieStore.get("NEXT_LOCALE")?.value;
+  if (fromCookie && routing.locales.includes(fromCookie as never)) {
+    return fromCookie;
+  }
+  return routing.defaultLocale;
+}
 
 export default async function AdminLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const locale = await getPanelLocale();
+  const locale = await getCurrentLocale();
   const messages = await getMessages({ locale });
 
   return (

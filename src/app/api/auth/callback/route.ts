@@ -43,16 +43,6 @@ export async function GET(request: NextRequest) {
   const targetPath = syncedUser && (syncedUser.role === "ADMIN" || syncedUser.role === "STAFF")
     ? "/admin"
     : next;
-  const effectiveLocale = syncedUser?.locale ?? locale;
-  const redirectPath = effectiveLocale === "pl" ? targetPath : `/${effectiveLocale}${targetPath}`;
-  const response = NextResponse.redirect(new URL(redirectPath, request.url));
-
-  // Ustaw cookie NEXT_LOCALE, żeby panel używał aktywnego języka
-  response.cookies.set("NEXT_LOCALE", effectiveLocale, {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "lax",
-  });
-
-  return response;
+  const redirectPath = locale === "pl" ? targetPath : `/${locale}${targetPath}`;
+  return NextResponse.redirect(new URL(redirectPath, request.url));
 }
