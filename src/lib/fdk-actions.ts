@@ -185,6 +185,64 @@ export async function deleteEmploymentBaseAction(id: number): Promise<FdkResult>
 }
 
 // =============================================================================
+// HR — WYŚLIJ DANE DO PRZYGOTOWANIA UMOWY
+// =============================================================================
+
+export async function sendHrContractEmailAction(foreignerId: number): Promise<FdkResult> {
+  await requireAdmin();
+
+  const foreigner = await db.fdkForeigner.findUnique({
+    where: { id: foreignerId },
+    include: { hrContracts: { orderBy: { rok: "desc" } } },
+  });
+  if (!foreigner) return { ok: false, error: "not_found" };
+  if (foreigner.hrContracts.length === 0) return { ok: false, error: "no_contracts" };
+
+  const { Resend } = await import("resend");
+  const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+  if (!resend) return { ok: false, error: "email_not_configured" };
+
+  const c = foreigner.hrContracts[0];
+  const fmt = (d: Date | null) => d ? d.toLocaleDateString("pl-PL") : "—";
+
+  const html = `
+    <h2>Dane do przygotowania umowy — ${foreigner.imie ?? ""} ${foreigner.nazwisko}</h2>
+    <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Imię i nazwisko</td><td style="padding:4px 0;font-weight:600;">${foreigner.imie ?? ""} ${foreigner.nazwisko}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">PESEL</td><td style="padding:4px 0;">${foreigner.pesel ?? "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Nr paszportu</td><td style="padding:4px 0;">${foreigner.nrPaszportu ?? "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Adres</td><td style="padding:4px 0;">${foreigner.adresPl ?? "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Telefon</td><td style="padding:4px 0;">${foreigner.telefon ?? "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td style="padding:4px 0;">${foreigner.email ?? "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Nr konta</td><td style="padding:4px 0;">${foreigner.nrKonta ?? "—"}</td></tr>
+      <tr><td colspan="2" style="padding:12px 0 4px;border-top:1px solid #eee;font-weight:700;">Kontrakt ${c.rok}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Okres</td><td style="padding:4px 0;">${fmt(c.dataOd)} – ${fmt(c.dataDo)}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Rodzaj umowy</td><td style="padding:4px 0;">${c.rodzajUmowy ?? "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">KUP</td><td style="padding:4px 0;">${c.kup ? `${Number(c.kup) * 100}%` : "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Kwota brutto min.</td><td style="padding:4px 0;">${c.kwotaBruttoMin ? `${Number(c.kwotaBruttoMin).toLocaleString("pl-PL")} PLN` : "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Kwota całościowa</td><td style="padding:4px 0;">${c.kwotaCalosciowa ? `${Number(c.kwotaCalosciowa).toLocaleString("pl-PL")} PLN` : "—"}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#666;">Stanowisko</td><td style="padding:4px 0;">${c.stanowisko ?? "—"}</td></tr>
+    </table>
+    <p style="margin-top:16px;font-size:12px;color:#999;">Wysłano z panelu getpermit.pl — Sprawy FDK</p>
+  `;
+
+  const from = process.env.CONTACT_EMAIL_FROM ?? "noreply@getpermit.pl";
+  const { error } = await resend.emails.send({
+    from,
+    to: "g.stepien@firmadlakazdego.pl",
+    subject: `Przygotuj umowę — ${foreigner.imie ?? ""} ${foreigner.nazwisko} (${c.rodzajUmowy ?? "umowa"} ${c.rok})`,
+    html,
+  });
+
+  if (error) {
+    console.error("[fdk] Email send error:", error);
+    return { ok: false, error: "send_failed" };
+  }
+
+  return { ok: true };
+}
+
+// =============================================================================
 // ATTACHMENTS
 // =============================================================================
 

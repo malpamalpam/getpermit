@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ArrowLeft, Eye, Download, FileText } from "lucide-react";
 import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
+import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -211,7 +212,8 @@ export default async function FdkForeignerPage({
         {activeTab === "hr" && (
           <div className="space-y-6">
             {foreigner.hrContracts.length > 0 && (
-              <div className="flex justify-end">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <SendHrEmailButton foreignerId={foreigner.id} />
                 <a
                   href="/api/fdk/export-hr"
                   className="inline-flex items-center gap-1.5 rounded-lg border border-primary/15 bg-white px-3 py-1.5 text-xs font-medium text-primary shadow-sm hover:bg-primary/5"
