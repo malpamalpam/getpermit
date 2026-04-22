@@ -351,3 +351,184 @@ model FdkPermit {
   @@index([nazwisko])
   @@map("fdk_permits")
 }
+
+// =============================================================================
+// MODUŁ FDK — KARTOTEKA CUDZOZIEMCÓW
+// =============================================================================
+
+enum FdkBaseType {
+  ZEZWOLENIE
+  OSWIADCZENIE
+  KARTA_POBYTU
+  BLUE_CARD
+  ZGLOSZENIE_UA
+}
+
+enum FdkStatus {
+  AKTYWNE
+  WYGASLE
+  UCHYLONE
+  UMORZONE
+  ZAKONCZONE
+  W_TRAKCIE
+  BRAK_DANYCH
+}
+
+model FdkForeigner {
+  id              Int       @id @default(autoincrement())
+  nazwisko        String
+  imie            String?
+  dataUrodzenia   DateTime? @map("data_urodzenia")
+  miejsceUrodzenia String?  @map("miejsce_urodzenia")
+  obywatelstwo    String?
+  plec            String?
+  pesel           String?
+  nrPaszportu     String?   @map("nr_paszportu")
+  paszportWaznyOd DateTime? @map("paszport_wazny_od")
+  paszportWaznyDo DateTime? @map("paszport_wazny_do")
+  adresPl         String?   @map("adres_pl") @db.Text
+  telefon         String?
+  email           String?
+  nrKonta         String?   @map("nr_konta")
+  uwagi           String?   @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  employmentBases    FdkEmploymentBase[]
+  hrContracts        FdkHrContract[]
+  detailedDocuments  FdkDetailedDocument[]
+  attachments        FdkAttachment[]
+
+  @@index([nazwisko])
+  @@index([pesel])
+  @@map("fdk_foreigners")
+}
+
+model FdkEmploymentBase {
+  id            Int         @id @default(autoincrement())
+  foreignerId   Int         @map("foreigner_id")
+  typ           FdkBaseType
+  status        FdkStatus   @default(BRAK_DANYCH)
+
+  // Wspólne
+  rodzajUmowy   String?     @map("rodzaj_umowy")
+  dataOd        DateTime?   @map("data_od")
+  dataDo        DateTime?   @map("data_do")
+
+  // Zezwolenie
+  firma              String?
+  nrDecyzji          String?  @map("nr_decyzji")
+  wezwanieBraki      String?  @map("wezwanie_braki") @db.Text
+  powiadomienieDo    DateTime? @map("powiadomienie_do")
+  uchylenie          String?  @db.Text
+  startInfo          String?  @map("start_info") @db.Text
+
+  // Oświadczenie
+  nrOswiadczenia     String?  @map("nr_oswiadczenia")
+  podjeciePracy      String?  @map("podjecie_pracy")
+
+  // Karta pobytu
+  urzad              String?
+  rodzajSprawy       String?  @map("rodzaj_sprawy")
+  dataZlozenia       DateTime? @map("data_zlozenia")
+  sposobWysylki      String?  @map("sposob_wysylki")
+  sygnatura          String?
+  brakujaceDokumenty String?  @map("brakujace_dokumenty") @db.Text
+  uwagiKp            String?  @map("uwagi_kp") @db.Text
+
+  // Blue Card
+  decyzjaOdebrana    DateTime? @map("decyzja_odebrana")
+  stanowisko         String?   @db.Text
+  stawka             Decimal?  @db.Decimal(12, 2)
+
+  // Zgłoszenie UA
+  dataPodjecia       DateTime? @map("data_podjecia")
+  uwagiUa            String?   @map("uwagi_ua") @db.Text
+
+  uwagi              String?   @db.Text
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+
+  @@index([foreignerId])
+  @@index([typ])
+  @@index([status])
+  @@index([dataDo])
+  @@map("fdk_employment_bases")
+}
+
+model FdkHrContract {
+  id            Int       @id @default(autoincrement())
+  foreignerId   Int       @map("foreigner_id")
+  rok           Int
+  dataOd        DateTime? @map("data_od")
+  dataDo        DateTime? @map("data_do")
+  rodzajUmowy   String?   @map("rodzaj_umowy")
+  kup           Decimal?  @db.Decimal(3, 2)
+  kwotaBruttoMin Decimal? @map("kwota_brutto_min") @db.Decimal(12, 2)
+  kwotaCalosciowa Decimal? @map("kwota_calosciowa") @db.Decimal(12, 2)
+  stanowisko    String?   @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  foreigner      FdkForeigner        @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+  monthlyEntries FdkHrMonthlyEntry[]
+
+  @@index([foreignerId])
+  @@map("fdk_hr_contracts")
+}
+
+model FdkHrMonthlyEntry {
+  id                    Int       @id @default(autoincrement())
+  contractId            Int       @map("contract_id")
+  miesiac               DateTime  /// Pierwszy dzień miesiąca
+  umowaWystawiona       Boolean   @default(false) @map("umowa_wystawiona")
+  rachunekWystawiony    Boolean   @default(false) @map("rachunek_wystawiony")
+  pitWyslany            Boolean   @default(false) @map("pit_wyslany")
+  kwota                 Decimal?  @db.Decimal(12, 2)
+  komentarz             String?   @db.Text
+  przekazaneDoPodpisu   Boolean   @default(false) @map("przekazane_do_podpisu")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  contract FdkHrContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+  @@map("fdk_hr_monthly_entries")
+}
+
+model FdkDetailedDocument {
+  id            Int      @id @default(autoincrement())
+  foreignerId   Int      @map("foreigner_id")
+  typDokumentu  String   @map("typ_dokumentu") /// zezwolenie_na_prace, informacja_starosty, trc, pit, zus, ubezpieczenie, wyksztalcenie, pelnomocnictwo, oplata
+  dane          Json     @default("{}") /// Elastyczny JSON z danymi per dokument
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+
+  @@index([foreignerId])
+  @@index([typDokumentu])
+  @@map("fdk_detailed_documents")
+}
+
+model FdkAttachment {
+  id                Int      @id @default(autoincrement())
+  foreignerId       Int      @map("foreigner_id")
+  kategoria         String   /// glowne, wp_2023, wp_2024, trc_2024
+  nazwaWyswietlana  String   @map("nazwa_wyswietlana")
+  nazwaPliku        String   @map("nazwa_pliku")
+  opis              String?  @db.Text
+  typPliku          String   @map("typ_pliku") /// pdf, jpeg, png, docx
+  storagePath       String   @map("storage_path")
+  rozmiarBytes      BigInt?  @map("rozmiar_bytes")
+  uploadedAt        DateTime @default(now()) @map("uploaded_at")
+
+  foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+
+  @@index([foreignerId])
+  @@index([kategoria])
+  @@map("fdk_attachments")
+}
