@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { siteConfig } from "@/config/site";
 import { db } from "@/lib/db";
@@ -11,6 +12,16 @@ import { routing } from "@/i18n/routing";
 import { syncUserFromAuth } from "@/lib/sync-user";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { headers } from "next/headers";
+
+/** Ustawia cookie NEXT_LOCALE, żeby panel klienta używał właściwego języka. */
+async function setLocaleCookie(locale: string) {
+  const cookieStore = await cookies();
+  cookieStore.set("NEXT_LOCALE", locale, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+}
 
 async function getClientIp(): Promise<string> {
   try {
@@ -187,6 +198,9 @@ export async function loginAction(input: {
     }
   }
 
+  // Ustaw cookie NEXT_LOCALE, żeby panel używał aktywnego języka strony
+  await setLocaleCookie(syncedUser?.locale ?? input.locale);
+
   const isStaffOrAdmin = syncedUser && (syncedUser.role === "ADMIN" || syncedUser.role === "STAFF");
   return { ok: true, redirect: isStaffOrAdmin ? "/admin" : "/panel" };
 }
@@ -326,6 +340,9 @@ export async function updateProfile(input: {
     console.error("[updateProfile] DB error:", e);
     return { ok: false, error: "db_error" };
   }
+
+  // Synchronizuj cookie NEXT_LOCALE z wybranym językiem
+  await setLocaleCookie(parsed.data.locale);
 
   revalidatePath("/panel/ustawienia");
   revalidatePath("/panel");
