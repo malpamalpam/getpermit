@@ -61,7 +61,7 @@ export function ServicesGrid() {
               key={box.id}
               id={box.id}
               href={box.href}
-              className="group flex flex-col rounded-2xl border-2 border-primary/20 bg-white p-8 shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl scroll-mt-24"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-white via-white to-accent/5 p-8 shadow-md transition-all hover:-translate-y-1 hover:border-accent hover:shadow-xl scroll-mt-24"
             >
               <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
                 <box.icon className="h-7 w-7" />
