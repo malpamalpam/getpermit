@@ -3,19 +3,19 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { signOutAction } from "@/lib/auth-actions";
-import { Briefcase, Users, LogOut, ShieldCheck, FileStack } from "lucide-react";
+import { Briefcase, Users, LogOut, ShieldCheck, FileStack, Calendar, Settings } from "lucide-react";
 import type { User } from "@prisma/client";
 
 interface Props {
   user: User;
-  active?: "cases" | "clients" | "fdk";
+  active?: "cases" | "clients" | "fdk" | "calendar" | "settings";
 }
 
 export function AdminHeader({ user, active }: Props) {
   const t = useTranslations("admin.header");
   const tAuth = useTranslations("panel.auth");
 
-  const linkClass = (key: "cases" | "clients" | "fdk") =>
+  const linkClass = (key: string) =>
     `inline-flex items-center gap-2 text-sm font-medium transition-colors ${
       active === key ? "text-primary" : "text-primary/60 hover:text-primary"
     }`;
@@ -59,6 +59,14 @@ export function AdminHeader({ user, active }: Props) {
                 <FileStack className="h-4 w-4" />
                 {t("fdk")}
               </Link>
+              <Link href="/admin/kalendarz" className={linkClass("calendar")}>
+                <Calendar className="h-4 w-4" />
+                Kalendarz
+              </Link>
+              <Link href="/admin/ustawienia" className={linkClass("settings")}>
+                <Settings className="h-4 w-4" />
+                Ustawienia
+              </Link>
             </nav>
           </div>
 
@@ -90,6 +98,14 @@ export function AdminHeader({ user, active }: Props) {
           <Link href="/admin/fdk" className={linkClass("fdk")}>
             <FileStack className="h-4 w-4" />
             {t("fdk")}
+          </Link>
+          <Link href="/admin/kalendarz" className={linkClass("calendar")}>
+            <Calendar className="h-4 w-4" />
+            Kal.
+          </Link>
+          <Link href="/admin/ustawienia" className={linkClass("settings")}>
+            <Settings className="h-4 w-4" />
+            Ust.
           </Link>
         </div>
       </Container>

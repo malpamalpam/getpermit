@@ -40,7 +40,7 @@ export default async function RootLayout({
         {/* Ensure lang is correct even if SSR falls back to pl */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `var m=location.pathname.match(/^\\/(pl|en|ru|uk)/);document.documentElement.lang=m?m[1]==='uk'?'ua':m[1]:'pl'`,
+            __html: `try{var m=location.pathname.match(/^\\/(pl|en|ru|uk)/);if(m)document.documentElement.lang=m[1]==='uk'?'ua':m[1]}catch(e){}`,
           }}
         />
         <script

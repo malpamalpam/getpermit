@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import { PrismaClient } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import * as fs from "fs";

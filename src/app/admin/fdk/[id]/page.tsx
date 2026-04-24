@@ -4,9 +4,11 @@ import { Container } from "@/components/ui/Container";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { ArrowLeft, Eye, Download, FileText } from "lucide-react";
+import { ArrowLeft, Eye, Download, FileText, Shield } from "lucide-react";
 import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
+import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
+import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -16,6 +18,7 @@ const TABS = [
   { key: "hr", label: "Dane HR" },
   { key: "documents", label: "Dokumenty" },
   { key: "attachments", label: "Załączniki" },
+  { key: "history", label: "Historia zmian" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -62,12 +65,21 @@ export default async function FdkForeignerPage({
       hrContracts: { include: { monthlyEntries: { orderBy: { miesiac: "asc" } } }, orderBy: { rok: "desc" } },
       detailedDocuments: { orderBy: { createdAt: "desc" } },
       attachments: { orderBy: [{ kategoria: "asc" }, { uploadedAt: "asc" }] },
+      changeLogs: { orderBy: { changedAt: "desc" }, take: 200 },
     },
   });
 
   if (!foreigner) notFound();
 
   const activeTab: TabKey = TABS.some((t) => t.key === sp.tab) ? (sp.tab as TabKey) : "overview";
+
+  // Check if foreigner has active residence permit
+  const now = new Date();
+  const hasActiveResidence =
+    (foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo > now) ||
+    foreigner.employmentBases.some(
+      (b) => b.typ === "KARTA_POBYTU" && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
+    );
 
   return (
     <>
@@ -81,9 +93,19 @@ export default async function FdkForeignerPage({
           <h1 className="font-display text-3xl font-extrabold text-primary">
             {foreigner.imie} {foreigner.nazwisko}
           </h1>
-          {foreigner.obywatelstwo && (
-            <p className="mt-1 text-sm text-ink/60">{foreigner.obywatelstwo}</p>
-          )}
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            {foreigner.obywatelstwo && (
+              <span className="text-sm text-ink/60">{foreigner.obywatelstwo}</span>
+            )}
+            {hasActiveResidence && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
+                <Shield className="h-3 w-3" /> Aktywna decyzja pobytowa
+                {foreigner.decyzjaPobytowaDo && (
+                  <> do {fmt(foreigner.decyzjaPobytowaDo)}</>
+                )}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Tabs */}
@@ -109,6 +131,11 @@ export default async function FdkForeignerPage({
                   {foreigner.attachments.length}
                 </span>
               )}
+              {tab.key === "history" && foreigner.changeLogs.length > 0 && (
+                <span className="ml-1.5 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1.5 text-[10px] font-bold">
+                  {foreigner.changeLogs.length}
+                </span>
+              )}
             </Link>
           ))}
         </div>
@@ -116,35 +143,25 @@ export default async function FdkForeignerPage({
         {/* Tab content */}
         {activeTab === "overview" && (
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 font-display text-lg font-bold text-primary">Dane osobowe</h2>
-              <dl className="space-y-2 text-sm">
-                {[
-                  ["Imię i nazwisko", `${foreigner.imie ?? ""} ${foreigner.nazwisko}`],
-                  ["Data urodzenia", fmt(foreigner.dataUrodzenia)],
-                  ["Miejsce urodzenia", foreigner.miejsceUrodzenia],
-                  ["Obywatelstwo", foreigner.obywatelstwo],
-                  ["Płeć", foreigner.plec],
-                  ["PESEL", foreigner.pesel],
-                  ["Nr paszportu", foreigner.nrPaszportu],
-                  ["Paszport ważny", foreigner.paszportWaznyOd || foreigner.paszportWaznyDo ? `${fmt(foreigner.paszportWaznyOd)} – ${fmt(foreigner.paszportWaznyDo)}` : null],
-                  ["Adres w PL", foreigner.adresPl],
-                  ["Telefon", foreigner.telefon],
-                  ["Email", foreigner.email],
-                  ["Nr konta", foreigner.nrKonta],
-                ].map(([label, value]) =>
-                  value ? (
-                    <div key={label as string} className="flex justify-between gap-4">
-                      <dt className="text-primary/60">{label}</dt>
-                      <dd className="text-right font-medium text-primary">{value}</dd>
-                    </div>
-                  ) : null
-                )}
-              </dl>
-            </div>
+            <FdkEditForeignerForm foreigner={foreigner} />
             <div className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
               <h2 className="mb-4 font-display text-lg font-bold text-primary">Podsumowanie</h2>
               <div className="space-y-3">
+                {foreigner.decyzjaPobytowaDo && (
+                  <div className="rounded-lg bg-blue-50 p-3 text-sm">
+                    <div className="font-semibold text-blue-800">
+                      Decyzja pobytowa{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                    </div>
+                    <div className="text-blue-700">
+                      Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}
+                    </div>
+                    {hasActiveResidence && (
+                      <div className="mt-1 text-xs text-blue-600">
+                        WP i OŚW dezaktywowane — decyzja pobytowa wchłania wcześniejsze dokumenty
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div className="text-sm text-primary/60">Podstawy zatrudnienia</div>
                 <div className="flex flex-wrap gap-1.5">
                   {foreigner.employmentBases.length === 0 && <span className="text-sm text-primary/40">Brak</span>}
@@ -157,6 +174,11 @@ export default async function FdkForeignerPage({
                 <div className="text-sm text-primary/60">Załączniki: {foreigner.attachments.length}</div>
                 <div className="text-sm text-primary/60">Kontrakty HR: {foreigner.hrContracts.length}</div>
                 <div className="text-sm text-primary/60">Dokumenty szczegółowe: {foreigner.detailedDocuments.length}</div>
+                {foreigner.jezykPreferowany && (
+                  <div className="text-sm text-primary/60">
+                    Język: {{ pl: "Polski", en: "English", ru: "Русский", uk: "Українська" }[foreigner.jezykPreferowany] ?? foreigner.jezykPreferowany}
+                  </div>
+                )}
               </div>
               {foreigner.uwagi && (
                 <div className="mt-4 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">
@@ -172,40 +194,55 @@ export default async function FdkForeignerPage({
             {foreigner.employmentBases.length === 0 && (
               <p className="py-12 text-center text-primary/40">Brak podstaw zatrudnienia</p>
             )}
-            {foreigner.employmentBases.map((b) => (
-              <div key={b.id} className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[b.typ]?.cls ?? "bg-gray-100"}`}>
-                    {TYPE_BADGES[b.typ]?.label ?? b.typ}
-                  </span>
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
-                    {b.status.replace("_", " ")}
-                  </span>
-                  {b.nrDecyzji && <span className="text-xs text-primary/50">Nr: {b.nrDecyzji}</span>}
+            {foreigner.employmentBases.map((b) => {
+              const isSuperseded =
+                hasActiveResidence &&
+                (b.typ === "ZEZWOLENIE" || b.typ === "OSWIADCZENIE");
+              return (
+                <div
+                  key={b.id}
+                  className={`rounded-xl border bg-white p-6 shadow-sm ${
+                    isSuperseded ? "border-orange-200 opacity-60" : "border-primary/10"
+                  }`}
+                >
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[b.typ]?.cls ?? "bg-gray-100"}`}>
+                      {TYPE_BADGES[b.typ]?.label ?? b.typ}
+                    </span>
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
+                      {b.status.replace("_", " ")}
+                    </span>
+                    {b.nrDecyzji && <span className="text-xs text-primary/50">Nr: {b.nrDecyzji}</span>}
+                    {isSuperseded && (
+                      <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
+                        Wchłonięte przez decyzję pobytową
+                      </span>
+                    )}
+                  </div>
+                  <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
+                    {[
+                      ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
+                      ["Rodzaj umowy", b.rodzajUmowy],
+                      ["Firma", b.firma],
+                      ["Stanowisko", b.stanowisko],
+                      ["Urząd", b.urzad],
+                      ["Rodzaj sprawy", b.rodzajSprawy],
+                      ["Sygnatura", b.sygnatura],
+                      ["Nr oświadczenia", b.nrOswiadczenia],
+                      ["Wezwanie/braki", b.wezwanieBraki],
+                      ["Uwagi", b.uwagi],
+                    ].map(([label, value]) =>
+                      value ? (
+                        <div key={label as string}>
+                          <dt className="text-primary/50">{label}</dt>
+                          <dd className="font-medium text-primary">{value}</dd>
+                        </div>
+                      ) : null
+                    )}
+                  </dl>
                 </div>
-                <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
-                  {[
-                    ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
-                    ["Rodzaj umowy", b.rodzajUmowy],
-                    ["Firma", b.firma],
-                    ["Stanowisko", b.stanowisko],
-                    ["Urząd", b.urzad],
-                    ["Rodzaj sprawy", b.rodzajSprawy],
-                    ["Sygnatura", b.sygnatura],
-                    ["Nr oświadczenia", b.nrOswiadczenia],
-                    ["Wezwanie/braki", b.wezwanieBraki],
-                    ["Uwagi", b.uwagi],
-                  ].map(([label, value]) =>
-                    value ? (
-                      <div key={label as string}>
-                        <dt className="text-primary/50">{label}</dt>
-                        <dd className="font-medium text-primary">{value}</dd>
-                      </div>
-                    ) : null
-                  )}
-                </dl>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -276,7 +313,6 @@ export default async function FdkForeignerPage({
                         </div>
                       ))}
                   </dl>
-                  {/* Chronologia (np. TRC) */}
                   {Array.isArray(dane.chronologia) && (
                     <div className="mt-4">
                       <h4 className="mb-2 text-sm font-semibold text-primary/70">Chronologia</h4>
@@ -360,6 +396,10 @@ export default async function FdkForeignerPage({
             })()}
             <FdkUploadForm foreignerId={foreigner.id} />
           </div>
+        )}
+
+        {activeTab === "history" && (
+          <FdkChangeHistory logs={foreigner.changeLogs} />
         )}
       </Container>
     </>

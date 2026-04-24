@@ -215,3 +215,79 @@ CREATE POLICY "storage_case_documents_delete_staff"
   USING (
     bucket_id = 'case-documents' AND public.is_staff()
   );
+
+-- =============================================================================
+-- FDK TABLES — RLS (dane osobowe cudzoziemców — tylko staff/admin)
+-- =============================================================================
+
+ALTER TABLE public.fdk_foreigners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_employment_bases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_hr_contracts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_hr_monthly_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_detailed_documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_attachments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_change_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_notification_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.fdk_permits ENABLE ROW LEVEL SECURITY;
+
+-- FDK Foreigners
+CREATE POLICY "fdk_foreigners_select_staff" ON public.fdk_foreigners FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_foreigners_insert_admin" ON public.fdk_foreigners FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_foreigners_update_admin" ON public.fdk_foreigners FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_foreigners_delete_admin" ON public.fdk_foreigners FOR DELETE USING (public.is_admin());
+
+-- FDK Employment Bases
+CREATE POLICY "fdk_bases_select_staff" ON public.fdk_employment_bases FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_bases_insert_admin" ON public.fdk_employment_bases FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_bases_update_admin" ON public.fdk_employment_bases FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_bases_delete_admin" ON public.fdk_employment_bases FOR DELETE USING (public.is_admin());
+
+-- FDK HR Contracts
+CREATE POLICY "fdk_hr_select_staff" ON public.fdk_hr_contracts FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_hr_insert_admin" ON public.fdk_hr_contracts FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_hr_update_admin" ON public.fdk_hr_contracts FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_hr_delete_admin" ON public.fdk_hr_contracts FOR DELETE USING (public.is_admin());
+
+-- FDK HR Monthly Entries
+CREATE POLICY "fdk_monthly_select_staff" ON public.fdk_hr_monthly_entries FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_monthly_insert_admin" ON public.fdk_hr_monthly_entries FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_monthly_update_admin" ON public.fdk_hr_monthly_entries FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- FDK Detailed Documents
+CREATE POLICY "fdk_docs_select_staff" ON public.fdk_detailed_documents FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_docs_insert_admin" ON public.fdk_detailed_documents FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_docs_delete_admin" ON public.fdk_detailed_documents FOR DELETE USING (public.is_admin());
+
+-- FDK Attachments
+CREATE POLICY "fdk_att_select_staff" ON public.fdk_attachments FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_att_insert_admin" ON public.fdk_attachments FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "fdk_att_delete_admin" ON public.fdk_attachments FOR DELETE USING (public.is_admin());
+
+-- FDK Change Logs (audit — read by staff, write by service role only)
+CREATE POLICY "fdk_changelog_select_staff" ON public.fdk_change_logs FOR SELECT USING (public.is_staff());
+
+-- FDK Notification Logs (read by staff, write by service role only)
+CREATE POLICY "fdk_notiflog_select_staff" ON public.fdk_notification_logs FOR SELECT USING (public.is_staff());
+
+-- FDK Permits (legacy)
+CREATE POLICY "fdk_permits_select_staff" ON public.fdk_permits FOR SELECT USING (public.is_staff());
+CREATE POLICY "fdk_permits_insert_admin" ON public.fdk_permits FOR INSERT WITH CHECK (public.is_admin());
+
+-- =============================================================================
+-- CALENDAR EVENTS — staff/admin only
+-- =============================================================================
+
+ALTER TABLE public.calendar_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "calendar_events_select_staff" ON public.calendar_events FOR SELECT USING (public.is_staff());
+CREATE POLICY "calendar_events_insert_staff" ON public.calendar_events FOR INSERT WITH CHECK (public.is_staff());
+CREATE POLICY "calendar_events_update_staff" ON public.calendar_events FOR UPDATE USING (public.is_staff()) WITH CHECK (public.is_staff());
+CREATE POLICY "calendar_events_delete_admin" ON public.calendar_events FOR DELETE USING (public.is_admin());
+
+-- =============================================================================
+-- NOTIFICATION SETTINGS — admin only
+-- =============================================================================
+
+ALTER TABLE public.notification_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "notif_settings_select_admin" ON public.notification_settings FOR SELECT USING (public.is_admin());
+CREATE POLICY "notif_settings_update_admin" ON public.notification_settings FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "notif_settings_insert_admin" ON public.notification_settings FOR INSERT WITH CHECK (public.is_admin());

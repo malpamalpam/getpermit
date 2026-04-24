@@ -125,6 +125,8 @@ model User {
   accessLogs AccessLog[]
   // dane osobowe (ankieta)
   personalData PersonalData?
+  // wydarzenia kalendarza
+  calendarEvents CalendarEvent[] @relation("CalendarEventCreator")
 
   @@index([role])
   @@map("users")
@@ -392,6 +394,13 @@ model FdkForeigner {
   nrKonta         String?   @map("nr_konta")
   uwagi           String?   @db.Text
 
+  /// Język preferowany cudzoziemca (pl, en, ru, uk) — do auto-maili
+  jezykPreferowany String? @map("jezyk_preferowany")
+  /// Data ważności aktywnej decyzji pobytowej (TRC/wiza) — główny dokument legalizacyjny
+  decyzjaPobytowaDo DateTime? @map("decyzja_pobytowa_do")
+  /// Typ dokumentu pobytowego (np. "zezwolenie na pobyt czasowy i pracę", "wiza")
+  typDokumentuPobytowego String? @map("typ_dokumentu_pobytowego")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -399,6 +408,8 @@ model FdkForeigner {
   hrContracts        FdkHrContract[]
   detailedDocuments  FdkDetailedDocument[]
   attachments        FdkAttachment[]
+  changeLogs         FdkChangeLog[]
+  notificationLogs   FdkNotificationLog[]
 
   @@index([nazwisko])
   @@index([pesel])
@@ -531,4 +542,97 @@ model FdkAttachment {
   @@index([foreignerId])
   @@index([kategoria])
   @@map("fdk_attachments")
+}
+
+// =============================================================================
+// AUDIT LOG — HISTORIA ZMIAN W PROFILU CUDZOZIEMCA
+// =============================================================================
+
+model FdkChangeLog {
+  id          Int      @id @default(autoincrement())
+  foreignerId Int      @map("foreigner_id")
+  changedBy   String   @map("changed_by") /// email lub ID użytkownika
+  field       String   /// nazwa zmienionego pola
+  oldValue    String?  @map("old_value") @db.Text
+  newValue    String?  @map("new_value") @db.Text
+  changedAt   DateTime @default(now()) @map("changed_at")
+
+  foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+
+  @@index([foreignerId, changedAt])
+  @@map("fdk_change_logs")
+}
+
+// =============================================================================
+// LOG POWIADOMIEŃ WYSŁANYCH DO CUDZOZIEMCÓW
+// =============================================================================
+
+model FdkNotificationLog {
+  id          Int      @id @default(autoincrement())
+  foreignerId Int      @map("foreigner_id")
+  typ         String   /// expiry_wp, expiry_osw, expiry_pobyt
+  email       String   /// adres e-mail na który wysłano
+  sentAt      DateTime @default(now()) @map("sent_at")
+
+  foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+
+  @@index([foreignerId, sentAt])
+  @@map("fdk_notification_logs")
+}
+
+// =============================================================================
+// KALENDARZ — WYDARZENIA I SPOTKANIA
+// =============================================================================
+
+enum CalendarEventType {
+  OFFICE_VISIT     /// Wizyta w urzędzie
+  OFFICE_MEETING   /// Spotkanie w biurze
+  OTHER            /// Inne
+}
+
+model CalendarEvent {
+  id           Int               @id @default(autoincrement())
+  type         CalendarEventType
+  title        String
+  description  String?           @db.Text
+  eventDate    DateTime          @map("event_date")
+  eventTime    String?           @map("event_time") /// HH:MM format
+  place        String?
+  organ        String?           /// np. Urząd Wojewódzki, UdSC
+  foreignerId  Int?              @map("foreigner_id") /// Powiązany cudzoziemiec
+  foreignerName String?          @map("foreigner_name") /// Cache nazwy dla szybkiego wyświetlania
+  createdById  String            @map("created_by_id") @db.Uuid
+  notes        String?           @db.Text /// Dodatkowe informacje
+  emailSent    Boolean           @default(false) @map("email_sent") /// Czy wysłano email do cudzoziemca
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  createdBy User @relation("CalendarEventCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([eventDate])
+  @@index([foreignerId])
+  @@map("calendar_events")
+}
+
+// =============================================================================
+// USTAWIENIA POWIADOMIEŃ
+// =============================================================================
+
+model NotificationSettings {
+  id                    Int     @id @default(1)
+  /// Częstotliwość wysyłki powiadomień do zespołu (w dniach)
+  teamNotifyFrequencyDays Int   @default(14) @map("team_notify_frequency_days")
+  /// Data ostatniego wysłania powiadomienia do zespołu
+  lastTeamNotifySentAt  DateTime? @map("last_team_notify_sent_at")
+  /// Oświadczenia: ile dni przed wygaśnięciem (domyślnie 45 = 1.5 miesiąca)
+  oswiadczenieDaysBefore Int   @default(45) @map("oswiadczenie_days_before")
+  /// Zezwolenia na pracę (WP): ile dni przed wygaśnięciem (domyślnie 240 = 8 miesięcy)
+  zezwolenieDaysBefore   Int   @default(240) @map("zezwolenie_days_before")
+  /// Decyzja pobytowa / wiza: ile dni przed wygaśnięciem (domyślnie 60 = 2 miesiące)
+  pobytDaysBefore        Int   @default(60) @map("pobyt_days_before")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_settings")
 }
