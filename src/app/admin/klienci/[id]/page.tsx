@@ -81,7 +81,7 @@ export default async function ClientDetailPage({
           </div>
           <div>
             <h1 className="font-display text-2xl font-extrabold text-primary">
-              {client.firstName ?? ""} {client.lastName ?? ""}
+              {client.firstName || pd?.firstNameLatin || ""} {client.lastName || pd?.lastNameLatin || ""}
             </h1>
             <div className="flex items-center gap-4 text-sm text-ink/60">
               <span className="flex items-center gap-1">

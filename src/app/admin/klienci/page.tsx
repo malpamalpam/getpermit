@@ -45,6 +45,7 @@ export default async function ClientsListPage({
     where,
     include: {
       _count: { select: { cases: true } },
+      personalData: { select: { firstNameLatin: true, lastNameLatin: true } },
     },
     orderBy: [{ lastName: "asc" }, { email: "asc" }],
     take: 200,
@@ -110,7 +111,9 @@ export default async function ClientsListPage({
                   const fullName =
                     c.firstName || c.lastName
                       ? `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim()
-                      : "—";
+                      : c.personalData?.firstNameLatin || c.personalData?.lastNameLatin
+                        ? `${c.personalData.firstNameLatin ?? ""} ${c.personalData.lastNameLatin ?? ""}`.trim()
+                        : "—";
                   return (
                     <tr
                       key={c.id}
