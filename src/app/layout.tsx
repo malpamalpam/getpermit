@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://getpermit.pl"),
   icons: {
     icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/logo.png", type: "image/png" },
-      { url: "/logo.svg", type: "image/svg+xml" },
     ],
   },
   robots: { index: true, follow: true },

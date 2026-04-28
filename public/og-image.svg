@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="50%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#38bdf8"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Decorative circles -->
+  <circle cx="1050" cy="80" r="200" fill="#38bdf8" opacity="0.06"/>
+  <circle cx="150" cy="550" r="180" fill="#06b6d4" opacity="0.05"/>
+  <!-- GP Logo Mark -->
+  <g transform="translate(480, 120) scale(0.7)">
+    <!-- G letter -->
+    <path d="M120 20C60 20 10 70 10 140C10 210 60 260 120 260C160 260 195 240 215 210L215 160L140 160L140 190L185 190C175 210 150 225 120 225C78 225 45 190 45 140C45 90 78 55 120 55C150 55 175 70 188 93L218 78C200 45 163 20 120 20Z" fill="url(#accent)"/>
+    <!-- P letter -->
+    <path d="M240 25L240 260L275 260L275 165L320 165C370 165 405 135 405 95C405 55 370 25 320 25L240 25ZM275 55L320 55C350 55 370 72 370 95C370 118 350 135 320 135L275 135L275 55Z" fill="url(#accent)"/>
+    <!-- Connecting swirl -->
+    <path d="M215 160C215 160 230 180 240 180" stroke="url(#accent)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Brand name -->
+  <text x="600" y="380" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="white" letter-spacing="-1">getpermit.pl</text>
+  <!-- Tagline -->
+  <text x="600" y="440" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#94a3b8" letter-spacing="0.5">Legalizacja pobytu i pracy w Polsce</text>
+  <!-- Accent line -->
+  <rect x="500" y="465" width="200" height="3" rx="1.5" fill="url(#accent)" opacity="0.6"/>
+  <!-- Stats bar -->
+  <g transform="translate(0, 510)">
+    <rect x="0" y="0" width="1200" height="120" fill="#0c1322" opacity="0.5"/>
+    <text x="250" y="55" text-anchor="middle" font-family="system-ui, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">10+</text>
+    <text x="250" y="85" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#64748b">lat doswiadczenia</text>
+    <text x="600" y="55" text-anchor="middle" font-family="system-ui, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">5000+</text>
+    <text x="600" y="85" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#64748b">obsluzonych klientow</text>
+    <text x="950" y="55" text-anchor="middle" font-family="system-ui, sans-serif" font-size="36" font-weight="700" fill="#38bdf8">98%</text>
+    <text x="950" y="85" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#64748b">skutecznosci</text>
+  </g>
+</svg>
