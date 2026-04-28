@@ -7,7 +7,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     title: "Temporary Residence Card in Poland 2026 \u2014 Complete Step-by-Step Guide",
     description: "How to get a temporary residence card in Poland in 2026? Required documents, costs, processing time and common mistakes. A practical guide by getpermit.pl.",
     date: "2026-04-15",
-    imageUrl: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=1200&q=80",
+    imageUrl: "/blog/karta-pobytu-czasowego.svg",
     imageAlt: "Temporary residence card in Poland \u2014 documents and legalization procedure",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -37,7 +37,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     title: "Permanent Residence Card in Poland \u2014 Who Can Get It and How to Apply",
     description: "A permanent residence card grants the right to live in Poland indefinitely. Check conditions, documents and costs. Guide by getpermit.pl.",
     date: "2026-04-14",
-    imageUrl: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&q=80",
+    imageUrl: "/blog/karta-stalego-pobytu.svg",
     imageAlt: "Permanent residence card in Poland \u2014 procedure for obtaining the document",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -63,7 +63,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     title: "EU Blue Card in Poland 2026 \u2014 New Rules and Requirements",
     description: "EU Blue Card after 2025 changes. Who can get a Blue Card in Poland? Requirements, documents, costs and EU mobility benefits. Guide by getpermit.pl.",
     date: "2026-04-13",
-    imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80",
+    imageUrl: "/blog/niebieska-karta-ue.svg",
     imageAlt: "EU Blue Card for specialists in Poland",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -91,7 +91,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     title: "Online Residence Applications via MOS in 2026 \u2014 How the New System Works",
     description: "Since 2026, residence card applications in Poland are submitted through MOS. How to create an account, fill in the e-application and avoid mistakes. Guide by getpermit.pl.",
     date: "2026-04-12",
-    imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80",
+    imageUrl: "/blog/wnioski-mos.svg",
     imageAlt: "MOS system \u2014 online residence applications in Poland 2026",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -119,7 +119,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     title: "How Much Does a Residence Card Cost in 2026? Full Price List",
     description: "Current residence card costs in 2026: stamp duty, card issuance, sworn translations and legal help. Price list and cost calculator by getpermit.pl.",
     date: "2026-04-11",
-    imageUrl: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&q=80",
+    imageUrl: "/blog/ile-kosztuje-karta-pobytu.svg",
     imageAlt: "Residence card costs in Poland 2026 \u2014 official fee price list",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [

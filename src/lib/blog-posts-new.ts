@@ -15,7 +15,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Jak uzyska\u0107 kart\u0119 pobytu czasowego w Polsce w 2026? Wymagane dokumenty, koszty, czas oczekiwania i najcz\u0119stsze b\u0142\u0119dy. Praktyczny przewodnik od ekspert\u00f3w getpermit.pl.",
     date: "2026-04-15",
-    imageUrl: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=1200&q=80",
+    imageUrl: "/blog/karta-pobytu-czasowego.svg",
     imageAlt: "Karta pobytu czasowego w Polsce \u2014 dokumenty i procedura legalizacji pobytu",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -157,7 +157,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Karta sta\u0142ego pobytu daje prawo do bezterminowego zamieszkania w Polsce. Sprawd\u017a warunki, dokumenty i koszty. Poradnik od ekspert\u00f3w getpermit.pl.",
     date: "2026-04-14",
-    imageUrl: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&q=80",
+    imageUrl: "/blog/karta-stalego-pobytu.svg",
     imageAlt: "Karta sta\u0142ego pobytu w Polsce \u2014 procedura uzyskania dokumentu pobytowego",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -272,7 +272,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "EU Blue Card po zmianach od 2025. Kto mo\u017ce uzyska\u0107 Niebiesk\u0105 Kart\u0119 UE w Polsce? Wymagania, dokumenty, koszty i korzy\u015bci mobilno\u015bci w UE. Poradnik getpermit.pl.",
     date: "2026-04-13",
-    imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80",
+    imageUrl: "/blog/niebieska-karta-ue.svg",
     imageAlt: "EU Blue Card \u2014 Niebieska Karta UE dla specjalist\u00f3w w Polsce",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -394,7 +394,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Od 2026 wnioski o kart\u0119 pobytu sk\u0142adasz przez MOS (Modu\u0142 Obs\u0142ugi Spraw). Jak za\u0142o\u017cy\u0107 konto, wype\u0142ni\u0107 e-wniosek i unikn\u0105\u0107 b\u0142\u0119d\u00f3w. Poradnik getpermit.pl.",
     date: "2026-04-12",
-    imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80",
+    imageUrl: "/blog/wnioski-mos.svg",
     imageAlt: "System MOS \u2014 sk\u0142adanie wniosk\u00f3w pobytowych online w Polsce 2026",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -502,6 +502,37 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <p>System dost\u0119pny jest w j\u0119zyku polskim, angielskim, rosyjskim i ukrai\u0144skim. Formularz wniosku nale\u017cy wype\u0142ni\u0107 po polsku.</p></details>
 </div>`,
       },
+    ],
+  },
+
+  // =========================================================================
+  // ARTYKUŁ: Ile kosztuje karta pobytu 2026
+  // Primary keyword: ile kosztuje karta pobytu
+  // =========================================================================
+  {
+    slug: "ile-kosztuje-karta-pobytu-2026",
+    title: "Ile kosztuje karta pobytu w 2026? Pełny cennik opłat",
+    description:
+      "Aktualne koszty karty pobytu w 2026 roku: opłaty skarbowe, wydanie karty, tłumaczenia przysięgłe i pomoc prawna. Cennik i kalkulator kosztów od getpermit.pl.",
+    date: "2026-04-11",
+    imageUrl: "/blog/ile-kosztuje-karta-pobytu.svg",
+    imageAlt: "Koszty karty pobytu w Polsce 2026 — cennik opłat urzędowych",
+    author: "Grzegorz Stępień, UTM Group",
+    toc: [
+      { id: "oplaty-skarbowe", title: "Opłaty skarbowe" },
+      { id: "wydanie-karty", title: "Koszt wydania karty" },
+      { id: "tlumaczenia", title: "Tłumaczenia przysięgłe" },
+      { id: "pomoc-prawna", title: "Pomoc prawna" },
+      { id: "calkowity-koszt", title: "Całkowity koszt" },
+      { id: "faq-koszty", title: "FAQ" },
+    ],
+    sections: [
+      { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr><tr><td>Przedłużenie wizy</td><td><strong>406 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
+      { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji: <strong>2–4 tygodnie</strong> od daty decyzji.</p>` },
+      { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
+      { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — bezpłatna (w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na bezpłatną wycenę</a>.</p>` },
+      { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
+      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Czy konsultacja w getpermit.pl jest naprawdę bezpłatna?</strong></summary><p>Tak. Wstępna konsultacja jest całkowicie bezpłatna i niezobowiązująca. Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę.</p></details></div>` },
     ],
   },
 

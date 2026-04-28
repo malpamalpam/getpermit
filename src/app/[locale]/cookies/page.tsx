@@ -1,13 +1,20 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Cookie, List } from "lucide-react";
 
-export const metadata = {
-  title: "Polityka cookies | getpermit.pl",
-  description:
-    "Polityka cookies serwisu getpermit.pl — rodzaje plików cookies, zarządzanie ustawieniami, podstawa prawna.",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal" });
+  return {
+    title: t("cookiesTitle"),
+    description: t("cookiesDescription"),
+    robots: { index: true, follow: true },
+  };
+}
 
 const TOC = [
   { id: "czym-sa-cookies", title: "§ 1. Czym są pliki cookies" },

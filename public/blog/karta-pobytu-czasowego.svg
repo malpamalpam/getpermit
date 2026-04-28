@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0ea5e9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.15" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <!-- Decorative circles -->
+  <circle cx="1050" cy="100" r="200" fill="rgba(255,255,255,0.03)" />
+  <circle cx="150" cy="530" r="150" fill="rgba(255,255,255,0.03)" />
+  <!-- Card shape -->
+  <rect x="380" y="140" width="440" height="280" rx="20" ry="20" fill="url(#card)" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+  <!-- Card chip -->
+  <rect x="420" y="190" width="60" height="45" rx="8" ry="8" fill="rgba(255,215,0,0.4)" stroke="rgba(255,215,0,0.6)" stroke-width="1.5" />
+  <line x1="420" y1="210" x2="480" y2="210" stroke="rgba(255,215,0,0.5)" stroke-width="1" />
+  <line x1="450" y1="190" x2="450" y2="235" stroke="rgba(255,215,0,0.5)" stroke-width="1" />
+  <!-- Card lines (data placeholders) -->
+  <rect x="420" y="260" width="200" height="12" rx="6" fill="rgba(255,255,255,0.25)" />
+  <rect x="420" y="290" width="140" height="10" rx="5" fill="rgba(255,255,255,0.15)" />
+  <rect x="420" y="315" width="260" height="10" rx="5" fill="rgba(255,255,255,0.15)" />
+  <rect x="420" y="340" width="180" height="10" rx="5" fill="rgba(255,255,255,0.15)" />
+  <!-- Photo placeholder on card -->
+  <rect x="700" y="190" width="80" height="100" rx="5" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+  <!-- Clock icon (temporary/time) -->
+  <circle cx="750" cy="340" r="30" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+  <line x1="750" y1="320" x2="750" y2="340" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" />
+  <line x1="750" y1="340" x2="765" y2="348" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" />
+  <!-- Title text -->
+  <text x="600" y="500" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="700" fill="white" letter-spacing="0.5">Karta Pobytu Czasowego</text>
+  <text x="600" y="545" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="400" fill="rgba(255,255,255,0.7)">Poradnik 2026 | getpermit.pl</text>
+  <!-- Polish flag stripe accent -->
+  <rect x="0" y="620" width="600" height="10" fill="rgba(255,255,255,0.3)" />
+  <rect x="600" y="620" width="600" height="10" fill="rgba(220,38,38,0.4)" />
+</svg>

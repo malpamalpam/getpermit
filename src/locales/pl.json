@@ -87,9 +87,18 @@
     "subtitle": "Napisz do nas — bezpłatnie ocenimy Twoją sprawę i zaproponujemy najlepsze rozwiązanie. Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę — pomagamy na każdym etapie.",
     "button": "Skontaktuj się z nami"
   },
+  "legal": {
+    "privacyTitle": "Polityka prywatności",
+    "privacyDescription": "Polityka prywatności serwisu getpermit.pl — informacje o przetwarzaniu danych osobowych, prawa użytkowników, RODO.",
+    "termsTitle": "Regulamin serwisu",
+    "termsDescription": "Regulamin korzystania z serwisu getpermit.pl — zasady świadczenia usług, formularz kontaktowy, reklamacje, odstąpienie od umowy.",
+    "cookiesTitle": "Polityka cookies",
+    "cookiesDescription": "Polityka cookies serwisu getpermit.pl — rodzaje plików cookies, zarządzanie ustawieniami, podstawa prawna."
+  },
   "contact": {
     "title": "Skontaktuj się z nami",
     "subtitle": "Wypełnij formularz, a odpowiemy w ciągu 24 godzin",
+    "metaDescription": "Skontaktuj się z getpermit.pl — bezpłatna konsultacja w sprawie karty pobytu, zezwolenia na pracę i legalizacji pobytu w Polsce. Odpowiadamy w 24h. Biuro: Warszawa, ul. Lwowska 17/4.",
     "form": {
       "name": "Imię i nazwisko",
       "namePlaceholder": "Jan Kowalski",
@@ -683,7 +692,7 @@
     "privacyLink": "Polityka prywatności"
   },
   "employers": {
-    "metaTitle": "Dla Pracodawc\u00f3w \u2014 zatrudnianie cudzoziemc\u00f3w | getpermit.pl",
+    "metaTitle": "Dla Pracodawc\u00f3w \u2014 zatrudnianie cudzoziemc\u00f3w",
     "metaDescription": "Kompleksowa obs\u0142uga firm zatrudniaj\u0105cych cudzoziemc\u00f3w w Polsce. Zezwolenia na prac\u0119, o\u015bwiadczenia, audyt legalno\u015bci, wsparcie HR. Bezp\u0142atna konsultacja.",
     "heroTitle": "Zatrudniasz cudzoziemc\u00f3w? Zadbaj o legalno\u015b\u0107 i spok\u00f3j ducha",
     "heroSubtitle": "Kompleksowa obs\u0142uga pracodawc\u00f3w: zezwolenia na prac\u0119, o\u015bwiadczenia, audyt dokument\u00f3w, wsparcie HR. 10+ lat do\u015bwiadczenia, 98% skuteczno\u015bci.",
@@ -741,7 +750,7 @@
     "ctaSubtitle": "Wype\u0142nij formularz \u2014 skontaktujemy si\u0119 w ci\u0105gu 24 godzin z wycen\u0105 i propozycj\u0105 wsp\u00f3\u0142pracy."
   },
   "blog": {
-    "metaTitle": "Blog — getpermit.pl",
+    "metaTitle": "Blog",
     "metaDescription": "Aktualności, poradniki i analizy dotyczące legalizacji pobytu i pracy cudzoziemców w Polsce.",
     "title": "Blog",
     "subtitle": "Aktualności, poradniki i analizy dotyczące legalizacji pobytu i pracy w Polsce.",

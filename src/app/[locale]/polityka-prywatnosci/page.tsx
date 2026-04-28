@@ -1,13 +1,20 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Shield, List } from "lucide-react";
 
-export const metadata = {
-  title: "Polityka prywatności | getpermit.pl",
-  description:
-    "Polityka prywatności serwisu getpermit.pl — informacje o przetwarzaniu danych osobowych, prawa użytkowników, RODO.",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal" });
+  return {
+    title: t("privacyTitle"),
+    description: t("privacyDescription"),
+    robots: { index: true, follow: true },
+  };
+}
 
 const TOC = [
   { id: "administrator", title: "§ 1. Administrator danych osobowych" },

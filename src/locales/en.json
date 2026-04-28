@@ -87,9 +87,18 @@
     "subtitle": "Write to us — we will assess your case for free and propose the best solution.",
     "button": "Contact us"
   },
+  "legal": {
+    "privacyTitle": "Privacy policy",
+    "privacyDescription": "Privacy policy of getpermit.pl — information on personal data processing, user rights, GDPR compliance.",
+    "termsTitle": "Terms of service",
+    "termsDescription": "Terms of service for getpermit.pl — rules for providing services, contact form, complaints, withdrawal from contract.",
+    "cookiesTitle": "Cookie policy",
+    "cookiesDescription": "Cookie policy of getpermit.pl — types of cookies, managing settings, legal basis."
+  },
   "contact": {
     "title": "Contact us",
     "subtitle": "Fill out the form and we will respond within 24 hours",
+    "metaDescription": "Contact getpermit.pl — free consultation on residence permits, work permits and immigration to Poland. We respond within 24 hours. Office: Warsaw, Lwowska 17/4.",
     "form": {
       "name": "Full name",
       "namePlaceholder": "John Doe",
@@ -653,7 +662,7 @@
     "privacyLink": "Privacy policy"
   },
   "employers": {
-    "metaTitle": "For Employers \u2014 Hiring Foreigners | getpermit.pl",
+    "metaTitle": "For Employers \u2014 Hiring Foreigners",
     "metaDescription": "Complete service for companies employing foreigners in Poland. Work permits, declarations, audit, HR support. Free consultation.",
     "heroTitle": "Hiring foreigners? Ensure legality and peace of mind",
     "heroSubtitle": "Complete service for employers: work permits, declarations, document audits, HR support. 10+ years of experience, 98% success rate.",
@@ -711,7 +720,7 @@
     "ctaSubtitle": "Fill out the form \u2014 we'll contact you within 24 hours with a quote and cooperation proposal."
   },
   "blog": {
-    "metaTitle": "Blog — getpermit.pl",
+    "metaTitle": "Blog",
     "metaDescription": "News, guides and analysis on residence and work legalization for foreigners in Poland.",
     "title": "Blog",
     "subtitle": "News, guides and analysis on residence and work legalization in Poland.",

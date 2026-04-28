@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,6 +17,12 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://getpermit.pl"),
+  icons: {
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+      { url: "/logo.svg", type: "image/svg+xml" },
+    ],
+  },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
@@ -32,17 +39,17 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  // next-intl middleware sets this header; fallback to parsing the URL path
+  const intlLocale = headersList.get("x-next-intl-locale");
+  const pathLocaleMatch = (headersList.get("x-invoke-path") ?? "").match(/^\/(pl|en|ru|uk)/);
+  const lang = intlLocale && ["pl", "en", "ru", "uk"].includes(intlLocale)
+    ? intlLocale
+    : pathLocaleMatch ? pathLocaleMatch[1] : "pl";
+
   return (
-    <html lang="pl" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-        {/* Ensure lang is correct even if SSR falls back to pl */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var m=location.pathname.match(/^\\/(pl|en|ru|uk)/);if(m)document.documentElement.lang=m[1]==='uk'?'ua':m[1]}catch(e){}`,
-          }}
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

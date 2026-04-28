@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#003399;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0052cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.15" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+    </linearGradient>
+  </defs>
+  <!-- Background (EU Blue) -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <!-- Decorative circles -->
+  <circle cx="1050" cy="120" r="220" fill="rgba(255,255,255,0.03)" />
+  <circle cx="150" cy="500" r="160" fill="rgba(255,255,255,0.03)" />
+  <!-- EU Stars circle -->
+  <g transform="translate(600,240)">
+    <circle cx="0" cy="0" r="130" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="1" />
+    <!-- 12 EU stars -->
+    <g fill="rgba(255,215,0,0.35)">
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(0)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(30)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(60)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(90)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(120)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(150)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(180)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(210)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(240)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(270)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(300)" />
+      <polygon points="0,-120 4,-108 -4,-108" transform="rotate(330)" />
+    </g>
+    <!-- Proper 5-point stars -->
+    <g fill="rgba(255,215,0,0.4)">
+      <g transform="rotate(0)  translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(30) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(60) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(90) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(120) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(150) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(180) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(210) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(240) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(270) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(300) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+      <g transform="rotate(330) translate(0,-110)"><polygon points="0,-10 2.4,-3.1 9.5,-3.1 3.5,1.2 5.9,8.1 0,3.8 -5.9,8.1 -3.5,1.2 -9.5,-3.1 -2.4,-3.1" /></g>
+    </g>
+  </g>
+  <!-- Card in center -->
+  <rect x="480" y="180" width="240" height="150" rx="12" ry="12" fill="url(#card)" stroke="rgba(255,255,255,0.25)" stroke-width="2" />
+  <!-- Card chip -->
+  <rect x="510" y="205" width="40" height="30" rx="5" ry="5" fill="rgba(255,215,0,0.4)" stroke="rgba(255,215,0,0.6)" stroke-width="1" />
+  <!-- Card lines -->
+  <rect x="510" y="255" width="120" height="8" rx="4" fill="rgba(255,255,255,0.2)" />
+  <rect x="510" y="275" width="80" height="6" rx="3" fill="rgba(255,255,255,0.12)" />
+  <rect x="510" y="295" width="150" height="6" rx="3" fill="rgba(255,255,255,0.12)" />
+  <!-- Photo area on card -->
+  <rect x="660" y="200" width="45" height="56" rx="3" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+  <!-- Globe icon (mobility) -->
+  <circle cx="200" cy="300" r="50" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2" />
+  <ellipse cx="200" cy="300" rx="25" ry="50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" />
+  <line x1="150" y1="300" x2="250" y2="300" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" />
+  <!-- Another globe -->
+  <circle cx="1000" cy="330" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+  <ellipse cx="1000" cy="330" rx="22" ry="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
+  <line x1="955" y1="330" x2="1045" y2="330" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
+  <!-- Title -->
+  <text x="600" y="460" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="38" font-weight="700" fill="white" letter-spacing="0.5">EU Blue Card</text>
+  <text x="600" y="505" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="400" fill="rgba(255,255,255,0.7)">Niebieska Karta UE 2026</text>
+  <text x="600" y="545" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="400" fill="rgba(255,255,255,0.5)">getpermit.pl</text>
+  <!-- EU flag accent -->
+  <rect x="0" y="620" width="1200" height="10" fill="rgba(255,215,0,0.25)" />
+</svg>

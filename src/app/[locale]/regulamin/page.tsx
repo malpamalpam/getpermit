@@ -1,13 +1,20 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { FileText, List } from "lucide-react";
 
-export const metadata = {
-  title: "Regulamin serwisu | getpermit.pl",
-  description:
-    "Regulamin korzystania z serwisu getpermit.pl — zasady świadczenia usług, formularz kontaktowy, reklamacje, odstąpienie od umowy.",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal" });
+  return {
+    title: t("termsTitle"),
+    description: t("termsDescription"),
+    robots: { index: true, follow: true },
+  };
+}
 
 const TOC = [
   { id: "postanowienia-ogolne", title: "§ 1. Postanowienia ogólne" },

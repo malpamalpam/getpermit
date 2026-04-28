@@ -39,7 +39,7 @@ export async function generateMetadata({
       siteName: siteConfig.name,
       locale: OG_LOCALES[locale] ?? "pl_PL",
       type: "website",
-      images: [{ url: `${siteConfig.url}/og-image.jpg`, width: 1200, height: 630, alt: siteConfig.name }],
+      images: [{ url: `${siteConfig.url}/logo.jpg`, width: 600, height: 400, alt: siteConfig.name }],
     },
     alternates: {
       canonical: `/${locale}`,
