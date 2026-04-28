@@ -1,7 +1,20 @@
 import type { ReactNode } from "react";
+import { Inter, Manrope } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { getPanelLocale } from "@/lib/panel-locale";
+
+const inter = Inter({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  variable: "--font-manrope",
+  display: "swap",
+});
 
 export default async function PanelLayout({
   children,
@@ -12,8 +25,12 @@ export default async function PanelLayout({
   const messages = await getMessages({ locale });
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="min-h-screen bg-surface">{children}</div>
-    </NextIntlClientProvider>
+    <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="min-h-screen bg-surface">{children}</div>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }

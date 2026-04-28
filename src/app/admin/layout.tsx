@@ -1,8 +1,21 @@
 import type { ReactNode } from "react";
+import { Inter, Manrope } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+
+const inter = Inter({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  variable: "--font-manrope",
+  display: "swap",
+});
 
 async function getCurrentLocale(): Promise<string> {
   const hdrs = await headers();
@@ -28,8 +41,12 @@ export default async function AdminLayout({
   const messages = await getMessages({ locale });
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="min-h-screen bg-surface">{children}</div>
-    </NextIntlClientProvider>
+    <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="min-h-screen bg-surface">{children}</div>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
