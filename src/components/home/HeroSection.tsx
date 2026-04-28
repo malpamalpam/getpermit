@@ -1,10 +1,10 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
+import { buttonVariants } from "@/components/ui/Button";
 import { HeroStats } from "./HeroStats";
 import { siteConfig } from "@/config/site";
 import { ArrowRight } from "lucide-react";
-import { BookingButton } from "@/components/booking/BookingButton";
+import Link from "next/link";
 
 const HERO_VIDEO_SRC =
   "/VIDEOS/hf_20260408_185746_f4ac7978-97b7-4ac9-ab4c-7b87612cea22.mp4";
@@ -38,10 +38,10 @@ export function HeroSection() {
             </p>
 
             <div className="mt-7">
-              <BookingButton variant="accent" size="xl" className="w-full sm:w-auto">
+              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "accent", size: "xl", className: "w-full sm:w-auto" })}>
                 {t("ctaPrimary")}
                 <ArrowRight className="h-5 w-5" />
-              </BookingButton>
+              </Link>
             </div>
 
             {/* Stats inline */}
