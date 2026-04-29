@@ -449,6 +449,46 @@ export async function createCalendarEventAction(
   return { ok: true, id: event.id };
 }
 
+export async function updateCalendarEventAction(
+  id: number,
+  input: z.infer<typeof calendarEventSchema>
+): Promise<FdkResult> {
+  await requireAdmin();
+  const parsed = calendarEventSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "validation" };
+
+  const d = parsed.data;
+  const foreignerId = d.foreignerId && d.foreignerId > 0 ? d.foreignerId : null;
+
+  let foreignerName: string | null = null;
+  if (foreignerId) {
+    const f = await db.fdkForeigner.findUnique({
+      where: { id: foreignerId },
+      select: { imie: true, nazwisko: true },
+    });
+    if (f) foreignerName = `${f.imie ?? ""} ${f.nazwisko}`.trim();
+  }
+
+  await db.calendarEvent.update({
+    where: { id },
+    data: {
+      type: d.type as "OFFICE_VISIT" | "OFFICE_MEETING" | "OTHER",
+      title: d.title,
+      description: d.description || null,
+      eventDate: new Date(d.eventDate),
+      eventTime: d.eventTime || null,
+      place: d.place || null,
+      organ: d.organ || null,
+      foreignerId,
+      foreignerName,
+      notes: d.notes || null,
+    },
+  });
+
+  revalidatePath("/admin/kalendarz");
+  return { ok: true };
+}
+
 export async function deleteCalendarEventAction(id: number): Promise<FdkResult> {
   await requireAdmin();
   await db.calendarEvent.delete({ where: { id } });

@@ -68,6 +68,13 @@
   }
 }
 
+/* Zapobieganie wychodzeniu tekstu poza kontener — szczególnie ważne
+   dla dłuższego tekstu cyrylicą (RU/UK) */
+.min-h-screen {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }

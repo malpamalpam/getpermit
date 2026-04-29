@@ -117,7 +117,8 @@ function getDocTypeLabel(typ: string, lang: Lang): string {
     ZEZWOLENIE: { pl: "zezwolenia na pracę", en: "work permit", ru: "разрешения на работу" },
     OSWIADCZENIE: { pl: "oświadczenia o powierzeniu pracy", en: "employer's declaration", ru: "заявления о поручении работы" },
     BLUE_CARD: { pl: "Blue Card", en: "Blue Card", ru: "Blue Card" },
-    KARTA_POBYTU: { pl: "zezwolenia na pobyt czasowy i pracę", en: "temporary residence and work permit", ru: "разрешения на временное пребывание и работу" },
+    KARTA_POBYTU: { pl: "karty pobytu", en: "residence card", ru: "карты побыта" },
+    ZGLOSZENIE_UA: { pl: "powiadomienia o pracy (UA)", en: "work notification (UA)", ru: "уведомления о работе (UA)" },
   };
   return labels[typ]?.[lang] ?? labels[typ]?.pl ?? typ;
 }
@@ -181,11 +182,11 @@ export async function GET(req: NextRequest) {
 
       const dateStr = base.dataDo.toLocaleDateString(lang === "en" ? "en-GB" : "pl-PL");
 
-      if ((base.typ === "ZEZWOLENIE" || base.typ === "OSWIADCZENIE" || base.typ === "BLUE_CARD") && !hasResidencePermit) {
+      if ((base.typ === "ZEZWOLENIE" || base.typ === "OSWIADCZENIE" || base.typ === "BLUE_CARD" || base.typ === "ZGLOSZENIE_UA") && !hasResidencePermit) {
         const threshold = base.typ === "OSWIADCZENIE" ? settings.oswiadczenieDaysBefore : settings.zezwolenieDaysBefore;
         if (daysLeft > threshold) continue;
 
-        const notifType = base.typ === "OSWIADCZENIE" ? "expiry_osw" : "expiry_wp";
+        const notifType = (base.typ === "OSWIADCZENIE" || base.typ === "ZGLOSZENIE_UA") ? "expiry_osw" : "expiry_wp";
         const key = `${f.id}_${notifType}`;
         if (sentSet.has(key)) continue;
 
@@ -229,7 +230,7 @@ export async function GET(req: NextRequest) {
         const key = `${f.id}_expiry_pobyt`;
         if (!sentSet.has(key)) {
           const dateStr = f.decyzjaPobytowaDo.toLocaleDateString(lang === "en" ? "en-GB" : "pl-PL");
-          const docLabel = f.typDokumentuPobytowego ?? getDocTypeLabel("KARTA_POBYTU", lang);
+          const docLabel = f.typDokumentuPobytowego || getDocTypeLabel("KARTA_POBYTU", lang);
           const { subject, body } = getResidencePermitEmail(lang, docLabel, dateStr);
 
           try {

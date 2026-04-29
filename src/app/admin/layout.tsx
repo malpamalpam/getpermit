@@ -44,7 +44,7 @@ export default async function AdminLayout({
     <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="min-h-screen bg-surface">{children}</div>
+          <div className="min-h-screen bg-surface" style={{ overflowWrap: "break-word", wordBreak: "break-word" }}>{children}</div>
         </NextIntlClientProvider>
       </body>
     </html>

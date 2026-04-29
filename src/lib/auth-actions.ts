@@ -10,7 +10,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { routing } from "@/i18n/routing";
 import { syncUserFromAuth } from "@/lib/sync-user";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 async function getClientIp(): Promise<string> {
   try {
@@ -187,6 +187,17 @@ export async function loginAction(input: {
     }
   }
 
+  // Ustaw cookie NEXT_LOCALE na locale zapisany w profilu użytkownika,
+  // aby panel wyświetlał się w preferowanym języku po zalogowaniu.
+  if (syncedUser?.locale) {
+    const cookieStore = await cookies();
+    cookieStore.set("NEXT_LOCALE", syncedUser.locale, {
+      path: "/",
+      maxAge: 31536000,
+      sameSite: "lax",
+    });
+  }
+
   const isStaffOrAdmin = syncedUser && (syncedUser.role === "ADMIN" || syncedUser.role === "STAFF");
   return { ok: true, redirect: isStaffOrAdmin ? "/admin" : "/panel" };
 }
@@ -326,6 +337,14 @@ export async function updateProfile(input: {
     console.error("[updateProfile] DB error:", e);
     return { ok: false, error: "db_error" };
   }
+
+  // Ustaw cookie NEXT_LOCALE, aby middleware i layout od razu odzwierciedlały nowy język
+  const cookieStore = await cookies();
+  cookieStore.set("NEXT_LOCALE", parsed.data.locale, {
+    path: "/",
+    maxAge: 31536000,
+    sameSite: "lax",
+  });
 
   revalidatePath("/panel/ustawienia");
   revalidatePath("/panel");

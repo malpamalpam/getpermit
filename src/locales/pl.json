@@ -5,7 +5,7 @@
     "about": "O nas",
     "blog": "Blog",
     "contact": "Kontakt",
-    "consultation": "Umów konsultację",
+    "consultation": "Umów konsultację (ok. 15 min)",
     "clientPanel": "Panel Klienta",
     "section_cudzoziemcy": "Dla Cudzoziemców",
     "section_pracodawcy": "Dla Pracodawców",
@@ -651,7 +651,7 @@
     "label": "Jak działamy",
     "title": "3 proste kroki",
     "subtitle": "Każdy przypadek traktujemy indywidualnie, oferując dopasowane rozwiązania.",
-    "step1": { "title": "Bezpłatna konsultacja", "desc": "Opowiedz o swojej sytuacji \u2014 nasi eksperci ocenią sprawę i zaproponują optymalną strategię." },
+    "step1": { "title": "Bezpłatna konsultacja (ok. 15 min)", "desc": "Opowiedz o swojej sytuacji \u2014 nasi eksperci ocenią sprawę i zaproponują optymalną strategię." },
     "step2": { "title": "Opracowanie dokumentacji", "desc": "Podpisanie umowy, kompletowanie i przygotowanie wszystkich wymaganych dokumentów." },
     "step3": { "title": "Pozytywna decyzja", "desc": "Reprezentujemy Cię przed urzędem aż do otrzymania dokumentów potwierdzających Twój status." }
   },
@@ -665,7 +665,7 @@
       },
       "duration": {
         "q": "Jak długo trwa proces uzyskania karty pobytu?",
-        "a": "Standardowy czas oczekiwania w urzędzie to 3-6 miesięcy, ale dzięki prawidłowo przygotowanej dokumentacji i naszemu doświadczeniu często udaje się skrócić ten czas."
+        "a": "Czas oczekiwania zależy od indywidualnej sprawy i obciążenia urzędu. Dzięki prawidłowo przygotowanej dokumentacji i naszemu doświadczeniu często udaje się skrócić ten czas."
       },
       "documents": {
         "q": "Jakie dokumenty muszę przygotować?",
@@ -697,7 +697,7 @@
     "heroTitle": "Zatrudniasz cudzoziemc\u00f3w? Zadbaj o legalno\u015b\u0107 i spok\u00f3j ducha",
     "heroSubtitle": "Kompleksowa obs\u0142uga pracodawc\u00f3w: zezwolenia na prac\u0119, o\u015bwiadczenia, audyt dokument\u00f3w, wsparcie HR. 10+ lat do\u015bwiadczenia, 98% skuteczno\u015bci.",
     "heroAlt": "Us\u0142ugi dla pracodawc\u00f3w zatrudniaj\u0105cych cudzoziemc\u00f3w w Polsce",
-    "ctaPrimary": "Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119",
+    "ctaPrimary": "Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119 (ok. 15 min)",
     "servicesTitle": "Nasze us\u0142ugi dla firm",
     "servicesSubtitle": "Wszystko czego potrzebujesz, aby legalnie zatrudnia\u0107 pracownik\u00f3w zza granicy.",
     "services": {

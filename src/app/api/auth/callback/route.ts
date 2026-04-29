@@ -39,10 +39,22 @@ export async function GET(request: NextRequest) {
     console.error("[auth/callback] user sync failed:", e);
   }
 
+  // Ustaw cookie NEXT_LOCALE na locale z profilu użytkownika
+  const userLocale = syncedUser?.locale ?? locale;
+
   // Admin/Staff → /admin, klient → /panel
   const targetPath = syncedUser && (syncedUser.role === "ADMIN" || syncedUser.role === "STAFF")
     ? "/admin"
     : next;
-  const redirectPath = locale === "pl" ? targetPath : `/${locale}${targetPath}`;
-  return NextResponse.redirect(new URL(redirectPath, request.url));
+  const redirectUrl = new URL(
+    userLocale === "pl" ? targetPath : `/${userLocale}${targetPath}`,
+    request.url
+  );
+  const response = NextResponse.redirect(redirectUrl);
+  response.cookies.set("NEXT_LOCALE", userLocale, {
+    path: "/",
+    maxAge: 31536000,
+    sameSite: "lax",
+  });
+  return response;
 }

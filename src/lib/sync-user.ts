@@ -24,8 +24,8 @@ export async function syncUserFromAuth(
       where: { id: authUserId },
       data: {
         lastLoginAt: new Date(),
-        // aktualizuj locale tylko jeśli różny — pozwala klientowi zmienić język w ustawieniach
-        ...(existing.locale !== locale ? { locale } : {}),
+        // Nie nadpisuj locale — klient mógł go zmienić w ustawieniach panelu.
+        // Ustawiaj locale tylko przy pierwszym logowaniu (patrz create poniżej).
       },
     });
 

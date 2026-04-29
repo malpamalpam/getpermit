@@ -28,6 +28,11 @@ export function SettingsForm({ user }: { user: User }) {
     setStatus("idle");
     startTransition(async () => {
       const result = await updateProfile({ firstName, lastName, phone, locale });
+      if (result.ok && locale !== user.locale) {
+        // Pełny reload strony, aby layout załadował nowe tłumaczenia
+        window.location.reload();
+        return;
+      }
       setStatus(result.ok ? "success" : "error");
     });
   };

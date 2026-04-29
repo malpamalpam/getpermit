@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createCalendarEventAction, deleteCalendarEventAction } from "@/lib/fdk-actions";
+import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction } from "@/lib/fdk-actions";
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,6 +13,7 @@ import {
   Building2,
   User,
   Mail,
+  Pencil,
 } from "lucide-react";
 
 interface CalendarEventData {
@@ -70,11 +71,11 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<"month" | "week">("month");
   const [showForm, setShowForm] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  // Form state
-  const [form, setForm] = useState({
+  const emptyForm = {
     type: "OFFICE_VISIT" as string,
     title: "",
     description: "",
@@ -84,7 +85,10 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     organ: "",
     foreignerId: 0,
     notes: "",
-  });
+  };
+
+  // Form state
+  const [form, setForm] = useState(emptyForm);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -122,16 +126,14 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     return documentExpiries.filter((e) => sameDay(new Date(e.dataDo), day));
   }
 
-  const handleCreateEvent = (e: React.FormEvent) => {
+  const handleSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await createCalendarEventAction(form as never);
+      const result = editingEventId
+        ? await updateCalendarEventAction(editingEventId, form as never)
+        : await createCalendarEventAction(form as never);
       if (result.ok) {
-        setShowForm(false);
-        setForm({
-          type: "OFFICE_VISIT", title: "", description: "", eventDate: "",
-          eventTime: "", place: "", organ: "", foreignerId: 0, notes: "",
-        });
+        closeForm();
         window.location.reload();
       }
     });
@@ -146,9 +148,32 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   };
 
   const openFormForDate = (day: Date) => {
-    setForm((prev) => ({ ...prev, eventDate: day.toISOString().slice(0, 10) }));
+    setEditingEventId(null);
+    setForm({ ...emptyForm, eventDate: day.toISOString().slice(0, 10) });
     setSelectedDate(day);
     setShowForm(true);
+  };
+
+  const openEditForm = (ev: CalendarEventData) => {
+    setEditingEventId(ev.id);
+    setForm({
+      type: ev.type,
+      title: ev.title,
+      description: ev.description ?? "",
+      eventDate: new Date(ev.eventDate).toISOString().slice(0, 10),
+      eventTime: ev.eventTime ?? "",
+      place: ev.place ?? "",
+      organ: ev.organ ?? "",
+      foreignerId: ev.foreignerId ?? 0,
+      notes: ev.notes ?? "",
+    });
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingEventId(null);
+    setForm(emptyForm);
   };
 
   const today = new Date();
@@ -188,7 +213,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
             </button>
           </div>
           <button
-            onClick={() => { setShowForm(true); setForm((prev) => ({ ...prev, eventDate: today.toISOString().slice(0, 10) })); }}
+            onClick={() => { setEditingEventId(null); setForm({ ...emptyForm, eventDate: today.toISOString().slice(0, 10) }); setShowForm(true); }}
             className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
           >
             <Plus className="h-4 w-4" /> Nowe wydarzenie
@@ -225,9 +250,9 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                     {dayEvents.slice(0, 3).map((ev) => (
                       <div
                         key={ev.id}
-                        className={`truncate rounded px-1 py-0.5 text-[10px] font-medium text-white ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
+                        className={`truncate rounded px-1 py-0.5 text-[10px] font-medium text-white cursor-pointer hover:opacity-80 ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
                         title={ev.title}
-                        onClick={(e) => { e.stopPropagation(); setSelectedDate(day); }}
+                        onClick={(e) => { e.stopPropagation(); openEditForm(ev); }}
                       >
                         {ev.eventTime && <span>{ev.eventTime} </span>}
                         {ev.title}
@@ -278,7 +303,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                 )}
                 <div className="space-y-2">
                   {dayEvents.map((ev) => (
-                    <div key={ev.id} className="flex items-start gap-3 rounded-lg bg-gray-50 p-3">
+                    <div key={ev.id} className="flex items-start gap-3 rounded-lg bg-gray-50 p-3 cursor-pointer hover:bg-gray-100" onClick={() => openEditForm(ev)}>
                       <div className={`mt-0.5 h-3 w-3 rounded-full flex-shrink-0 ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -294,9 +319,14 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         </div>
                         {ev.description && <p className="mt-1 text-xs text-primary/40">{ev.description}</p>}
                       </div>
-                      <button onClick={() => handleDelete(ev.id)} className="text-red-400 hover:text-red-600">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      <div className="flex flex-col gap-1">
+                        <button onClick={(e) => { e.stopPropagation(); openEditForm(ev); }} className="text-primary/30 hover:text-accent">
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); handleDelete(ev.id); }} className="text-red-400 hover:text-red-600">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                   {dayExpiries.map((exp, i) => (
@@ -313,13 +343,15 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
         </div>
       )}
 
-      {/* Create Event Modal */}
+      {/* Create/Edit Event Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <form onSubmit={handleCreateEvent} className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+          <form onSubmit={handleSubmitEvent} className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-lg font-bold text-primary">Nowe wydarzenie</h3>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg p-1.5 text-primary/40 hover:bg-primary/5">
+              <h3 className="font-display text-lg font-bold text-primary">
+                {editingEventId ? "Edytuj wydarzenie" : "Nowe wydarzenie"}
+              </h3>
+              <button type="button" onClick={closeForm} className="rounded-lg p-1.5 text-primary/40 hover:bg-primary/5">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -383,14 +415,26 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               )}
             </div>
 
-            <div className="mt-5 flex justify-end gap-3">
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5">
-                Anuluj
-              </button>
-              <button type="submit" disabled={isPending} className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50">
-                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                {isPending ? "Tworzenie..." : "Utwórz"}
-              </button>
+            <div className="mt-5 flex items-center justify-between">
+              {editingEventId ? (
+                <button
+                  type="button"
+                  onClick={() => { closeForm(); handleDelete(editingEventId); }}
+                  disabled={isPending}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Usuń
+                </button>
+              ) : <div />}
+              <div className="flex gap-3">
+                <button type="button" onClick={closeForm} className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5">
+                  Anuluj
+                </button>
+                <button type="submit" disabled={isPending} className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50">
+                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : editingEventId ? <Pencil className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  {isPending ? "Zapisywanie..." : editingEventId ? "Zapisz" : "Utwórz"}
+                </button>
+              </div>
             </div>
           </form>
         </div>

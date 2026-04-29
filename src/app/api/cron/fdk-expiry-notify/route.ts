@@ -115,8 +115,13 @@ export async function GET(req: NextRequest) {
         expiringOSW.push(row);
       } else if (base.typ === "KARTA_POBYTU") {
         if (daysLeft > settings.pobytDaysBefore) continue;
-        row.typLabel = "Karta pobytu";
+        row.typLabel = "Karta pobytu (zezw. na pobyt)";
         expiringPobyt.push(row);
+      } else if (base.typ === "ZGLOSZENIE_UA") {
+        if (hasResidencePermit) continue;
+        if (daysLeft > settings.oswiadczenieDaysBefore) continue;
+        row.typLabel = "Zgłoszenie UA (powiadomienie)";
+        expiringOSW.push(row);
       }
     }
 
@@ -133,7 +138,9 @@ export async function GET(req: NextRequest) {
             imie: f.imie ?? "",
             nazwisko: f.nazwisko,
             typ: "DECYZJA_POBYTOWA",
-            typLabel: f.typDokumentuPobytowego ?? "Decyzja pobytowa",
+            typLabel: f.typDokumentuPobytowego
+              ? `Dokument pobytowy: ${f.typDokumentuPobytowego}`
+              : "Decyzja pobytowa (typ nieznany)",
             dataDo: f.decyzjaPobytowaDo,
             daysLeft,
           });

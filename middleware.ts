@@ -124,7 +124,19 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Panel/admin chroniony — sprawdź sesję Supabase
-  const response = NextResponse.next();
+  // Detect locale for protected panel/admin routes (same logic as public)
+  const lang = request.nextUrl.searchParams.get("lang");
+  const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
+  const protectedLocale =
+    (lang && LOCALES.includes(lang)) ? lang
+    : (cookieLocale && LOCALES.includes(cookieLocale)) ? cookieLocale
+    : detectBrowserLocale(request);
+
+  const reqHeaders = new Headers(request.headers);
+  reqHeaders.set("x-panel-locale", protectedLocale);
+  const response = NextResponse.next({ request: { headers: reqHeaders } });
+  response.cookies.set("NEXT_LOCALE", protectedLocale, { path: "/", maxAge: 31536000, sameSite: "lax" });
+
   const supabase = createSupabaseMiddlewareClient(request, response);
 
   const {

@@ -84,7 +84,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Pobranie odcisk\u00f3w palc\u00f3w</strong> \u2014 biometria pobierana w urz\u0119dzie</li>
 <li><strong>Otrzymanie stempla w paszporcie</strong> \u2014 potwierdzenie z\u0142o\u017cenia wniosku, legalizuje pobyt na czas post\u0119powania</li>
 <li><strong>Oczekiwanie na decyzj\u0119</strong> \u2014 urz\u0105d mo\u017ce wzywa\u0107 do uzupe\u0142nienia dokument\u00f3w</li>
-<li><strong>Odbi\u00f3r karty pobytu</strong> \u2014 po pozytywnej decyzji, karta jest produkowana w ci\u0105gu 2\u20134 tygodni</li>
+<li><strong>Odbi\u00f3r karty pobytu</strong> \u2014 po pozytywnej decyzji, karta jest produkowana przez urz\u0105d (czas zale\u017cy od obci\u0105\u017cenia)</li>
 </ol>
 <p>Wa\u017cne: stempel w paszporcie pozwala na legalne przebywanie i prac\u0119 w Polsce przez ca\u0142y czas trwania post\u0119powania. Jest to kluczowa informacja dla pracodawc\u00f3w.</p>`,
       },
@@ -106,14 +106,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "czas-oczekiwania",
         heading: "Ile trwa rozpatrzenie wniosku o kart\u0119 pobytu czasowego",
-        content: `<p>Ustawowy termin rozpatrzenia wniosku to <strong>60 dni</strong> od z\u0142o\u017cenia kompletnej dokumentacji. W praktyce czas oczekiwania zale\u017cy od urz\u0119du wojew\u00f3dzkiego:</p>
-<ul>
-<li><strong>Mazowiecki UW (Warszawa)</strong> \u2014 4\u20138 miesi\u0119cy</li>
-<li><strong>Ma\u0142opolski UW (Krak\u00f3w)</strong> \u2014 3\u20136 miesi\u0119cy</li>
-<li><strong>Dolno\u015bl\u0105ski UW (Wroc\u0142aw)</strong> \u2014 3\u20135 miesi\u0119cy</li>
-<li><strong>Pomorski UW (Gda\u0144sk)</strong> \u2014 2\u20134 miesi\u0105ce</li>
-</ul>
-<p>Przekroczenie terminu ustawowego uprawnia do z\u0142o\u017cenia <strong>ponaglenia</strong> do wojewody. W przypadku dalszej bezczynno\u015bci mo\u017cna wnie\u015b\u0107 skarg\u0119 do Wojew\u00f3dzkiego S\u0105du Administracyjnego. <a href="/pl/uslugi/ponaglenia-i-odwolania">Pomagamy w procedurze odwo\u0142awczej</a>.</p>`,
+        content: `<p>Czas oczekiwania na decyzj\u0119 w sprawie karty pobytu czasowego <strong>zale\u017cy od indywidualnej sprawy i obci\u0105\u017cenia urz\u0119du wojew\u00f3dzkiego</strong>. Ka\u017cdy urz\u0105d rozpatruje wnioski w r\u00f3\u017cnym tempie, a na czas oczekiwania wp\u0142ywa m.in. kompletno\u015b\u0107 dokumentacji i z\u0142o\u017cono\u015b\u0107 sprawy.</p>
+<p>W przypadku przekroczenia ustawowego terminu rozpatrzenia wniosku przys\u0142uguje prawo do z\u0142o\u017cenia <strong>ponaglenia</strong> do wojewody. W przypadku dalszej bezczynno\u015bci mo\u017cna wnie\u015b\u0107 skarg\u0119 do Wojew\u00f3dzkiego S\u0105du Administracyjnego. <a href="/pl/uslugi/ponaglenia-i-odwolania">Pomagamy w procedurze odwo\u0142awczej</a>.</p>`,
       },
       {
         id: "najczestsze-bledy",
@@ -227,7 +221,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li>Wydanie karty: <strong>100 z\u0142</strong></li>
 <li>T\u0142umaczenia przysi\u0119g\u0142e: od 50 z\u0142 za stron\u0119</li>
 </ul>
-<p>Czas oczekiwania: od <strong>3 do 12 miesi\u0119cy</strong> w zale\u017cno\u015bci od z\u0142o\u017cono\u015bci sprawy i obci\u0105\u017cenia urz\u0119du. Sprawy z Kart\u0105 Polaka rozpatrywane s\u0105 zwykle szybciej.</p>
+<p>Czas oczekiwania <strong>zale\u017cy od indywidualnej sprawy i obci\u0105\u017cenia urz\u0119du</strong>. Sprawy z Kart\u0105 Polaka rozpatrywane s\u0105 zwykle szybciej.</p>
 <p><a href="/pl/kontakt">Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119 \u2014 przygotujemy Tw\u00f3j wniosek profesjonalnie</a>.</p>`,
       },
       {
@@ -362,7 +356,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>Mobilno\u015b\u0107 w UE</td><td>Tak</td><td>Nie</td></tr>
 <tr><td>\u0141\u0105czenie rodzin</td><td>Uproszczone</td><td>Standardowe</td></tr>
 <tr><td>Op\u0142ata skarbowa</td><td>440 z\u0142</td><td>440 z\u0142</td></tr>
-<tr><td>Czas oczekiwania</td><td>1\u20133 miesi\u0105ce</td><td>3\u20136 miesi\u0119cy</td></tr>
+<tr><td>Czas oczekiwania</td><td>Zwykle kr\u00f3cej</td><td>Zale\u017cy od urz\u0119du</td></tr>
 </tbody>
 </table>
 <p><a href="/pl/kontakt">Nie wiesz, kt\u00f3re zezwolenie jest dla Ciebie? Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119</a>.</p>`,
@@ -378,7 +372,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <details><summary><strong>Czy mog\u0119 zmieni\u0107 pracodawc\u0119 maj\u0105c Blue Card?</strong></summary>
 <p>Przez pierwsze 12 miesi\u0119cy zmiana pracodawcy wymaga nowego zezwolenia. Po roku mo\u017cesz zmieni\u0107 prac\u0119 powiadamiaj\u0105c urz\u0105d, pod warunkiem spe\u0142nienia progu wynagrodzenia.</p></details>
 <details><summary><strong>Ile trwa procedura uzyskania Blue Card?</strong></summary>
-<p>Zazwyczaj 1\u20133 miesi\u0105ce, co jest szybsze ni\u017c standardowe zezwolenie na pobyt i prac\u0119 (3\u20136 miesi\u0119cy).</p></details>
+<p>Czas oczekiwania zale\u017cy od indywidualnej sprawy i obci\u0105\u017cenia urz\u0119du, ale Blue Card jest zazwyczaj rozpatrywana szybciej ni\u017c standardowe zezwolenie na pobyt i prac\u0119.</p></details>
 </div>`,
       },
     ],
@@ -528,7 +522,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     ],
     sections: [
       { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr><tr><td>Przedłużenie wizy</td><td><strong>406 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
-      { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji: <strong>2–4 tygodnie</strong> od daty decyzji.</p>` },
+      { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji karty zależy od urzędu.</p>` },
       { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
       { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — bezpłatna (w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na bezpłatną wycenę</a>.</p>` },
       { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
