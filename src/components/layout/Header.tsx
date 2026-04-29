@@ -81,7 +81,7 @@ export function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-5 lg:gap-7 md:flex ml-8 lg:ml-12">
             {SECTION_IDS.map((id) => {
               const isActive = active === id;
               return (
