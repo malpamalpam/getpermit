@@ -38,17 +38,13 @@ export function HeroSection() {
               {t("subtitle")}
             </p>
 
-            <p className="mt-3 text-sm text-white/50">
-              🇵🇱 Polski &nbsp;·&nbsp; 🇬🇧 English &nbsp;·&nbsp; 🇷🇺 Русский &nbsp;·&nbsp; 🇺🇦 Українська
-            </p>
-
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
               <BookingButton variant="accent" size="xl" className="w-full sm:w-auto">
                 <CalendarCheck className="h-5 w-5" />
                 {t("ctaPrimary")}
                 <ArrowRight className="h-5 w-5" />
               </BookingButton>
-              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "outline", size: "xl", className: "w-full sm:w-auto border-white/30 text-white hover:bg-white/10" })}>
+              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "accent", size: "xl", className: "w-full sm:w-auto bg-white/15 text-white hover:bg-white/25 border-0" })}>
                 {t("ctaSecondary")}
               </Link>
             </div>
