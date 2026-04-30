@@ -2,8 +2,9 @@ import { useTranslations, useLocale } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { buttonVariants } from "@/components/ui/Button";
 import { HeroStats } from "./HeroStats";
+import { BookingButton } from "@/components/booking/BookingButton";
 import { siteConfig } from "@/config/site";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarCheck } from "lucide-react";
 import Link from "next/link";
 
 const HERO_VIDEO_SRC =
@@ -37,10 +38,18 @@ export function HeroSection() {
               {t("subtitle")}
             </p>
 
-            <div className="mt-7">
-              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "accent", size: "xl", className: "w-full sm:w-auto" })}>
+            <p className="mt-3 text-sm text-white/50">
+              🇵🇱 Polski &nbsp;·&nbsp; 🇬🇧 English &nbsp;·&nbsp; 🇷🇺 Русский &nbsp;·&nbsp; 🇺🇦 Українська
+            </p>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <BookingButton variant="accent" size="xl" className="w-full sm:w-auto">
+                <CalendarCheck className="h-5 w-5" />
                 {t("ctaPrimary")}
                 <ArrowRight className="h-5 w-5" />
+              </BookingButton>
+              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "outline", size: "xl", className: "w-full sm:w-auto border-white/30 text-white hover:bg-white/10" })}>
+                {t("ctaSecondary")}
               </Link>
             </div>
 

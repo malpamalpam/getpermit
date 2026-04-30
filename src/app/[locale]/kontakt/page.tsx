@@ -1,8 +1,9 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { ContactForm } from "@/components/forms/ContactForm";
+import { BookingButton } from "@/components/booking/BookingButton";
 import { siteConfig } from "@/config/site";
-import { Mail, MapPin, Clock, Phone } from "lucide-react";
+import { Mail, MapPin, Clock, Phone, CalendarCheck, ArrowRight } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -35,6 +36,21 @@ export default async function ContactPage({
             {t("title")}
           </h1>
           <p className="mt-4 text-lg text-primary/70">{t("subtitle")}</p>
+        </div>
+
+        {/* Booking CTA — primary path */}
+        <div className="mx-auto mt-10 max-w-2xl">
+          <div className="rounded-2xl border border-accent/20 bg-accent/5 p-6 text-center">
+            <p className="text-lg font-semibold text-primary">{t("bookingCtaTitle")}</p>
+            <p className="mt-1 text-sm text-primary/60">{t("bookingCtaSubtitle")}</p>
+            <div className="mt-4">
+              <BookingButton variant="accent" size="xl">
+                <CalendarCheck className="h-5 w-5" />
+                {t("bookingCtaButton")}
+                <ArrowRight className="h-5 w-5" />
+              </BookingButton>
+            </div>
+          </div>
         </div>
 
         <div className="mx-auto mt-14 grid max-w-6xl gap-8 lg:grid-cols-5">

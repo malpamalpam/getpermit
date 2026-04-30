@@ -1,7 +1,9 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
-import { ArrowRight } from "lucide-react";
+import { buttonVariants } from "@/components/ui/Button";
+import { BookingButton } from "@/components/booking/BookingButton";
+import { ArrowRight, CalendarCheck } from "lucide-react";
+import Link from "next/link";
 
 export function CtaBanner() {
   const t = useTranslations("ctaBanner");
@@ -19,13 +21,18 @@ export function CtaBanner() {
               {t("title")}
             </h2>
             <p className="mt-4 text-lg text-white/80">{t("subtitle")}</p>
-            <div className="mt-8">
-              <a href={`/${locale}/kontakt`}>
-                <Button variant="accent" size="xl">
-                  {t("button")}
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </a>
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <BookingButton variant="accent" size="xl">
+                <CalendarCheck className="h-5 w-5" />
+                {t("button")}
+                <ArrowRight className="h-5 w-5" />
+              </BookingButton>
+              <Link
+                href={`/${locale}/kontakt`}
+                className={buttonVariants({ variant: "outline", size: "xl", className: "border-white/30 text-white hover:bg-white/10" })}
+              >
+                {t("buttonSecondary")}
+              </Link>
             </div>
           </div>
         </div>

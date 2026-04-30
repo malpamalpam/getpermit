@@ -2,8 +2,10 @@
  * Mapa zdjęć hero dla podstron usług.
  * Źródło: Unsplash (darmowe komercyjnie).
  *
- * TODO: replace with authentic photos of UTM Group office & team
- * when available. Place originals in /public/images/services/{slug}/hero.webp
+ * TODO: zamień na własne zdjęcia biura/zespołu UTM Group.
+ * Nawet 2-3 autentyczne fotografie znacząco podniosą wiarygodność.
+ * Umieść oryginały w /public/images/services/{slug}/hero.webp
+ * i zaktualizuj src w mapie poniżej.
  */
 
 export interface ServiceImage {

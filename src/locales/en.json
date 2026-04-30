@@ -16,7 +16,8 @@
     "badge": "Legal help for foreigners",
     "title": "Residence Permit and Work Permit in Poland \u2014 Complete Support for Foreigners",
     "subtitle": "Work permit, temporary residence card, Blue Card, EU long-term resident, your own business \u2014 fast and comprehensive, 98% success rate, 10+ years of experience.",
-    "ctaPrimary": "Contact us!",
+    "ctaPrimary": "Book a free consultation",
+    "ctaSecondary": "Send us a message",
     "blogCta": "Read the blog"
   },
   "about": {
@@ -51,7 +52,9 @@
     "subtitle": "Poland visa application, work permit, EU Blue Card, residence permits. Professional immigration services for foreigners in Poland.",
     "sectionLabel": "Our offer",
     "viewAll": "View all services",
-    "viewDetails": "Learn more",
+    "viewDetails": "See details →",
+    "foreignersBenefit": "We help at every stage — from application to document collection. 98% success rate.",
+    "employersBenefit": "Legal security for your company — permits, declarations, document audits.",
     "from": "from",
     "duration": "Processing time",
     "price": "Price",
@@ -64,6 +67,8 @@
     "label": "TESTIMONIALS",
     "title": "What our clients say",
     "subtitle": "Hundreds of foreigners have already received their documents thanks to our help",
+    "googleBadge": "Google Reviews",
+    "googleReviews": "100+ reviews",
     "items": {
       "olena": {
         "name": "Olena K.",
@@ -79,13 +84,49 @@
         "name": "Rajesh P.",
         "role": "India → Wrocław",
         "quote": "Thanks to the team I got my permanent residence card. They explained every step in English and handled all the bureaucracy."
+      },
+      "liu": {
+        "name": "Liu W.",
+        "role": "China → Warsaw",
+        "quote": "The company helped me obtain an EU Blue Card. Everything went smoothly, communication in English. Highly recommended."
+      },
+      "fatih": {
+        "name": "Fatih A.",
+        "role": "Turkey → Gdańsk",
+        "quote": "They handled my case from start to finish. Temporary residence card in 3 months. Great service, zero stress."
+      },
+      "nguyen": {
+        "name": "Nguyen T.",
+        "role": "Vietnam → Wrocław",
+        "quote": "Professional help with residence legalization. Documents submitted flawlessly on the first try. Saved me a lot of time."
+      },
+      "anna": {
+        "name": "Anna S.",
+        "role": "Employer, Warsaw",
+        "quote": "They've been handling our company for 3 years — work permits, declarations, notifications. Everything on time and without problems."
+      },
+      "dmitriy": {
+        "name": "Dmitriy K.",
+        "role": "Russia → Poznań",
+        "quote": "They helped me get a work permit and residence card. Everything very professional, I recommend to everyone."
+      },
+      "priya": {
+        "name": "Priya M.",
+        "role": "India → Kraków",
+        "quote": "Excellent service! Got my work permit renewed without any issues. The team is responsive and very knowledgeable."
+      },
+      "irina": {
+        "name": "Irina B.",
+        "role": "Ukraine → Łódź",
+        "quote": "They helped with residence cards for the whole family. Very grateful for the professional approach and support at every stage."
       }
     }
   },
   "ctaBanner": {
     "title": "Have questions about your situation?",
     "subtitle": "Write to us — we will assess your case for free and propose the best solution.",
-    "button": "Contact us"
+    "button": "Book a free consultation",
+    "buttonSecondary": "Send us a message"
   },
   "legal": {
     "privacyTitle": "Privacy policy",
@@ -98,6 +139,9 @@
   "contact": {
     "title": "Contact us",
     "subtitle": "Fill out the form and we will respond within 24 hours",
+    "bookingCtaTitle": "Fastest way: book a consultation online",
+    "bookingCtaSubtitle": "Free call with an expert — we'll assess your case and suggest a solution",
+    "bookingCtaButton": "Book a free consultation",
     "metaDescription": "Contact getpermit.pl — free consultation on residence permits, work permits and immigration to Poland. We respond within 24 hours. Office: Warsaw, Lwowska 17/4.",
     "form": {
       "name": "Full name",

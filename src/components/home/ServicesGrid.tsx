@@ -25,6 +25,7 @@ export function ServicesGrid() {
       id: "cudzoziemcy",
       icon: Users,
       label: t("forForeigners"),
+      benefit: t("foreignersBenefit"),
       href: `/${locale}/${base}`,
       items: foreignerCategories.map((c) => localized(c.title, locale)),
     },
@@ -34,6 +35,7 @@ export function ServicesGrid() {
             id: "pracodawcy",
             icon: Briefcase,
             label: t("forEmployers"),
+            benefit: t("employersBenefit"),
             href: `/${locale}/${base}/${getLocalizedSlug("dla-pracodawcow", locale)}`,
             items: employerCategory.services.map((s) => localized(s.title, locale)),
           },
@@ -69,6 +71,7 @@ export function ServicesGrid() {
               <h3 className="font-display text-2xl font-extrabold text-primary">
                 {box.label}
               </h3>
+              <p className="mt-2 text-sm text-primary/50">{box.benefit}</p>
               <ul className="mt-5 flex-1 space-y-2 text-sm text-primary/70">
                 {box.items.map((item) => (
                   <li key={item} className="flex items-start gap-2">

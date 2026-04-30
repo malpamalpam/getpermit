@@ -16,7 +16,8 @@
     "badge": "Pomoc prawna dla cudzoziemców",
     "title": "Karta pobytu i zezwolenie na prac\u0119 w Polsce \u2014 kompleksowa pomoc dla cudzoziemc\u00f3w",
     "subtitle": "Zezwolenie na prac\u0119, karta pobytu czasowego, Blue Card, rezydent d\u0142ugoterminowy UE, w\u0142asna firma \u2014 szybko i kompleksowo, 98% skuteczno\u015bci, 10+ lat do\u015bwiadczenia.",
-    "ctaPrimary": "Skontaktuj się z nami!",
+    "ctaPrimary": "Umów bezpłatną konsultację",
+    "ctaSecondary": "Napisz do nas",
     "blogCta": "Czytaj blog"
   },
   "about": {
@@ -51,7 +52,9 @@
     "subtitle": "Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę typu A, EU Blue Card. Kompleksowa pomoc w legalizacji cudzoziemców w Polsce.",
     "sectionLabel": "Oferta",
     "viewAll": "Zobacz wszystkie usługi",
-    "viewDetails": "Dowiedz się więcej",
+    "viewDetails": "Sprawdź szczegóły →",
+    "foreignersBenefit": "Pomagamy na każdym etapie — od wniosku po odbiór dokumentów. 98% skuteczności.",
+    "employersBenefit": "Bezpieczeństwo prawne Twojej firmy — zezwolenia, oświadczenia, audyt dokumentów.",
     "from": "od",
     "duration": "Czas realizacji",
     "price": "Cena",
@@ -64,6 +67,8 @@
     "label": "Opinie",
     "title": "Co mówią nasi klienci",
     "subtitle": "Setki cudzoziemców otrzymały już swoje dokumenty dzięki naszej pomocy",
+    "googleBadge": "Opinie Google",
+    "googleReviews": "100+ opinii",
     "items": {
       "olena": {
         "name": "Olena K.",
@@ -79,13 +84,49 @@
         "name": "Rajesh P.",
         "role": "Indie → Wrocław",
         "quote": "Thanks to the team I got my permanent residence card. They explained every step in English and handled all the bureaucracy."
+      },
+      "liu": {
+        "name": "Liu W.",
+        "role": "Chiny → Warszawa",
+        "quote": "Firma pomogła mi uzyskać Blue Card EU. Wszystko sprawnie, komunikacja po angielsku. Bardzo polecam."
+      },
+      "fatih": {
+        "name": "Fatih A.",
+        "role": "Turcja → Gdańsk",
+        "quote": "Prowadzili moją sprawę od początku do końca. Karta pobytu czasowego w 3 miesiące. Świetna obsługa, zero stresu."
+      },
+      "nguyen": {
+        "name": "Nguyen T.",
+        "role": "Wietnam → Wrocław",
+        "quote": "Profesjonalna pomoc przy legalizacji pobytu. Dokumenty złożone bezbłędnie za pierwszym razem. Oszczędziłem dużo czasu."
+      },
+      "anna": {
+        "name": "Anna S.",
+        "role": "Pracodawca, Warszawa",
+        "quote": "Obsługują naszą firmę od 3 lat — zezwolenia na pracę, oświadczenia, powiadomienia. Wszystko terminowo i bez problemów."
+      },
+      "dmitriy": {
+        "name": "Dmitriy K.",
+        "role": "Rosja → Poznań",
+        "quote": "Помогли получить разрешение на работу и карту побыту. Все очень профессионально, рекомендую всем."
+      },
+      "priya": {
+        "name": "Priya M.",
+        "role": "Indie → Kraków",
+        "quote": "Excellent service! Got my work permit renewed without any issues. The team is responsive and very knowledgeable."
+      },
+      "irina": {
+        "name": "Irina B.",
+        "role": "Ukraina → Łódź",
+        "quote": "Допомогли з карткою побуту для всієї родини. Дуже вдячна за професійний підхід і підтримку на кожному етапі."
       }
     }
   },
   "ctaBanner": {
     "title": "Potrzebujesz karty pobytu lub zezwolenia na pracę?",
     "subtitle": "Napisz do nas — bezpłatnie ocenimy Twoją sprawę i zaproponujemy najlepsze rozwiązanie. Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę — pomagamy na każdym etapie.",
-    "button": "Skontaktuj się z nami"
+    "button": "Umów bezpłatną konsultację",
+    "buttonSecondary": "Napisz do nas"
   },
   "legal": {
     "privacyTitle": "Polityka prywatności",
@@ -98,6 +139,9 @@
   "contact": {
     "title": "Skontaktuj się z nami",
     "subtitle": "Wypełnij formularz, a odpowiemy w ciągu 24 godzin",
+    "bookingCtaTitle": "Najszybciej: zarezerwuj konsultację online",
+    "bookingCtaSubtitle": "Bezpłatna rozmowa z ekspertem — ocenimy Twoją sprawę i zaproponujemy rozwiązanie",
+    "bookingCtaButton": "Zarezerwuj bezpłatną konsultację",
     "metaDescription": "Skontaktuj się z getpermit.pl — bezpłatna konsultacja w sprawie karty pobytu, zezwolenia na pracę i legalizacji pobytu w Polsce. Odpowiadamy w 24h. Biuro: Warszawa, ul. Lwowska 17/4.",
     "form": {
       "name": "Imię i nazwisko",

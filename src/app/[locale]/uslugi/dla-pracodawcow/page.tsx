@@ -28,6 +28,7 @@ export async function generateMetadata({
     openGraph: {
       images: [
         {
+          // TODO: zamień na własne zdjęcie biura/zespołu
           url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80",
           width: 1200,
           height: 630,
@@ -60,6 +61,7 @@ export default async function EmployersPage({
   return (
     <article>
       {/* Hero */}
+      {/* TODO: zamień na własne zdjęcie biura/zespołu */}
       <div className="relative overflow-hidden bg-primary">
         <Image
           src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1440&q=80"

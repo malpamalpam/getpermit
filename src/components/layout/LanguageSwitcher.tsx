@@ -4,13 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { usePathname as useNextPathname } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Globe } from "lucide-react";
 
-const LOCALE_LABELS: Record<string, string> = {
-  pl: "PL",
-  en: "EN",
-  ru: "RU",
-  uk: "UA",
+const LOCALE_CONFIG: Record<string, { label: string; flag: string; nativeName: string }> = {
+  pl: { label: "PL", flag: "🇵🇱", nativeName: "Polski" },
+  en: { label: "EN", flag: "🇬🇧", nativeName: "English" },
+  ru: { label: "RU", flag: "🇷🇺", nativeName: "Русский" },
+  uk: { label: "UA", flag: "🇺🇦", nativeName: "Українська" },
 };
 
 export function LanguageSwitcher() {
@@ -34,34 +34,42 @@ export function LanguageSwitcher() {
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
+  const current = LOCALE_CONFIG[locale];
+
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 rounded-md border border-primary/15 px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/5"
+        className="inline-flex items-center gap-1.5 rounded-md border border-primary/15 px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/5"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label="Language"
       >
-        {LOCALE_LABELS[locale]}
+        <Globe className="h-3.5 w-3.5 text-primary/50" />
+        <span>{current.flag} {current.label}</span>
         <ChevronDown className={`h-3.5 w-3.5 text-primary/50 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1 min-w-[80px] overflow-hidden rounded-lg border border-primary/10 bg-white py-1 shadow-lg">
-          {routing.locales.map((loc) => (
-            <button
-              key={loc}
-              onClick={() => { onChange(loc); setOpen(false); }}
-              className={`flex w-full items-center px-3 py-1.5 text-xs font-semibold transition-colors ${
-                loc === locale
-                  ? "bg-accent/10 text-accent"
-                  : "text-primary/70 hover:bg-primary/5 hover:text-primary"
-              }`}
-            >
-              {LOCALE_LABELS[loc]}
-            </button>
-          ))}
+        <div className="absolute right-0 top-full z-50 mt-1 min-w-[140px] overflow-hidden rounded-lg border border-primary/10 bg-white py-1 shadow-lg">
+          {routing.locales.map((loc) => {
+            const cfg = LOCALE_CONFIG[loc];
+            return (
+              <button
+                key={loc}
+                onClick={() => { onChange(loc); setOpen(false); }}
+                className={`flex w-full items-center gap-2 px-3 py-2 text-xs font-semibold transition-colors ${
+                  loc === locale
+                    ? "bg-accent/10 text-accent"
+                    : "text-primary/70 hover:bg-primary/5 hover:text-primary"
+                }`}
+              >
+                <span className="text-sm">{cfg.flag}</span>
+                <span>{cfg.label}</span>
+                <span className="font-normal text-primary/40">{cfg.nativeName}</span>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

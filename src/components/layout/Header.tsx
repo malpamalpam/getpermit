@@ -7,8 +7,9 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
 import { BookingButton } from "@/components/booking/BookingButton";
+import { siteConfig } from "@/config/site";
 import { SERVICE_BASE_PATH } from "@/lib/service-slugs";
 
 const SECTION_IDS = ["cudzoziemcy", "pracodawcy", "proces"] as const;
@@ -64,7 +65,7 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-3 text-primary"
+            className="flex flex-shrink-0 items-center gap-3 text-primary"
             aria-label="getpermit.pl"
           >
             <Image
@@ -80,15 +81,15 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-5 lg:gap-7 md:flex ml-8 lg:ml-12">
+          {/* Desktop nav — visible from lg to avoid overflow with longer translations (RU/UK) */}
+          <nav className="hidden items-center gap-4 xl:gap-6 lg:flex mx-6 xl:mx-10">
             {SECTION_IDS.map((id) => {
               const isActive = active === id;
               return (
                 <a
                   key={id}
                   href={sectionHref(id)}
-                  className={`relative text-sm font-medium transition-colors ${
+                  className={`relative whitespace-nowrap text-[13px] xl:text-sm font-medium transition-colors ${
                     isActive
                       ? "text-primary"
                       : "text-primary/70 hover:text-primary"
@@ -105,29 +106,38 @@ export function Header() {
             })}
             <Link
               href="/blog"
-              className="text-sm font-medium text-primary/70 transition-colors hover:text-primary"
+              className="whitespace-nowrap text-[13px] xl:text-sm font-medium text-primary/70 transition-colors hover:text-primary"
             >
               {t("blog")}
             </Link>
           </nav>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden flex-shrink-0 items-center gap-3 lg:flex">
+            <a
+              href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary/70 transition-colors hover:text-accent"
+              title="Pon–Pt 9:00–17:00"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              <span>{siteConfig.contact.phone}</span>
+            </a>
+            <div className="h-5 w-px bg-primary/10" />
             <LanguageSwitcher />
             <BookingButton variant="primary" size="sm">
               {t("consultation")}
             </BookingButton>
             <a
               href={`/panel/login?lang=${locale}`}
-              className="inline-flex h-9 items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+              className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-md border border-primary/20 bg-primary/5 px-3 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
             >
               {t("clientPanel")}
             </a>
           </div>
 
-          {/* Mobile toggle */}
+          {/* Mobile toggle — visible on md and below (desktop nav starts at lg) */}
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-primary md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-primary lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={t("menuToggle")}
             aria-expanded={mobileOpen}
@@ -138,7 +148,7 @@ export function Header() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="border-t border-primary/10 py-4 md:hidden">
+          <div className="border-t border-primary/10 py-4 lg:hidden">
             <nav className="flex flex-col gap-4">
               {SECTION_IDS.map((id) => (
                 <a
@@ -157,6 +167,15 @@ export function Header() {
               >
                 {t("blog")}
               </Link>
+              {/* Phone number — mobile */}
+              <a
+                href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
+                className="inline-flex items-center gap-2 text-sm font-medium text-accent"
+              >
+                <Phone className="h-4 w-4" />
+                {siteConfig.contact.phone}
+                <span className="text-xs font-normal text-primary/40">Pon–Pt 9:00–17:00</span>
+              </a>
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-4">
                 <LanguageSwitcher />
                 <div className="flex items-center gap-2">
