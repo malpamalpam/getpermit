@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
-    contentDispositionType: "attachment",
+    contentDispositionType: "inline",
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
