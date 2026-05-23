@@ -105,11 +105,12 @@ export default async function middleware(request: NextRequest) {
   if (isPanelRoute && isPublicPanelPath(pathname)) {
     const lang = request.nextUrl.searchParams.get("lang");
     const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
-    // Priority: explicit ?lang= > cookie > browser Accept-Language > default
+    // Priority: explicit ?lang= > cookie > default PL (not browser detection —
+    // panel should default to Polish per business requirement)
     const locale =
       (lang && LOCALES.includes(lang)) ? lang
       : (cookieLocale && LOCALES.includes(cookieLocale)) ? cookieLocale
-      : detectBrowserLocale(request);
+      : routing.defaultLocale;
 
     const reqHeaders = new Headers(request.headers);
     reqHeaders.set("x-panel-locale", locale);
@@ -130,7 +131,7 @@ export default async function middleware(request: NextRequest) {
   const protectedLocale =
     (lang && LOCALES.includes(lang)) ? lang
     : (cookieLocale && LOCALES.includes(cookieLocale)) ? cookieLocale
-    : detectBrowserLocale(request);
+    : routing.defaultLocale;
 
   const reqHeaders = new Headers(request.headers);
   reqHeaders.set("x-panel-locale", protectedLocale);
