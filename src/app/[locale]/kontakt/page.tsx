@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { BookingButton } from "@/components/booking/BookingButton";
 import { siteConfig } from "@/config/site";
+import { getAlternates } from "@/lib/seo";
 import { Mail, MapPin, Clock, Phone, CalendarCheck, ArrowRight } from "lucide-react";
 
 export async function generateMetadata({
@@ -15,6 +16,11 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("metaDescription"),
+    openGraph: {
+      title: t("title"),
+      description: t("metaDescription"),
+    },
+    alternates: getAlternates("/kontakt", locale),
   };
 }
 

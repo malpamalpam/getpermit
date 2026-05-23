@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { ServiceCard } from "@/components/services/ServiceCard";
+import { getAlternates } from "@/lib/seo";
 import {
   getServiceCategories,
   localized,
@@ -36,6 +37,11 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("subtitle"),
+    openGraph: {
+      title: t("title"),
+      description: t("subtitle"),
+    },
+    alternates: getAlternates("/uslugi", locale),
   };
 }
 

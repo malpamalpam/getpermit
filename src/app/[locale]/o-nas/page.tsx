@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/config/site";
+import { getAlternates } from "@/lib/seo";
 import { Shield, Users, Award, Heart } from "lucide-react";
 
 export async function generateMetadata({
@@ -9,9 +10,16 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "nav" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
+  const t = await getTranslations({ locale, namespace: "about" });
   return {
-    title: t("about"),
+    title: tNav("about"),
+    description: t("metaDescription"),
+    openGraph: {
+      title: tNav("about"),
+      description: t("metaDescription"),
+    },
+    alternates: getAlternates("/o-nas", locale),
   };
 }
 

@@ -30,6 +30,7 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
     formState: { errors },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
+    mode: "onBlur",
     defaultValues: {
       name: "",
       email: "",

@@ -6,15 +6,17 @@ import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/config/site";
 
 function useCountUp(target: number, durationMs = 1600, start = false) {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(target);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!start) return;
+    if (!start || hasAnimated.current) return;
+    hasAnimated.current = true;
+    setValue(0);
     let raf = 0;
     const startTs = performance.now();
     const tick = (now: number) => {
       const progress = Math.min((now - startTs) / durationMs, 1);
-      // easeOutCubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setValue(Math.round(target * eased));
       if (progress < 1) raf = requestAnimationFrame(tick);

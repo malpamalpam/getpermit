@@ -12,9 +12,10 @@ import {
   localizedList,
 } from "@/lib/services";
 import { routing } from "@/i18n/routing";
+import { siteConfig } from "@/config/site";
 import Image from "next/image";
 import { getServiceHeroImage } from "@/lib/service-images";
-import { getLocalizedSlug, resolveInternalSlug } from "@/lib/service-slugs";
+import { getLocalizedSlug, resolveInternalSlug, SERVICE_BASE_PATH } from "@/lib/service-slugs";
 import {
   Wallet,
   CheckCircle2,
@@ -40,11 +41,27 @@ export async function generateMetadata({
   const service = await getServiceBySlug(internalSlug);
   if (!service) return {};
   const heroImg = getServiceHeroImage(internalSlug);
+  const title = localized(service.title, locale);
+  const description = localized(service.shortDescription, locale);
   return {
-    title: localized(service.title, locale),
-    description: localized(service.shortDescription, locale),
+    title,
+    description,
     openGraph: {
+      title,
+      description,
       images: [{ url: heroImg.src, width: 1440, height: 480 }],
+    },
+    alternates: {
+      canonical: `${siteConfig.url}/${locale}/${SERVICE_BASE_PATH[locale]}/${slug}`,
+      languages: {
+        ...Object.fromEntries(
+          routing.locales.map((l) => {
+            const lSlug = getLocalizedSlug(internalSlug, l);
+            return [l, `${siteConfig.url}/${l}/${SERVICE_BASE_PATH[l]}/${lSlug}`];
+          })
+        ),
+        "x-default": `${siteConfig.url}/en/${SERVICE_BASE_PATH.en}/${getLocalizedSlug(internalSlug, "en")}`,
+      },
     },
   };
 }

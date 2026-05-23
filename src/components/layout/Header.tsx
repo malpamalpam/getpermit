@@ -105,6 +105,12 @@ export function Header() {
               );
             })}
             <Link
+              href="/o-nas"
+              className="whitespace-nowrap text-[13px] xl:text-sm font-medium text-primary/70 transition-colors hover:text-primary"
+            >
+              {t("about")}
+            </Link>
+            <Link
               href="/blog"
               className="whitespace-nowrap text-[13px] xl:text-sm font-medium text-primary/70 transition-colors hover:text-primary"
             >
@@ -160,6 +166,13 @@ export function Header() {
                   {t(`section_${id}`)}
                 </a>
               ))}
+              <Link
+                href="/o-nas"
+                className="text-base font-medium text-primary"
+                onClick={() => setMobileOpen(false)}
+              >
+                {t("about")}
+              </Link>
               <Link
                 href="/blog"
                 className="text-base font-medium text-primary"

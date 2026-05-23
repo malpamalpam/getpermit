@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { getAllBlogPosts } from "@/lib/blog";
+import { getAlternates } from "@/lib/seo";
 import { BookOpen, Calendar, ArrowRight } from "lucide-react";
 
 export async function generateMetadata({
@@ -15,6 +16,11 @@ export async function generateMetadata({
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
+    openGraph: {
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+    },
+    alternates: getAlternates("/blog", locale),
   };
 }
 
