@@ -24,6 +24,12 @@ export function BookingDialog({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // GTM: track dialog open
+  useEffect(() => {
+    if (!open) return;
+    window.dataLayer?.push({ event: "booking_dialog_open" });
+  }, [open]);
+
   // Lock body scroll + Escape key
   useEffect(() => {
     if (!open) return;
@@ -39,11 +45,18 @@ export function BookingDialog({
     };
   }, [open, onClose]);
 
-  // Listen for Cal.com dimension changes via postMessage
+  // Listen for Cal.com postMessage events (resize + booking confirmation)
   const handleMessage = useCallback((e: MessageEvent) => {
-    if (!containerRef.current) return;
     try {
       const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+
+      // GTM: track successful booking
+      if (data?.action === "bookingSuccessful" || data?.type === "bookingSuccessful") {
+        window.dataLayer?.push({ event: "booking_confirmed" });
+      }
+
+      // Resize iframe container
+      if (!containerRef.current) return;
       if (data?.type === "__dimensionChanged" || data?.action === "__dimensionChanged") {
         const height = data.data?.height ?? data.height;
         if (height && typeof height === "number" && height > 400) {
