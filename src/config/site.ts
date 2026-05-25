@@ -49,7 +49,7 @@ export const siteConfig = {
   calcom: {
     url:
       process.env.NEXT_PUBLIC_CALCOM_URL ||
-      "https://cal.eu/getpermit",
+      "https://cal.com/getpermit",
   },
 } as const;
 
