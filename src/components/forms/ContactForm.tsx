@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations, useLocale } from "next-intl";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { ALL_SERVICES, localized } from "@/lib/services";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackFormSubmit, trackFormError, trackFormStart } from "@/lib/gtm";
 
 interface ContactFormProps {
   defaultService?: string;
@@ -22,6 +23,8 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
   const tErrors = useTranslations("errors");
   const locale = useLocale();
   const [status, setStatus] = useState<FormStatus>("idle");
+  const formStarted = useRef(false);
+  const formName = compact ? "sidebar_consultation" : "contact";
 
   const {
     register,
@@ -52,9 +55,11 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
       });
       if (!res.ok) throw new Error("Network error");
       setStatus("success");
+      trackFormSubmit(formName, values.service, locale);
       reset();
     } catch {
       setStatus("error");
+      trackFormError(formName, "network_error");
     }
   };
 
@@ -83,7 +88,17 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={cn("space-y-4", compact && "space-y-3")} noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={cn("space-y-4", compact && "space-y-3")}
+      noValidate
+      onFocus={() => {
+        if (!formStarted.current) {
+          formStarted.current = true;
+          trackFormStart(formName);
+        }
+      }}
+    >
       {/* Honeypot */}
       <input
         {...register("website")}

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useLocale } from "next-intl";
 import { X } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { pushEvent } from "@/lib/gtm";
 
 const CALCOM_LOCALE: Record<string, string> = {
   pl: "pl",
