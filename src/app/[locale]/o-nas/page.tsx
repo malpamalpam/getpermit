@@ -2,7 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/config/site";
 import { getAlternates } from "@/lib/seo";
-import { Shield, Users, Award, Heart } from "lucide-react";
+import { Shield, Award, Heart } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -35,7 +35,6 @@ export default async function AboutPage({
 
   const values = [
     { icon: Shield, title: t("safety"), desc: t("safetyDesc") },
-    { icon: Users, title: t("experience"), desc: t("experienceDesc") },
     { icon: Award, title: t("effectiveness"), desc: t("effectivenessDesc") },
     { icon: Heart, title: t("mission"), desc: t("missionDesc") },
   ];
@@ -56,35 +55,8 @@ export default async function AboutPage({
       </div>
 
       <Container className="py-16">
-        {/* Team */}
-        <div className="mb-16">
-          <h2 className="mb-8 text-center font-display text-2xl font-bold text-primary md:text-3xl">
-            {t("teamTitle")}
-          </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center rounded-2xl border border-primary/10 bg-white p-6 shadow-card text-center"
-              >
-                <img
-                  src={`/images/Team/osoba-${i}.jpg`}
-                  alt={t(`team.person${i}.name`)}
-                  className="mb-4 h-32 w-32 rounded-full object-cover bg-surface"
-                />
-                <h3 className="font-display text-lg font-bold text-primary">
-                  {t(`team.person${i}.name`)}
-                </h3>
-                <p className="mt-1 text-sm text-accent">
-                  {t(`team.person${i}.role`)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Values */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-3">
           {values.map((v, i) => {
             const Icon = v.icon;
             return (

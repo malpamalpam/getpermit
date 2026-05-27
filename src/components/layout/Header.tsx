@@ -7,9 +7,8 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { BookingButton } from "@/components/booking/BookingButton";
-import { siteConfig } from "@/config/site";
 import { SERVICE_BASE_PATH } from "@/lib/service-slugs";
 
 const SECTION_IDS = ["cudzoziemcy", "pracodawcy", "proces"] as const;
@@ -105,12 +104,6 @@ export function Header() {
               );
             })}
             <Link
-              href="/o-nas"
-              className="whitespace-nowrap text-[13px] xl:text-sm font-medium text-primary/70 transition-colors hover:text-primary"
-            >
-              {t("about")}
-            </Link>
-            <Link
               href="/blog"
               className="whitespace-nowrap text-[13px] xl:text-sm font-medium text-primary/70 transition-colors hover:text-primary"
             >
@@ -119,15 +112,6 @@ export function Header() {
           </nav>
 
           <div className="hidden flex-shrink-0 items-center gap-3 lg:flex">
-            <a
-              href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary/70 transition-colors hover:text-accent"
-              title="Pon–Pt 9:00–17:00"
-            >
-              <Phone className="h-3.5 w-3.5" />
-              <span>{siteConfig.contact.phone}</span>
-            </a>
-            <div className="h-5 w-px bg-primary/10" />
             <LanguageSwitcher />
             <BookingButton variant="primary" size="sm">
               {t("consultation")}
@@ -167,28 +151,12 @@ export function Header() {
                 </a>
               ))}
               <Link
-                href="/o-nas"
-                className="text-base font-medium text-primary"
-                onClick={() => setMobileOpen(false)}
-              >
-                {t("about")}
-              </Link>
-              <Link
                 href="/blog"
                 className="text-base font-medium text-primary"
                 onClick={() => setMobileOpen(false)}
               >
                 {t("blog")}
               </Link>
-              {/* Phone number — mobile */}
-              <a
-                href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
-                className="inline-flex items-center gap-2 text-sm font-medium text-accent"
-              >
-                <Phone className="h-4 w-4" />
-                {siteConfig.contact.phone}
-                <span className="text-xs font-normal text-primary/40">Pon–Pt 9:00–17:00</span>
-              </a>
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-4">
                 <LanguageSwitcher />
                 <div className="flex items-center gap-2">

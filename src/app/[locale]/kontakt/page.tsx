@@ -4,7 +4,7 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import { BookingButton } from "@/components/booking/BookingButton";
 import { siteConfig } from "@/config/site";
 import { getAlternates } from "@/lib/seo";
-import { Mail, MapPin, Clock, Phone, CalendarCheck, ArrowRight } from "lucide-react";
+import { Mail, MapPin, Clock, CalendarCheck, ArrowRight } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -63,12 +63,6 @@ export default async function ContactPage({
           {/* Contact info */}
           <div className="lg:col-span-2">
             <div className="space-y-6">
-              <ContactInfoItem
-                icon={<Phone className="h-5 w-5" />}
-                label={tInfo("phone")}
-                value={siteConfig.contact.phone}
-                href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
-              />
               <ContactInfoItem
                 icon={<Mail className="h-5 w-5" />}
                 label={tInfo("email")}
