@@ -7,21 +7,36 @@ import { CaseCard } from "@/components/panel/CaseCard";
 import { requireUser } from "@/lib/auth";
 import { getPanelLocale } from "@/lib/panel-locale";
 import { db } from "@/lib/db";
-import { Inbox, Mail } from "lucide-react";
+import { Inbox, Mail, AlertTriangle, CheckCircle2, FileText } from "lucide-react";
 
 export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function PanelDashboardPage() {
+interface Props {
+  searchParams: Promise<{ payment?: string }>;
+}
+
+export default async function PanelDashboardPage({ searchParams }: Props) {
   const locale = await getPanelLocale();
   const t = await getTranslations({ locale, namespace: "panel.dashboard" });
   const user = await requireUser();
+  const { payment } = await searchParams;
 
-  const cases = await db.case.findMany({
-    where: { userId: user.id },
-    orderBy: { updatedAt: "desc" },
-  });
+  const [cases, agreement] = await Promise.all([
+    db.case.findMany({
+      where: { userId: user.id },
+      orderBy: { updatedAt: "desc" },
+    }),
+    db.userAgreement.findUnique({ where: { userId: user.id } }),
+  ]);
+
+  const docsAccepted =
+    !!agreement?.termsAccepted &&
+    !!agreement.privacyAccepted &&
+    !!agreement.contractAccepted;
+  const isPaid = agreement?.paymentStatus === "paid";
+  const paymentSuccess = payment === "success";
 
   const greetingName = user.firstName ?? user.email.split("@")[0] ?? "";
 
@@ -39,6 +54,54 @@ export default async function PanelDashboardPage() {
             {t("subtitle")}
           </p>
         </div>
+
+        {/* Status banery */}
+        {paymentSuccess && (
+          <div className="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+            <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-green-600" />
+            <span>
+              <strong>Dziękujemy!</strong> Płatność została zrealizowana.
+              Administrator wkrótce przystąpi do realizacji Twojej sprawy.
+            </span>
+          </div>
+        )}
+
+        {!docsAccepted && (
+          <div className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
+              <span>
+                <strong>Wymagana akceptacja dokumentów.</strong>{" "}
+                Przed przystąpieniem do realizacji sprawy należy zaakceptować regulamin, politykę prywatności i umowę, a następnie dokonać płatności.
+              </span>
+            </div>
+            <Link
+              href="/panel/dokumenty"
+              className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-md bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              Przejdź
+            </Link>
+          </div>
+        )}
+
+        {docsAccepted && !isPaid && !paymentSuccess && (
+          <div className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
+              <span>
+                <strong>Oczekuje na płatność.</strong>{" "}
+                Dokumenty zaakceptowane — dokończ płatność, aby uruchomić realizację sprawy.
+              </span>
+            </div>
+            <Link
+              href="/panel/dokumenty"
+              className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-md bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-600"
+            >
+              Zapłać
+            </Link>
+          </div>
+        )}
 
         {cases.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-primary/20 bg-white p-10 text-center">

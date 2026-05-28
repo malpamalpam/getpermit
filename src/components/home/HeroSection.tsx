@@ -44,7 +44,7 @@ export function HeroSection() {
                 {t("ctaPrimary")}
                 <ArrowRight className="h-5 w-5" />
               </BookingButton>
-              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "accent", size: "xl", className: "w-full sm:w-auto bg-white/15 text-white hover:bg-white/25 border-0" })}>
+              <Link href={`/${locale}/kontakt`} className={buttonVariants({ variant: "accent", size: "xl", className: "w-full sm:w-auto bg-white text-primary hover:bg-white/90 border-0" })}>
                 {t("ctaSecondary")}
               </Link>
             </div>

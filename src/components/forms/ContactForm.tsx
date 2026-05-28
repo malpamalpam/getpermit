@@ -7,7 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { contactFormSchema, type ContactFormValues } from "@/lib/validations";
 import { Button } from "@/components/ui/Button";
 import { ALL_SERVICES, localized } from "@/lib/services";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Paperclip, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackFormSubmit, trackFormError, trackFormStart } from "@/lib/gtm";
 
@@ -18,24 +18,33 @@ interface ContactFormProps {
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
+const ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/jpg"];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
 export function ContactForm({ defaultService, compact }: ContactFormProps) {
   const t = useTranslations("contact.form");
   const tErrors = useTranslations("errors");
   const locale = useLocale();
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const formStarted = useRef(false);
   const formName = compact ? "sidebar_consultation" : "contact";
 
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     mode: "onBlur",
     defaultValues: {
-      name: "",
+      senderType: undefined as unknown as "firma",
+      companyName: "",
+      fullName: "",
       email: "",
       phone: "",
       service: defaultService ?? "",
@@ -45,18 +54,56 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
     },
   });
 
+  const senderType = watch("senderType");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files ?? []);
+    const tooBig = selected.find((f) => f.size > MAX_FILE_SIZE);
+    const wrongType = selected.find((f) => !ALLOWED_TYPES.includes(f.type));
+
+    if (tooBig) {
+      setFileError(t("attachmentsFileTooLarge", { name: tooBig.name }));
+      setFiles([]);
+      return;
+    }
+    if (wrongType) {
+      setFileError(t("attachmentsInvalidType", { name: wrongType.name }));
+      setFiles([]);
+      return;
+    }
+    setFileError(null);
+    setFiles(selected);
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const onSubmit = async (values: ContactFormValues) => {
+    if (fileError) return;
     setStatus("submitting");
+
+    const formData = new FormData();
+    formData.append("senderType", values.senderType);
+    if (values.senderType === "firma") formData.append("companyName", values.companyName ?? "");
+    if (values.senderType === "cudzoziemiec") formData.append("fullName", values.fullName ?? "");
+    formData.append("email", values.email);
+    formData.append("phone", values.phone ?? "");
+    formData.append("service", values.service ?? "");
+    formData.append("message", values.message);
+    formData.append("consent", "true");
+    formData.append("website", values.website ?? "");
+    formData.append("locale", locale);
+    files.forEach((f) => formData.append("attachments", f));
+
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, locale }),
-      });
+      const res = await fetch("/api/contact", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Network error");
       setStatus("success");
       trackFormSubmit(formName, values.service, locale);
       reset();
+      setFiles([]);
     } catch {
       setStatus("error");
       trackFormError(formName, "network_error");
@@ -67,9 +114,7 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
     if (!key) return undefined;
     if (key === "email") return tErrors("email");
     if (key === "consent") return tErrors("consent");
-    if (key.startsWith("min:")) {
-      return tErrors("minLength", { min: key.split(":")[1] });
-    }
+    if (key.startsWith("min:")) return tErrors("minLength", { min: key.split(":")[1] });
     return tErrors("required");
   };
 
@@ -109,22 +154,68 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
         aria-hidden="true"
       />
 
+      {/* Sender type */}
       <div>
-        <label htmlFor="name" className={labelBase}>
-          {t("name")} <span className="text-accent">*</span>
-        </label>
-        <input
-          id="name"
-          {...register("name")}
-          type="text"
-          placeholder={t("namePlaceholder")}
-          className={inputBase}
-          aria-invalid={!!errors.name}
-        />
-        {errors.name && (
-          <p className="mt-1 text-xs text-red-600">{translateError(errors.name.message)}</p>
+        <span className={labelBase}>
+          {t("senderType")} <span className="text-accent">*</span>
+        </span>
+        <div className="mt-1 flex gap-4">
+          {(["firma", "cudzoziemiec"] as const).map((val) => (
+            <label key={val} className="flex cursor-pointer items-center gap-2 text-sm text-primary">
+              <input
+                {...register("senderType")}
+                type="radio"
+                value={val}
+                className="h-4 w-4 cursor-pointer text-accent focus:ring-accent"
+              />
+              {val === "firma" ? t("senderTypeFirma") : t("senderTypeCudzoziemiec")}
+            </label>
+          ))}
+        </div>
+        {errors.senderType && (
+          <p className="mt-1 text-xs text-red-600">{translateError(errors.senderType.message)}</p>
         )}
       </div>
+
+      {/* Conditional: company name */}
+      {senderType === "firma" && (
+        <div>
+          <label htmlFor="companyName" className={labelBase}>
+            {t("companyName")} <span className="text-accent">*</span>
+          </label>
+          <input
+            id="companyName"
+            {...register("companyName")}
+            type="text"
+            placeholder={t("companyNamePlaceholder")}
+            className={inputBase}
+            aria-invalid={!!errors.companyName}
+          />
+          {errors.companyName && (
+            <p className="mt-1 text-xs text-red-600">{translateError(errors.companyName.message)}</p>
+          )}
+        </div>
+      )}
+
+      {/* Conditional: full name */}
+      {senderType === "cudzoziemiec" && (
+        <div>
+          <label htmlFor="fullName" className={labelBase}>
+            {t("fullName")} <span className="text-accent">*</span>
+          </label>
+          <input
+            id="fullName"
+            {...register("fullName")}
+            type="text"
+            placeholder={t("fullNamePlaceholder")}
+            className={inputBase}
+            aria-invalid={!!errors.fullName}
+          />
+          {errors.fullName && (
+            <p className="mt-1 text-xs text-red-600">{translateError(errors.fullName.message)}</p>
+          )}
+        </div>
+      )}
 
       <div>
         <label htmlFor="email" className={labelBase}>
@@ -193,6 +284,46 @@ export function ContactForm({ defaultService, compact }: ContactFormProps) {
           <p className="mt-1 text-xs text-red-600">{translateError(errors.message.message)}</p>
         )}
       </div>
+
+      {/* File attachments — hidden in compact mode */}
+      {!compact && (
+        <div>
+          <span className={labelBase}>{t("attachments")}</span>
+          <p className="mb-2 text-xs text-primary/50">{t("attachmentsHint")}</p>
+          <label className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-primary/20 px-4 py-3 text-sm text-primary/60 hover:border-accent/40 hover:text-accent transition-colors">
+            <Paperclip className="h-4 w-4 flex-shrink-0" />
+            <span>{files.length > 0 ? `${files.length} plik(i) wybrano` : "Kliknij, aby dodać pliki"}</span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.jpg,.jpeg"
+              multiple
+              className="sr-only"
+              onChange={handleFileChange}
+            />
+          </label>
+          {fileError && (
+            <p className="mt-1 text-xs text-red-600">{fileError}</p>
+          )}
+          {files.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {files.map((f, i) => (
+                <li key={i} className="flex items-center justify-between rounded-md bg-primary/5 px-3 py-1.5 text-xs text-primary">
+                  <span className="truncate max-w-[240px]">{f.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="ml-2 flex-shrink-0 text-primary/40 hover:text-red-500"
+                    aria-label="Usuń plik"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <label className="flex cursor-pointer items-start gap-2.5 text-xs text-primary/70">
         <input

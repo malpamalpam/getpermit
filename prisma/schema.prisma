@@ -125,6 +125,8 @@ model User {
   accessLogs AccessLog[]
   // dane osobowe (ankieta)
   personalData PersonalData?
+  // umowa i status płatności
+  agreement UserAgreement?
   // wydarzenia kalendarza
   calendarEvents CalendarEvent[] @relation("CalendarEventCreator")
 
@@ -635,4 +637,29 @@ model NotificationSettings {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("notification_settings")
+}
+
+// =============================================================================
+// UMOWA I PŁATNOŚĆ
+// =============================================================================
+
+model UserAgreement {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @unique @map("user_id") @db.Uuid
+  termsAccepted    Boolean   @default(false) @map("terms_accepted")
+  privacyAccepted  Boolean   @default(false) @map("privacy_accepted")
+  contractAccepted Boolean   @default(false) @map("contract_accepted")
+  acceptedAt       DateTime? @map("accepted_at")
+  /// Kwota do zapłaty w groszach (PLN × 100), ustalana przez admina
+  amount           Int       @default(0)
+  paymentStatus    String    @default("pending") @map("payment_status")
+  paypalOrderId    String?   @map("paypal_order_id")
+  paypalCaptureId  String?   @map("paypal_capture_id")
+  paidAt           DateTime? @map("paid_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_agreements")
 }

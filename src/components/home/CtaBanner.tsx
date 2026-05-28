@@ -29,7 +29,7 @@ export function CtaBanner() {
               </BookingButton>
               <Link
                 href={`/${locale}/kontakt`}
-                className={buttonVariants({ variant: "outline", size: "xl", className: "border-white/30 text-white hover:bg-white/10" })}
+                className={buttonVariants({ variant: "outline", size: "xl", className: "bg-white text-primary border-transparent hover:bg-white/90" })}
               >
                 {t("buttonSecondary")}
               </Link>

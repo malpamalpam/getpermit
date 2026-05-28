@@ -3,19 +3,19 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { signOutAction } from "@/lib/auth-actions";
-import { LayoutDashboard, Settings, ArrowLeft, LogOut, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Settings, ArrowLeft, LogOut, ClipboardList, FileText } from "lucide-react";
 import type { User } from "@prisma/client";
 
 interface Props {
   user: User;
-  active?: "dashboard" | "questionnaire" | "settings";
+  active?: "dashboard" | "questionnaire" | "settings" | "dokumenty";
 }
 
 export function PanelHeader({ user, active }: Props) {
   const t = useTranslations("panel.header");
   const tAuth = useTranslations("panel.auth");
 
-  const linkClass = (key: "dashboard" | "questionnaire" | "settings") =>
+  const linkClass = (key: "dashboard" | "questionnaire" | "settings" | "dokumenty") =>
     `inline-flex items-center gap-2 text-sm font-medium transition-colors ${
       active === key
         ? "text-primary"
@@ -55,6 +55,10 @@ export function PanelHeader({ user, active }: Props) {
               <Link href="/panel/ankieta" className={linkClass("questionnaire")}>
                 <ClipboardList className="h-4 w-4" />
                 {t("questionnaire")}
+              </Link>
+              <Link href="/panel/dokumenty" className={linkClass("dokumenty")}>
+                <FileText className="h-4 w-4" />
+                Dokumenty
               </Link>
               <Link href="/panel/ustawienia" className={linkClass("settings")}>
                 <Settings className="h-4 w-4" />

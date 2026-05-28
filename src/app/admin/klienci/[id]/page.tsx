@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -6,7 +7,7 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { requireStaff } from "@/lib/auth";
 import { getPanelLocale } from "@/lib/panel-locale";
 import { db } from "@/lib/db";
-import { ArrowLeft, User as UserIcon, Mail, Phone } from "lucide-react";
+import { ArrowLeft, User as UserIcon, Mail, Phone, CheckCircle2, XCircle, CreditCard } from "lucide-react";
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -25,6 +26,21 @@ function boolLabel(val: boolean | null | undefined, t: (k: string) => string): s
   if (val === true) return t("yes");
   if (val === false) return t("no");
   return "\u2014";
+}
+
+function StatusBadge({ label, ok, icon }: { label: string; ok: boolean; icon: ReactNode }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+        ok
+          ? "border border-green-200 bg-green-50 text-green-700"
+          : "border border-red-200 bg-red-50 text-red-600"
+      }`}
+    >
+      {ok ? icon : <XCircle className="h-4 w-4" />}
+      {label}
+    </span>
+  );
 }
 
 function Field({ label, value }: { label: string; value: string | null | undefined }) {
@@ -54,6 +70,7 @@ export default async function ClientDetailPage({
     where: { id },
     include: {
       personalData: true,
+      agreement: true,
       _count: { select: { cases: true } },
     },
   });
@@ -61,6 +78,7 @@ export default async function ClientDetailPage({
   if (!client) notFound();
 
   const pd = client.personalData;
+  const ag = client.agreement;
 
   return (
     <>
@@ -98,6 +116,61 @@ export default async function ClientDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Agreement & payment status */}
+        <div className="mt-6 flex flex-wrap gap-3">
+          <StatusBadge
+            label="Dokumenty zaakceptowane"
+            ok={!!ag?.termsAccepted && !!ag.privacyAccepted && !!ag.contractAccepted}
+            icon={<CheckCircle2 className="h-4 w-4" />}
+          />
+          <StatusBadge
+            label={`Płatność: ${ag?.paymentStatus ?? "brak"}`}
+            ok={ag?.paymentStatus === "paid"}
+            icon={<CreditCard className="h-4 w-4" />}
+          />
+          {ag?.amount && ag.amount > 0 ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-white px-3 py-1 text-xs font-medium text-primary">
+              Kwota: {(ag.amount / 100).toLocaleString("pl-PL")} zł
+            </span>
+          ) : null}
+        </div>
+
+        {/* Admin: ustaw kwotę */}
+        <form
+          action={async (fd: FormData) => {
+            "use server";
+            const { requireAdmin: ra } = await import("@/lib/auth");
+            const { db: database } = await import("@/lib/db");
+            await ra();
+            const amountPln = parseFloat(fd.get("amountPln") as string);
+            if (!isNaN(amountPln) && amountPln >= 0) {
+              await database.userAgreement.upsert({
+                where: { userId: id },
+                create: { userId: id, amount: Math.round(amountPln * 100) },
+                update: { amount: Math.round(amountPln * 100) },
+              });
+            }
+          }}
+          className="mt-4 flex items-center gap-2"
+        >
+          <label className="text-xs font-medium text-primary/60">Ustaw kwotę (PLN):</label>
+          <input
+            name="amountPln"
+            type="number"
+            min="0"
+            step="0.01"
+            defaultValue={ag?.amount ? ag.amount / 100 : ""}
+            placeholder="np. 500"
+            className="w-28 rounded-md border border-primary/15 px-2 py-1 text-sm"
+          />
+          <button
+            type="submit"
+            className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-white hover:bg-primary/90"
+          >
+            Zapisz
+          </button>
+        </form>
 
         {!pd ? (
           <div className="mt-8 rounded-2xl border border-dashed border-primary/15 p-10 text-center text-sm text-ink/50">
