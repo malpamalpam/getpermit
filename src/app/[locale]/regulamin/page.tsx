@@ -133,7 +133,7 @@ export default async function RegulaminPage({
                   możliwość umówienia konsultacji.
                 </li>
                 <li className={pClass}>
-                  <strong>Konsultacja</strong> — bezpłatna lub odpłatna
+                  <strong>Konsultacja</strong> — odpłatna
                   rozmowa z ekspertem Usługodawcy dotycząca legalizacji
                   pobytu lub pracy w Polsce.
                 </li>
@@ -155,7 +155,7 @@ export default async function RegulaminPage({
                       formularz kontaktowy umożliwiający przesłanie zapytania
                     </li>
                     <li className={liClass}>
-                      możliwość umówienia bezpłatnej konsultacji
+                      możliwość umówienia konsultacji
                     </li>
                     <li className={liClass}>
                       prezentacja oferty usług Usługodawcy, w tym: pomoc

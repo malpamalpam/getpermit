@@ -196,8 +196,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "Dokumenty wymagane do wniosku o pobyt sta\u0142y",
         content: `<p>Podstawowy zestaw dokument\u00f3w obejmuje:</p>
 <ul>
-<li>Wype\u0142niony formularz wniosku (2 egzemplarze)</li>
-<li>4 zdj\u0119cia biometryczne</li>
+<li>Wniosek z\u0142o\u017cony przez system MOS (Modu\u0142 Obs\u0142ugi Spraw)</li>
+<li>Fotografia cyfrowa (do wniosku przez system MOS)</li>
 <li>Kserokopia paszportu (wszystkie strony)</li>
 <li>Potwierdzenie uiszczenia op\u0142aty skarbowej (640 z\u0142)</li>
 <li>Dokumenty potwierdzaj\u0105ce podstaw\u0119 ubiegania si\u0119 o pobyt sta\u0142y:</li>
@@ -322,8 +322,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "Dokumenty wymagane do wniosku o EU Blue Card",
         content: `<p>Do wniosku nale\u017cy do\u0142\u0105czy\u0107:</p>
 <ul>
-<li>Wype\u0142niony formularz wniosku o zezwolenie na pobyt czasowy</li>
-<li>4 zdj\u0119cia biometryczne</li>
+<li>Wniosek z\u0142o\u017cony przez system MOS (Modu\u0142 Obs\u0142ugi Spraw)</li>
+<li>Fotografia cyfrowa (do wniosku przez system MOS)</li>
 <li>Kserokopia paszportu</li>
 <li>Umowa o prac\u0119 lub promesa zatrudnienia</li>
 <li>Dyplom uczelni wy\u017cszej (z nostryfikacj\u0105 je\u015bli wymagana) <strong>lub</strong> potwierdzenie 3-letniego do\u015bwiadczenia w IT</li>
@@ -524,9 +524,9 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
       { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji karty zależy od urzędu.</p>` },
       { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
-      { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — bezpłatna (w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na bezpłatną wycenę</a>.</p>` },
+      { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — 250 zł (ok. 15 min, w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na konsultację</a>.</p>` },
       { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
-      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Czy konsultacja w getpermit.pl jest naprawdę bezpłatna?</strong></summary><p>Tak. Wstępna konsultacja jest całkowicie bezpłatna i niezobowiązująca. Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę.</p></details></div>` },
+      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div>` },
     ],
   },
 

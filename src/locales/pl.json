@@ -16,7 +16,7 @@
     "badge": "Pomoc prawna dla cudzoziemców",
     "title": "Karta pobytu i zezwolenie na prac\u0119 w Polsce \u2014 kompleksowa pomoc dla cudzoziemc\u00f3w",
     "subtitle": "Zezwolenie na prac\u0119, karta pobytu czasowego, Blue Card, rezydent d\u0142ugoterminowy UE, w\u0142asna firma \u2014 szybko i kompleksowo, 98% skuteczno\u015bci, 10+ lat do\u015bwiadczenia.",
-    "ctaPrimary": "Umów bezpłatną konsultację",
+    "ctaPrimary": "Umów konsultację",
     "ctaSecondary": "Napisz do nas",
     "blogCta": "Czytaj blog"
   },
@@ -125,8 +125,8 @@
   },
   "ctaBanner": {
     "title": "Potrzebujesz karty pobytu lub zezwolenia na pracę?",
-    "subtitle": "Napisz do nas — bezpłatnie ocenimy Twoją sprawę i zaproponujemy najlepsze rozwiązanie. Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę — pomagamy na każdym etapie.",
-    "button": "Umów bezpłatną konsultację",
+    "subtitle": "Napisz do nas — ocenimy Twoją sprawę i zaproponujemy najlepsze rozwiązanie. Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę — pomagamy na każdym etapie.",
+    "button": "Umów konsultację",
     "buttonSecondary": "Napisz do nas"
   },
   "legal": {
@@ -141,9 +141,9 @@
     "title": "Skontaktuj się z nami",
     "subtitle": "Wypełnij formularz, a odpowiemy w ciągu 24 godzin",
     "bookingCtaTitle": "Najszybciej: zarezerwuj konsultację online",
-    "bookingCtaSubtitle": "Bezpłatna rozmowa z ekspertem — ocenimy Twoją sprawę i zaproponujemy rozwiązanie",
-    "bookingCtaButton": "Zarezerwuj bezpłatną konsultację",
-    "metaDescription": "Skontaktuj się z getpermit.pl — bezpłatna konsultacja w sprawie karty pobytu, zezwolenia na pracę i legalizacji pobytu w Polsce. Odpowiadamy w 24h. Biuro: Warszawa, ul. Lwowska 17/4.",
+    "bookingCtaSubtitle": "Rozmowa z ekspertem (250 zł, ok. 15 min) — ocenimy Twoją sprawę i zaproponujemy rozwiązanie",
+    "bookingCtaButton": "Zarezerwuj konsultację (250 zł)",
+    "metaDescription": "Skontaktuj się z getpermit.pl — konsultacja w sprawie karty pobytu, zezwolenia na pracę i legalizacji pobytu w Polsce. Odpowiadamy w 24h. Biuro: Warszawa, ul. Lwowska 17/4.",
     "form": {
       "senderType": "Kim jesteś?",
       "senderTypeFirma": "Firma (pracodawca)",
@@ -198,7 +198,7 @@
   },
   "metadata": {
     "title": "Karta pobytu i zezwolenie na pracę w Polsce | getpermit.pl",
-    "description": "Karta pobytu i zezwolenie na pracę w Polsce. Pomagamy cudzoziemcom — 98% skuteczności, 5000+ klientów. Bezpłatna konsultacja w 24h.",
+    "description": "Karta pobytu i zezwolenie na pracę w Polsce. Pomagamy cudzoziemcom — 98% skuteczności, 5000+ klientów. Konsultacja w 24h.",
     "keywords": "karta pobytu, karta stałego pobytu, karta pobytu czasowego, zezwolenie na pracę, zezwolenie na pracę typu a, karta czasowego pobytu, ponaglenie karta pobytu, karta pobytu status online, numer karty pobytu, legalizacja pobytu Polska"
   },
   "panel": {
@@ -705,7 +705,7 @@
     "label": "Jak działamy",
     "title": "3 proste kroki",
     "subtitle": "Każdy przypadek traktujemy indywidualnie, oferując dopasowane rozwiązania.",
-    "step1": { "title": "Bezpłatna konsultacja (ok. 15 min)", "desc": "Opowiedz o swojej sytuacji \u2014 nasi eksperci ocenią sprawę i zaproponują optymalną strategię." },
+    "step1": { "title": "Konsultacja (250 zł, ok. 15 min)", "desc": "Opowiedz o swojej sytuacji \u2014 nasi eksperci ocenią sprawę i zaproponują optymalną strategię." },
     "step2": { "title": "Opracowanie dokumentacji", "desc": "Podpisanie umowy, kompletowanie i przygotowanie wszystkich wymaganych dokumentów." },
     "step3": { "title": "Pozytywna decyzja", "desc": "Reprezentujemy Cię przed urzędem aż do otrzymania dokumentów potwierdzających Twój status." }
   },
@@ -715,7 +715,7 @@
     "items": {
       "cost": {
         "q": "Ile kosztuje pomoc w uzyskaniu karty pobytu?",
-        "a": "Koszt zależy od rodzaju sprawy i jej złożoności. Bezpłatna konsultacja pozwoli nam dokładnie wycenić Twoją sprawę. Skontaktuj się z nami, a otrzymasz wycenę w ciągu 24 godzin."
+        "a": "Koszt zależy od rodzaju sprawy i jej złożoności. Konsultacja (250 zł, ok. 15 min) pozwoli nam dokładnie wycenić Twoją sprawę. Skontaktuj się z nami, a otrzymasz wycenę w ciągu 24 godzin."
       },
       "duration": {
         "q": "Jak długo trwa proces uzyskania karty pobytu?",
@@ -723,7 +723,7 @@
       },
       "documents": {
         "q": "Jakie dokumenty muszę przygotować?",
-        "a": "Lista dokumentów zależy od rodzaju zezwolenia. Na bezpłatnej konsultacji przedstawimy Ci dokładną listę potrzebnych dokumentów — nie musisz się martwić, prowadzimy Cię krok po kroku."
+        "a": "Lista dokumentów zależy od rodzaju zezwolenia. Na konsultacji przedstawimy Ci dokładną listę potrzebnych dokumentów — nie musisz się martwić, prowadzimy Cię krok po kroku."
       },
       "workWhileWaiting": {
         "q": "Czy mogę pracować w Polsce czekając na decyzję?",

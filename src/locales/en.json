@@ -16,7 +16,7 @@
     "badge": "Legal help for foreigners",
     "title": "Residence Permit and Work Permit in Poland \u2014 Complete Support for Foreigners",
     "subtitle": "Work permit, temporary residence card, Blue Card, EU long-term resident, your own business \u2014 fast and comprehensive, 98% success rate, 10+ years of experience.",
-    "ctaPrimary": "Book a free consultation",
+    "ctaPrimary": "Book a consultation",
     "ctaSecondary": "Send us a message",
     "blogCta": "Read the blog"
   },
@@ -125,8 +125,8 @@
   },
   "ctaBanner": {
     "title": "Have questions about your situation?",
-    "subtitle": "Write to us — we will assess your case for free and propose the best solution.",
-    "button": "Book a free consultation",
+    "subtitle": "Write to us — we will assess your case and propose the best solution.",
+    "button": "Book a consultation",
     "buttonSecondary": "Send us a message"
   },
   "legal": {
@@ -141,9 +141,9 @@
     "title": "Contact us",
     "subtitle": "Fill out the form and we will respond within 24 hours",
     "bookingCtaTitle": "Fastest way: book a consultation online",
-    "bookingCtaSubtitle": "Free call with an expert — we'll assess your case and suggest a solution",
-    "bookingCtaButton": "Book a free consultation",
-    "metaDescription": "Contact getpermit.pl — free consultation on residence permits, work permits and immigration to Poland. We respond within 24 hours. Office: Warsaw, Lwowska 17/4.",
+    "bookingCtaSubtitle": "Call with an expert (PLN 250, approx. 15 min) — we'll assess your case and suggest a solution",
+    "bookingCtaButton": "Book a consultation (PLN 250)",
+    "metaDescription": "Contact getpermit.pl — consultation on residence permits, work permits and immigration to Poland. We respond within 24 hours. Office: Warsaw, Lwowska 17/4.",
     "form": {
       "senderType": "Who are you?",
       "senderTypeFirma": "Company (employer)",
@@ -198,7 +198,7 @@
   },
   "metadata": {
     "title": "Poland Visa & Work Permit — Immigration Services | getpermit.pl",
-    "description": "Poland visa, work permit, EU Blue Card — professional immigration services in Poland. Residence permits, visa applications. Free consultation in English.",
+    "description": "Poland visa, work permit, EU Blue Card — professional immigration services in Poland. Residence permits, visa applications. Consultation in English.",
     "keywords": "poland visa, work permit poland, eu blue card, immigration poland, poland visa application, how to move to poland, live in poland, poland schengen visa, european blue card, polska visa"
   },
   "panel": {
@@ -675,7 +675,7 @@
     "label": "How we work",
     "title": "3 simple steps",
     "subtitle": "We treat every case individually, offering tailored solutions.",
-    "step1": { "title": "Free consultation (approx. 15 min)", "desc": "Tell us about your situation \u2014 our experts will assess your case and propose an optimal strategy." },
+    "step1": { "title": "Consultation (PLN 250, approx. 15 min)", "desc": "Tell us about your situation \u2014 our experts will assess your case and propose an optimal strategy." },
     "step2": { "title": "Document preparation", "desc": "Signing the agreement, collecting and preparing all required documents." },
     "step3": { "title": "Positive decision", "desc": "We represent you before the office until you receive the documents confirming your status." }
   },
@@ -685,7 +685,7 @@
     "items": {
       "cost": {
         "q": "How much does help with a residence card cost?",
-        "a": "The cost depends on the type and complexity of the case. A free consultation will allow us to quote your case precisely. Contact us and you'll receive a quote within 24 hours."
+        "a": "The cost depends on the type and complexity of the case. A consultation (PLN 250, approx. 15 min) will allow us to quote your case precisely. Contact us and you'll receive a quote within 24 hours."
       },
       "duration": {
         "q": "How long does the residence card process take?",
@@ -693,7 +693,7 @@
       },
       "documents": {
         "q": "What documents do I need to prepare?",
-        "a": "The list of documents depends on the type of permit. During a free consultation, we'll present you with the exact list — don't worry, we guide you step by step."
+        "a": "The list of documents depends on the type of permit. During a consultation, we'll present you with the exact list — don't worry, we guide you step by step."
       },
       "workWhileWaiting": {
         "q": "Can I work in Poland while waiting for the decision?",
@@ -717,11 +717,11 @@
   },
   "employers": {
     "metaTitle": "For Employers \u2014 Hiring Foreigners",
-    "metaDescription": "Complete service for companies employing foreigners in Poland. Work permits, declarations, audit, HR support. Free consultation.",
+    "metaDescription": "Complete service for companies employing foreigners in Poland. Work permits, declarations, audit, HR support.",
     "heroTitle": "Hiring foreigners? Ensure legality and peace of mind",
     "heroSubtitle": "Complete service for employers: work permits, declarations, document audits, HR support. 10+ years of experience, 98% success rate.",
     "heroAlt": "Services for employers hiring foreigners in Poland",
-    "ctaPrimary": "Book a free consultation (approx. 15 min)",
+    "ctaPrimary": "Book a consultation (PLN 250, approx. 15 min)",
     "servicesTitle": "Our services for companies",
     "servicesSubtitle": "Everything you need to legally employ foreign workers.",
     "services": {
