@@ -731,7 +731,7 @@
       },
       "declarations": {
         "title": "Employment declarations",
-        "desc": "Simplified procedure for citizens of Ukraine, Belarus, Russia, Moldova, Georgia, and Armenia."
+        "desc": "Simplified procedure for citizens of Ukraine, Belarus, Moldova, and Armenia."
       },
       "audit": {
         "title": "Employment legality audit",
@@ -739,7 +739,7 @@
       },
       "notifications": {
         "title": "Notifications of entrusting work to a foreigner",
-        "desc": "Filing notifications to the District Labor Office about entrusting work to a foreigner \u2014 a new employer obligation from 2025."
+        "desc": "Filing notifications to the District Labor Office about entrusting work to a foreigner \u2014 an employer obligation in effect since 2022."
       },
       "b2bIncubator": {
         "title": "B2B work legalization in business incubator",

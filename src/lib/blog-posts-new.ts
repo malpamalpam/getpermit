@@ -39,7 +39,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li>Podejmowania pracy (je\u015bli zezwolenie obejmuje prac\u0119)</li>
 <li>Podr\u00f3\u017cowania po strefie Schengen do 90 dni w ci\u0105gu 180 dni</li>
 <li>Korzystania z publicznej opieki zdrowotnej (przy op\u0142aconym ubezpieczeniu)</li>
-<li>Ubiegania si\u0119 o numer PESEL</li>
+<li>Zameldowania si\u0119 na pobyt czasowy</li>
 </ul>
 <p>Podstaw\u0119 prawn\u0105 stanowi <strong>ustawa o cudzoziemcach z 12 grudnia 2013 r.</strong> (Dz.U. 2024 poz. 769 z p\u00f3\u017an. zm.).</p>`,
       },
@@ -63,8 +63,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <table>
 <thead><tr><th>Dokument</th><th>Uwagi</th></tr></thead>
 <tbody>
-<tr><td>Wype\u0142niony wniosek</td><td>Formularz dost\u0119pny w systemie MOS lub w urz\u0119dzie</td></tr>
-<tr><td>4 aktualne zdj\u0119cia biometryczne</td><td>35\u00d745 mm, kolorowe, na bia\u0142ym tle</td></tr>
+<tr><td>Wype\u0142niony wniosek</td><td>Sk\u0142adany wy\u0142\u0105cznie przez system MOS</td></tr>
+<tr><td>Fotografia cyfrowa</td><td>Za\u0142\u0105czana do wniosku w systemie MOS</td></tr>
 <tr><td>Kserokopia paszportu</td><td>Wszystkie zapisane strony</td></tr>
 <tr><td>Potwierdzenie uiszczenia op\u0142aty skarbowej</td><td>340 z\u0142 (lub 440 z\u0142 w przypadku pracy)</td></tr>
 <tr><td>Ubezpieczenie zdrowotne</td><td>Na ca\u0142y okres pobytu lub umowa z pracodawc\u0105</td></tr>
@@ -72,7 +72,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>\u0179r\u00f3d\u0142o dochodu</td><td>Umowa o prac\u0119, za\u015bwiadczenie z banku, zeznanie PIT</td></tr>
 </tbody>
 </table>
-<p>Dodatkowe dokumenty dla os\u00f3b pracuj\u0105cych: za\u015bwiadczenie od pracodawcy, informacja starosty (test rynku pracy), za\u0142\u0105cznik nr 1. <a href="/pl/uslugi/zezwolenie-na-pobyt-czasowy">Sprawd\u017a pe\u0142n\u0105 list\u0119 dla Twojego przypadku</a>.</p>`,
+<p>Dodatkowe dokumenty dla os\u00f3b pracuj\u0105cych: za\u015bwiadczenie od pracodawcy, za\u0142\u0105cznik nr 1. <a href="/pl/uslugi/zezwolenie-na-pobyt-czasowy">Sprawd\u017a pe\u0142n\u0105 list\u0119 dla Twojego przypadku</a>.</p>`,
       },
       {
         id: "procedura",
@@ -80,7 +80,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         content: `<p>Proces uzyskania karty pobytu czasowego sk\u0142ada si\u0119 z nast\u0119puj\u0105cych etap\u00f3w:</p>
 <ol>
 <li><strong>Przygotowanie dokument\u00f3w</strong> \u2014 skompletowanie wszystkich wymaganych za\u0142\u0105cznik\u00f3w</li>
-<li><strong>Z\u0142o\u017cenie wniosku</strong> \u2014 przez system MOS lub osobi\u015bcie w urz\u0119dzie wojew\u00f3dzkim</li>
+<li><strong>Z\u0142o\u017cenie wniosku</strong> \u2014 wy\u0142\u0105cznie przez system MOS (od 27 kwietnia 2025 r.)</li>
 <li><strong>Pobranie odcisk\u00f3w palc\u00f3w</strong> \u2014 biometria pobierana w urz\u0119dzie</li>
 <li><strong>Otrzymanie stempla w paszporcie</strong> \u2014 potwierdzenie z\u0142o\u017cenia wniosku, legalizuje pobyt na czas post\u0119powania</li>
 <li><strong>Oczekiwanie na decyzj\u0119</strong> \u2014 urz\u0105d mo\u017ce wzywa\u0107 do uzupe\u0142nienia dokument\u00f3w</li>
@@ -116,7 +116,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <ol>
 <li><strong>Z\u0142o\u017cenie wniosku po terminie</strong> \u2014 wniosek musi by\u0107 z\u0142o\u017cony przed wyga\u015bni\u0119ciem wizy lub ruchu bezwizowego</li>
 <li><strong>Brak t\u0142umacze\u0144 przysi\u0119g\u0142ych</strong> \u2014 wszystkie dokumenty zagraniczne wymagaj\u0105 t\u0142umaczenia przez t\u0142umacza przysi\u0119g\u0142ego</li>
-<li><strong>Niekompletna dokumentacja</strong> \u2014 brak za\u015bwiadcze\u0144 od pracodawcy lub informacji starosty</li>
+<li><strong>Niekompletna dokumentacja</strong> \u2014 brak za\u015bwiadcze\u0144 od pracodawcy lub wymaganych za\u0142\u0105cznik\u00f3w</li>
 <li><strong>B\u0142\u0119dy w formularzu</strong> \u2014 literowe b\u0142\u0119dy w danych osobowych powoduj\u0105 wezwania do uzupe\u0142nienia</li>
 <li><strong>Brak ubezpieczenia zdrowotnego</strong> \u2014 cz\u0119sto pomijane w przypadku zleceniobiorc\u00f3w</li>
 </ol>
@@ -288,7 +288,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Mobilno\u015b\u0107 w UE</strong> \u2014 po 12 miesi\u0105cach mo\u017cliwo\u015b\u0107 przeniesienia si\u0119 do innego pa\u0144stwa cz\u0142onkowskiego</li>
 <li><strong>\u0141atwiejsze \u0142\u0105czenie rodzin</strong> \u2014 uproszczona procedura sprowadzenia ma\u0142\u017conka i dzieci</li>
 <li><strong>Szybsza \u015bcie\u017cka do rezydenta UE</strong> \u2014 mo\u017cliwo\u015b\u0107 sumowania okres\u00f3w pobytu w r\u00f3\u017cnych krajach UE</li>
-<li><strong>Brak testu rynku pracy</strong> \u2014 nie trzeba uzyskiwa\u0107 informacji starosty</li>
+<li><strong>Uproszczona procedura</strong> \u2014 mniej wymog\u00f3w formalnych ni\u017c przy standardowym zezwoleniu na prac\u0119</li>
 </ul>`,
       },
       {
@@ -352,7 +352,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tbody>
 <tr><td>Pr\u00f3g wynagrodzenia</td><td>~7500 z\u0142 brutto/mc</td><td>Brak progu</td></tr>
 <tr><td>Wykszta\u0142cenie</td><td>Wy\u017csze lub 3 lata do\u015bwiadczenia IT</td><td>Dowolne</td></tr>
-<tr><td>Test rynku pracy</td><td>Nie wymagany</td><td>Wymagany (z wyj\u0105tkami)</td></tr>
+<tr><td>Test rynku pracy</td><td>Zniesiony</td><td>Zniesiony</td></tr>
 <tr><td>Mobilno\u015b\u0107 w UE</td><td>Tak</td><td>Nie</td></tr>
 <tr><td>\u0141\u0105czenie rodzin</td><td>Uproszczone</td><td>Standardowe</td></tr>
 <tr><td>Op\u0142ata skarbowa</td><td>440 z\u0142</td><td>440 z\u0142</td></tr>
@@ -521,7 +521,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       { id: "faq-koszty", title: "FAQ" },
     ],
     sections: [
-      { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr><tr><td>Przedłużenie wizy</td><td><strong>406 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
+      { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
       { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji karty zależy od urzędu.</p>` },
       { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
       { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — bezpłatna (w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na bezpłatną wycenę</a>.</p>` },

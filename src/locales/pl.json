@@ -761,7 +761,7 @@
       },
       "declarations": {
         "title": "O\u015bwiadczenia o powierzeniu pracy",
-        "desc": "Uproszczona procedura dla obywateli Ukrainy, Bia\u0142orusi, Rosji, Mo\u0142dawii, Gruzji i Armenii."
+        "desc": "Uproszczona procedura dla obywateli Ukrainy, Bia\u0142orusi, Mo\u0142dawii i Armenii."
       },
       "audit": {
         "title": "Audyt legalno\u015bci zatrudnienia",
@@ -769,7 +769,7 @@
       },
       "notifications": {
         "title": "Powiadomienia o powierzeniu pracy cudzoziemcowi",
-        "desc": "Sk\u0142adanie powiadomie\u0144 do Powiatowego Urz\u0119du Pracy o powierzeniu pracy cudzoziemcowi \u2014 nowy obowi\u0105zek pracodawcy od 2025 r."
+        "desc": "Sk\u0142adanie powiadomie\u0144 do Powiatowego Urz\u0119du Pracy o powierzeniu pracy cudzoziemcowi \u2014 obowi\u0105zek pracodawcy obowi\u0105zuj\u0105cy od 2022 r."
       },
       "b2bIncubator": {
         "title": "Legalizacja pracy B2B w inkubatorze",
