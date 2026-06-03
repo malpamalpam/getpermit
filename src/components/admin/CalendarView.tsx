@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction } from "@/lib/fdk-actions";
 import {
   ChevronLeft,
@@ -15,6 +16,8 @@ import {
   Mail,
   Pencil,
   Clock,
+  AlertCircle,
+  Eye,
 } from "lucide-react";
 
 interface CalendarEventData {
@@ -100,13 +103,16 @@ function formatHour(hour: number): string {
 }
 
 export function CalendarView({ events, documentExpiries, foreigners }: Props) {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<"month" | "week">("month");
   const [showForm, setShowForm] = useState(false);
   const [editingEventId, setEditingEventId] = useState<number | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEventData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isPending, startTransition] = useTransition();
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const emptyForm = {
@@ -162,13 +168,20 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
 
   const handleSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     startTransition(async () => {
-      const result = editingEventId
-        ? await updateCalendarEventAction(editingEventId, form as never)
-        : await createCalendarEventAction(form as never);
-      if (result.ok) {
-        closeForm();
-        window.location.reload();
+      try {
+        const result = editingEventId
+          ? await updateCalendarEventAction(editingEventId, form as never)
+          : await createCalendarEventAction(form as never);
+        if (result.ok) {
+          closeForm();
+          router.refresh();
+        } else {
+          setFormError("Nie udało się zapisać wydarzenia. Sprawdź, czy wszystkie wymagane pola są wypełnione.");
+        }
+      } catch {
+        setFormError("Wystąpił błąd połączenia. Spróbuj ponownie.");
       }
     });
   };
@@ -176,20 +189,31 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const handleDelete = (id: number) => {
     if (!confirm("Usunąć to wydarzenie?")) return;
     startTransition(async () => {
-      await deleteCalendarEventAction(id);
-      window.location.reload();
+      try {
+        await deleteCalendarEventAction(id);
+        router.refresh();
+      } catch {
+        setFormError("Nie udało się usunąć wydarzenia.");
+      }
     });
   };
 
   const openFormForDate = (day: Date, time?: string) => {
     setEditingEventId(null);
+    setFormError(null);
     setForm({ ...emptyForm, eventDate: day.toISOString().slice(0, 10), eventTime: time ?? "" });
     setSelectedDate(day);
     setShowForm(true);
   };
 
+  const openEventDetail = (ev: CalendarEventData) => {
+    setSelectedEvent(ev);
+  };
+
   const openEditForm = (ev: CalendarEventData) => {
+    setSelectedEvent(null);
     setEditingEventId(ev.id);
+    setFormError(null);
     setForm({
       type: ev.type,
       title: ev.title,
@@ -207,6 +231,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const closeForm = () => {
     setShowForm(false);
     setEditingEventId(null);
+    setFormError(null);
     setForm(emptyForm);
   };
 
@@ -312,8 +337,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         key={ev.id}
                         type="button"
                         className={`w-full truncate rounded px-1.5 py-1 text-[11px] font-medium text-white cursor-pointer text-left transition-opacity ${hoveredEvent === ev.id ? "opacity-80" : ""} ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
-                        title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""} — kliknij aby edytować`}
-                        onClick={() => openEditForm(ev)}
+                        title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""} — kliknij aby zobaczyć szczegóły`}
+                        onClick={() => openEventDetail(ev)}
                         onMouseEnter={() => setHoveredEvent(ev.id)}
                         onMouseLeave={() => setHoveredEvent(null)}
                       >
@@ -366,8 +391,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                           key={ev.id}
                           type="button"
                           className={`w-full truncate rounded px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-white text-left ${TYPE_COLORS[ev.type] ?? "bg-gray-500"} hover:opacity-80`}
-                          onClick={() => openEditForm(ev)}
-                          title={`${ev.title} — kliknij aby edytować`}
+                          onClick={() => openEventDetail(ev)}
+                          title={`${ev.title} — kliknij aby zobaczyć szczegóły`}
                         >
                           {ev.title}
                         </button>
@@ -471,8 +496,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                           type="button"
                           className={`absolute left-0.5 right-0.5 z-20 rounded border-l-[3px] px-1.5 py-1 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
                           style={{ top: `${top}px`, minHeight: `${height}px` }}
-                          onClick={(e) => { e.stopPropagation(); openEditForm(ev); }}
-                          title={`${ev.title} — kliknij aby edytować`}
+                          onClick={(e) => { e.stopPropagation(); openEventDetail(ev); }}
+                          title={`${ev.title} — kliknij aby zobaczyć szczegóły`}
                         >
                           <div className="text-[11px] font-semibold text-primary truncate">{ev.title}</div>
                           <div className="text-[10px] text-primary/50 flex items-center gap-1">
@@ -566,6 +591,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               )}
             </div>
 
+            {formError && (
+              <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                {formError}
+              </div>
+            )}
+
             <div className="mt-5 flex items-center justify-between">
               {editingEventId ? (
                 <button
@@ -588,6 +620,95 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               </div>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Event Detail Modal */}
+      {selectedEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setSelectedEvent(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className={`h-3 w-3 rounded-full ${TYPE_COLORS[selectedEvent.type] ?? "bg-gray-500"}`} />
+                <span className="text-xs font-medium text-primary/50">
+                  {TYPE_LABELS[selectedEvent.type] ?? selectedEvent.type}
+                </span>
+              </div>
+              <button onClick={() => setSelectedEvent(null)} className="rounded-lg p-1.5 text-primary/40 hover:bg-primary/5">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <h3 className="font-display text-xl font-bold text-primary mb-4">{selectedEvent.title}</h3>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center gap-2 text-primary/70">
+                <Clock className="h-4 w-4 flex-shrink-0 text-primary/40" />
+                <span>
+                  {new Date(selectedEvent.eventDate).toLocaleDateString("pl-PL", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                  {selectedEvent.eventTime && `, godz. ${selectedEvent.eventTime}`}
+                </span>
+              </div>
+
+              {selectedEvent.place && (
+                <div className="flex items-center gap-2 text-primary/70">
+                  <MapPin className="h-4 w-4 flex-shrink-0 text-primary/40" />
+                  <span>{selectedEvent.place}</span>
+                </div>
+              )}
+
+              {selectedEvent.organ && (
+                <div className="flex items-center gap-2 text-primary/70">
+                  <Building2 className="h-4 w-4 flex-shrink-0 text-primary/40" />
+                  <span>{selectedEvent.organ}</span>
+                </div>
+              )}
+
+              {selectedEvent.foreignerName && (
+                <div className="flex items-center gap-2 text-primary/70">
+                  <User className="h-4 w-4 flex-shrink-0 text-primary/40" />
+                  <span>{selectedEvent.foreignerName}</span>
+                </div>
+              )}
+
+              {selectedEvent.description && (
+                <div className="mt-3 rounded-lg bg-gray-50 p-3 text-primary/70">
+                  {selectedEvent.description}
+                </div>
+              )}
+
+              {selectedEvent.notes && (
+                <div className="rounded-lg bg-blue-50 p-3 text-blue-700">
+                  <div className="text-xs font-semibold mb-1">Dodatkowe informacje:</div>
+                  {selectedEvent.notes}
+                </div>
+              )}
+
+              {selectedEvent.emailSent && (
+                <div className="flex items-center gap-1.5 text-xs text-green-600">
+                  <Mail className="h-3.5 w-3.5" />
+                  Email wysłany do cudzoziemca
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => { setSelectedEvent(null); handleDelete(selectedEvent.id); }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Usuń
+              </button>
+              <button
+                type="button"
+                onClick={() => openEditForm(selectedEvent)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
+              >
+                <Pencil className="h-4 w-4" /> Edytuj
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -32,10 +32,16 @@ export async function syncUserFromAuth(
     // Synchronizuj rolę do app_metadata przy każdym logowaniu, żeby JWT
     // odzwierciedlał aktualną rolę z public.users (np. po awansie z CLIENT
     // na STAFF/ADMIN).
-    const admin = createSupabaseAdminClient();
-    await admin.auth.admin.updateUserById(authUserId, {
-      app_metadata: { role: updated.role },
-    });
+    // Fire-and-forget — nie blokuj logowania jeśli Supabase admin API jest
+    // chwilowo niedostępne (np. przy równoczesnych sesjach wielu użytkowników).
+    try {
+      const admin = createSupabaseAdminClient();
+      await admin.auth.admin.updateUserById(authUserId, {
+        app_metadata: { role: updated.role },
+      });
+    } catch (e) {
+      console.warn("[sync-user] Failed to sync role to app_metadata:", e);
+    }
 
     return updated;
   }
@@ -53,10 +59,14 @@ export async function syncUserFromAuth(
 
   // Skopiuj rolę do app_metadata, żeby middleware mógł szybko sprawdzić
   // bez zapytania do DB.
-  const admin = createSupabaseAdminClient();
-  await admin.auth.admin.updateUserById(authUserId, {
-    app_metadata: { role: created.role },
-  });
+  try {
+    const admin = createSupabaseAdminClient();
+    await admin.auth.admin.updateUserById(authUserId, {
+      app_metadata: { role: created.role },
+    });
+  } catch (e) {
+    console.warn("[sync-user] Failed to set role in app_metadata for new user:", e);
+  }
 
   return created;
 }

@@ -22,8 +22,9 @@ export async function createSupabaseServerClient() {
               cookieStore.set(name, value, options as CookieOptions);
             });
           } catch {
-            // setAll wywołane z Server Component — można zignorować, bo refresh
-            // tokena obsłuży middleware.
+            // setAll wywołane z Server Component (read-only context) — ignorujemy,
+            // bo refresh tokena obsłuży middleware przy kolejnym request.
+            // Nie logujemy — to oczekiwane zachowanie w Server Components.
           }
         },
       },

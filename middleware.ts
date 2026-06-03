@@ -140,9 +140,14 @@ export default async function middleware(request: NextRequest) {
 
   const supabase = createSupabaseMiddlewareClient(request, response);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data, error } = await supabase.auth.getUser();
+    if (!error) user = data.user;
+  } catch {
+    // Supabase API unreachable or cookie parsing failure — redirect to login
+    // rather than showing an unhandled error page.
+  }
 
   if (!user) {
     const loginUrl = new URL("/panel/login", request.url);

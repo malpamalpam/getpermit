@@ -8,18 +8,26 @@ import type { Role, User } from "@prisma/client";
  * Zwraca null, jeśli nie zalogowany lub user jeszcze nie ma rekordu w public.users.
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user: authUser },
+      error,
+    } = await supabase.auth.getUser();
 
-  if (!authUser) return null;
+    if (error || !authUser) return null;
 
-  const dbUser = await db.user.findUnique({
-    where: { id: authUser.id },
-  });
+    const dbUser = await db.user.findUnique({
+      where: { id: authUser.id },
+    });
 
-  return dbUser;
+    return dbUser;
+  } catch (e) {
+    // Catch Supabase/DB errors to prevent unhandled exceptions in concurrent
+    // session scenarios (e.g., expired refresh token race condition).
+    console.error("[auth] getCurrentUser failed:", e);
+    return null;
+  }
 }
 
 /**

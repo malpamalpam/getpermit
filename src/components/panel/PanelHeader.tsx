@@ -96,6 +96,10 @@ export function PanelHeader({ user, active }: Props) {
             <LayoutDashboard className="h-4 w-4" />
             {t("dashboard")}
           </Link>
+          <Link href="/panel/dokumenty" className={linkClass("dokumenty")}>
+            <FileText className="h-4 w-4" />
+            Dokumenty
+          </Link>
           <Link href="/panel/ustawienia" className={linkClass("settings")}>
             <Settings className="h-4 w-4" />
             {t("settings")}
