@@ -15,7 +15,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Jak uzyska\u0107 kart\u0119 pobytu czasowego w Polsce w 2026? Wymagane dokumenty, koszty, czas oczekiwania i najcz\u0119stsze b\u0142\u0119dy. Praktyczny przewodnik od ekspert\u00f3w getpermit.pl.",
     date: "2026-04-15",
-    imageUrl: "/blog/karta-pobytu-czasowego.svg",
+    imageUrl: "/images/blog/karta-pobytu-czasowego.svg",
     imageAlt: "Karta pobytu czasowego w Polsce \u2014 dokumenty i procedura legalizacji pobytu",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -151,7 +151,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Karta sta\u0142ego pobytu daje prawo do bezterminowego zamieszkania w Polsce. Sprawd\u017a warunki, dokumenty i koszty. Poradnik od ekspert\u00f3w getpermit.pl.",
     date: "2026-04-14",
-    imageUrl: "/blog/karta-stalego-pobytu.svg",
+    imageUrl: "/images/blog/karta-stalego-pobytu.svg",
     imageAlt: "Karta sta\u0142ego pobytu w Polsce \u2014 procedura uzyskania dokumentu pobytowego",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -266,7 +266,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "EU Blue Card po zmianach od 2025. Kto mo\u017ce uzyska\u0107 Niebiesk\u0105 Kart\u0119 UE w Polsce? Wymagania, dokumenty, koszty i korzy\u015bci mobilno\u015bci w UE. Poradnik getpermit.pl.",
     date: "2026-04-13",
-    imageUrl: "/blog/niebieska-karta-ue.svg",
+    imageUrl: "/images/blog/niebieska-karta-ue.svg",
     imageAlt: "EU Blue Card \u2014 Niebieska Karta UE dla specjalist\u00f3w w Polsce",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -388,7 +388,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Od 2026 wnioski o kart\u0119 pobytu sk\u0142adasz przez MOS (Modu\u0142 Obs\u0142ugi Spraw). Jak za\u0142o\u017cy\u0107 konto, wype\u0142ni\u0107 e-wniosek i unikn\u0105\u0107 b\u0142\u0119d\u00f3w. Poradnik getpermit.pl.",
     date: "2026-04-12",
-    imageUrl: "/blog/wnioski-mos.svg",
+    imageUrl: "/images/blog/wnioski-mos.svg",
     imageAlt: "System MOS \u2014 sk\u0142adanie wniosk\u00f3w pobytowych online w Polsce 2026",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -509,7 +509,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Aktualne koszty karty pobytu w 2026 roku: opłaty skarbowe, wydanie karty, tłumaczenia przysięgłe i pomoc prawna. Cennik i kalkulator kosztów od getpermit.pl.",
     date: "2026-04-11",
-    imageUrl: "/blog/ile-kosztuje-karta-pobytu.svg",
+    imageUrl: "/images/blog/ile-kosztuje-karta-pobytu.svg",
     imageAlt: "Koszty karty pobytu w Polsce 2026 — cennik opłat urzędowych",
     author: "Grzegorz Stępień, UTM Group",
     toc: [
