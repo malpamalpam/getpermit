@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction } from "@/lib/fdk-actions";
 import {
@@ -211,6 +211,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   };
 
   const openEditForm = (ev: CalendarEventData) => {
+    const d = new Date(ev.eventDate);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     setSelectedEvent(null);
     setEditingEventId(ev.id);
     setFormError(null);
@@ -218,7 +220,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
       type: ev.type,
       title: ev.title,
       description: ev.description ?? "",
-      eventDate: new Date(ev.eventDate).toISOString().slice(0, 10),
+      eventDate: dateStr,
       eventTime: ev.eventTime ?? "",
       place: ev.place ?? "",
       organ: ev.organ ?? "",
@@ -236,6 +238,17 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   };
 
   const today = new Date();
+
+  // Auto-scroll to current time in week view (also triggered by "Dziś" button)
+  useEffect(() => {
+    if (view === "week" && gridRef.current) {
+      const now = new Date();
+      const currentHour = now.getHours() + now.getMinutes() / 60;
+      const scrollTarget = Math.max(0, (Math.min(currentHour, WEEK_HOURS_END) - WEEK_HOURS_START - 1) * HOUR_HEIGHT_PX);
+      gridRef.current.scrollTop = scrollTarget;
+    }
+  }, [view, currentDate]);
+
   const inputCls =
     "block w-full rounded-md border border-primary/15 bg-white px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/20";
 
