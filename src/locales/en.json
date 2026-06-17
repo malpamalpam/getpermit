@@ -74,12 +74,12 @@
       "olena": {
         "name": "Olena K.",
         "role": "Ukraine → Warsaw",
-        "quote": "I received my residence card in 4 months. The whole process was clear, documents prepared flawlessly. I recommend it to every foreigner."
+        "quote": "I received my residence card. The whole process was clear, documents prepared flawlessly. I recommend it to every foreigner."
       },
       "aleksey": {
         "name": "Aleksey V.",
         "role": "Belarus → Kraków",
-        "quote": "They helped me obtain a type A work permit and a temporary residence card. Professional and fast, despite a complicated situation."
+        "quote": "They helped me obtain a type A work permit. Professional and efficient, despite a complicated situation."
       },
       "rajesh": {
         "name": "Rajesh P.",
@@ -94,7 +94,7 @@
       "fatih": {
         "name": "Fatih A.",
         "role": "Turkey → Gdańsk",
-        "quote": "They handled my case from start to finish. Temporary residence card in 3 months. Great service, zero stress."
+        "quote": "They handled my case from start to finish — temporary residence card. Great service, zero stress."
       },
       "nguyen": {
         "name": "Nguyen T.",
@@ -104,12 +104,12 @@
       "anna": {
         "name": "Anna S.",
         "role": "Employer, Warsaw",
-        "quote": "They've been handling our company for 3 years — work permits, declarations, notifications. Everything on time and without problems."
+        "quote": "They handle our company — work permits, declarations, notifications. Everything on time and without problems."
       },
       "dmitriy": {
         "name": "Dmitriy K.",
         "role": "Russia → Poznań",
-        "quote": "They helped me get a work permit and residence card. Everything very professional, I recommend to everyone."
+        "quote": "They helped me get a work permit. Everything very professional, I recommend to everyone."
       },
       "priya": {
         "name": "Priya M.",
@@ -141,7 +141,7 @@
     "title": "Contact us",
     "subtitle": "Fill out the form and we will respond within 24 hours",
     "bookingCtaTitle": "Fastest way: book a consultation online",
-    "bookingCtaSubtitle": "Call with an expert (PLN 250, approx. 15 min) — we'll assess your case and suggest a solution",
+    "bookingCtaSubtitle": "Call with an expert (PLN 250, approx. 20 min) — we'll assess your case and suggest a solution. The consultation fee is credited toward the procedure costs",
     "bookingCtaButton": "Book a consultation (PLN 250)",
     "metaDescription": "Contact getpermit.pl — consultation on residence permits, work permits and immigration to Poland. We respond within 24 hours. Office: Warsaw, Lwowska 17/4.",
     "form": {
@@ -675,7 +675,7 @@
     "label": "How we work",
     "title": "3 simple steps",
     "subtitle": "We treat every case individually, offering tailored solutions.",
-    "step1": { "title": "Consultation (PLN 250, approx. 15 min)", "desc": "Tell us about your situation \u2014 our experts will assess your case and propose an optimal strategy." },
+    "step1": { "title": "Consultation (PLN 250, approx. 20 min)", "desc": "Tell us about your situation \u2014 our experts will assess your case and propose an optimal strategy. The consultation fee is credited toward the procedure costs." },
     "step2": { "title": "Document preparation", "desc": "Signing the agreement, collecting and preparing all required documents." },
     "step3": { "title": "Positive decision", "desc": "We represent you before the office until you receive the documents confirming your status." }
   },
@@ -685,7 +685,7 @@
     "items": {
       "cost": {
         "q": "How much does help with a residence card cost?",
-        "a": "The cost depends on the type and complexity of the case. A consultation (PLN 250, approx. 15 min) will allow us to quote your case precisely. Contact us and you'll receive a quote within 24 hours."
+        "a": "The cost depends on the type and complexity of the case. A consultation (PLN 250, approx. 20 min) will allow us to quote your case precisely. The consultation fee is credited toward the procedure costs. Contact us and you'll receive a quote within 24 hours."
       },
       "duration": {
         "q": "How long does the residence card process take?",
@@ -721,7 +721,7 @@
     "heroTitle": "Hiring foreigners? Ensure legality and peace of mind",
     "heroSubtitle": "Complete service for employers: work permits, declarations, document audits, HR support. 10+ years of experience, 98% success rate.",
     "heroAlt": "Services for employers hiring foreigners in Poland",
-    "ctaPrimary": "Book a consultation (PLN 250, approx. 15 min)",
+    "ctaPrimary": "Book a consultation (PLN 250, approx. 20 min)",
     "servicesTitle": "Our services for companies",
     "servicesSubtitle": "Everything you need to legally employ foreign workers.",
     "services": {

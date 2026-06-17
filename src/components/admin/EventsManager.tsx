@@ -33,7 +33,7 @@ export function EventsManager({ caseId, events }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [eventDate, setEventDate] = useState(
-    new Date().toISOString().slice(0, 10)
+    new Date().toLocaleDateString("sv")
   );
   const [isPending, startTransition] = useTransition();
 
@@ -50,7 +50,7 @@ export function EventsManager({ caseId, events }: Props) {
       if (result.ok) {
         setTitle("");
         setDescription("");
-        setEventDate(new Date().toISOString().slice(0, 10));
+        setEventDate(new Date().toLocaleDateString("sv"));
         setShowForm(false);
         router.refresh();
       }

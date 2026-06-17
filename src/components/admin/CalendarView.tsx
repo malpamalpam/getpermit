@@ -102,6 +102,10 @@ function formatHour(hour: number): string {
   return `${hour.toString().padStart(2, "0")}:00`;
 }
 
+function toLocalDateString(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -201,7 +205,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const openFormForDate = (day: Date, time?: string) => {
     setEditingEventId(null);
     setFormError(null);
-    setForm({ ...emptyForm, eventDate: day.toISOString().slice(0, 10), eventTime: time ?? "" });
+    setForm({ ...emptyForm, eventDate: toLocalDateString(day), eventTime: time ?? "" });
     setSelectedDate(day);
     setShowForm(true);
   };
@@ -300,7 +304,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
             </button>
           </div>
           <button
-            onClick={() => { setEditingEventId(null); setForm({ ...emptyForm, eventDate: today.toISOString().slice(0, 10) }); setShowForm(true); }}
+            onClick={() => { setEditingEventId(null); setForm({ ...emptyForm, eventDate: toLocalDateString(today) }); setShowForm(true); }}
             className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
           >
             <Plus className="h-4 w-4" /> Nowe wydarzenie
