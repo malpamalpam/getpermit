@@ -109,7 +109,7 @@ function toLocalDateString(d: Date): string {
 export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<"month" | "week">("month");
+  const [view, setView] = useState<"month" | "week" | "day">("month");
   const [showForm, setShowForm] = useState(false);
   const [editingEventId, setEditingEventId] = useState<number | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEventData | null>(null);
@@ -118,6 +118,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const [hoveredEvent, setHoveredEvent] = useState<number | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const dayGridRef = useRef<HTMLDivElement>(null);
 
   const emptyForm = {
     type: "OFFICE_VISIT" as string,
@@ -141,6 +142,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
   const prevWeek = () => setCurrentDate(new Date(currentDate.getTime() - 7 * 86400000));
   const nextWeek = () => setCurrentDate(new Date(currentDate.getTime() + 7 * 86400000));
+  const prevDay = () => setCurrentDate(new Date(currentDate.getTime() - 86400000));
+  const nextDay = () => setCurrentDate(new Date(currentDate.getTime() + 86400000));
 
   // Build month grid
   const firstDay = new Date(year, month, 1);
@@ -214,9 +217,11 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     setSelectedEvent(ev);
   };
 
-  const openEditForm = (ev: CalendarEventData) => {
+  const startEditById = (eventId: number) => {
+    const ev = events.find((e) => e.id === eventId);
+    if (!ev) return;
     const d = new Date(ev.eventDate);
-    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const dateStr = toLocalDateString(d);
     setSelectedEvent(null);
     setEditingEventId(ev.id);
     setFormError(null);
@@ -243,13 +248,14 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
 
   const today = new Date();
 
-  // Auto-scroll to current time in week view (also triggered by "Dziś" button)
+  // Auto-scroll to current time in week/day view
   useEffect(() => {
-    if (view === "week" && gridRef.current) {
+    const ref = view === "week" ? gridRef.current : view === "day" ? dayGridRef.current : null;
+    if (ref) {
       const now = new Date();
       const currentHour = now.getHours() + now.getMinutes() / 60;
       const scrollTarget = Math.max(0, (Math.min(currentHour, WEEK_HOURS_END) - WEEK_HOURS_START - 1) * HOUR_HEIGHT_PX);
-      gridRef.current.scrollTop = scrollTarget;
+      ref.scrollTop = scrollTarget;
     }
   }, [view, currentDate]);
 
@@ -265,27 +271,51 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     openFormForDate(day, `${clampedHour.toString().padStart(2, "0")}:00`);
   };
 
+  // Header navigation
+  const handlePrev = () => {
+    if (view === "month") prevMonth();
+    else if (view === "week") prevWeek();
+    else prevDay();
+  };
+  const handleNext = () => {
+    if (view === "month") nextMonth();
+    else if (view === "week") nextWeek();
+    else nextDay();
+  };
+
+  const headerTitle = (() => {
+    if (view === "month") return `${MONTHS_PL[month]} ${year}`;
+    if (view === "week") return `${weekDays[0].toLocaleDateString("pl-PL")} — ${weekDays[6].toLocaleDateString("pl-PL")}`;
+    // day view
+    const dow = (currentDate.getDay() + 6) % 7;
+    return `${DAYS_FULL_PL[dow]}, ${currentDate.toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" })}`;
+  })();
+
+  // Day view data
+  const dayViewEvents = getEventsForDay(currentDate);
+  const dayViewExpiries = getExpiriesForDay(currentDate);
+  const dayTimedEvents = dayViewEvents.filter((ev) => ev.eventTime);
+  const dayAllDayEvents = dayViewEvents.filter((ev) => !ev.eventTime);
+
   return (
     <div>
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <button onClick={view === "month" ? prevMonth : prevWeek} className="rounded-lg border border-primary/15 p-2 hover:bg-primary/5">
+          <button onClick={handlePrev} className="rounded-lg border border-primary/15 p-2 hover:bg-primary/5">
             <ChevronLeft className="h-4 w-4" />
           </button>
           <h2 className="font-display text-xl font-bold text-primary">
-            {view === "month"
-              ? `${MONTHS_PL[month]} ${year}`
-              : `${weekDays[0].toLocaleDateString("pl-PL")} — ${weekDays[6].toLocaleDateString("pl-PL")}`}
+            {headerTitle}
           </h2>
-          <button onClick={view === "month" ? nextMonth : nextWeek} className="rounded-lg border border-primary/15 p-2 hover:bg-primary/5">
+          <button onClick={handleNext} className="rounded-lg border border-primary/15 p-2 hover:bg-primary/5">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setCurrentDate(new Date())}
-            className="rounded-lg border border-primary/15 px-3 py-1.5 text-xs font-medium text-primary/60 hover:bg-primary/5"
+            onClick={() => { setCurrentDate(new Date()); setView("day"); }}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${view === "day" && sameDay(currentDate, today) ? "border-accent bg-accent text-white" : "border-primary/15 text-primary/60 hover:bg-primary/5"}`}
           >
             Dziś
           </button>
@@ -301,6 +331,12 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               className={`px-3 py-1.5 text-xs font-medium ${view === "week" ? "bg-accent text-white" : "text-primary/60 hover:bg-primary/5"}`}
             >
               Tydzień
+            </button>
+            <button
+              onClick={() => setView("day")}
+              className={`px-3 py-1.5 text-xs font-medium ${view === "day" ? "bg-accent text-white" : "text-primary/60 hover:bg-primary/5"}`}
+            >
+              Dzień
             </button>
           </div>
           <button
@@ -334,9 +370,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                   className={`min-h-[100px] border-b border-r border-primary/5 p-1 transition-colors hover:bg-accent/5 ${isToday ? "bg-accent/5" : ""}`}
                 >
                   <div className="mb-1 flex items-center justify-between">
-                    <div className={`text-xs font-medium ${isToday ? "flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white" : "text-primary/50 pl-1"}`}>
+                    <button
+                      type="button"
+                      onClick={() => { setCurrentDate(day); setView("day"); }}
+                      className={`text-xs font-medium cursor-pointer hover:underline ${isToday ? "flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white" : "text-primary/50 pl-1"}`}
+                    >
                       {day.getDate()}
-                    </div>
+                    </button>
                     <button
                       onClick={() => openFormForDate(day)}
                       className="rounded p-0.5 text-primary/20 hover:text-accent hover:bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -354,8 +394,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         key={ev.id}
                         type="button"
                         className={`w-full truncate rounded px-1.5 py-1 text-[11px] font-medium text-white cursor-pointer text-left transition-opacity ${hoveredEvent === ev.id ? "opacity-80" : ""} ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
-                        title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""} — kliknij aby zobaczyć szczegóły`}
-                        onClick={() => openEventDetail(ev)}
+                        title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""} — kliknij aby edytować`}
+                        onClick={() => startEditById(ev.id)}
                         onMouseEnter={() => setHoveredEvent(ev.id)}
                         onMouseLeave={() => setHoveredEvent(null)}
                       >
@@ -364,7 +404,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                       </button>
                     ))}
                     {dayEvents.length > 3 && (
-                      <div className="text-[10px] text-primary/40 pl-1">+{dayEvents.length - 3} więcej</div>
+                      <button
+                        type="button"
+                        onClick={() => { setCurrentDate(day); setView("day"); }}
+                        className="text-[10px] text-primary/40 pl-1 hover:text-accent cursor-pointer"
+                      >
+                        +{dayEvents.length - 3} więcej
+                      </button>
                     )}
                     {dayExpiries.slice(0, 2).map((exp, i) => (
                       <div
@@ -408,8 +454,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                           key={ev.id}
                           type="button"
                           className={`w-full truncate rounded px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-white text-left ${TYPE_COLORS[ev.type] ?? "bg-gray-500"} hover:opacity-80`}
-                          onClick={() => openEventDetail(ev)}
-                          title={`${ev.title} — kliknij aby zobaczyć szczegóły`}
+                          onClick={() => startEditById(ev.id)}
+                          title={`${ev.title} — kliknij aby edytować`}
                         >
                           {ev.title}
                         </button>
@@ -434,9 +480,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               return (
                 <div key={i} className={`border-r border-primary/5 px-2 py-2 text-center ${isToday ? "bg-accent/5" : "bg-gray-50"}`}>
                   <div className="text-[10px] font-medium text-primary/40 uppercase">{DAYS_PL[i]}</div>
-                  <div className={`text-lg font-bold ${isToday ? "text-accent" : "text-primary"}`}>
+                  <button
+                    type="button"
+                    onClick={() => { setCurrentDate(day); setView("day"); }}
+                    className={`text-lg font-bold cursor-pointer hover:underline ${isToday ? "text-accent" : "text-primary"}`}
+                  >
                     {day.getDate()}
-                  </div>
+                  </button>
                 </div>
               );
             })}
@@ -513,8 +563,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                           type="button"
                           className={`absolute left-0.5 right-0.5 z-20 rounded border-l-[3px] px-1.5 py-1 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
                           style={{ top: `${top}px`, minHeight: `${height}px` }}
-                          onClick={(e) => { e.stopPropagation(); openEventDetail(ev); }}
-                          title={`${ev.title} — kliknij aby zobaczyć szczegóły`}
+                          onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
+                          title={`${ev.title} — kliknij aby edytować`}
                         >
                           <div className="text-[11px] font-semibold text-primary truncate">{ev.title}</div>
                           <div className="text-[10px] text-primary/50 flex items-center gap-1">
@@ -533,6 +583,141 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               })}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Day View */}
+      {view === "day" && (
+        <div className="rounded-xl border border-primary/10 bg-white shadow-sm overflow-hidden">
+          {/* All-day events & expiries */}
+          {(dayAllDayEvents.length > 0 || dayViewExpiries.length > 0) && (
+            <div className="border-b border-primary/10 p-3 space-y-1.5">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-primary/40 mb-1">Cały dzień</div>
+              {dayAllDayEvents.map((ev) => (
+                <button
+                  key={ev.id}
+                  type="button"
+                  onClick={() => startEditById(ev.id)}
+                  className={`w-full text-left rounded-lg border-l-4 p-3 transition-colors ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-primary">{ev.title}</span>
+                      <span className="text-[10px] text-primary/40">{TYPE_LABELS[ev.type] ?? ev.type}</span>
+                    </div>
+                    <Pencil className="h-3.5 w-3.5 text-primary/30" />
+                  </div>
+                  {ev.foreignerName && <div className="text-xs text-primary/50 mt-0.5">{ev.foreignerName}</div>}
+                </button>
+              ))}
+              {dayViewExpiries.map((exp, i) => (
+                <div key={`exp-${i}`} className="rounded-lg border-l-4 border-l-red-500 bg-red-50 p-3 text-xs font-medium text-red-700">
+                  {exp.foreignerName} — {exp.typLabel}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Time grid for single day */}
+          <div className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 280px)" }} ref={dayGridRef}>
+            <div className="relative" style={{ minHeight: `${(WEEK_HOURS_END - WEEK_HOURS_START) * HOUR_HEIGHT_PX}px` }}>
+              {/* Hour rows */}
+              {Array.from({ length: WEEK_HOURS_END - WEEK_HOURS_START }, (_, i) => (
+                <div
+                  key={i}
+                  className="absolute inset-x-0 border-t border-primary/5 flex"
+                  style={{ top: `${i * HOUR_HEIGHT_PX}px`, height: `${HOUR_HEIGHT_PX}px` }}
+                >
+                  <div className="w-16 flex-shrink-0 pr-2 text-right text-[11px] text-primary/40 font-medium -mt-[7px]">
+                    {formatHour(WEEK_HOURS_START + i)}
+                  </div>
+                  <div
+                    className="flex-1 cursor-pointer hover:bg-accent/5 transition-colors"
+                    onClick={() => openFormForDate(currentDate, `${(WEEK_HOURS_START + i).toString().padStart(2, "0")}:00`)}
+                  />
+                </div>
+              ))}
+              {/* Half-hour lines */}
+              {Array.from({ length: WEEK_HOURS_END - WEEK_HOURS_START }, (_, i) => (
+                <div
+                  key={`half-${i}`}
+                  className="absolute border-t border-primary/[0.03] border-dashed"
+                  style={{ top: `${i * HOUR_HEIGHT_PX + HOUR_HEIGHT_PX / 2}px`, left: "64px", right: 0 }}
+                />
+              ))}
+
+              {/* Current time indicator */}
+              {sameDay(currentDate, today) && (() => {
+                const now = new Date();
+                const currentHour = now.getHours() + now.getMinutes() / 60;
+                if (currentHour < WEEK_HOURS_START || currentHour > WEEK_HOURS_END) return null;
+                const top = (currentHour - WEEK_HOURS_START) * HOUR_HEIGHT_PX;
+                return (
+                  <div className="absolute z-10 pointer-events-none" style={{ top: `${top}px`, left: "60px", right: 0 }}>
+                    <div className="h-0.5 bg-red-500 relative">
+                      <div className="absolute -left-1 -top-[3px] h-2 w-2 rounded-full bg-red-500" />
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Events positioned on the grid */}
+              {dayTimedEvents.map((ev) => {
+                const time = parseTime(ev.eventTime);
+                if (time === null) return null;
+                const top = Math.max(0, (time - WEEK_HOURS_START) * HOUR_HEIGHT_PX);
+                const eventDuration = 1;
+                const height = eventDuration * HOUR_HEIGHT_PX - 2;
+                return (
+                  <button
+                    key={ev.id}
+                    type="button"
+                    className={`absolute z-20 rounded-lg border-l-4 px-3 py-2 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
+                    style={{ top: `${top}px`, minHeight: `${height}px`, left: "68px", right: "8px" }}
+                    onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-semibold text-primary truncate">{ev.title}</div>
+                      <Pencil className="h-3.5 w-3.5 text-primary/30 flex-shrink-0 ml-2" />
+                    </div>
+                    <div className="text-xs text-primary/50 flex items-center gap-1.5 mt-0.5">
+                      <Clock className="h-3 w-3 inline" />
+                      {ev.eventTime}
+                      {ev.place && (
+                        <>
+                          <MapPin className="h-3 w-3 inline" />
+                          <span className="truncate">{ev.place}</span>
+                        </>
+                      )}
+                    </div>
+                    {ev.foreignerName && (
+                      <div className="text-xs text-primary/40 mt-0.5 flex items-center gap-1">
+                        <User className="h-3 w-3 inline" />
+                        {ev.foreignerName}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Empty state for day view */}
+          {dayViewEvents.length === 0 && dayViewExpiries.length === 0 && (
+            <div className="p-12 text-center">
+              <div className="text-primary/30 mb-3">
+                <Clock className="h-10 w-10 mx-auto" />
+              </div>
+              <p className="text-sm text-primary/50 mb-4">Brak wydarzeń na ten dzień</p>
+              <button
+                type="button"
+                onClick={() => openFormForDate(currentDate)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
+              >
+                <Plus className="h-4 w-4" /> Dodaj wydarzenie
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -719,7 +904,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               </button>
               <button
                 type="button"
-                onClick={() => openEditForm(selectedEvent)}
+                onClick={() => startEditById(selectedEvent.id)}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
               >
                 <Pencil className="h-4 w-4" /> Edytuj
