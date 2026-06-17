@@ -91,20 +91,18 @@ export async function POST(request: NextRequest) {
           await db.fdkForeigner.update({ where: { id: foreignerId }, data: updateData });
         }
 
-        // Auto-create employment base if dates extracted
-        if (parsed.dataOd || parsed.dataDo) {
-          await db.fdkEmploymentBase.create({
-            data: {
-              foreignerId,
-              typ: "OSWIADCZENIE",
-              status: "BRAK_DANYCH",
-              dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
-              dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
-              rodzajUmowy: parsed.rodzajUmowy || null,
-              podjeciePracy: parsed.rodzajPracy || null,
-            },
-          });
-        }
+        // Always create employment base from scraped data
+        await db.fdkEmploymentBase.create({
+          data: {
+            foreignerId,
+            typ: "OSWIADCZENIE",
+            status: "BRAK_DANYCH",
+            dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+            dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+            rodzajUmowy: parsed.rodzajUmowy || null,
+            podjeciePracy: parsed.rodzajPracy || null,
+          },
+        });
       }
     } catch (err) {
       console.error("[fdk/upload] PDF parsing error (non-fatal):", err);

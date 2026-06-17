@@ -120,17 +120,17 @@ export async function parseOswiadczeniePdf(buffer: ArrayBuffer): Promise<Oswiadc
     const pdfData = await pdfParse(Buffer.from(buffer));
     const text = pdfData.text;
 
-    if (!text || text.length < 50) return null;
+    if (!text || text.length < 20) return null;
 
-    // Check if it looks like an oświadczenie
-    const isOswiadczenie =
-      text.toLowerCase().includes("oświadczenie") ||
-      text.toLowerCase().includes("oswiadczenie") ||
-      text.toLowerCase().includes("powierzeniu");
+    // Try to parse as oświadczenie — even if keyword not found,
+    // still attempt extraction (some PDFs have OCR quirks)
+    const result = parseOswiadczenieText(text);
 
-    if (!isOswiadczenie) return null;
+    // Return result if anything was extracted
+    const hasAnyData = result.dataOd || result.dataDo || result.nazwisko || result.imie
+      || result.rodzajPracy || result.rodzajUmowy || result.nrPaszportu;
 
-    return parseOswiadczenieText(text);
+    return hasAnyData ? result : null;
   } catch (err) {
     console.error("[pdf-parser] Failed to parse PDF:", err);
     return null;

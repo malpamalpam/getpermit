@@ -84,22 +84,20 @@ export async function GET(
       await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: updateData });
     }
 
-    // Create employment base if dates extracted
-    let baseId: number | null = null;
-    if (parsed.dataOd || parsed.dataDo) {
-      const base = await db.fdkEmploymentBase.create({
-        data: {
-          foreignerId: attachment.foreignerId,
-          typ: "OSWIADCZENIE",
-          status: "BRAK_DANYCH",
-          dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
-          dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
-          rodzajUmowy: parsed.rodzajUmowy || null,
-          podjeciePracy: parsed.rodzajPracy || null,
-        },
-      });
-      baseId = base.id;
-    }
+    // Always create employment base from scraped data
+    const base = await db.fdkEmploymentBase.create({
+      data: {
+        foreignerId: attachment.foreignerId,
+        typ: "OSWIADCZENIE",
+        status: "BRAK_DANYCH",
+        dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+        dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+        rodzajUmowy: parsed.rodzajUmowy || null,
+        podjeciePracy: parsed.rodzajPracy || null,
+        nrOswiadczenia: null,
+      },
+    });
+    const baseId = base.id;
 
     return NextResponse.json({
       ok: true,
