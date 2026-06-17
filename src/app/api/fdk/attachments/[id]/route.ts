@@ -114,7 +114,7 @@ export async function GET(
         dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
         rodzajUmowy: parsed.rodzajUmowy || null,
         podjeciePracy: parsed.rodzajPracy || null,
-        nrOswiadczenia: null,
+        nrOswiadczenia: parsed.nrOswiadczenia || null,
       },
     });
     const baseId = base.id;

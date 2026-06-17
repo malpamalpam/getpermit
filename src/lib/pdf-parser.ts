@@ -22,14 +22,19 @@ export interface OswiadczenieData {
   // Work details
   rodzajPracy?: string;
   rodzajUmowy?: string;
+  // Nr oświadczenia
+  nrOswiadczenia?: string;
 }
 
 /**
- * Parse dd/mm/rrrr or dd.mm.rrrr to YYYY-MM-DD
+ * Parse date in various Polish formats to YYYY-MM-DD:
+ * - dd/mm/yyyy, dd.mm.yyyy (no spaces)
+ * - dd / mm / yyyy (with spaces around separators)
+ * - dd / mm / rrrr (literal "rrrr" is skipped — it's the format label)
  */
 function parseDatePL(raw: string): string | undefined {
-  // Try dd/mm/yyyy or dd.mm.yyyy
-  const match = raw.match(/(\d{1,2})[./](\d{1,2})[./](\d{4})/);
+  // Match: dd [sep] mm [sep] yyyy where sep can have spaces
+  const match = raw.match(/(\d{1,2})\s*[./]\s*(\d{1,2})\s*[./]\s*(\d{4})/);
   if (match) {
     const [, day, month, year] = match;
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
@@ -38,72 +43,89 @@ function parseDatePL(raw: string): string | undefined {
 }
 
 /**
- * Extract text between two markers (case insensitive).
+ * Capitalize first letter, lowercase rest (for names in ALL CAPS)
  */
-function extractBetween(text: string, startMarker: string, endMarker: string): string | undefined {
-  const lower = text.toLowerCase();
-  const startIdx = lower.indexOf(startMarker.toLowerCase());
-  if (startIdx === -1) return undefined;
-  const after = startIdx + startMarker.length;
-  const endIdx = endMarker ? lower.indexOf(endMarker.toLowerCase(), after) : text.length;
-  if (endIdx === -1) return text.slice(after).trim();
-  return text.slice(after, endIdx).trim();
+function titleCase(s: string): string {
+  return s
+    .split(/[\s-]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
 }
 
 export function parseOswiadczenieText(text: string): OswiadczenieData {
   const result: OswiadczenieData = {};
 
-  // Normalize whitespace
+  // Normalize whitespace (but keep single spaces)
   const normalized = text.replace(/\s+/g, " ").trim();
 
-  // --- Dates Od/Do ---
-  // Pattern: "Od (dd/mm/rrrr) ... Do (dd/mm/rrrr)"
-  // or "Od dd/mm/rrrr Do dd/mm/rrrr"
-  // or "w okresie: Od ... Do ..."
+  // --- Nr oświadczenia ---
+  const nrMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
+  if (nrMatch) result.nrOswiadczenia = nrMatch[1].trim();
+
+  // --- Dates Od/Do (sekcja 4 or ewidencja) ---
+  // Format: "Od (dd / mm / rrrr): 11 / 06 / 2026      Do (dd / mm / rrrr): 10 / 06 / 2028"
+  // or:     "Od 11/06/2026 Do 10/06/2028"
   const dateRangeMatch = normalized.match(
-    /[Oo]d\s*[:(]?\s*(\d{1,2}[./]\d{1,2}[./]\d{4})\s*[)]?\s*.*?[Dd]o\s*[:(]?\s*(\d{1,2}[./]\d{1,2}[./]\d{4})/
+    /[Oo]d\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})\s+[Dd]o\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})/
   );
   if (dateRangeMatch) {
     result.dataOd = parseDatePL(dateRangeMatch[1]);
     result.dataDo = parseDatePL(dateRangeMatch[2]);
   }
 
-  // --- Foreigner name ---
-  // Common patterns:
-  // "Dane cudzoziemca: 2.1 ... Nazwisko ..."
-  // "Imię (imiona): ..."
-  // "Nazwisko: ..."
-  const nazwiskoMatch = normalized.match(/[Nn]azwisko[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:[-\s][A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)/);
-  if (nazwiskoMatch) result.nazwisko = nazwiskoMatch[1].trim();
+  // If we found dates from section 4, check if ewidencja has different dates (ewidencja takes priority)
+  const ewidencjaMatch = normalized.match(
+    /ewidencji\s+oświadczeń.*?[Oo]d\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})\s+[Dd]o\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})/i
+  );
+  if (ewidencjaMatch) {
+    result.dataOd = parseDatePL(ewidencjaMatch[1]);
+    result.dataDo = parseDatePL(ewidencjaMatch[2]);
+  }
 
-  const imieMatch = normalized.match(/[Ii]mi[ęe]\s*(?:\(imiona\))?[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:\s+[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?)/);
-  if (imieMatch) result.imie = imieMatch[1].trim();
+  // --- Foreigner name ---
+  // Format: "2.1. Imię / imiona: MAKSIM" or "Imię (imiona): Jan"
+  const imieMatch = normalized.match(/[Ii]mi[ęe]\s*(?:\/\s*imiona|\(imiona\))?[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:[\s-][A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)?)/);
+  if (imieMatch) result.imie = titleCase(imieMatch[1].trim());
+
+  // Format: "2.2. Nazwisko: BORZDOV" or "Nazwisko: Kowalski"
+  const nazwiskoMatch = normalized.match(/2\.2[.\s]*[Nn]azwisko[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:[-\s][A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)*)/);
+  if (nazwiskoMatch) {
+    result.nazwisko = titleCase(nazwiskoMatch[1].trim());
+  } else {
+    // Fallback: any "Nazwisko:" not preceded by section number
+    const fallback = normalized.match(/[Nn]azwisko[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:[-\s][A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)?)/);
+    if (fallback) result.nazwisko = titleCase(fallback[1].trim());
+  }
 
   // --- Date of birth ---
-  const dobMatch = normalized.match(/[Dd]ata\s+urodzenia[:\s]+(\d{1,2}[./]\d{1,2}[./]\d{4})/);
+  // Format: "2.4. Data urodzenia (dd / mm / rrrr): 28 / 08 / 1979"
+  const dobMatch = normalized.match(/[Dd]ata\s+urodzenia\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})/);
   if (dobMatch) result.dataUrodzenia = parseDatePL(dobMatch[1]);
 
   // --- Citizenship ---
-  const obywMatch = normalized.match(/[Oo]bywatelstwo[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:\s+[a-ząćęłńóśźż]+)?)/);
+  // Format: "2.5. Obywatelstwo: Białoruś"
+  const obywMatch = normalized.match(/[Oo]bywatelstwo[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:[\s][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ]+)*)/);
   if (obywMatch) result.obywatelstwo = obywMatch[1].trim();
 
   // --- Passport ---
-  const paszportMatch = normalized.match(/(?:[Nn]umer\s+)?(?:dokumentu\s+podróży|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
+  // Format: "2.7. Seria i numer: PD0347939" or "Numer dokumentu podróży: AB1234567"
+  const paszportMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
   if (paszportMatch) result.nrPaszportu = paszportMatch[1].trim();
 
   // --- Rodzaj pracy (pkt 3.1) ---
-  // "3.1" or "3.1." or "3.1 Rodzaj pracy"
-  const rodzajPracyMatch = normalized.match(/3\.1[.\s)]*(?:[Rr]odzaj\s+pracy[:\s]*)?([\s\S]{3,200}?)(?=3\.2|$)/);
+  // Format: "3.1. Stanowisko / rodzaj pracy wykonywanej przez cudzoziemca: Stworzenie materiałów..."
+  const rodzajPracyMatch = normalized.match(/3\.1[.\s]*(?:Stanowisko\s*\/?\s*)?(?:[Rr]odzaj\s+pracy[^:]*)?[:\s]+(.+?)(?=\s*3\.2\b)/);
   if (rodzajPracyMatch) {
     const cleaned = rodzajPracyMatch[1].replace(/\s+/g, " ").trim();
-    if (cleaned.length > 2 && cleaned.length < 200) result.rodzajPracy = cleaned;
+    if (cleaned.length > 2 && cleaned.length < 300) result.rodzajPracy = cleaned;
   }
 
   // --- Rodzaj umowy (pkt 3.6) ---
-  const rodzajUmowyMatch = normalized.match(/3\.6[.\s)]*(?:[Rr]odzaj\s+umowy[:\s]*)?([\s\S]{3,200}?)(?=3\.7|4\.|$)/);
+  // Format: "3.6. Rodzaj umowy stanowiącej podstawę ... : Umowa o dzieło"
+  const rodzajUmowyMatch = normalized.match(/3\.6[.\s]*(?:[Rr]odzaj\s+umowy[^:]*)?[:\s]+(.+?)(?=\s*3\.7\b)/);
   if (rodzajUmowyMatch) {
     const cleaned = rodzajUmowyMatch[1].replace(/\s+/g, " ").trim();
-    if (cleaned.length > 2 && cleaned.length < 200) result.rodzajUmowy = cleaned;
+    if (cleaned.length > 2 && cleaned.length < 300) result.rodzajUmowy = cleaned;
   }
 
   return result;
@@ -122,8 +144,6 @@ export async function parseOswiadczeniePdf(buffer: ArrayBuffer): Promise<Oswiadc
 
     if (!text || text.length < 20) return null;
 
-    // Try to parse as oświadczenie — even if keyword not found,
-    // still attempt extraction (some PDFs have OCR quirks)
     const result = parseOswiadczenieText(text);
 
     // Return result if anything was extracted
