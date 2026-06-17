@@ -44,23 +44,29 @@ export default async function CalendarPage() {
     ZGLOSZENIE_UA: "Zgłoszenie UA",
   };
 
-  const documentExpiries: { foreignerName: string; typLabel: string; dataDo: Date }[] = [];
+  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: Date; daysLeft: number }[] = [];
 
   for (const f of foreigners) {
     for (const b of f.employmentBases) {
       if (!b.dataDo) continue;
+      const daysLeft = Math.ceil((b.dataDo.getTime() - now.getTime()) / 86400000);
       documentExpiries.push({
         foreignerName: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
         typLabel: TYPE_LABELS[b.typ] ?? b.typ,
+        typ: b.typ,
         dataDo: b.dataDo,
+        daysLeft,
       });
     }
     // Add residence permit expiry
     if (f.decyzjaPobytowaDo && f.decyzjaPobytowaDo >= start && f.decyzjaPobytowaDo <= end) {
+      const daysLeft = Math.ceil((f.decyzjaPobytowaDo.getTime() - now.getTime()) / 86400000);
       documentExpiries.push({
         foreignerName: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
         typLabel: f.typDokumentuPobytowego ?? "Decyzja pobytowa",
+        typ: "DECYZJA_POBYTOWA",
         dataDo: f.decyzjaPobytowaDo,
+        daysLeft,
       });
     }
   }

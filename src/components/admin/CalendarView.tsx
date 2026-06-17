@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction } from "@/lib/fdk-actions";
+import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction, toggleCalendarEventDoneAction } from "@/lib/fdk-actions";
 import {
   ChevronLeft,
   ChevronRight,
@@ -18,6 +18,8 @@ import {
   Clock,
   AlertCircle,
   Eye,
+  Check,
+  Filter,
 } from "lucide-react";
 
 interface CalendarEventData {
@@ -33,13 +35,28 @@ interface CalendarEventData {
   foreignerName: string | null;
   notes: string | null;
   emailSent: boolean;
+  done: boolean;
+  doneAt: Date | null;
   createdAt: Date;
 }
 
 interface DocumentExpiry {
   foreignerName: string;
   typLabel: string;
+  typ: string;
   dataDo: Date;
+  daysLeft: number;
+}
+
+function expiryTooltip(exp: DocumentExpiry): string {
+  const dateStr = new Date(exp.dataDo).toLocaleDateString("pl-PL");
+  if (exp.daysLeft < 0) {
+    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName} — wygasło ${Math.abs(exp.daysLeft)} dni temu (${dateStr})`;
+  }
+  if (exp.daysLeft === 0) {
+    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName} — wygasa DZIŚ (${dateStr})`;
+  }
+  return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName} — za ${exp.daysLeft} dni (${dateStr})`;
 }
 
 interface Props {
@@ -51,26 +68,44 @@ interface Props {
 const TYPE_LABELS: Record<string, string> = {
   OFFICE_VISIT: "Wizyta w urzędzie",
   OFFICE_MEETING: "Spotkanie w biurze",
+  DOCUMENT_EXPIRY: "Koniec dokumentu",
+  WORK_START_REMINDER: "Podjęcie pracy",
+  CONTRACT_REMINDER: "Zgłoszenie umowy",
+  WORK_NOTIFICATION: "Notyfikacja pracy",
   OTHER: "Inne",
 };
 
 const TYPE_COLORS: Record<string, string> = {
   OFFICE_VISIT: "bg-blue-500",
   OFFICE_MEETING: "bg-green-500",
+  DOCUMENT_EXPIRY: "bg-red-500",
+  WORK_START_REMINDER: "bg-orange-500",
+  CONTRACT_REMINDER: "bg-purple-500",
+  WORK_NOTIFICATION: "bg-teal-500",
   OTHER: "bg-gray-500",
 };
 
 const TYPE_BORDER_COLORS: Record<string, string> = {
   OFFICE_VISIT: "border-l-blue-500",
   OFFICE_MEETING: "border-l-green-500",
+  DOCUMENT_EXPIRY: "border-l-red-500",
+  WORK_START_REMINDER: "border-l-orange-500",
+  CONTRACT_REMINDER: "border-l-purple-500",
+  WORK_NOTIFICATION: "border-l-teal-500",
   OTHER: "border-l-gray-500",
 };
 
 const TYPE_BG_LIGHT: Record<string, string> = {
   OFFICE_VISIT: "bg-blue-50 hover:bg-blue-100",
   OFFICE_MEETING: "bg-green-50 hover:bg-green-100",
+  DOCUMENT_EXPIRY: "bg-red-50 hover:bg-red-100",
+  WORK_START_REMINDER: "bg-orange-50 hover:bg-orange-100",
+  CONTRACT_REMINDER: "bg-purple-50 hover:bg-purple-100",
+  WORK_NOTIFICATION: "bg-teal-50 hover:bg-teal-100",
   OTHER: "bg-gray-50 hover:bg-gray-100",
 };
+
+const ALL_EVENT_TYPES = Object.keys(TYPE_LABELS);
 
 const MONTHS_PL = [
   "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
@@ -119,6 +154,8 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const [formError, setFormError] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const dayGridRef = useRef<HTMLDivElement>(null);
+  const [visibleTypes, setVisibleTypes] = useState<Set<string>>(new Set(ALL_EVENT_TYPES));
+  const [showLegend, setShowLegend] = useState(false);
 
   const emptyForm = {
     type: "OFFICE_VISIT" as string,
@@ -165,8 +202,24 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     weekDays.push(new Date(weekStart.getTime() + i * 86400000));
   }
 
+  const toggleTypeFilter = (type: string) => {
+    setVisibleTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  };
+
+  const handleToggleDone = (id: number) => {
+    startTransition(async () => {
+      await toggleCalendarEventDoneAction(id);
+      router.refresh();
+    });
+  };
+
   function getEventsForDay(day: Date) {
-    return events.filter((e) => sameDay(new Date(e.eventDate), day));
+    return events.filter((e) => sameDay(new Date(e.eventDate), day) && visibleTypes.has(e.type));
   }
 
   function getExpiriesForDay(day: Date) {
@@ -345,8 +398,40 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
           >
             <Plus className="h-4 w-4" /> Nowe wydarzenie
           </button>
+          <button
+            type="button"
+            onClick={() => setShowLegend((p) => !p)}
+            className={`rounded-lg border px-3 py-2 text-sm font-medium ${showLegend ? "border-accent bg-accent/10 text-accent" : "border-primary/15 text-primary/60 hover:bg-primary/5"}`}
+          >
+            <Filter className="h-4 w-4" />
+          </button>
         </div>
       </div>
+
+      {/* Legend & Filters */}
+      {showLegend && (
+        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/10 bg-white p-3 shadow-sm">
+          <span className="text-xs font-semibold text-primary/50 mr-1">Filtruj:</span>
+          {ALL_EVENT_TYPES.map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => toggleTypeFilter(type)}
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-opacity ${
+                visibleTypes.has(type) ? "" : "opacity-30"
+              }`}
+            >
+              <span className={`inline-block h-2.5 w-2.5 rounded-full ${TYPE_COLORS[type] ?? "bg-gray-500"}`} />
+              {TYPE_LABELS[type] ?? type}
+            </button>
+          ))}
+          <span className="mx-2 h-4 border-l border-primary/15" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-700">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500" />
+            Koniec dokumentu (expiry)
+          </span>
+        </div>
+      )}
 
       {/* Month View */}
       {view === "month" && (
@@ -393,12 +478,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                       <button
                         key={ev.id}
                         type="button"
-                        className={`w-full truncate rounded px-1.5 py-1 text-[11px] font-medium text-white cursor-pointer text-left transition-opacity ${hoveredEvent === ev.id ? "opacity-80" : ""} ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
-                        title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""} — kliknij aby edytować`}
+                        className={`w-full truncate rounded px-1.5 py-1 text-[11px] font-medium text-white cursor-pointer text-left transition-opacity ${hoveredEvent === ev.id ? "opacity-80" : ""} ${ev.done ? "opacity-50 line-through" : ""} ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
+                        title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""}${ev.done ? " ✓ DONE" : ""} — kliknij aby edytować`}
                         onClick={() => startEditById(ev.id)}
                         onMouseEnter={() => setHoveredEvent(ev.id)}
                         onMouseLeave={() => setHoveredEvent(null)}
                       >
+                        {ev.done && <Check className="inline h-2.5 w-2.5 mr-0.5" />}
                         {ev.eventTime && <span className="opacity-80">{ev.eventTime} </span>}
                         {ev.title}
                       </button>
@@ -416,7 +502,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                       <div
                         key={`exp-${i}`}
                         className="truncate rounded bg-red-100 px-1.5 py-1 text-[11px] font-medium text-red-700"
-                        title={`${exp.foreignerName} — ${exp.typLabel}`}
+                        title={expiryTooltip(exp)}
                       >
                         {exp.foreignerName} — {exp.typLabel}
                       </div>
@@ -453,16 +539,16 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         <button
                           key={ev.id}
                           type="button"
-                          className={`w-full truncate rounded px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-white text-left ${TYPE_COLORS[ev.type] ?? "bg-gray-500"} hover:opacity-80`}
+                          className={`w-full truncate rounded px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-white text-left ${TYPE_COLORS[ev.type] ?? "bg-gray-500"} hover:opacity-80 ${ev.done ? "opacity-50 line-through" : ""}`}
                           onClick={() => startEditById(ev.id)}
-                          title={`${ev.title} — kliknij aby edytować`}
+                          title={`${ev.title}${ev.done ? " ✓ DONE" : ""} — kliknij aby edytować`}
                         >
-                          {ev.title}
+                          {ev.done && <Check className="inline h-2.5 w-2.5 mr-0.5" />}{ev.title}
                         </button>
                       ))}
                       {expiries.map((exp, i) => (
-                        <div key={`exp-${i}`} className="truncate rounded bg-red-100 px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-red-700">
-                          {exp.foreignerName}
+                        <div key={`exp-${i}`} className="truncate rounded bg-red-100 px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-red-700" title={expiryTooltip(exp)}>
+                          {exp.foreignerName} — {exp.typLabel}
                         </div>
                       ))}
                     </div>
@@ -561,12 +647,12 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         <button
                           key={ev.id}
                           type="button"
-                          className={`absolute left-0.5 right-0.5 z-20 rounded border-l-[3px] px-1.5 py-1 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
+                          className={`absolute left-0.5 right-0.5 z-20 rounded border-l-[3px] px-1.5 py-1 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"} ${ev.done ? "opacity-50" : ""}`}
                           style={{ top: `${top}px`, minHeight: `${height}px` }}
                           onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
-                          title={`${ev.title} — kliknij aby edytować`}
+                          title={`${ev.title}${ev.done ? " ✓ DONE" : ""} — kliknij aby edytować`}
                         >
-                          <div className="text-[11px] font-semibold text-primary truncate">{ev.title}</div>
+                          <div className={`text-[11px] font-semibold text-primary truncate ${ev.done ? "line-through" : ""}`}>{ev.done && <Check className="inline h-2.5 w-2.5 mr-0.5" />}{ev.title}</div>
                           <div className="text-[10px] text-primary/50 flex items-center gap-1">
                             <Clock className="h-2.5 w-2.5 inline" />
                             {ev.eventTime}
@@ -598,11 +684,11 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                   key={ev.id}
                   type="button"
                   onClick={() => startEditById(ev.id)}
-                  className={`w-full text-left rounded-lg border-l-4 p-3 transition-colors ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
+                  className={`w-full text-left rounded-lg border-l-4 p-3 transition-colors ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"} ${ev.done ? "opacity-50" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-primary">{ev.title}</span>
+                      <span className={`text-xs font-semibold text-primary ${ev.done ? "line-through" : ""}`}>{ev.done && <Check className="inline h-3 w-3 mr-0.5" />}{ev.title}</span>
                       <span className="text-[10px] text-primary/40">{TYPE_LABELS[ev.type] ?? ev.type}</span>
                     </div>
                     <Pencil className="h-3.5 w-3.5 text-primary/30" />
@@ -611,8 +697,15 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                 </button>
               ))}
               {dayViewExpiries.map((exp, i) => (
-                <div key={`exp-${i}`} className="rounded-lg border-l-4 border-l-red-500 bg-red-50 p-3 text-xs font-medium text-red-700">
-                  {exp.foreignerName} — {exp.typLabel}
+                <div key={`exp-${i}`} className="rounded-lg border-l-4 border-l-red-500 bg-red-50 p-3 text-xs font-medium text-red-700" title={expiryTooltip(exp)}>
+                  <div>{exp.foreignerName} — {exp.typLabel}</div>
+                  <div className="mt-0.5 text-red-600/70 font-normal">
+                    {exp.daysLeft < 0
+                      ? `Wygasło ${Math.abs(exp.daysLeft)} dni temu`
+                      : exp.daysLeft === 0
+                        ? "Wygasa DZIŚ"
+                        : `Pozostało ${exp.daysLeft} dni`}
+                  </div>
                 </div>
               ))}
             </div>
@@ -672,12 +765,12 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                   <button
                     key={ev.id}
                     type="button"
-                    className={`absolute z-20 rounded-lg border-l-4 px-3 py-2 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"}`}
+                    className={`absolute z-20 rounded-lg border-l-4 px-3 py-2 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"} ${ev.done ? "opacity-50" : ""}`}
                     style={{ top: `${top}px`, minHeight: `${height}px`, left: "68px", right: "8px" }}
                     onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="text-sm font-semibold text-primary truncate">{ev.title}</div>
+                      <div className={`text-sm font-semibold text-primary truncate ${ev.done ? "line-through" : ""}`}>{ev.done && <Check className="inline h-3 w-3 mr-0.5" />}{ev.title}</div>
                       <Pencil className="h-3.5 w-3.5 text-primary/30 flex-shrink-0 ml-2" />
                     </div>
                     <div className="text-xs text-primary/50 flex items-center gap-1.5 mt-0.5">
@@ -738,9 +831,9 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               <div>
                 <label className="mb-1 block text-xs font-medium text-primary/60">Typ</label>
                 <select value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))} className={inputCls}>
-                  <option value="OFFICE_VISIT">Wizyta w urzędzie</option>
-                  <option value="OFFICE_MEETING">Spotkanie w biurze</option>
-                  <option value="OTHER">Inne</option>
+                  {ALL_EVENT_TYPES.map((t) => (
+                    <option key={t} value={t}>{TYPE_LABELS[t]}</option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -894,7 +987,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               )}
             </div>
 
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-6 flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={() => { setSelectedEvent(null); handleDelete(selectedEvent.id); }}
@@ -902,13 +995,27 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               >
                 <Trash2 className="h-3.5 w-3.5" /> Usuń
               </button>
-              <button
-                type="button"
-                onClick={() => startEditById(selectedEvent.id)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
-              >
-                <Pencil className="h-4 w-4" /> Edytuj
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => { handleToggleDone(selectedEvent.id); setSelectedEvent(null); }}
+                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium ${
+                    selectedEvent.done
+                      ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+                      : "border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+                  }`}
+                >
+                  <Check className="h-4 w-4" />
+                  {selectedEvent.done ? "Cofnij DONE" : "Oznacz DONE"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startEditById(selectedEvent.id)}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
+                >
+                  <Pencil className="h-4 w-4" /> Edytuj
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { randomUUID } from "crypto";
+import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
 
 /**
  * POST /api/fdk/attachments/upload
@@ -70,5 +71,45 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return NextResponse.json({ ok: true, id: attachment.id });
+  // Auto-extract data from PDF attachments (oświadczenia)
+  let extracted = null;
+  if (typPliku === "pdf") {
+    try {
+      const parsed = await parseOswiadczeniePdf(arrayBuffer);
+      if (parsed) {
+        extracted = parsed;
+
+        // Auto-fill foreigner data if fields are empty
+        const updateData: Record<string, unknown> = {};
+        if (parsed.imie && !foreigner.imie) updateData.imie = parsed.imie;
+        if (parsed.nazwisko && foreigner.nazwisko === "Nowy") updateData.nazwisko = parsed.nazwisko;
+        if (parsed.dataUrodzenia && !foreigner.dataUrodzenia) updateData.dataUrodzenia = new Date(parsed.dataUrodzenia);
+        if (parsed.obywatelstwo && !foreigner.obywatelstwo) updateData.obywatelstwo = parsed.obywatelstwo;
+        if (parsed.nrPaszportu && !foreigner.nrPaszportu) updateData.nrPaszportu = parsed.nrPaszportu;
+
+        if (Object.keys(updateData).length > 0) {
+          await db.fdkForeigner.update({ where: { id: foreignerId }, data: updateData });
+        }
+
+        // Auto-create employment base if dates extracted
+        if (parsed.dataOd || parsed.dataDo) {
+          await db.fdkEmploymentBase.create({
+            data: {
+              foreignerId,
+              typ: "OSWIADCZENIE",
+              status: "BRAK_DANYCH",
+              dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+              dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+              rodzajUmowy: parsed.rodzajUmowy || null,
+              podjeciePracy: parsed.rodzajPracy || null,
+            },
+          });
+        }
+      }
+    } catch (err) {
+      console.error("[fdk/upload] PDF parsing error (non-fatal):", err);
+    }
+  }
+
+  return NextResponse.json({ ok: true, id: attachment.id, extracted });
 }

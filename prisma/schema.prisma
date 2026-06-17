@@ -435,10 +435,19 @@ model FdkEmploymentBase {
   powiadomienieDo    DateTime? @map("powiadomienie_do")
   uchylenie          String?  @db.Text
   startInfo          String?  @map("start_info") @db.Text
+  przedluzenie       Boolean  @default(false)
+  przewidywanaDataPodjecia Boolean @default(false) @map("przewidywana_data_podjecia")
+  przewidywanaDataKomentarz String? @map("przewidywana_data_komentarz") @db.Text
+  reminderDate       DateTime? @map("reminder_date")
+  reminderCalendarEventId Int? @map("reminder_calendar_event_id")
 
   // Oświadczenie
   nrOswiadczenia     String?  @map("nr_oswiadczenia")
-  podjeciePracy      String?  @map("podjecie_pracy")
+  podjeciePracy      String?  @map("podjecie_pracy") /// legacy field
+  podjeciePracyStatus String?  @map("podjecie_pracy_status") /// PODJAL / NIE_PODJAL / null
+  podjeciePracyData  DateTime? @map("podjecie_pracy_data")
+  dataStartu         DateTime? @map("data_startu")
+  oswCalendarEventIds String?  @map("osw_calendar_event_ids") /// comma-separated IDs of calendar events
 
   // Karta pobytu
   urzad              String?
@@ -586,9 +595,13 @@ model FdkNotificationLog {
 // =============================================================================
 
 enum CalendarEventType {
-  OFFICE_VISIT     /// Wizyta w urzędzie
-  OFFICE_MEETING   /// Spotkanie w biurze
-  OTHER            /// Inne
+  OFFICE_VISIT        /// Wizyta w urzędzie
+  OFFICE_MEETING      /// Spotkanie w biurze
+  DOCUMENT_EXPIRY     /// Koniec dokumentu
+  WORK_START_REMINDER /// Przypomnienie o podjęciu pracy
+  CONTRACT_REMINDER   /// Zgłoszenie umowy
+  WORK_NOTIFICATION   /// Notyfikacja podjęcia pracy
+  OTHER               /// Inne
 }
 
 model CalendarEvent {
@@ -605,6 +618,8 @@ model CalendarEvent {
   createdById  String            @map("created_by_id") @db.Uuid
   notes        String?           @db.Text /// Dodatkowe informacje
   emailSent    Boolean           @default(false) @map("email_sent") /// Czy wysłano email do cudzoziemca
+  done         Boolean           @default(false)
+  doneAt       DateTime?         @map("done_at")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

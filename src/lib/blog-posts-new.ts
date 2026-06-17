@@ -15,7 +15,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Jak uzyska\u0107 kart\u0119 pobytu czasowego w Polsce w 2026? Wymagane dokumenty, koszty, czas oczekiwania i najcz\u0119stsze b\u0142\u0119dy. Praktyczny przewodnik od ekspert\u00f3w getpermit.pl.",
     date: "2026-04-15",
-    imageUrl: "/images/blog/karta-pobytu-czasowego.svg",
+    imageUrl: "https://images.unsplash.com/photo-1473163928189-364b2c4e1135?w=1600&q=80",
     imageAlt: "Karta pobytu czasowego w Polsce \u2014 dokumenty i procedura legalizacji pobytu",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -151,7 +151,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Karta sta\u0142ego pobytu daje prawo do bezterminowego zamieszkania w Polsce. Sprawd\u017a warunki, dokumenty i koszty. Poradnik od ekspert\u00f3w getpermit.pl.",
     date: "2026-04-14",
-    imageUrl: "/images/blog/karta-stalego-pobytu.svg",
+    imageUrl: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?w=1600&q=80",
     imageAlt: "Karta sta\u0142ego pobytu w Polsce \u2014 procedura uzyskania dokumentu pobytowego",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -266,7 +266,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "EU Blue Card po zmianach od 2025. Kto mo\u017ce uzyska\u0107 Niebiesk\u0105 Kart\u0119 UE w Polsce? Wymagania, dokumenty, koszty i korzy\u015bci mobilno\u015bci w UE. Poradnik getpermit.pl.",
     date: "2026-04-13",
-    imageUrl: "/images/blog/niebieska-karta-ue.svg",
+    imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80",
     imageAlt: "EU Blue Card \u2014 Niebieska Karta UE dla specjalist\u00f3w w Polsce",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -388,7 +388,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Od 2026 wnioski o kart\u0119 pobytu sk\u0142adasz przez MOS (Modu\u0142 Obs\u0142ugi Spraw). Jak za\u0142o\u017cy\u0107 konto, wype\u0142ni\u0107 e-wniosek i unikn\u0105\u0107 b\u0142\u0119d\u00f3w. Poradnik getpermit.pl.",
     date: "2026-04-12",
-    imageUrl: "/images/blog/wnioski-mos.svg",
+    imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80",
     imageAlt: "System MOS \u2014 sk\u0142adanie wniosk\u00f3w pobytowych online w Polsce 2026",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
     toc: [
@@ -509,7 +509,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     description:
       "Aktualne koszty karty pobytu w 2026 roku: opłaty skarbowe, wydanie karty, tłumaczenia przysięgłe i pomoc prawna. Cennik i kalkulator kosztów od getpermit.pl.",
     date: "2026-04-11",
-    imageUrl: "/images/blog/ile-kosztuje-karta-pobytu.svg",
+    imageUrl: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&q=80",
     imageAlt: "Koszty karty pobytu w Polsce 2026 — cennik opłat urzędowych",
     author: "Grzegorz Stępień, UTM Group",
     toc: [
@@ -527,6 +527,392 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — 250 zł (ok. 15 min, w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na konsultację</a>.</p>` },
       { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
       { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div>` },
+    ],
+  },
+
+  // =========================================================================
+  // POST 01: Wnioski pobytowe tylko przez MOS od 27.04.2026
+  // =========================================================================
+  {
+    slug: "wnioski-pobytowe-tylko-przez-mos-od-27-kwietnia-2026",
+    title: "Od 27 kwietnia 2026 wnioski pobytowe wyłącznie online przez MOS — papierowe nie będą rozpatrywane",
+    description: "Od 27.04.2026 wnioski o pobyt czasowy, stały i rezydenta UE składa się tylko elektronicznie przez system MOS. Sprawdź, co z wnioskami papierowymi.",
+    date: "2026-06-01",
+    imageUrl: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=1600&q=80",
+    imageAlt: "Laptop z otwartym formularzem online — elektroniczne wnioski pobytowe MOS",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "nowa-procedura", title: "Rewolucja w legalizacji pobytu" },
+      { id: "wnioski-papierowe", title: "Co z wnioskami papierowymi" },
+      { id: "jak-dziala", title: "Jak działa nowa procedura" },
+      { id: "praktyka", title: "Co to oznacza w praktyce" },
+    ],
+    sections: [
+      {
+        id: "nowa-procedura",
+        heading: "Od 27 kwietnia 2026 wnioski pobytowe wyłącznie online przez MOS",
+        content: `<p>Rewolucja w legalizacji pobytu stała się faktem. Od 27 kwietnia 2026 r. wnioski o zezwolenie na pobyt czasowy, pobyt stały oraz pobyt rezydenta długoterminowego UE można składać <strong>wyłącznie elektronicznie</strong> — przez system MOS (Moduł Obsługi Spraw).</p>`,
+      },
+      {
+        id: "wnioski-papierowe",
+        heading: "Co z wnioskami papierowymi?",
+        content: `<p>Wnioski papierowe, które nie wpłynęły do urzędów wojewódzkich przed 27 kwietnia 2026 r., <strong>nie są rozpatrywane</strong> — niezależnie od daty nadania na poczcie. Jeśli wysłałeś wniosek papierowy w ostatnich dniach kwietnia, koniecznie zweryfikuj jego status.</p>`,
+      },
+      {
+        id: "jak-dziala",
+        heading: "Jak działa nowa procedura?",
+        content: `<p>Cudzoziemiec zakłada bezpłatne konto w MOS, wypełnia e-wniosek, dołącza skany dokumentów i fotografię cyfrową. Jedyne koszty to opłata skarbowa (zależna od typu zezwolenia) oraz 100 zł za wydanie karty pobytu. W procedurach związanych z pracą system angażuje także pracodawcę — na jego adres e-mail trafia indywidualny link do elektronicznego podpisania dokumentów.</p><p>Więcej o systemie: <a href="/pl/blog/wnioski-pobytowe-mos-2026">Wnioski pobytowe online przez MOS w 2026</a>.</p>`,
+      },
+      {
+        id: "praktyka",
+        heading: "Co to oznacza w praktyce?",
+        content: `<p>Koniec kolejek przed urzędami i wniosków wysyłanych „na ostatnią chwilę" listem poleconym. Ale też nowe ryzyka: błędy w e-wniosku, problemy z podpisem elektronicznym pracodawcy czy brakujące załączniki mogą opóźnić wszczęcie postępowania.</p><p><strong>Potrzebujesz pomocy ze złożeniem wniosku w MOS? Umów konsultację z getpermit.pl — przeprowadzimy Cię przez całą procedurę.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 02: Rok nowej ustawy o zatrudnianiu cudzoziemców
+  // =========================================================================
+  {
+    slug: "rok-nowej-ustawy-o-zatrudnianiu-cudzoziemcow",
+    title: "Rok nowej ustawy o zatrudnianiu cudzoziemców — co się realnie zmieniło?",
+    description: "1 czerwca 2025 weszła w życie ustawa o warunkach dopuszczalności powierzania pracy cudzoziemcom. Podsumowujemy 12 miesięcy: elektronizacja, koniec testu rynku pracy, nowe obowiązki.",
+    date: "2026-06-02",
+    imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600&q=80",
+    imageAlt: "Uścisk dłoni pracodawcy i pracownika — zatrudnianie cudzoziemców po nowej ustawie",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "elektronizacja", title: "Pełna elektronizacja przez praca.gov.pl" },
+      { id: "koniec-testu", title: "Koniec testu rynku pracy" },
+      { id: "obowiazki", title: "Nowe obowiązki informacyjne" },
+      { id: "bilans", title: "Bilans dla pracodawców i cudzoziemców" },
+    ],
+    sections: [
+      {
+        id: "elektronizacja",
+        heading: "Pełna elektronizacja przez praca.gov.pl",
+        content: `<p>1 czerwca 2025 r. weszła w życie ustawa z 20 marca 2025 r. o warunkach dopuszczalności powierzania pracy cudzoziemcom na terytorium RP. Po dwunastu miesiącach widać, jak głęboko zmieniła rynek legalizacji pracy.</p><p>Oświadczenia o powierzeniu pracy, wnioski o zezwolenia na pracę (w tym sezonowe) i wszystkie dokumenty składa się wyłącznie elektronicznie przez portal praca.gov.pl. Dokumenty złożone w innej formie są odrzucane.</p>`,
+      },
+      {
+        id: "koniec-testu",
+        heading: "Koniec testu rynku pracy",
+        content: `<p>Zniesiono informację starosty — pracodawca nie musi już udowadniać, że nie znalazł pracownika lokalnie. To skróciło procedury o tygodnie, choć urzędy zyskały nowe narzędzia weryfikacji fikcyjnego zatrudnienia.</p>`,
+      },
+      {
+        id: "obowiazki",
+        heading: "Nowe obowiązki informacyjne",
+        content: `<p>Pracodawca musi w określonych terminach informować urząd o rozpoczęciu i zakończeniu pracy cudzoziemca. Zgłoszenie wcześniejszego zakończenia pracy unieważnia oświadczenie. Za uchybienia grożą realne kary.</p>`,
+      },
+      {
+        id: "bilans",
+        heading: "Bilans dla pracodawców i cudzoziemców",
+        content: `<p>Procedury są szybsze i tańsze logistycznie, ale wymagają dyscypliny cyfrowej: profil na praca.gov.pl, podpis elektroniczny i pilnowanie terminów to dziś podstawa legalnego zatrudnienia.</p><p><strong>Zatrudniasz cudzoziemców? getpermit.pl poprowadzi cały proces — od oświadczenia po kartę pobytu pracownika.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 03: Opłata 400 zł za oświadczenia i zezwolenia
+  // =========================================================================
+  {
+    slug: "oplata-400-zl-oswiadczenia-zezwolenia-na-prace",
+    title: "400 zł zamiast 100 zł — opłaty za legalizację pracy cudzoziemców po podwyżce",
+    description: "Od 1 grudnia 2025 opłata za oświadczenie o powierzeniu pracy i wnioski o zezwolenie na pracę wzrosła ze 100 do 400 zł. Sprawdź aktualny cennik.",
+    date: "2026-06-03",
+    imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1600&q=80",
+    imageAlt: "Kalkulator i dokumenty — wyższe opłaty za legalizację pracy cudzoziemców",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "co-podrozalo", title: "Co podrożało" },
+      { id: "kto-ponosi", title: "Kto ponosi koszt" },
+      { id: "jak-ograniczyc", title: "Jak ograniczyć wydatki" },
+    ],
+    sections: [
+      {
+        id: "co-podrozalo",
+        heading: "Co podrożało od 1 grudnia 2025?",
+        content: `<p>Od 1 grudnia 2025 r. obowiązują rozporządzenia podnoszące opłaty za dokumenty legalizujące pracę cudzoziemców. Opłata za złożenie oświadczenia o powierzeniu wykonywania pracy cudzoziemcowi oraz za wnioski o wydanie zezwolenia na pracę wzrosła <strong>ze 100 zł do 400 zł</strong>. Opłatę wnosi się na konto właściwego powiatowego urzędu pracy.</p>`,
+      },
+      {
+        id: "kto-ponosi",
+        heading: "Kto ponosi koszt?",
+        content: `<p>Opłaty obciążają pracodawcę — przepisy zabraniają przenoszenia kosztów legalizacji pracy na cudzoziemca. Próby potrącania tych kwot z wynagrodzenia pracownika to naruszenie przepisów i ryzyko kar.</p>`,
+      },
+      {
+        id: "jak-ograniczyc",
+        heading: "Jak ograniczyć wydatki?",
+        content: `<p>Czterokrotnie wyższa stawka oznacza, że błędy formalne kosztują realne pieniądze. Odrzucone oświadczenie z powodu braków to konieczność ponownej opłaty. Warto: weryfikować dane przed wysyłką w praca.gov.pl, wybierać właściwy typ dokumentu (oświadczenie vs zezwolenie) i planować zatrudnienie z wyprzedzeniem.</p><p><strong>Nie chcesz płacić podwójnie za błędy we wnioskach? Zespół getpermit.pl przygotuje dokumenty poprawnie za pierwszym razem.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 04: Gruzja poza procedurą oświadczeniową
+  // =========================================================================
+  {
+    slug: "gruzja-poza-procedura-oswiadczeniowa",
+    title: "Obywatele Gruzji bez oświadczeń — jak legalnie zatrudnić Gruzina w 2026 roku?",
+    description: "Od 1 grudnia 2025 Gruzja została wykreślona z procedury oświadczeniowej. Obywatele Gruzji potrzebują zezwolenia na pracę. Sprawdź przepisy przejściowe.",
+    date: "2026-06-04",
+    imageUrl: "https://images.unsplash.com/photo-1565008576549-57569a49371d?w=1600&q=80",
+    imageAlt: "Tbilisi, Gruzja — zmiana zasad zatrudniania obywateli Gruzji w Polsce",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "co-sie-zmienilo", title: "Co się zmieniło" },
+      { id: "przepisy-przejsciowe", title: "Przepisy przejściowe" },
+      { id: "co-powinien-pracodawca", title: "Co powinien zrobić pracodawca" },
+    ],
+    sections: [
+      {
+        id: "co-sie-zmienilo",
+        heading: "Co się zmieniło od 1 grudnia 2025?",
+        content: `<p>Od 1 grudnia 2025 r. Gruzja nie figuruje już na liście państw objętych uproszczoną procedurą oświadczeniową. Dotychczas obywatele Gruzji — obok obywateli Ukrainy, Białorusi, Mołdawii i Armenii — mogli pracować na podstawie oświadczenia o powierzeniu pracy rejestrowanego w kilka dni. Po zmianie rozporządzeń z listopada 2025 r. ich zatrudnienie wymaga <strong>zezwolenia na pracę</strong> lub zezwolenia na pobyt i pracę.</p>`,
+      },
+      {
+        id: "przepisy-przejsciowe",
+        heading: "Przepisy przejściowe",
+        content: `<p>Oświadczenia uzyskane dla obywateli Gruzji przed 1 grudnia 2025 r. zachowują ważność — praca na ich podstawie jest legalna do końca okresu wskazanego w dokumencie. Po jego upływie konieczne jest już zezwolenie.</p>`,
+      },
+      {
+        id: "co-powinien-pracodawca",
+        heading: "Co powinien zrobić pracodawca?",
+        content: `<p>Zaplanować procedurę z wyprzedzeniem: postępowanie o zezwolenie na pracę trwa dłużej niż rejestracja oświadczenia, a wniosek składa się elektronicznie przez praca.gov.pl (opłata 400 zł). Pracownikom z kończącymi się oświadczeniami warto od razu wszcząć procedurę pobytowo-pracowniczą przez <a href="/pl/blog/wnioski-pobytowe-mos-2026">MOS</a>.</p><p><strong>Zatrudniasz obywateli Gruzji? Sprawdzimy ich sytuację i poprowadzimy właściwą procedurę — umów konsultację z getpermit.pl.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 05: EES w pełni działa od 10.04.2026
+  // =========================================================================
+  {
+    slug: "ees-system-wjazdu-wyjazdu-w-pelni-dziala",
+    title: "EES działa w pełni — koniec stempli w paszportach. Co musi wiedzieć cudzoziemiec w Polsce?",
+    description: "Od 10 kwietnia 2026 system EES działa na wszystkich granicach zewnętrznych Schengen. Biometria zamiast stempli i automatyczne liczenie 90/180 dni.",
+    date: "2026-06-05",
+    imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1600&q=80",
+    imageAlt: "Kontrola graniczna na lotnisku — system EES rejestruje wjazdy i wyjazdy ze strefy Schengen",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "jak-dziala-ees", title: "Jak działa EES" },
+      { id: "liczenie-90-180", title: "Automatyczne liczenie 90/180" },
+      { id: "posiadacze-kart", title: "Co z posiadaczami kart pobytu" },
+    ],
+    sections: [
+      {
+        id: "jak-dziala-ees",
+        heading: "Jak działa EES?",
+        content: `<p>Unijny system wjazdu/wyjazdu (EES), uruchamiany etapami od 12 października 2025 r., od 10 kwietnia 2026 r. działa w pełnym zakresie na granicach zewnętrznych strefy Schengen — także na polskich przejściach granicznych i lotniskach.</p><p>System elektronicznie rejestruje każde przekroczenie granicy zewnętrznej przez obywatela państwa trzeciego podróżującego na pobyt krótkoterminowy: dane paszportowe, odciski palców i wizerunek twarzy. Tradycyjne stemple w paszportach odeszły do historii.</p>`,
+      },
+      {
+        id: "liczenie-90-180",
+        heading: "Automatyczne liczenie 90/180",
+        content: `<p>EES sam wylicza wykorzystanie limitu 90 dni pobytu w okresie 180 dni. Przekroczenia, które wcześniej bywały niezauważone, system wychwytuje automatycznie — a wpis o overstay widzą służby graniczne wszystkich państw członkowskich.</p>`,
+      },
+      {
+        id: "posiadacze-kart",
+        heading: "Co z posiadaczami kart pobytu?",
+        content: `<p>Cudzoziemcy posiadający polską kartę pobytu lub wizę długoterminową <strong>nie podlegają rejestracji w EES</strong> — system dotyczy pobytów krótkoterminowych. To kolejny argument, by uporządkować swój status pobytowy zamiast funkcjonować na ruchu bezwizowym.</p><p><strong>Kończy Ci się limit 90/180? Pomożemy zalegalizować pobyt długoterminowo — umów konsultację z getpermit.pl.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 06: ETIAS od końca 2026
+  // =========================================================================
+  {
+    slug: "etias-od-konca-2026-co-musisz-wiedziec",
+    title: "ETIAS od końca 2026 — autoryzacja podróży za 20 euro. Kogo dotyczy?",
+    description: "W IV kwartale 2026 rusza ETIAS — elektroniczna autoryzacja podróży dla obywateli 59 państw bezwizowych. Opłata 20 euro, ważność 3 lata, okres przejściowy.",
+    date: "2026-06-06",
+    imageUrl: "https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=1600&q=80",
+    imageAlt: "Paszport i dokumenty podróżne — autoryzacja ETIAS dla podróżnych bezwizowych do UE",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "kogo-obejmie", title: "Kogo obejmie ETIAS" },
+      { id: "koszt-waznosc", title: "Koszt i ważność" },
+      { id: "wylaczenia", title: "Wyłączenia i okres przejściowy" },
+    ],
+    sections: [
+      {
+        id: "kogo-obejmie",
+        heading: "Kogo obejmie ETIAS?",
+        content: `<p>W czwartym kwartale 2026 r. ma ruszyć ETIAS — europejski system informacji o podróży i zezwoleń na podróż. Obejmie obywateli 59 państw i terytoriów zwolnionych z obowiązku wizowego — w tym Ukrainy, Gruzji czy Wielkiej Brytanii — podróżujących do 30 państw europejskich na pobyty do 90 dni w okresie 180 dni.</p>`,
+      },
+      {
+        id: "koszt-waznosc",
+        heading: "Ile kosztuje i jak długo jest ważna?",
+        content: `<p>Opłata wynosi <strong>20 euro</strong> (Komisja Europejska podniosła ją w lipcu 2025 r. z planowanych 7 euro). Autoryzacja będzie ważna 3 lata lub do końca ważności paszportu. Zwolnione z opłaty są osoby poniżej 18. i powyżej 70. roku życia.</p>`,
+      },
+      {
+        id: "wylaczenia",
+        heading: "Okres przejściowy i wyłączenia",
+        content: `<p>Po starcie przewidziano co najmniej 6-miesięczny okres przejściowy, w którym autoryzacja będzie fakultatywna. ETIAS <strong>nie dotyczy</strong> posiadaczy kart pobytu i wiz długoterminowych — osoby z uregulowanym statusem w Polsce podróżują bez autoryzacji.</p><p><strong>Masz wątpliwości, czy ETIAS obejmie Ciebie lub Twoich pracowników? Zapytaj ekspertów getpermit.pl.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 07: Niebieska Karta UE — nowy próg wynagrodzenia
+  // =========================================================================
+  {
+    slug: "niebieska-karta-ue-nowy-prog-wynagrodzenia-2026",
+    title: "Niebieska Karta UE w 2026 — nowy próg wynagrodzenia 13 355,34 zł brutto",
+    description: "Od 2026 próg wynagrodzenia dla Blue Card w Polsce wynosi 13 355,34 zł brutto. Sprawdź nowe wymagania: umowa od 6 miesięcy i uznanie doświadczenia zawodowego.",
+    date: "2026-06-08",
+    imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80",
+    imageAlt: "Nowoczesny biurowiec — Niebieska Karta UE dla wysoko wykwalifikowanych specjalistów",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "nowy-prog", title: "Nowy próg 13 355,34 zł brutto" },
+      { id: "lagodniejsze-warunki", title: "Łagodniejsze pozostałe warunki" },
+      { id: "dlaczego-warto", title: "Dlaczego warto ubiegać się o Blue Card" },
+    ],
+    sections: [
+      {
+        id: "nowy-prog",
+        heading: "Nowy próg: 13 355,34 zł brutto",
+        content: `<p>Specjaliści ubiegający się o Niebieską Kartę UE w Polsce muszą w 2026 r. wykazać wyższe wynagrodzenie. Zgodnie z komunikatem GUS z 9 lutego 2026 r. przeciętne wynagrodzenie w gospodarce narodowej w 2025 r. wyniosło 8 903,56 zł brutto. Próg dla Blue Card to 150% tej kwoty — w postępowaniach wszczętych w 2026 r. wynagrodzenie musi wynosić co najmniej <strong>13 355,34 zł brutto miesięcznie</strong>.</p>`,
+      },
+      {
+        id: "lagodniejsze-warunki",
+        heading: "Łagodniejsze pozostałe warunki",
+        content: `<p>Po wdrożeniu nowej dyrektywy Blue Card procedura została częściowo ujednolicona w całej UE: wystarczy umowa zawarta na <strong>co najmniej 6 miesięcy</strong> (wcześniej 12), a w niektórych zawodach — zwłaszcza IT — wyższe kwalifikacje można wykazać <strong>doświadczeniem zawodowym</strong> zamiast dyplomem uczelni. Więcej o Blue Card: <a href="/pl/blog/niebieska-karta-ue-blue-card-2026">Niebieska Karta UE w Polsce 2026</a>.</p>`,
+      },
+      {
+        id: "dlaczego-warto",
+        heading: "Dlaczego warto ubiegać się o Blue Card?",
+        content: `<p>Blue Card daje szybszą ścieżkę do statusu rezydenta długoterminowego UE, ułatwioną mobilność do innych państw członkowskich i korzystniejsze zasady łączenia rodzin. Kartę wydaje się maksymalnie na 3 lata z możliwością przedłużenia.</p><p><strong>Spełniasz warunki Blue Card? Sprawdzimy Twoją sytuację i poprowadzimy wniosek w MOS — umów konsultację z getpermit.pl.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 08: Jednolite zezwolenie — dyrektywa single permit 2024/1233
+  // =========================================================================
+  {
+    slug: "jednolite-zezwolenie-dyrektywa-single-permit-2026",
+    title: "Jednolite zezwolenie na pobyt i pracę po dyrektywie single permit — co zmienia się od 22 maja 2026?",
+    description: "Od 22.05.2026 Polska stosuje nową dyrektywę single permit 2024/1233. Jednolite zezwolenie na pobyt i pracę — krótsze terminy, rozszerzone prawa pracownicze i nowe obowiązki.",
+    date: "2026-06-09",
+    imageUrl: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1600&q=80",
+    imageAlt: "Podpisywanie umowy — jednolite zezwolenie na pobyt i pracę, dyrektywa single permit 2024/1233",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "czym-jest-single", title: "Czym jest single permit" },
+      { id: "co-zmienia-dyrektywa", title: "Co zmienia dyrektywa 2024/1233" },
+      { id: "terminy", title: "Krótsze terminy rozpatrywania" },
+      { id: "prawa-pracownika", title: "Prawa pracownika" },
+      { id: "praktyczne-skutki", title: "Praktyczne skutki dla pracodawców" },
+    ],
+    sections: [
+      {
+        id: "czym-jest-single",
+        heading: "Czym jest jednolite zezwolenie na pobyt i pracę (single permit)?",
+        content: `<p>Jednolite zezwolenie (single permit) to jeden dokument — karta pobytu — łączący prawo do zamieszkania i pracy w Polsce. Zastępuje osobne procedury: zezwolenie na pobyt i oddzielne zezwolenie na pracę. Od 22 maja 2026 r. Polska stosuje znowelizowaną dyrektywę 2024/1233, aktualizującą wcześniejszą dyrektywę 2011/98/UE.</p>`,
+      },
+      {
+        id: "co-zmienia-dyrektywa",
+        heading: "Co zmienia dyrektywa 2024/1233?",
+        content: `<ul><li><strong>Ujednolicone okienko</strong> — jeden organ prowadzi całą procedurę pobytowo-pracowniczą</li><li><strong>Uproszczony dostęp do informacji</strong> — cudzoziemiec musi otrzymać pisemne wyjaśnienie o przysługujących mu prawach</li><li><strong>Równe traktowanie</strong> — pracownicy z single permit mają takie same prawa do szkoleń, urlopów i świadczeń jak obywatele UE</li><li><strong>Ochrona przed nadużyciami</strong> — pracodawca nie może uzależniać kontynuacji pracy od nieudzielenia informacji o warunkach zatrudnienia</li></ul>`,
+      },
+      {
+        id: "terminy",
+        heading: "Krótsze terminy rozpatrywania",
+        content: `<p>Dyrektywa 2024/1233 zobowiązuje państwa członkowskie do rozpatrzenia wniosków o single permit w ciągu <strong>90 dni</strong> od dnia złożenia kompletnej dokumentacji. W Polsce termin ustawowy wynosił dotychczas 1 miesiąc (z możliwością przedłużenia do 2), ale w praktyce urzędy często go przekraczały. Nowe przepisy wzmacniają uprawnienia do składania ponagleń.</p>`,
+      },
+      {
+        id: "prawa-pracownika",
+        heading: "Prawa pracownika z single permit",
+        content: `<p>Posiadacze jednolitego zezwolenia mają prawo do:</p><ul><li>Takiego samego wynagrodzenia jak pracownicy krajowi na tym samym stanowisku</li><li>Swobody zrzeszania się w związkach zawodowych</li><li>Urlopu wypoczynkowego i zwolnień lekarskich na takich samych zasadach</li><li>Przeniesienia do innego pracodawcy po spełnieniu warunków zezwolenia</li></ul>`,
+      },
+      {
+        id: "praktyczne-skutki",
+        heading: "Praktyczne skutki dla pracodawców",
+        content: `<p>Pracodawca musi zadbać o to, by cudzoziemiec z single permit nie był dyskryminowany w zakresie wynagrodzenia i warunków pracy. Obowiązuje też zakaz pobierania od pracownika opłat za koszty rekrutacji i legalizacji. Naruszenie tych zasad może skutkować karami finansowymi i utratą możliwości zatrudniania cudzoziemców.</p><p><strong>Masz pytania dotyczące jednolitego zezwolenia po zmianach? Skontaktuj się z getpermit.pl — doradzimy pracodawcom i pracownikom.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 09: Płaca minimalna 2026 a legalizacja pracy cudzoziemców
+  // =========================================================================
+  {
+    slug: "placa-minimalna-2026-a-legalizacja-pracy-cudzoziemcow",
+    title: "Płaca minimalna 4806 zł w 2026 — jak zmiana wpływa na legalizację pracy cudzoziemców",
+    description: "Od 1 stycznia 2026 minimalne wynagrodzenie wynosi 4806 zł brutto (31,40 zł/h). Sprawdź, jak zmiana płacy minimalnej wpływa na oświadczenia i zezwolenia na pracę.",
+    date: "2026-06-10",
+    imageUrl: "https://images.unsplash.com/photo-1579621970795-87facc2f976d?w=1600&q=80",
+    imageAlt: "Banknoty i dokumenty — płaca minimalna 4806 zł a legalizacja pracy cudzoziemców w 2026",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "aktualne-stawki", title: "Aktualne stawki od 1 stycznia 2026" },
+      { id: "wplyw-na-oswiadczenia", title: "Wpływ na oświadczenia o powierzeniu pracy" },
+      { id: "wplyw-na-zezwolenia", title: "Wpływ na zezwolenia na pracę" },
+      { id: "obowiazki-pracodawcy", title: "Obowiązki pracodawcy" },
+    ],
+    sections: [
+      {
+        id: "aktualne-stawki",
+        heading: "Aktualne stawki od 1 stycznia 2026",
+        content: `<p>Od 1 stycznia 2026 r. obowiązuje minimalne wynagrodzenie za pracę w wysokości <strong>4806 zł brutto</strong> miesięcznie oraz minimalna stawka godzinowa <strong>31,40 zł brutto</strong>. Wzrost o ponad 5% w stosunku do 2025 r. przekłada się bezpośrednio na warunki legalizacji pracy cudzoziemców.</p>`,
+      },
+      {
+        id: "wplyw-na-oswiadczenia",
+        heading: "Wpływ na oświadczenia o powierzeniu pracy",
+        content: `<p>Oświadczenie o powierzeniu pracy musi wskazywać wynagrodzenie co najmniej równe minimalnemu. Jeśli wcześniej złożone oświadczenie wskazuje wynagrodzenie niższe niż 4806 zł brutto, może to prowadzić do problemów podczas kontroli PIP. Pracodawcy powinni aktualizować warunki zatrudnienia aneksem lub nowym oświadczeniem.</p>`,
+      },
+      {
+        id: "wplyw-na-zezwolenia",
+        heading: "Wpływ na zezwolenia na pracę",
+        content: `<p>Zezwolenie na pracę wydawane jest na konkretne stanowisko i wynagrodzenie. Jeśli wynagrodzenie wskazane w zezwoleniu jest niższe od obowiązującego minimum, pracodawca zobowiązany jest do wypłacania pracownikowi co najmniej minimalnej stawki. Przy składaniu nowych wniosków należy od razu wskazywać wynagrodzenie ≥ 4806 zł brutto.</p>`,
+      },
+      {
+        id: "obowiazki-pracodawcy",
+        heading: "Obowiązki pracodawcy",
+        content: `<p>Pracodawca zatrudniający cudzoziemca nie może wypłacać wynagrodzenia niższego od ustawowego minimum, niezależnie od tego, co wskazuje oświadczenie lub zezwolenie. Niedostosowanie warunków grozi:</p><ul><li>Karą grzywny za naruszenie przepisów o minimalnym wynagrodzeniu</li><li>Cofnięciem zezwolenia na pracę</li><li>Wpisem na listę podmiotów z ograniczeniami w zatrudnianiu cudzoziemców</li></ul><p><strong>Chcesz upewnić się, że Twoje dokumenty pracownicze są zgodne z aktualnymi przepisami? Skonsultuj się z getpermit.pl.</strong></p>`,
+      },
+    ],
+  },
+
+  // =========================================================================
+  // POST 10: Pracodawca w systemie MOS — podpis elektroniczny
+  // =========================================================================
+  {
+    slug: "pracodawca-w-systemie-mos-podpis-elektroniczny",
+    title: "Pracodawca w systemie MOS — jak podpisać wniosek elektronicznie i co to jest link pracowniczy",
+    description: "Od 27.04.2026 pracodawca uczestniczy w procedurze MOS przez e-mail i podpis elektroniczny. Jak działa system, co podpisuje pracodawca i jakie grożą kary za odmowę.",
+    date: "2026-06-11",
+    imageUrl: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1600&q=80",
+    imageAlt: "Laptop i podpis elektroniczny — pracodawca w systemie MOS przy legalizacji pracy cudzoziemca",
+    author: "Zespół getpermit.pl",
+    toc: [
+      { id: "jak-dziala-link", title: "Jak działa link pracodawcy w MOS" },
+      { id: "co-podpisuje", title: "Co podpisuje pracodawca" },
+      { id: "podpis-elektroniczny", title: "Wymagany podpis elektroniczny" },
+      { id: "co-jesli-odmowa", title: "Co jeśli pracodawca odmówi" },
+    ],
+    sections: [
+      {
+        id: "jak-dziala-link",
+        heading: "Jak działa link pracodawcy w systemie MOS?",
+        content: `<p>W procedurach związanych z legalizacją pracy przez system MOS pracodawca jest aktywnym uczestnikiem — nie tylko wystawia dokumenty, ale musi potwierdzić swój udział elektronicznie. Gdy cudzoziemiec złoży wniosek w MOS, system automatycznie generuje <strong>indywidualny link</strong> i wysyła go na adres e-mail pracodawcy wskazany we wniosku. Pod tym linkiem pracodawca loguje się na swoje konto i podpisuje wymagane dokumenty.</p>`,
+      },
+      {
+        id: "co-podpisuje",
+        heading: "Co podpisuje pracodawca?",
+        content: `<p>W zależności od rodzaju procedury pracodawca potwierdza elektronicznie:</p><ul><li>Treść oświadczenia o powierzeniu pracy — zgodność danych z umową i rzeczywistymi warunkami zatrudnienia</li><li>Załącznik nr 1 do wniosku o zezwolenie na pobyt i pracę — dane pracodawcy i warunki zatrudnienia</li><li>Zobowiązanie do zatrudnienia cudzoziemca na warunkach wskazanych we wniosku</li></ul>`,
+      },
+      {
+        id: "podpis-elektroniczny",
+        heading: "Wymagany podpis elektroniczny",
+        content: `<p>System MOS akceptuje następujące formy podpisu pracodawcy:</p><ul><li><strong>Profil Zaufany</strong> — bezpłatny podpis elektroniczny potwierdzony przez ePUAP, dostępny przez e-banking lub dowód osobisty z chipem</li><li><strong>Kwalifikowany podpis elektroniczny</strong> — płatna usługa certyfikowanych dostawców (np. Certum, Autenti), równoważna podpisowi własnoręcznemu</li></ul><p>Pracodawca musi posiadać konto w MOS lub zarejestrować się przed podpisaniem. Czas na podpisanie dokumentów jest ograniczony — zwykle 7-14 dni od wysłania linku.</p>`,
+      },
+      {
+        id: "co-jesli-odmowa",
+        heading: "Co jeśli pracodawca odmówi podpisania lub nie zareaguje?",
+        content: `<p>Brak podpisu pracodawcy w wyznaczonym terminie powoduje <strong>zawieszenie lub umorzenie postępowania</strong>. Oznacza to, że wniosek cudzoziemca nie będzie rozpatrywany do czasu uzupełnienia brakującego elementu. Pracodawca, który systematycznie odmawia udziału w procedurach MOS, może zostać wpisany na listę podmiotów z ograniczeniami w zatrudnianiu cudzoziemców.</p><p><strong>Potrzebujesz pomocy z rejestracją pracodawcy w MOS lub podpisem elektronicznym? Nasz zespół przeprowadzi Cię przez cały proces — skontaktuj się z getpermit.pl.</strong></p>`,
+      },
     ],
   },
 

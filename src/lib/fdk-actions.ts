@@ -31,22 +31,50 @@ const foreignerSchema = z.object({
   typDokumentuPobytowego: z.string().trim().max(255).optional().or(z.literal("")),
 });
 
+const optStr = z.string().optional().or(z.literal(""));
+const optDate = z.string().optional().or(z.literal(""));
+
 const employmentBaseSchema = z.object({
   foreignerId: z.number().int(),
   typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA"]),
   status: z.enum(["AKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
-  rodzajUmowy: z.string().optional().or(z.literal("")),
-  dataOd: z.string().optional().or(z.literal("")),
-  dataDo: z.string().optional().or(z.literal("")),
-  firma: z.string().optional().or(z.literal("")),
-  nrDecyzji: z.string().optional().or(z.literal("")),
-  wezwanieBraki: z.string().optional().or(z.literal("")),
-  nrOswiadczenia: z.string().optional().or(z.literal("")),
-  urzad: z.string().optional().or(z.literal("")),
-  rodzajSprawy: z.string().optional().or(z.literal("")),
-  sygnatura: z.string().optional().or(z.literal("")),
-  stanowisko: z.string().optional().or(z.literal("")),
-  uwagi: z.string().optional().or(z.literal("")),
+  // Wspólne
+  rodzajUmowy: optStr,
+  dataOd: optDate,
+  dataDo: optDate,
+  // Zezwolenie
+  firma: optStr,
+  nrDecyzji: optStr,
+  wezwanieBraki: optStr,
+  powiadomienieDo: optDate,
+  uchylenie: optStr,
+  startInfo: optStr,
+  przedluzenie: z.boolean().optional().default(false),
+  przewidywanaDataPodjecia: z.boolean().optional().default(false),
+  przewidywanaDataKomentarz: optStr,
+  // Oświadczenie
+  nrOswiadczenia: optStr,
+  podjeciePracy: optStr,
+  podjeciePracyStatus: optStr, // PODJAL / NIE_PODJAL / ""
+  podjeciePracyData: optDate,
+  dataStartu: optDate,
+  // Karta pobytu
+  urzad: optStr,
+  rodzajSprawy: optStr,
+  dataZlozenia: optDate,
+  sposobWysylki: optStr,
+  sygnatura: optStr,
+  brakujaceDokumenty: optStr,
+  uwagiKp: optStr,
+  // Blue Card
+  decyzjaOdebrana: optDate,
+  stanowisko: optStr,
+  stawka: optStr,
+  // Zgłoszenie UA
+  dataPodjecia: optDate,
+  uwagiUa: optStr,
+  // Ogólne
+  uwagi: optStr,
 });
 
 // =============================================================================
@@ -62,6 +90,51 @@ function toDate(v: string | undefined | null): Date | null {
 function revalidateFdk(id?: number) {
   revalidatePath("/admin/fdk");
   if (id) revalidatePath(`/admin/fdk/${id}`);
+}
+
+function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
+  return {
+    foreignerId: d.foreignerId,
+    typ: d.typ,
+    status: d.status,
+    // Wspólne
+    rodzajUmowy: d.rodzajUmowy || null,
+    dataOd: toDate(d.dataOd),
+    dataDo: toDate(d.dataDo),
+    // Zezwolenie
+    firma: d.firma || null,
+    nrDecyzji: d.nrDecyzji || null,
+    wezwanieBraki: d.wezwanieBraki || null,
+    powiadomienieDo: toDate(d.powiadomienieDo),
+    uchylenie: d.uchylenie || null,
+    startInfo: d.startInfo || null,
+    przedluzenie: d.przedluzenie ?? false,
+    przewidywanaDataPodjecia: d.przewidywanaDataPodjecia ?? false,
+    przewidywanaDataKomentarz: d.przewidywanaDataKomentarz || null,
+    // Oświadczenie
+    nrOswiadczenia: d.nrOswiadczenia || null,
+    podjeciePracy: d.podjeciePracy || null,
+    podjeciePracyStatus: d.podjeciePracyStatus || null,
+    podjeciePracyData: toDate(d.podjeciePracyData),
+    dataStartu: toDate(d.dataStartu),
+    // Karta pobytu
+    urzad: d.urzad || null,
+    rodzajSprawy: d.rodzajSprawy || null,
+    dataZlozenia: toDate(d.dataZlozenia),
+    sposobWysylki: d.sposobWysylki || null,
+    sygnatura: d.sygnatura || null,
+    brakujaceDokumenty: d.brakujaceDokumenty || null,
+    uwagiKp: d.uwagiKp || null,
+    // Blue Card
+    decyzjaOdebrana: toDate(d.decyzjaOdebrana),
+    stanowisko: d.stanowisko || null,
+    stawka: d.stawka ? parseFloat(d.stawka) : null,
+    // Zgłoszenie UA
+    dataPodjecia: toDate(d.dataPodjecia),
+    uwagiUa: d.uwagiUa || null,
+    // Ogólne
+    uwagi: d.uwagi || null,
+  };
 }
 
 function fmtValue(v: unknown): string | null {
@@ -195,36 +268,227 @@ export async function deleteForeignerAction(id: number): Promise<FdkResult> {
 }
 
 // =============================================================================
+// REMINDER HELPERS
+// =============================================================================
+
+/**
+ * Manage the "55-day work start" reminder for zezwolenie na pracę.
+ * If `przewidywanaDataPodjecia` is false and `dataDo` exists → create reminder.
+ * If `przewidywanaDataPodjecia` is true → remove any existing reminder.
+ */
+async function manageWpReminder(
+  baseId: number,
+  foreignerId: number,
+  typ: string,
+  dataDo: Date | null,
+  przewidywanaDataPodjecia: boolean,
+  komentarz: string | null,
+  existingCalendarEventId: number | null,
+  createdById: string
+) {
+  if (typ !== "ZEZWOLENIE") return;
+
+  // Remove existing reminder if any
+  if (existingCalendarEventId) {
+    try {
+      await db.calendarEvent.delete({ where: { id: existingCalendarEventId } });
+    } catch { /* already deleted */ }
+    await db.fdkEmploymentBase.update({
+      where: { id: baseId },
+      data: { reminderCalendarEventId: null, reminderDate: null },
+    });
+  }
+
+  // Create new reminder if tick is NOT checked and dataDo exists
+  if (!przewidywanaDataPodjecia && dataDo) {
+    const reminderDate = new Date(dataDo);
+    reminderDate.setDate(reminderDate.getDate() + 55);
+
+    // Fetch foreigner name for the calendar entry
+    const foreigner = await db.fdkForeigner.findUnique({
+      where: { id: foreignerId },
+      select: { imie: true, nazwisko: true },
+    });
+    const foreignerName = foreigner
+      ? `${foreigner.imie ?? ""} ${foreigner.nazwisko}`.trim()
+      : `Cudzoziemiec #${foreignerId}`;
+
+    const event = await db.calendarEvent.create({
+      data: {
+        type: "OTHER",
+        title: `Podjęcie pracy — ${foreignerName}`,
+        description: `Przypomnienie: 55. dzień od daty ważności zezwolenia na pracę.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}${komentarz ? `\n\nKomentarz: ${komentarz}` : ""}`,
+        eventDate: reminderDate,
+        foreignerId,
+        foreignerName,
+        createdById,
+        notes: komentarz,
+      },
+    });
+
+    await db.fdkEmploymentBase.update({
+      where: { id: baseId },
+      data: { reminderCalendarEventId: event.id, reminderDate },
+    });
+
+    revalidatePath("/admin/kalendarz");
+  }
+}
+
+/**
+ * Manage calendar events for oświadczenie o powierzeniu pracy.
+ * Creates reminders based on:
+ * - podjeciePracyStatus (PODJAL → calendar entry, NIE_PODJAL → entry 14 days after dataDo)
+ * - dataStartu → 2 entries: -1 day "Zgłoszenie umowy", +7 days "Notyfikacja podjęcia pracy"
+ */
+async function manageOswReminders(
+  baseId: number,
+  foreignerId: number,
+  typ: string,
+  dataDo: Date | null,
+  podjeciePracyStatus: string | null,
+  podjeciePracyData: Date | null,
+  dataStartu: Date | null,
+  existingEventIds: string | null,
+  createdById: string
+) {
+  if (typ !== "OSWIADCZENIE") return;
+
+  // Remove existing calendar events
+  if (existingEventIds) {
+    const ids = existingEventIds.split(",").map(Number).filter(Boolean);
+    for (const eid of ids) {
+      try { await db.calendarEvent.delete({ where: { id: eid } }); } catch { /* ok */ }
+    }
+    await db.fdkEmploymentBase.update({
+      where: { id: baseId },
+      data: { oswCalendarEventIds: null },
+    });
+  }
+
+  const foreigner = await db.fdkForeigner.findUnique({
+    where: { id: foreignerId },
+    select: { imie: true, nazwisko: true },
+  });
+  const fName = foreigner ? `${foreigner.imie ?? ""} ${foreigner.nazwisko}`.trim() : `#${foreignerId}`;
+  const newIds: number[] = [];
+
+  // Podjęcie pracy
+  if (podjeciePracyStatus === "PODJAL" && podjeciePracyData) {
+    const ev = await db.calendarEvent.create({
+      data: {
+        type: "OTHER",
+        title: `Podjęcie pracy — ${fName}`,
+        description: `Oświadczenie: podjęcie pracy.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}`,
+        eventDate: podjeciePracyData,
+        foreignerId,
+        foreignerName: fName,
+        createdById,
+      },
+    });
+    newIds.push(ev.id);
+  }
+
+  // Niepodjęcie pracy — 14 dni od daty ważności
+  if (podjeciePracyStatus === "NIE_PODJAL" && dataDo) {
+    const d14 = new Date(dataDo);
+    d14.setDate(d14.getDate() + 14);
+    const ev = await db.calendarEvent.create({
+      data: {
+        type: "OTHER",
+        title: `Niepodjęcie pracy (14 dni) — ${fName}`,
+        description: `Oświadczenie: termin na zgłoszenie niepodjęcia pracy.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}`,
+        eventDate: d14,
+        foreignerId,
+        foreignerName: fName,
+        createdById,
+      },
+    });
+    newIds.push(ev.id);
+  }
+
+  // Data startu → 2 powiadomienia
+  if (dataStartu) {
+    const dayBefore = new Date(dataStartu);
+    dayBefore.setDate(dayBefore.getDate() - 1);
+    const ev1 = await db.calendarEvent.create({
+      data: {
+        type: "OTHER",
+        title: `Zgłoszenie umowy — ${fName}`,
+        description: `1 dzień przed datą startu pracy.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}`,
+        eventDate: dayBefore,
+        foreignerId,
+        foreignerName: fName,
+        createdById,
+      },
+    });
+    newIds.push(ev1.id);
+
+    const day7 = new Date(dataStartu);
+    day7.setDate(day7.getDate() + 7);
+    const ev2 = await db.calendarEvent.create({
+      data: {
+        type: "OTHER",
+        title: `Notyfikacja podjęcia pracy — ${fName}`,
+        description: `7. dzień od daty startu pracy.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}`,
+        eventDate: day7,
+        foreignerId,
+        foreignerName: fName,
+        createdById,
+      },
+    });
+    newIds.push(ev2.id);
+  }
+
+  if (newIds.length > 0) {
+    await db.fdkEmploymentBase.update({
+      where: { id: baseId },
+      data: { oswCalendarEventIds: newIds.join(",") },
+    });
+    revalidatePath("/admin/kalendarz");
+  }
+}
+
+// =============================================================================
 // EMPLOYMENT BASES CRUD
 // =============================================================================
 
 export async function createEmploymentBaseAction(
   input: z.infer<typeof employmentBaseSchema>
 ): Promise<FdkResult> {
-  await requireAdmin();
+  const user = await requireAdmin();
   const parsed = employmentBaseSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "validation" };
 
   const d = parsed.data;
-  await db.fdkEmploymentBase.create({
-    data: {
-      foreignerId: d.foreignerId,
-      typ: d.typ,
-      status: d.status,
-      rodzajUmowy: d.rodzajUmowy || null,
-      dataOd: toDate(d.dataOd),
-      dataDo: toDate(d.dataDo),
-      firma: d.firma || null,
-      nrDecyzji: d.nrDecyzji || null,
-      wezwanieBraki: d.wezwanieBraki || null,
-      nrOswiadczenia: d.nrOswiadczenia || null,
-      urzad: d.urzad || null,
-      rodzajSprawy: d.rodzajSprawy || null,
-      sygnatura: d.sygnatura || null,
-      stanowisko: d.stanowisko || null,
-      uwagi: d.uwagi || null,
-    },
+  const created = await db.fdkEmploymentBase.create({
+    data: buildEmploymentBaseData(d),
   });
+
+  // Manage WP reminder (55-day work start)
+  await manageWpReminder(
+    created.id,
+    d.foreignerId,
+    d.typ,
+    toDate(d.dataDo),
+    d.przewidywanaDataPodjecia ?? false,
+    d.przewidywanaDataKomentarz || null,
+    null,
+    user.id
+  );
+
+  // Manage OŚW reminders
+  await manageOswReminders(
+    created.id,
+    d.foreignerId,
+    d.typ,
+    toDate(d.dataDo),
+    d.podjeciePracyStatus || null,
+    toDate(d.podjeciePracyData),
+    toDate(d.dataStartu),
+    null,
+    user.id
+  );
 
   revalidateFdk(d.foreignerId);
   return { ok: true };
@@ -242,22 +506,8 @@ export async function updateEmploymentBaseAction(
   if (!old) return { ok: false, error: "not_found" };
 
   const d = parsed.data;
-  const newData = {
-    typ: d.typ,
-    status: d.status,
-    rodzajUmowy: d.rodzajUmowy || null,
-    dataOd: toDate(d.dataOd),
-    dataDo: toDate(d.dataDo),
-    firma: d.firma || null,
-    nrDecyzji: d.nrDecyzji || null,
-    wezwanieBraki: d.wezwanieBraki || null,
-    nrOswiadczenia: d.nrOswiadczenia || null,
-    urzad: d.urzad || null,
-    rodzajSprawy: d.rodzajSprawy || null,
-    sygnatura: d.sygnatura || null,
-    stanowisko: d.stanowisko || null,
-    uwagi: d.uwagi || null,
-  };
+  const { foreignerId: _fid, ...dataWithoutForeignerId } = buildEmploymentBaseData(d);
+  const newData = dataWithoutForeignerId;
 
   await db.fdkEmploymentBase.update({ where: { id }, data: newData });
 
@@ -267,6 +517,31 @@ export async function updateEmploymentBaseAction(
     user.email,
     { [`base_${id}_status`]: old.status, [`base_${id}_dataDo`]: old.dataDo },
     { [`base_${id}_status`]: newData.status, [`base_${id}_dataDo`]: newData.dataDo }
+  );
+
+  // Manage WP reminder (55-day work start)
+  await manageWpReminder(
+    id,
+    d.foreignerId,
+    d.typ,
+    toDate(d.dataDo),
+    d.przewidywanaDataPodjecia ?? false,
+    d.przewidywanaDataKomentarz || null,
+    old.reminderCalendarEventId,
+    user.id
+  );
+
+  // Manage OŚW reminders
+  await manageOswReminders(
+    id,
+    d.foreignerId,
+    d.typ,
+    toDate(d.dataDo),
+    d.podjeciePracyStatus || null,
+    toDate(d.podjeciePracyData),
+    toDate(d.dataStartu),
+    old.oswCalendarEventIds,
+    user.id
   );
 
   revalidateFdk(d.foreignerId);
@@ -372,7 +647,7 @@ export async function sendHrContractEmailAction(
 // =============================================================================
 
 const calendarEventSchema = z.object({
-  type: z.enum(["OFFICE_VISIT", "OFFICE_MEETING", "OTHER"]),
+  type: z.enum(["OFFICE_VISIT", "OFFICE_MEETING", "DOCUMENT_EXPIRY", "WORK_START_REMINDER", "CONTRACT_REMINDER", "WORK_NOTIFICATION", "OTHER"]),
   title: z.string().trim().min(1).max(255),
   description: z.string().trim().optional().or(z.literal("")),
   eventDate: z.string().min(1),
@@ -492,6 +767,22 @@ export async function updateCalendarEventAction(
 export async function deleteCalendarEventAction(id: number): Promise<FdkResult> {
   await requireAdmin();
   await db.calendarEvent.delete({ where: { id } });
+  revalidatePath("/admin/kalendarz");
+  return { ok: true };
+}
+
+export async function toggleCalendarEventDoneAction(id: number): Promise<FdkResult> {
+  await requireAdmin();
+  const ev = await db.calendarEvent.findUnique({ where: { id } });
+  if (!ev) return { ok: false, error: "not_found" };
+
+  await db.calendarEvent.update({
+    where: { id },
+    data: {
+      done: !ev.done,
+      doneAt: ev.done ? null : new Date(),
+    },
+  });
   revalidatePath("/admin/kalendarz");
   return { ok: true };
 }

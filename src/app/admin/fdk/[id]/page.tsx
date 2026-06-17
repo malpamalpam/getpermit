@@ -9,6 +9,7 @@ import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
+import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
 import { withComputedStatuses } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -32,14 +33,6 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  AKTYWNE: "bg-green-100 text-green-800",
-  WYGASLE: "bg-red-100 text-red-800",
-  UCHYLONE: "bg-red-100 text-red-800",
-  UMORZONE: "bg-red-100 text-red-800",
-  W_TRAKCIE: "bg-yellow-100 text-yellow-800",
-  BRAK_DANYCH: "bg-gray-100 text-gray-600",
-};
 
 function fmt(d: Date | null | undefined): string {
   return d ? d.toLocaleDateString("pl-PL") : "—";
@@ -193,60 +186,11 @@ export default async function FdkForeignerPage({
         )}
 
         {activeTab === "bases" && (
-          <div className="space-y-4">
-            {foreigner.employmentBases.length === 0 && (
-              <p className="py-12 text-center text-primary/40">Brak podstaw zatrudnienia</p>
-            )}
-            {foreigner.employmentBases.map((b) => {
-              const isSuperseded =
-                hasActiveResidence &&
-                (b.typ === "ZEZWOLENIE" || b.typ === "OSWIADCZENIE");
-              return (
-                <div
-                  key={b.id}
-                  className={`rounded-xl border bg-white p-6 shadow-sm ${
-                    isSuperseded ? "border-orange-200 opacity-60" : "border-primary/10"
-                  }`}
-                >
-                  <div className="mb-3 flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[b.typ]?.cls ?? "bg-gray-100"}`}>
-                      {TYPE_BADGES[b.typ]?.label ?? b.typ}
-                    </span>
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
-                      {b.status.replace("_", " ")}
-                    </span>
-                    {b.nrDecyzji && <span className="text-xs text-primary/50">Nr: {b.nrDecyzji}</span>}
-                    {isSuperseded && (
-                      <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
-                        Wchłonięte przez decyzję pobytową
-                      </span>
-                    )}
-                  </div>
-                  <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
-                    {[
-                      ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
-                      ["Rodzaj umowy", b.rodzajUmowy],
-                      ["Firma", b.firma],
-                      ["Stanowisko", b.stanowisko],
-                      ["Urząd", b.urzad],
-                      ["Rodzaj sprawy", b.rodzajSprawy],
-                      ["Sygnatura", b.sygnatura],
-                      ["Nr oświadczenia", b.nrOswiadczenia],
-                      ["Wezwanie/braki", b.wezwanieBraki],
-                      ["Uwagi", b.uwagi],
-                    ].map(([label, value]) =>
-                      value ? (
-                        <div key={label as string}>
-                          <dt className="text-primary/50">{label}</dt>
-                          <dd className="font-medium text-primary">{value}</dd>
-                        </div>
-                      ) : null
-                    )}
-                  </dl>
-                </div>
-              );
-            })}
-          </div>
+          <EmploymentBasesTab
+            foreignerId={foreigner.id}
+            bases={foreigner.employmentBases}
+            hasActiveResidence={!!hasActiveResidence}
+          />
         )}
 
         {activeTab === "hr" && (
@@ -369,26 +313,20 @@ export default async function FdkForeignerPage({
                           <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
                           {f.opis && <p className="mt-0.5 text-xs text-primary/50">{f.opis}</p>}
                           <div className="mt-2 flex items-center gap-2">
-                            {f.rozmiarBytes && Number(f.rozmiarBytes) > 0 ? (
-                              <>
-                                <a
-                                  href={`/api/fdk/attachments/${f.id}?action=preview`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
-                                >
-                                  <Eye className="h-3 w-3" /> Podgląd
-                                </a>
-                                <a
-                                  href={`/api/fdk/attachments/${f.id}?action=download`}
-                                  className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
-                                >
-                                  <Download className="h-3 w-3" /> Pobierz
-                                </a>
-                              </>
-                            ) : (
-                              <span className="text-[11px] text-primary/40">Brak pliku — prześlij ponownie</span>
-                            )}
+                            <a
+                              href={`/api/fdk/attachments/${f.id}?action=preview`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
+                            >
+                              <Eye className="h-3 w-3" /> Podgląd
+                            </a>
+                            <a
+                              href={`/api/fdk/attachments/${f.id}?action=download`}
+                              className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
+                            >
+                              <Download className="h-3 w-3" /> Pobierz
+                            </a>
                           </div>
                         </div>
                       </div>
