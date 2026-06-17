@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ServicesGrid } from "@/components/home/ServicesGrid";
 import { ProcessSection } from "@/components/home/ProcessSection";
@@ -22,8 +22,28 @@ export default async function HomePage({
 
   const sid = (key: string) => SECTION_IDS[key]?.[locale] ?? key;
 
+  // FAQ JSON-LD — only on the homepage (not in layout to avoid duplication)
+  const t = await getTranslations({ locale, namespace: "faq" });
+  const faqKeys = ["cost", "duration", "documents", "workWhileWaiting", "worldwide", "rejected"] as const;
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqKeys.map((key) => ({
+      "@type": "Question",
+      name: t(`items.${key}.q`),
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: t(`items.${key}.a`),
+      },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <HeroSection />
       <ServicesGrid />
       <div id={sid("proces")} className="scroll-mt-24">

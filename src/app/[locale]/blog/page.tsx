@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { getAllBlogPosts } from "@/lib/blog";
+import { getLocalizedBlogSlug } from "@/lib/blog-slugs";
 import { getAlternates } from "@/lib/seo";
 import { BookOpen, Calendar, ArrowRight } from "lucide-react";
 
@@ -61,7 +62,7 @@ export default async function BlogPage({
             {posts.map((post) => (
               <Link
                 key={post.slug}
-                href={`/${locale}/blog/${post.slug}`}
+                href={`/${locale}/blog/${getLocalizedBlogSlug(post.slug, locale)}`}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
               >
                 <div className="relative h-[180px] w-full overflow-hidden md:h-[200px]">

@@ -163,7 +163,7 @@ const nextConfig: NextConfig = {
       redirects.push({
         source: path,
         destination: `/pl${path === "/" ? "" : path}`,
-        permanent: false,
+        permanent: true,
       });
     }
 

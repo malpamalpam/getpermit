@@ -4,6 +4,8 @@ import { LoginForm } from "./LoginForm";
 import { LogIn } from "lucide-react";
 import { getPanelLocale } from "@/lib/panel-locale";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata() {
   const locale = await getPanelLocale();
   const t = await getTranslations({ locale, namespace: "panel.auth" });

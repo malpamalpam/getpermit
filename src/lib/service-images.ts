@@ -17,7 +17,7 @@ export interface ServiceImage {
 export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
   // Legalizacja pracy
   "zezwolenie-na-prace": {
-    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
+    src: "/images/services/zezwolenie-na-prace-getpermit.jpg",
     alt: {
       pl: "Zezwolenie na pracę w Polsce — dokumenty i konsultacja prawna",
       en: "Work permit in Poland — documents and legal consultation",
@@ -27,7 +27,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Cytonn Photography",
   },
   "oswiadczenie-o-powierzeniu-pracy": {
-    src: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1440&q=80&auto=format",
+    src: "/images/services/oswiadczenie-o-powierzeniu-pracy-getpermit.jpg",
     alt: {
       pl: "Oświadczenie o powierzeniu pracy cudzoziemcowi — pomoc prawna",
       en: "Declaration of entrusting work to a foreigner — legal assistance",
@@ -39,7 +39,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 
   // Legalizacja pobytu
   "karta-pobytu-czasowego": {
-    src: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=1440&q=80&auto=format",
+    src: "/images/services/karta-pobytu-czasowego-getpermit.jpg",
     alt: {
       pl: "Karta pobytu czasowego w Polsce — profesjonalna pomoc prawna getpermit.pl",
       en: "Temporary residence card in Poland — professional legal help",
@@ -49,7 +49,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / LinkedIn Sales Solutions",
   },
   "zezwolenie-na-pobyt-czasowy-i-prace": {
-    src: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1440&q=80&auto=format",
+    src: "/images/services/zezwolenie-pobyt-czasowy-i-praca-getpermit.jpg",
     alt: {
       pl: "Zezwolenie na pobyt czasowy i pracę — kompleksowa obsługa",
       en: "Temporary residence and work permit — comprehensive service",
@@ -59,7 +59,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Christina @ wocintechchat.com",
   },
   "eu-blue-card": {
-    src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1440&q=80&auto=format",
+    src: "/images/services/eu-blue-card-getpermit.jpg",
     alt: {
       pl: "EU Blue Card — Niebieska Karta UE dla specjalistów w Polsce",
       en: "EU Blue Card for specialists in Poland",
@@ -69,7 +69,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / ThisisEngineering",
   },
   "wymiana-karty-pobytu": {
-    src: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1440&q=80&auto=format",
+    src: "/images/services/wymiana-karty-pobytu-getpermit.jpg",
     alt: {
       pl: "Wymiana karty pobytu — dokumenty i procedura",
       en: "Residence card exchange — documents and procedure",
@@ -81,7 +81,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 
   // Pobyty długoterminowe
   "rezydent-dlugoterminowy-ue": {
-    src: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1440&q=80&auto=format",
+    src: "/images/services/rezydent-dlugoterminowy-ue-getpermit.jpg",
     alt: {
       pl: "Rezydent długoterminowy UE — status pobytowy w Polsce",
       en: "EU long-term resident — residence status in Poland",
@@ -91,7 +91,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Dylan Gillis",
   },
   "karta-stalego-pobytu": {
-    src: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1440&q=80&auto=format",
+    src: "/images/services/karta-stalego-pobytu-getpermit.jpg",
     alt: {
       pl: "Pobyt stały w Polsce — karta stałego pobytu dla cudzoziemców",
       en: "Permanent residence in Poland — permanent residence card for foreigners",
@@ -103,7 +103,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 
   // Procedura odwoławcza
   "ponaglenia-i-odwolania": {
-    src: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1440&q=80&auto=format",
+    src: "/images/services/ponaglenia-i-odwolania-getpermit.jpg",
     alt: {
       pl: "Ponaglenia i odwołania — procedura prawna w sprawach pobytowych",
       en: "Urgency complaints and appeals — legal procedure in residence cases",
@@ -115,7 +115,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 
   // Tłumaczenia
   "tlumaczenia-przysiegle": {
-    src: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1440&q=80&auto=format",
+    src: "/images/services/tlumaczenia-przysiegle-getpermit.jpg",
     alt: {
       pl: "Tłumaczenia przysięgłe dokumentów — certyfikowany tłumacz",
       en: "Sworn document translations — certified translator",
@@ -127,7 +127,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 
   // B2B Inkubator
   "legalizacja-b2b-inkubator": {
-    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
+    src: "/images/services/zezwolenie-na-prace-getpermit.jpg",
     alt: {
       pl: "Legalizacja na podstawie umowy B2B w inkubatorze przedsiębiorczości",
       en: "Legalization via B2B contract in a business incubator",
@@ -137,7 +137,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Cytonn Photography",
   },
   "legalizacja-pracy-b2b-inkubator": {
-    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
+    src: "/images/services/zezwolenie-na-prace-getpermit.jpg",
     alt: {
       pl: "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości",
       en: "Work legalization via B2B contract in a business incubator",
@@ -147,7 +147,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: "Unsplash / Cytonn Photography",
   },
   "powiadomienia-o-powierzeniu-pracy": {
-    src: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1440&q=80&auto=format",
+    src: "/images/services/oswiadczenie-o-powierzeniu-pracy-getpermit.jpg",
     alt: {
       pl: "Powiadomienia o powierzeniu pracy cudzoziemcowi",
       en: "Notifications of entrusting work to a foreigner",
@@ -159,7 +159,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 
   // Dodatkowe
   "obywatelstwo-polskie": {
-    src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1440&q=80&auto=format",
+    src: "/images/services/obywatelstwo-polskie-getpermit.jpg",
     alt: {
       pl: "Obywatelstwo polskie — procedura nadania obywatelstwa",
       en: "Polish citizenship — citizenship procedure",
@@ -174,7 +174,7 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
 export function getServiceHeroImage(slug: string): ServiceImage {
   return (
     SERVICE_HERO_IMAGES[slug] ?? {
-      src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1440&q=80&auto=format",
+      src: "/images/services/zezwolenie-na-prace-getpermit.jpg",
       alt: {
         pl: "Profesjonalna pomoc prawna w legalizacji pobytu — getpermit.pl",
         en: "Professional legal help with residence legalization — getpermit.pl",
@@ -194,7 +194,7 @@ export interface CategoryImage {
 
 export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
   "legalizacja-pracy": {
-    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80",
+    src: "/images/services/zezwolenie-na-prace-getpermit.jpg",
     alt: {
       pl: "Zezwolenie na prac\u0119 typu A i o\u015bwiadczenie dla cudzoziemc\u00f3w w Polsce",
       en: "Type A work permit and declaration for foreigners in Poland",
@@ -203,7 +203,7 @@ export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
     },
   },
   "legalizacja-pobytu": {
-    src: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800&q=80",
+    src: "/images/services/karta-pobytu-czasowego-getpermit.jpg",
     alt: {
       pl: "Karta pobytu czasowego i EU Blue Card dla cudzoziemc\u00f3w w Polsce",
       en: "Temporary residence card and EU Blue Card for foreigners in Poland",
@@ -212,7 +212,7 @@ export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
     },
   },
   "pobyty-dlugoterminowe": {
-    src: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80",
+    src: "/images/services/karta-stalego-pobytu-getpermit.jpg",
     alt: {
       pl: "Status rezydenta d\u0142ugoterminowego UE i pobyt sta\u0142y w Polsce",
       en: "EU long-term resident status and permanent residence in Poland",
@@ -221,7 +221,7 @@ export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
     },
   },
   "procedura-odwolawcza": {
-    src: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
+    src: "/images/services/ponaglenia-i-odwolania-getpermit.jpg",
     alt: {
       pl: "Ponaglenia i odwo\u0142ania od decyzji w sprawach pobytowych",
       en: "Urgency complaints and appeals in residence cases",
@@ -230,7 +230,7 @@ export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
     },
   },
   "tlumaczenia-przysiegle": {
-    src: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
+    src: "/images/services/tlumaczenia-przysiegle-getpermit.jpg",
     alt: {
       pl: "T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w do legalizacji pobytu",
       en: "Sworn translations of documents for residence legalization",
@@ -239,7 +239,7 @@ export const CATEGORY_IMAGES: Record<string, CategoryImage> = {
     },
   },
   "dla-pracodawcow": {
-    src: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
+    src: "/images/services/uslugi-dla-pracodawcow-getpermit.jpg",
     alt: {
       pl: "Us\u0142ugi dla pracodawc\u00f3w \u2014 zatrudnianie cudzoziemc\u00f3w w Polsce",
       en: "Services for employers \u2014 hiring foreigners in Poland",

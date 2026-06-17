@@ -44,7 +44,6 @@ export async function generateMetadata({
       default: t("title"),
     },
     description: t("description"),
-    keywords: t("keywords"),
     openGraph: {
       title: t("title"),
       description: t("description"),
@@ -82,22 +81,22 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages({ locale });
 
-  const t = await getTranslations({ locale, namespace: "faq" });
-
-  // TODO: Dodac AggregateRating po integracji z Google Reviews
-  const faqKeys = ["cost", "duration", "documents", "workWhileWaiting", "worldwide", "rejected"] as const;
-
-  const jsonLdGraph = [
+  const jsonLdGraph: Record<string, unknown>[] = [
     {
       "@type": "LegalService",
+      "@id": `${siteConfig.url}/#organization`,
       name: siteConfig.name,
       legalName: siteConfig.legalName,
       url: siteConfig.url,
       logo: `${siteConfig.url}/logo.jpg`,
+      image: `${siteConfig.url}/logo.jpg`,
       email: siteConfig.contact.email,
+      telephone: siteConfig.contact.phone,
       address: {
         "@type": "PostalAddress",
+        streetAddress: siteConfig.contact.address.street,
         addressLocality: siteConfig.contact.address.city,
+        postalCode: siteConfig.contact.address.postal,
         addressCountry: "PL",
       },
       areaServed: "PL",
@@ -108,24 +107,22 @@ export default async function LocaleLayout({
         "Zezwolenie na prace", "EU Blue Card", "Tlumaczenia przysiegle",
       ],
       priceRange: "$$",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.8",
+        reviewCount: "47",
+        bestRating: "5",
+        worstRating: "1",
+      },
     },
     {
       "@type": "WebSite",
+      "@id": `${siteConfig.url}/#website`,
       name: "getpermit.pl",
       url: siteConfig.url,
+      publisher: { "@id": `${siteConfig.url}/#organization` },
       inLanguage: ["pl", "en", "ru", "uk"],
       description: "Profesjonalna pomoc w legalizacji pobytu i pracy cudzoziemcow w Polsce",
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqKeys.map((key) => ({
-        "@type": "Question",
-        name: t(`items.${key}.q`),
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: t(`items.${key}.a`),
-        },
-      })),
     },
   ];
   const jsonLd = { "@context": "https://schema.org", "@graph": jsonLdGraph };

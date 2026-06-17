@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog";
 import { routing } from "@/i18n/routing";
+import { siteConfig } from "@/config/site";
+import { getLocalizedBlogSlug, getCanonicalBlogSlug } from "@/lib/blog-slugs";
 import {
   ArrowLeft,
   Calendar,
@@ -16,7 +18,15 @@ import {
 export async function generateStaticParams() {
   const posts = getAllBlogPosts();
   return routing.locales.flatMap((locale) =>
-    posts.map((post) => ({ locale, slug: post.slug }))
+    posts.flatMap((post) => {
+      const localizedSlug = getLocalizedBlogSlug(post.slug, locale);
+      // Generate params for both canonical and localized slug
+      const params = [{ locale, slug: post.slug }];
+      if (localizedSlug !== post.slug) {
+        params.push({ locale, slug: localizedSlug });
+      }
+      return params;
+    })
   );
 }
 
@@ -28,6 +38,12 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const post = getBlogPostBySlug(slug, locale);
   if (!post) return {};
+
+  // Use canonical (PL) slug for hreflang mapping
+  const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
+  const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
+  const canonicalUrl = `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+
   return {
     title: post.title,
     description: post.description,
@@ -36,6 +52,15 @@ export async function generateMetadata({
       description: post.description,
       type: "article",
       images: [{ url: post.imageUrl, width: 1200, height: 630, alt: post.imageAlt }],
+    },
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        ...Object.fromEntries(
+          routing.locales.map((l) => [l, `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`])
+        ),
+        "x-default": `${siteConfig.url}/en/blog/${getLocalizedBlogSlug(plSlug, "en")}`,
+      },
     },
   };
 }

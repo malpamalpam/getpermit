@@ -19,6 +19,7 @@ import { NEW_BLOG_POSTS } from "./blog-posts-new";
 import { BLOG_POSTS_EN } from "./blog-posts-en";
 import { BLOG_POSTS_RU } from "./blog-posts-ru";
 import { BLOG_POSTS_UK } from "./blog-posts-uk";
+import { getCanonicalBlogSlug, getLocalizedBlogSlug } from "./blog-slugs";
 
 export const BLOG_POSTS: BlogPost[] = [
   ...NEW_BLOG_POSTS,
@@ -175,10 +176,22 @@ export const BLOG_POSTS: BlogPost[] = [
 
 export function getBlogPostBySlug(slug: string, locale?: string): BlogPost | null {
   const loc = locale ?? "pl";
-  // Szukaj po slug + locale; fallback na pl
+
+  // Direct match by slug + locale
+  const direct = BLOG_POSTS.find((p) => p.slug === slug && (p.locale ?? "pl") === loc);
+  if (direct) return direct;
+
+  // Try reverse lookup: slug may be a localized version, find canonical PL slug
+  const canonicalSlug = getCanonicalBlogSlug(slug, loc);
+  if (canonicalSlug && canonicalSlug !== slug) {
+    const byCanonical = BLOG_POSTS.find((p) => p.slug === canonicalSlug && (p.locale ?? "pl") === loc);
+    if (byCanonical) return byCanonical;
+  }
+
+  // Fallback to PL version
   return (
-    BLOG_POSTS.find((p) => p.slug === slug && (p.locale ?? "pl") === loc) ??
     BLOG_POSTS.find((p) => p.slug === slug && (p.locale ?? "pl") === "pl") ??
+    (canonicalSlug ? BLOG_POSTS.find((p) => p.slug === canonicalSlug && (p.locale ?? "pl") === "pl") : null) ??
     null
   );
 }

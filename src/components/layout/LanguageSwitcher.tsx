@@ -13,6 +13,56 @@ const LOCALE_CONFIG: Record<string, { label: string; flag: string; nativeName: s
   uk: { label: "UA", flag: "🇺🇦", nativeName: "Українська" },
 };
 
+/**
+ * Map localized path segments between locales.
+ * Used to translate URLs when switching language.
+ */
+const PATH_TRANSLATIONS: Record<string, Record<string, string>> = {
+  // Services
+  "/uslugi": { pl: "/uslugi", en: "/services", ru: "/uslugi", uk: "/poslugy" },
+  "/services": { pl: "/uslugi", en: "/services", ru: "/uslugi", uk: "/poslugy" },
+  "/poslugy": { pl: "/uslugi", en: "/services", ru: "/uslugi", uk: "/poslugy" },
+  // Contact
+  "/kontakt": { pl: "/kontakt", en: "/contact", ru: "/kontakty", uk: "/kontakty" },
+  "/contact": { pl: "/kontakt", en: "/contact", ru: "/kontakty", uk: "/kontakty" },
+  "/kontakty": { pl: "/kontakt", en: "/contact", ru: "/kontakty", uk: "/kontakty" },
+  // About
+  "/o-nas": { pl: "/o-nas", en: "/about", ru: "/o-nas", uk: "/pro-nas" },
+  "/about": { pl: "/o-nas", en: "/about", ru: "/o-nas", uk: "/pro-nas" },
+  "/pro-nas": { pl: "/o-nas", en: "/about", ru: "/o-nas", uk: "/pro-nas" },
+  // Privacy
+  "/polityka-prywatnosci": { pl: "/polityka-prywatnosci", en: "/privacy-policy", ru: "/politika-konfidentsialnosti", uk: "/polityka-konfidentsijnosti" },
+  "/privacy-policy": { pl: "/polityka-prywatnosci", en: "/privacy-policy", ru: "/politika-konfidentsialnosti", uk: "/polityka-konfidentsijnosti" },
+  "/politika-konfidentsialnosti": { pl: "/polityka-prywatnosci", en: "/privacy-policy", ru: "/politika-konfidentsialnosti", uk: "/polityka-konfidentsijnosti" },
+  "/polityka-konfidentsijnosti": { pl: "/polityka-prywatnosci", en: "/privacy-policy", ru: "/politika-konfidentsialnosti", uk: "/polityka-konfidentsijnosti" },
+  // Terms
+  "/regulamin": { pl: "/regulamin", en: "/terms", ru: "/pravila", uk: "/pravyla" },
+  "/terms": { pl: "/regulamin", en: "/terms", ru: "/pravila", uk: "/pravyla" },
+  "/pravila": { pl: "/regulamin", en: "/terms", ru: "/pravila", uk: "/pravyla" },
+  "/pravyla": { pl: "/regulamin", en: "/terms", ru: "/pravila", uk: "/pravyla" },
+};
+
+function translatePath(pathWithoutLocale: string, targetLocale: string): string {
+  // Try exact match first (for simple pages)
+  if (PATH_TRANSLATIONS[pathWithoutLocale]?.[targetLocale]) {
+    return PATH_TRANSLATIONS[pathWithoutLocale][targetLocale];
+  }
+
+  // Try matching the first segment (for nested routes like /uslugi/slug)
+  const segments = pathWithoutLocale.split("/").filter(Boolean);
+  if (segments.length >= 1) {
+    const firstSegPath = `/${segments[0]}`;
+    if (PATH_TRANSLATIONS[firstSegPath]?.[targetLocale]) {
+      const translatedFirst = PATH_TRANSLATIONS[firstSegPath][targetLocale];
+      const rest = segments.slice(1).join("/");
+      return rest ? `${translatedFirst}/${rest}` : translatedFirst;
+    }
+  }
+
+  // No translation found — return as-is
+  return pathWithoutLocale;
+}
+
 export function LanguageSwitcher() {
   const locale = useLocale();
   const fullPathname = useNextPathname();
@@ -21,7 +71,8 @@ export function LanguageSwitcher() {
 
   const onChange = (nextLocale: string) => {
     const pathWithoutLocale = fullPathname.replace(/^\/(pl|en|ru|uk)/, "") || "/";
-    window.location.href = `/${nextLocale}${pathWithoutLocale}`;
+    const translatedPath = translatePath(pathWithoutLocale, nextLocale);
+    window.location.href = `/${nextLocale}${translatedPath}`;
   };
 
   // Close on outside click
