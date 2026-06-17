@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
 
 /**
  * GET /api/fdk/attachments/[id]?action=download|preview
@@ -43,6 +44,69 @@ export async function GET(
     }
 
     return NextResponse.redirect(data.signedUrl);
+  }
+
+  // Scrape — parse PDF and auto-fill foreigner + create employment base
+  if (action === "scrape") {
+    if (attachment.typPliku !== "pdf") {
+      return NextResponse.json({ error: "Only PDF files can be scraped" }, { status: 400 });
+    }
+
+    const { data: fileData, error: dlError } = await supabase.storage
+      .from("fdk-attachments")
+      .download(attachment.storagePath);
+
+    if (dlError || !fileData) {
+      return NextResponse.json({ error: "Could not download file for parsing" }, { status: 500 });
+    }
+
+    const buffer = await fileData.arrayBuffer();
+    const parsed = await parseOswiadczeniePdf(buffer);
+
+    if (!parsed) {
+      return NextResponse.json({ error: "Nie udało się wyciągnąć danych z PDF. Sprawdź czy to oświadczenie." }, { status: 422 });
+    }
+
+    const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
+    if (!foreigner) {
+      return NextResponse.json({ error: "Foreigner not found" }, { status: 404 });
+    }
+
+    // Auto-fill foreigner data if fields are empty
+    const updateData: Record<string, unknown> = {};
+    if (parsed.imie && !foreigner.imie) updateData.imie = parsed.imie;
+    if (parsed.nazwisko && foreigner.nazwisko === "Nowy") updateData.nazwisko = parsed.nazwisko;
+    if (parsed.dataUrodzenia && !foreigner.dataUrodzenia) updateData.dataUrodzenia = new Date(parsed.dataUrodzenia);
+    if (parsed.obywatelstwo && !foreigner.obywatelstwo) updateData.obywatelstwo = parsed.obywatelstwo;
+    if (parsed.nrPaszportu && !foreigner.nrPaszportu) updateData.nrPaszportu = parsed.nrPaszportu;
+
+    if (Object.keys(updateData).length > 0) {
+      await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: updateData });
+    }
+
+    // Create employment base if dates extracted
+    let baseId: number | null = null;
+    if (parsed.dataOd || parsed.dataDo) {
+      const base = await db.fdkEmploymentBase.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          typ: "OSWIADCZENIE",
+          status: "BRAK_DANYCH",
+          dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+          dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+          rodzajUmowy: parsed.rodzajUmowy || null,
+          podjeciePracy: parsed.rodzajPracy || null,
+        },
+      });
+      baseId = base.id;
+    }
+
+    return NextResponse.json({
+      ok: true,
+      extracted: parsed,
+      foreignerUpdated: Object.keys(updateData),
+      employmentBaseCreated: baseId,
+    });
   }
 
   // Download — stream file

@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ArrowLeft, Eye, Download, FileText, Shield } from "lucide-react";
 import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
+import { ScrapeButton } from "@/components/admin/fdk/ScrapeButton";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
@@ -327,6 +328,7 @@ export default async function FdkForeignerPage({
                             >
                               <Download className="h-3 w-3" /> Pobierz
                             </a>
+                            <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
                           </div>
                         </div>
                       </div>
