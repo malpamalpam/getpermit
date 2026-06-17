@@ -142,7 +142,7 @@ async function main() {
     data: {
       foreignerId: regan.id,
       typ: "KARTA_POBYTU",
-      status: "ZAKONCZONE",
+      status: "WYGASLE",
       urzad: "Mazowiecki",
       rodzajSprawy: "Praca i pobyt",
       dataZlozenia: new Date("2024-05-28"),
