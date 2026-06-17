@@ -46,6 +46,26 @@ export async function GET(
     return NextResponse.redirect(data.signedUrl);
   }
 
+  // Debug — show raw text extracted from PDF (for debugging parser)
+  if (action === "debug-text") {
+    if (attachment.typPliku !== "pdf") {
+      return NextResponse.json({ error: "Only PDF" }, { status: 400 });
+    }
+    const { data: fileData, error: dlError } = await supabase.storage
+      .from("fdk-attachments")
+      .download(attachment.storagePath);
+    if (dlError || !fileData) {
+      return NextResponse.json({ error: "Download failed" }, { status: 500 });
+    }
+    try {
+      const pdfParse = (await import("pdf-parse")).default;
+      const pdfData = await pdfParse(Buffer.from(await fileData.arrayBuffer()));
+      return NextResponse.json({ text: pdfData.text, length: pdfData.text?.length ?? 0 });
+    } catch (err) {
+      return NextResponse.json({ error: "PDF parse failed", details: String(err) }, { status: 500 });
+    }
+  }
+
   // Scrape — parse PDF and auto-fill foreigner + create employment base
   if (action === "scrape") {
     if (attachment.typPliku !== "pdf") {
