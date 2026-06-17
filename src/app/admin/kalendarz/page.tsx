@@ -30,7 +30,7 @@ export default async function CalendarPage() {
       employmentBases: {
         where: {
           dataDo: { gte: start, lte: end },
-          status: { in: ["AKTYWNE", "W_TRAKCIE"] },
+          status: { notIn: ["UCHYLONE", "UMORZONE"] },
         },
       },
     },

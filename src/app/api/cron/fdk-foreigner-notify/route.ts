@@ -158,7 +158,7 @@ export async function GET(req: NextRequest) {
     where: { email: { not: null } },
     include: {
       employmentBases: {
-        where: { dataDo: { not: null }, status: { in: ["AKTYWNE", "W_TRAKCIE"] } },
+        where: { dataDo: { not: null }, status: { notIn: ["UCHYLONE", "UMORZONE"] } },
       },
     },
   });

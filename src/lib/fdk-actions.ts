@@ -34,7 +34,7 @@ const foreignerSchema = z.object({
 const employmentBaseSchema = z.object({
   foreignerId: z.number().int(),
   typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA"]),
-  status: z.enum(["AKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "ZAKONCZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
+  status: z.enum(["AKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
   rodzajUmowy: z.string().optional().or(z.literal("")),
   dataOd: z.string().optional().or(z.literal("")),
   dataDo: z.string().optional().or(z.literal("")),

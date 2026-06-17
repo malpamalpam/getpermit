@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       employmentBases: {
         where: {
           dataDo: { not: null },
-          status: { in: ["AKTYWNE", "W_TRAKCIE"] },
+          status: { notIn: ["UCHYLONE", "UMORZONE"] },
         },
         orderBy: { dataDo: "asc" },
       },

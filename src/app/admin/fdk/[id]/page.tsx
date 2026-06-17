@@ -9,6 +9,7 @@ import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
+import { withComputedStatuses } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -36,7 +37,6 @@ const STATUS_COLORS: Record<string, string> = {
   WYGASLE: "bg-red-100 text-red-800",
   UCHYLONE: "bg-red-100 text-red-800",
   UMORZONE: "bg-red-100 text-red-800",
-  ZAKONCZONE: "bg-emerald-100 text-emerald-800",
   W_TRAKCIE: "bg-yellow-100 text-yellow-800",
   BRAK_DANYCH: "bg-gray-100 text-gray-600",
 };
@@ -70,6 +70,9 @@ export default async function FdkForeignerPage({
   });
 
   if (!foreigner) notFound();
+
+  // Recompute statuses from dates
+  foreigner.employmentBases = withComputedStatuses(foreigner.employmentBases);
 
   const activeTab: TabKey = TABS.some((t) => t.key === sp.tab) ? (sp.tab as TabKey) : "overview";
 

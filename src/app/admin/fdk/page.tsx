@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "lucide-react";
+import { withComputedStatuses } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -14,7 +15,6 @@ const STATUS_COLORS: Record<string, string> = {
   WYGASLE: "bg-red-100 text-red-800",
   UCHYLONE: "bg-red-100 text-red-800",
   UMORZONE: "bg-red-100 text-red-800",
-  ZAKONCZONE: "bg-emerald-100 text-emerald-800",
   W_TRAKCIE: "bg-yellow-100 text-yellow-800",
   BRAK_DANYCH: "bg-gray-100 text-gray-600",
 };
@@ -75,6 +75,11 @@ export default async function FdkPage({
     }),
     db.fdkForeigner.count({ where: where as never }),
   ]);
+
+  // Recompute statuses from dates
+  for (const f of foreigners) {
+    f.employmentBases = withComputedStatuses(f.employmentBases);
+  }
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -156,7 +161,6 @@ export default async function FdkPage({
               { value: "", label: "Wszystkie" },
               { value: "AKTYWNE", label: "Aktywne" },
               { value: "WYGASLE", label: "Wygasłe" },
-              { value: "ZAKONCZONE", label: "Zakończone" },
               { value: "W_TRAKCIE", label: "W trakcie" },
             ].map((opt) => (
               <a

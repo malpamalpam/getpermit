@@ -10,6 +10,10 @@
       "schedule": "0 3 * * *"
     },
     {
+      "path": "/api/cron/fdk-status-sync",
+      "schedule": "0 6 * * *"
+    },
+    {
       "path": "/api/cron/fdk-expiry-notify",
       "schedule": "0 7 * * *"
     },
