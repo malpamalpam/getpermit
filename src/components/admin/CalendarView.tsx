@@ -20,6 +20,7 @@ import {
   Eye,
   Check,
   Filter,
+  Search,
 } from "lucide-react";
 
 interface CalendarEventData {
@@ -156,6 +157,9 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
   const dayGridRef = useRef<HTMLDivElement>(null);
   const [visibleTypes, setVisibleTypes] = useState<Set<string>>(new Set(ALL_EVENT_TYPES));
   const [showLegend, setShowLegend] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<CalendarEventData[]>([]);
+  const [showSearch, setShowSearch] = useState(false);
 
   const emptyForm = {
     type: "OFFICE_VISIT" as string,
@@ -324,6 +328,36 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     openFormForDate(day, `${clampedHour.toString().padStart(2, "0")}:00`);
   };
 
+  // Search logic
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const q = query.toLowerCase();
+    const results = events.filter((ev) =>
+      ev.title.toLowerCase().includes(q) ||
+      (ev.foreignerName && ev.foreignerName.toLowerCase().includes(q)) ||
+      (ev.description && ev.description.toLowerCase().includes(q)) ||
+      (TYPE_LABELS[ev.type] ?? "").toLowerCase().includes(q)
+    );
+    setSearchResults(results.sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()));
+  };
+
+  const jumpToEvent = (ev: CalendarEventData) => {
+    setCurrentDate(new Date(ev.eventDate));
+    setView("day");
+    setShowSearch(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  // Year change
+  const handleYearChange = (newYear: number) => {
+    setCurrentDate(new Date(newYear, month, 1));
+  };
+
   // Header navigation
   const handlePrev = () => {
     if (view === "month") prevMonth();
@@ -358,9 +392,20 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
           <button onClick={handlePrev} className="rounded-lg border border-primary/15 p-2 hover:bg-primary/5">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h2 className="font-display text-xl font-bold text-primary">
-            {headerTitle}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-xl font-bold text-primary">
+              {headerTitle}
+            </h2>
+            <select
+              value={year}
+              onChange={(e) => handleYearChange(parseInt(e.target.value))}
+              className="rounded-md border border-primary/15 bg-white px-2 py-1 text-sm font-medium text-primary focus:border-accent focus:outline-none"
+            >
+              {Array.from({ length: 10 }, (_, i) => year - 3 + i).map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
           <button onClick={handleNext} className="rounded-lg border border-primary/15 p-2 hover:bg-primary/5">
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -400,6 +445,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
           </button>
           <button
             type="button"
+            onClick={() => { setShowSearch((p) => !p); if (showSearch) { setSearchQuery(""); setSearchResults([]); } }}
+            className={`rounded-lg border px-3 py-2 text-sm font-medium ${showSearch ? "border-accent bg-accent/10 text-accent" : "border-primary/15 text-primary/60 hover:bg-primary/5"}`}
+          >
+            <Search className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
             onClick={() => setShowLegend((p) => !p)}
             className={`rounded-lg border px-3 py-2 text-sm font-medium ${showLegend ? "border-accent bg-accent/10 text-accent" : "border-primary/15 text-primary/60 hover:bg-primary/5"}`}
           >
@@ -407,6 +459,52 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
           </button>
         </div>
       </div>
+
+      {/* Search */}
+      {showSearch && (
+        <div className="mb-4 rounded-lg border border-primary/10 bg-white p-3 shadow-sm">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/40" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Szukaj wydarzeń po nazwie, osobie, typie..."
+              className="w-full rounded-lg border border-primary/15 bg-white py-2 pl-10 pr-4 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+              autoFocus
+            />
+          </div>
+          {searchQuery && (
+            <div className="mt-2 max-h-[300px] overflow-y-auto">
+              {searchResults.length === 0 ? (
+                <p className="py-3 text-center text-sm text-primary/40">Brak wyników</p>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-xs text-primary/40 mb-1">{searchResults.length} wyników</p>
+                  {searchResults.map((ev) => (
+                    <button
+                      key={ev.id}
+                      type="button"
+                      onClick={() => jumpToEvent(ev)}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-accent/5 transition-colors"
+                    >
+                      <span className={`inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`} />
+                      <div className="min-w-0 flex-1">
+                        <div className={`font-medium text-primary truncate ${ev.done ? "line-through opacity-50" : ""}`}>{ev.title}</div>
+                        <div className="text-xs text-primary/50">
+                          {new Date(ev.eventDate).toLocaleDateString("pl-PL")}
+                          {ev.eventTime && ` ${ev.eventTime}`}
+                          {ev.foreignerName && ` · ${ev.foreignerName}`}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Legend & Filters */}
       {showLegend && (

@@ -117,5 +117,35 @@ describe("parseOswiadczenieText", () => {
     expect(result.rodzajPracy).toBe("Stworzenie materiałów graficznych 2D");
     expect(result.rodzajUmowy).toBe("Umowa o dzieło");
     expect(result.nrOswiadczenia).toBe("PZC.4390.9558.WK.2026");
+    expect(result.detectedType).toBe("OSWIADCZENIE");
+  });
+
+  it("detects zezwolenie na pracę type", () => {
+    const text = "ZEZWOLENIE NA PRACĘ typ A nr decyzji: WUP/123/2026 na okres od 01.01.2026 do 31.12.2026 stanowisko: pracownik produkcji";
+    const result = parseOswiadczenieText(text);
+    expect(result.detectedType).toBe("ZEZWOLENIE");
+    expect(result.nrDecyzji).toBe("WUP/123/2026");
+  });
+
+  it("detects karta pobytu type", () => {
+    const text = "DECYZJA o udzieleniu zezwolenia na pobyt czasowy ważne od 15.03.2025 do 15.03.2028";
+    const result = parseOswiadczenieText(text);
+    expect(result.detectedType).toBe("KARTA_POBYTU");
+    expect(result.dataOd).toBe("2025-03-15");
+    expect(result.dataDo).toBe("2028-03-15");
+  });
+
+  it("extracts dates from 'ważne od...do' format", () => {
+    const text = "Karta ważna od 10.05.2024 do 10.05.2027";
+    const result = parseOswiadczenieText(text);
+    expect(result.dataOd).toBe("2024-05-10");
+    expect(result.dataDo).toBe("2027-05-10");
+  });
+
+  it("extracts dates from 'na okres od...do' format", () => {
+    const text = "Zezwolenie na pracę na okres od 01/06/2026 r. do 31/05/2027";
+    const result = parseOswiadczenieText(text);
+    expect(result.dataOd).toBe("2026-06-01");
+    expect(result.dataDo).toBe("2027-05-31");
   });
 });

@@ -91,18 +91,34 @@ export async function POST(request: NextRequest) {
           await db.fdkForeigner.update({ where: { id: foreignerId }, data: updateData });
         }
 
-        // Always create employment base from scraped data
+        // Create employment base with detected type
+        const docType = parsed.detectedType ?? "OSWIADCZENIE";
         await db.fdkEmploymentBase.create({
           data: {
             foreignerId,
-            typ: "OSWIADCZENIE",
+            typ: docType,
             status: "BRAK_DANYCH",
             dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
             dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
             rodzajUmowy: parsed.rodzajUmowy || null,
             podjeciePracy: parsed.rodzajPracy || null,
+            nrOswiadczenia: parsed.nrOswiadczenia || null,
+            nrDecyzji: parsed.nrDecyzji || null,
+            stanowisko: parsed.stanowisko || null,
+            firma: parsed.firma || null,
           },
         });
+
+        // Update decyzjaPobytowaDo for residence permits
+        if (docType === "KARTA_POBYTU" && parsed.dataDo) {
+          const dataDo = new Date(parsed.dataDo);
+          if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
+            await db.fdkForeigner.update({
+              where: { id: foreignerId },
+              data: { decyzjaPobytowaDo: dataDo },
+            });
+          }
+        }
       }
     } catch (err) {
       console.error("[fdk/upload] PDF parsing error (non-fatal):", err);

@@ -12,10 +12,11 @@ export const metadata = {
 export default async function CalendarPage() {
   const user = await requireAdmin();
 
-  // Fetch calendar events for the current and next 2 months
+  // Fetch calendar events for a wide range (3 years: last year → 2 years ahead)
+  // This ensures document expiries far in the future (e.g. 2-year oświadczenia) are visible
   const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const end = new Date(now.getFullYear(), now.getMonth() + 3, 0);
+  const start = new Date(now.getFullYear() - 1, 0, 1);
+  const end = new Date(now.getFullYear() + 2, 11, 31);
 
   const events = await db.calendarEvent.findMany({
     where: {

@@ -84,7 +84,7 @@ export async function GET(
     const parsed = await parseOswiadczeniePdf(buffer);
 
     if (!parsed) {
-      return NextResponse.json({ error: "Nie udało się wyciągnąć danych z PDF. Sprawdź czy to oświadczenie." }, { status: 422 });
+      return NextResponse.json({ error: "Nie udało się wyciągnąć danych z PDF. Plik może być skanem bez warstwy tekstowej." }, { status: 422 });
     }
 
     const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
@@ -104,20 +104,37 @@ export async function GET(
       await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: updateData });
     }
 
+    // Determine document type from content or default to OSWIADCZENIE
+    const docType = parsed.detectedType ?? "OSWIADCZENIE";
+
     // Always create employment base from scraped data
     const base = await db.fdkEmploymentBase.create({
       data: {
         foreignerId: attachment.foreignerId,
-        typ: "OSWIADCZENIE",
+        typ: docType,
         status: "BRAK_DANYCH",
         dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
         dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
         rodzajUmowy: parsed.rodzajUmowy || null,
         podjeciePracy: parsed.rodzajPracy || null,
         nrOswiadczenia: parsed.nrOswiadczenia || null,
+        nrDecyzji: parsed.nrDecyzji || null,
+        stanowisko: parsed.stanowisko || null,
+        firma: parsed.firma || null,
       },
     });
     const baseId = base.id;
+
+    // Also update foreigner's decyzjaPobytowaDo if this is a residence permit
+    if (docType === "KARTA_POBYTU" && parsed.dataDo) {
+      const dataDo = new Date(parsed.dataDo);
+      if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
+        await db.fdkForeigner.update({
+          where: { id: attachment.foreignerId },
+          data: { decyzjaPobytowaDo: dataDo },
+        });
+      }
+    }
 
     return NextResponse.json({
       ok: true,
