@@ -38,6 +38,9 @@ export const siteConfig = {
     linkedin: "https://linkedin.com/company/getpermit",
   },
 
+  // Google Business Profile — reviews URL
+  googleReviewsUrl: "https://g.page/r/getpermit/review",
+
   // Statystyki na stronie głównej
   stats: {
     yearsOfExperience: 10,

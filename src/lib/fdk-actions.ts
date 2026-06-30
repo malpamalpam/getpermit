@@ -352,7 +352,7 @@ async function manageOswReminders(
   existingEventIds: string | null,
   createdById: string
 ) {
-  if (typ !== "OSWIADCZENIE") return;
+  if (typ !== "OSWIADCZENIE" && typ !== "ZEZWOLENIE") return;
 
   // Remove existing calendar events
   if (existingEventIds) {
@@ -407,13 +407,13 @@ async function manageOswReminders(
     newIds.push(ev.id);
   }
 
-  // Data startu → 2 powiadomienia
+  // Data startu → 2 powiadomienia (for both OSWIADCZENIE and ZEZWOLENIE)
   if (dataStartu) {
     const dayBefore = new Date(dataStartu);
     dayBefore.setDate(dayBefore.getDate() - 1);
     const ev1 = await db.calendarEvent.create({
       data: {
-        type: "OTHER",
+        type: "CONTRACT_REMINDER",
         title: `Zgłoszenie umowy — ${fName}`,
         description: `1 dzień przed datą startu pracy.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}`,
         eventDate: dayBefore,
@@ -428,7 +428,7 @@ async function manageOswReminders(
     day7.setDate(day7.getDate() + 7);
     const ev2 = await db.calendarEvent.create({
       data: {
-        type: "OTHER",
+        type: "WORK_NOTIFICATION",
         title: `Notyfikacja podjęcia pracy — ${fName}`,
         description: `7. dzień od daty startu pracy.\nLink: /admin/fdk/${foreignerId}?tab=bases&baseId=${baseId}`,
         eventDate: day7,
@@ -656,6 +656,7 @@ const calendarEventSchema = z.object({
   organ: z.string().trim().optional().or(z.literal("")),
   foreignerId: z.number().int().optional().or(z.literal(0)),
   notes: z.string().trim().optional().or(z.literal("")),
+  assignedTo: z.string().trim().optional().or(z.literal("")),
 });
 
 export async function createCalendarEventAction(
@@ -696,6 +697,7 @@ export async function createCalendarEventAction(
       foreignerName,
       createdById: user.id,
       notes: d.notes || null,
+      assignedTo: d.assignedTo || null,
     },
   });
 
@@ -757,6 +759,7 @@ export async function updateCalendarEventAction(
       foreignerId,
       foreignerName,
       notes: d.notes || null,
+      assignedTo: d.assignedTo || null,
     },
   });
 

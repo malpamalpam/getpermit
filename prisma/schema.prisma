@@ -617,6 +617,7 @@ model CalendarEvent {
   foreignerName String?          @map("foreigner_name") /// Cache nazwy dla szybkiego wyświetlania
   createdById  String            @map("created_by_id") @db.Uuid
   notes        String?           @db.Text /// Dodatkowe informacje
+  assignedTo   String?           @map("assigned_to") /// Osoba z działu prowadząca spotkanie
   emailSent    Boolean           @default(false) @map("email_sent") /// Czy wysłano email do cudzoziemca
   done         Boolean           @default(false)
   doneAt       DateTime?         @map("done_at")

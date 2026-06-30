@@ -117,12 +117,12 @@ export default async function ClientsListPage({
                   return (
                     <tr
                       key={c.id}
-                      className="transition-colors hover:bg-surface"
+                      className="group relative transition-colors hover:bg-surface"
                     >
                       <td className="px-4 py-3 font-medium text-primary">
                         <Link
                           href={`/admin/klienci/${c.id}`}
-                          className="hover:text-accent hover:underline"
+                          className="hover:text-accent hover:underline after:absolute after:inset-0 after:content-['']"
                         >
                           {fullName}
                         </Link>
@@ -140,7 +140,7 @@ export default async function ClientsListPage({
                       <td className="px-4 py-3 text-right">
                         <Link
                           href={`/admin/sprawa/nowa?client=${c.id}`}
-                          className="text-xs font-medium text-accent hover:underline"
+                          className="relative z-10 text-xs font-medium text-accent hover:underline"
                         >
                           {t("addCaseButton")}
                         </Link>

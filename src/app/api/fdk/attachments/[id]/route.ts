@@ -107,23 +107,56 @@ export async function GET(
     // Determine document type from content or default to OSWIADCZENIE
     const docType = parsed.detectedType ?? "OSWIADCZENIE";
 
-    // Always create employment base from scraped data
-    const base = await db.fdkEmploymentBase.create({
-      data: {
+    // Check for duplicate: same foreigner, same type, same date range
+    const existingBase = await db.fdkEmploymentBase.findFirst({
+      where: {
         foreignerId: attachment.foreignerId,
         typ: docType,
-        status: "BRAK_DANYCH",
-        dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
-        dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
-        rodzajUmowy: parsed.rodzajUmowy || null,
-        podjeciePracy: parsed.rodzajPracy || null,
-        nrOswiadczenia: parsed.nrOswiadczenia || null,
-        nrDecyzji: parsed.nrDecyzji || null,
-        stanowisko: parsed.stanowisko || null,
-        firma: parsed.firma || null,
+        ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
+        ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
       },
     });
-    const baseId = base.id;
+
+    // Build type-specific data — don't mix zezwolenie and oświadczenie fields
+    const baseData: Record<string, unknown> = {
+      foreignerId: attachment.foreignerId,
+      typ: docType,
+      status: "BRAK_DANYCH" as const,
+      dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+      dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+      rodzajUmowy: parsed.rodzajUmowy || null,
+      stanowisko: parsed.stanowisko || null,
+      firma: parsed.firma || null,
+    };
+
+    if (docType === "OSWIADCZENIE") {
+      baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
+      baseData.podjeciePracy = parsed.rodzajPracy || null;
+    } else {
+      // ZEZWOLENIE, KARTA_POBYTU — no oświadczenie fields
+      baseData.nrDecyzji = parsed.nrDecyzji || null;
+    }
+
+    // Map wynagrodzenie to stawka if available
+    if (parsed.wynagrodzenie) {
+      const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
+      if (numMatch) {
+        baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
+      }
+    }
+
+    let baseId: number;
+    if (existingBase) {
+      // Update existing record instead of creating duplicate
+      await db.fdkEmploymentBase.update({
+        where: { id: existingBase.id },
+        data: baseData,
+      });
+      baseId = existingBase.id;
+    } else {
+      const base = await db.fdkEmploymentBase.create({ data: baseData as never });
+      baseId = base.id;
+    }
 
     // Also update foreigner's decyzjaPobytowaDo if this is a residence permit
     if (docType === "KARTA_POBYTU" && parsed.dataDo) {

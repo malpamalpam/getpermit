@@ -305,6 +305,21 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
                 <textarea value={startInfo} onChange={(e) => setStartInfo(e.target.value)} className={inputCls} rows={2} />
               </div>
 
+              {/* Data rozpoczęcia pracy */}
+              <div>
+                <label className={labelCls}>Data rozpoczęcia pracy</label>
+                <input type="date" value={dataStartu} onChange={(e) => setDataStartu(e.target.value)} className={inputCls} />
+                {dataStartu && (
+                  <div className="mt-1.5 rounded-md bg-amber-50 border border-amber-200 p-2 text-xs text-amber-700">
+                    Zostaną utworzone 2 powiadomienia:
+                    <ul className="ml-4 mt-1 list-disc">
+                      <li><strong>1 dzień przed</strong> ({(() => { const d = new Date(dataStartu); d.setDate(d.getDate() - 1); return d.toLocaleDateString("pl-PL"); })()}) — Zgłoszenie umowy</li>
+                      <li><strong>7. dzień od</strong> ({(() => { const d = new Date(dataStartu); d.setDate(d.getDate() + 7); return d.toLocaleDateString("pl-PL"); })()}) — Notyfikacja podjęcia pracy</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+
               {/* Nowe ticki */}
               <div className="space-y-3 rounded-md border border-blue-300/50 bg-blue-50/50 p-3">
                 <label className="flex items-center gap-2 cursor-pointer">

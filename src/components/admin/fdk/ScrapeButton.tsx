@@ -28,6 +28,7 @@ export function ScrapeButton({ attachmentId, typPliku }: Props) {
         if (data.extracted?.dataDo) parts.push(`Do: ${data.extracted.dataDo}`);
         if (data.extracted?.rodzajPracy) parts.push(`Praca: ${data.extracted.rodzajPracy}`);
         if (data.extracted?.rodzajUmowy) parts.push(`Umowa: ${data.extracted.rodzajUmowy}`);
+        if (data.extracted?.wynagrodzenie) parts.push(`Wynagrodzenie: ${data.extracted.wynagrodzenie}`);
         if (data.employmentBaseCreated) parts.push("Dodano do podstaw zatrudnienia");
         setResult(parts.length > 0 ? parts.join(" | ") : "Wyciągnięto dane");
         router.refresh();

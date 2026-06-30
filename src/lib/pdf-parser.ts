@@ -26,6 +26,8 @@ export interface ParsedDocumentData {
   // Document identifiers
   nrOswiadczenia?: string;
   nrDecyzji?: string;
+  // Salary
+  wynagrodzenie?: string;
 }
 
 // Keep backward compatibility
@@ -163,11 +165,13 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   extractPersonalData(normalized, result);
   extractDateRange(normalized, result);
 
-  // --- Nr oświadczenia ---
-  const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
-  if (nrWpisuMatch) result.nrOswiadczenia = nrWpisuMatch[1].trim();
+  // --- Nr oświadczenia (only for OSWIADCZENIE documents) ---
+  if (result.detectedType !== "ZEZWOLENIE" && result.detectedType !== "KARTA_POBYTU") {
+    const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
+    if (nrWpisuMatch) result.nrOswiadczenia = nrWpisuMatch[1].trim();
+  }
 
-  // --- Nr decyzji ---
+  // --- Nr decyzji (for zezwolenie / karta pobytu) ---
   const nrDecyzjiMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura)[.:\s]+([A-Z0-9/.\-]+)/i);
   if (nrDecyzjiMatch) result.nrDecyzji = nrDecyzjiMatch[1].trim();
 
@@ -189,16 +193,30 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
     }
   }
 
-  // --- Rodzaj umowy (pkt 3.6) ---
+  // --- Rodzaj umowy (pkt 3.6 or generic) ---
   const rodzajUmowyMatch = normalized.match(/3\.6[.\s]*(?:[Rr]odzaj\s+umowy[^:]*)?[:\s]+(.+?)(?=\s*3\.7\b)/);
   if (rodzajUmowyMatch) {
     const cleaned = rodzajUmowyMatch[1].replace(/\s+/g, " ").trim();
     if (cleaned.length > 2 && cleaned.length < 300) result.rodzajUmowy = cleaned;
   }
+  // Fallback for zezwolenie/other documents: "Rodzaj umowy: ..."
+  if (!result.rodzajUmowy) {
+    const umowyFallback = normalized.match(/[Rr]odzaj\s+umowy[:\s]+([^,.\n]{3,100})/);
+    if (umowyFallback) result.rodzajUmowy = umowyFallback[1].trim();
+  }
 
   // --- Firma / pracodawca ---
   const firmaMatch = normalized.match(/(?:1\.1[.\s]*)?[Nn]azwa[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][^\n,]{3,100}?)(?=\s*1\.2|\s*[Aa]dres)/);
   if (firmaMatch) result.firma = firmaMatch[1].trim();
+
+  // --- Wynagrodzenie ---
+  const wynagrodzenieMatch = normalized.match(
+    /(?:[Ww]ynagrodzeni[ea]|[Ww]ysoko[śs][ćc]\s+wynagrodzenia|[Ss]tawka|3\.8[.\s]*(?:[Nn]ajni[żz]sze\s+)?[Ww]ynagrodzeni[ea])[^:]*[:\s]+([0-9][0-9\s,.]*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie|godzin[ęe]|za\s+godzin[ęe])?(?:\s+(?:PLN|brutto|netto|miesi[ęe]cznie))*)/i
+  );
+  if (wynagrodzenieMatch) {
+    const cleaned = wynagrodzenieMatch[1].replace(/\s+/g, " ").trim();
+    if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
+  }
 
   return result;
 }
@@ -219,7 +237,7 @@ export async function parseOswiadczeniePdf(buffer: ArrayBuffer): Promise<ParsedD
 
     const hasAnyData = result.dataOd || result.dataDo || result.nazwisko || result.imie
       || result.rodzajPracy || result.rodzajUmowy || result.nrPaszportu
-      || result.nrDecyzji || result.stanowisko;
+      || result.nrDecyzji || result.stanowisko || result.wynagrodzenie;
 
     return hasAnyData ? result : null;
   } catch (err) {

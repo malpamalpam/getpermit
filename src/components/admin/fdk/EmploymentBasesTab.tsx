@@ -137,7 +137,11 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
                 ["Rodzaj pracy", b.podjeciePracy],
                 ["Status podjęcia", b.podjeciePracyStatus === "PODJAL" ? "Podjął pracę" : b.podjeciePracyStatus === "NIE_PODJAL" ? "Nie podjął pracy" : null],
                 ["Data podjęcia pracy", b.podjeciePracyData ? fmt(b.podjeciePracyData) : null],
-                ["Data startu", b.dataStartu ? fmt(b.dataStartu) : null],
+                ["Data rozpoczęcia pracy", b.dataStartu ? fmt(b.dataStartu) : null],
+                // Calendar-derived dates
+                ["Zgłoszenie umowy (kalendarz)", b.dataStartu ? (() => { const d = new Date(b.dataStartu); d.setDate(d.getDate() - 1); return fmt(d); })() : null],
+                ["Notyfikacja podjęcia pracy (kalendarz)", b.dataStartu ? (() => { const d = new Date(b.dataStartu); d.setDate(d.getDate() + 7); return fmt(d); })() : null],
+                ["Niepodjęcie pracy (kalendarz)", b.podjeciePracyStatus === "NIE_PODJAL" && b.dataDo ? (() => { const d = new Date(b.dataDo); d.setDate(d.getDate() + 14); return fmt(d); })() : null],
                 ["Wezwanie/braki", b.wezwanieBraki],
                 ["Przedłużenie", b.przedluzenie ? "Tak" : null],
                 ["Podjęcie pracy potwierdzone", b.przewidywanaDataPodjecia ? "Tak" : null],

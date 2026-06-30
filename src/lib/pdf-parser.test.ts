@@ -127,6 +127,50 @@ describe("parseOswiadczenieText", () => {
     expect(result.nrDecyzji).toBe("WUP/123/2026");
   });
 
+  it("zezwolenie typ A: complete data, no oświadczenie fields, no duplicates", () => {
+    const text = `
+      ZEZWOLENIE NA PRACĘ
+      Typ A
+      Nr decyzji: DUW/WP/00123/2026
+      Imię (imiona): OLEKSANDR
+      Nazwisko: PETROV
+      Data urodzenia (dd / mm / rrrr): 15 / 03 / 1990
+      Obywatelstwo: Ukraina
+      Seria i numer: FH123456
+      Stanowisko: pracownik produkcji
+      1.1. Nazwa: ABC Sp. z o.o.
+      1.2. Adres siedziby
+      Rodzaj umowy: umowa o pracę
+      na okres od 01/01/2026 r. do 31/12/2026
+      Numer wpisu: PZC.1234.5678.WK.2026
+      wynagrodzenie: 4666,00 PLN brutto
+    `;
+    const result = parseOswiadczenieText(text);
+
+    // Detected as ZEZWOLENIE
+    expect(result.detectedType).toBe("ZEZWOLENIE");
+
+    // Personal data extracted
+    expect(result.imie).toBe("Oleksandr");
+    expect(result.nazwisko).toBe("Petrov");
+    expect(result.dataUrodzenia).toBe("1990-03-15");
+    expect(result.obywatelstwo).toBe("Ukraina");
+    expect(result.nrPaszportu).toBe("FH123456");
+
+    // Work data
+    expect(result.stanowisko).toBe("pracownik produkcji");
+    expect(result.firma).toBe("ABC Sp. z o.o.");
+    expect(result.nrDecyzji).toBe("DUW/WP/00123/2026");
+    expect(result.dataOd).toBe("2026-01-01");
+    expect(result.dataDo).toBe("2026-12-31");
+
+    // Wynagrodzenie extracted
+    expect(result.wynagrodzenie).toBe("4666,00 PLN brutto");
+
+    // NO oświadczenie number — "Numer wpisu" should be ignored for ZEZWOLENIE
+    expect(result.nrOswiadczenia).toBeUndefined();
+  });
+
   it("detects karta pobytu type", () => {
     const text = "DECYZJA o udzieleniu zezwolenia na pobyt czasowy ważne od 15.03.2025 do 15.03.2028";
     const result = parseOswiadczenieText(text);

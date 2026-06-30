@@ -35,6 +35,7 @@ interface CalendarEventData {
   foreignerId: number | null;
   foreignerName: string | null;
   notes: string | null;
+  assignedTo: string | null;
   emailSent: boolean;
   done: boolean;
   doneAt: Date | null;
@@ -171,6 +172,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
     organ: "",
     foreignerId: 0,
     notes: "",
+    assignedTo: "",
   };
 
   // Form state
@@ -292,6 +294,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
       organ: ev.organ ?? "",
       foreignerId: ev.foreignerId ?? 0,
       notes: ev.notes ?? "",
+      assignedTo: ev.assignedTo ?? "",
     });
     setShowForm(true);
   };
@@ -550,18 +553,17 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               return (
                 <div
                   key={day.toISOString()}
-                  className={`min-h-[100px] border-b border-r border-primary/5 p-1 transition-colors hover:bg-accent/5 ${isToday ? "bg-accent/5" : ""}`}
+                  className={`min-h-[100px] border-b border-r border-primary/5 p-1 transition-colors hover:bg-accent/5 cursor-pointer ${isToday ? "bg-accent/5" : ""}`}
+                  onClick={() => { setCurrentDate(day); setView("day"); }}
                 >
                   <div className="mb-1 flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => { setCurrentDate(day); setView("day"); }}
-                      className={`text-xs font-medium cursor-pointer hover:underline ${isToday ? "flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white" : "text-primary/50 pl-1"}`}
+                    <span
+                      className={`text-xs font-medium ${isToday ? "flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white" : "text-primary/50 pl-1"}`}
                     >
                       {day.getDate()}
-                    </button>
+                    </span>
                     <button
-                      onClick={() => openFormForDate(day)}
+                      onClick={(e) => { e.stopPropagation(); openFormForDate(day); }}
                       className="rounded p-0.5 text-primary/20 hover:text-accent hover:bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ opacity: undefined }}
                       onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
@@ -578,7 +580,7 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         type="button"
                         className={`w-full truncate rounded px-1.5 py-1 text-[11px] font-medium text-white cursor-pointer text-left transition-opacity ${hoveredEvent === ev.id ? "opacity-80" : ""} ${ev.done ? "opacity-50 line-through" : ""} ${TYPE_COLORS[ev.type] ?? "bg-gray-500"}`}
                         title={`${ev.title}${ev.eventTime ? ` (${ev.eventTime})` : ""}${ev.done ? " ✓ DONE" : ""} — kliknij aby edytować`}
-                        onClick={() => startEditById(ev.id)}
+                        onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
                         onMouseEnter={() => setHoveredEvent(ev.id)}
                         onMouseLeave={() => setHoveredEvent(null)}
                       >
@@ -588,13 +590,11 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                       </button>
                     ))}
                     {dayEvents.length > 3 && (
-                      <button
-                        type="button"
-                        onClick={() => { setCurrentDate(day); setView("day"); }}
+                      <span
                         className="text-[10px] text-primary/40 pl-1 hover:text-accent cursor-pointer"
                       >
                         +{dayEvents.length - 3} więcej
-                      </button>
+                      </span>
                     )}
                     {dayExpiries.slice(0, 2).map((exp, i) => (
                       <div
@@ -968,6 +968,10 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                 </select>
               </div>
               <div>
+                <label className="mb-1 block text-xs font-medium text-primary/60">Osoba prowadząca (z działu)</label>
+                <input value={form.assignedTo} onChange={(e) => setForm((p) => ({ ...p, assignedTo: e.target.value }))} className={inputCls} placeholder="np. Jan Kowalski" />
+              </div>
+              <div>
                 <label className="mb-1 block text-xs font-medium text-primary/60">Opis</label>
                 <textarea value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} className={inputCls} rows={2} />
               </div>
@@ -1061,6 +1065,13 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                 <div className="flex items-center gap-2 text-primary/70">
                   <User className="h-4 w-4 flex-shrink-0 text-primary/40" />
                   <span>{selectedEvent.foreignerName}</span>
+                </div>
+              )}
+
+              {selectedEvent.assignedTo && (
+                <div className="flex items-center gap-2 text-primary/70">
+                  <User className="h-4 w-4 flex-shrink-0 text-accent/60" />
+                  <span>Prowadzi: <strong>{selectedEvent.assignedTo}</strong></span>
                 </div>
               )}
 
