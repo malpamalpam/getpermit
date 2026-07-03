@@ -47,8 +47,8 @@ function boolLabel(val: boolean | null | undefined, t: (k: string) => string): s
 function safeT(t: (k: string) => string, key: string, raw: string): string {
   try {
     const result = t(key);
-    // next-intl returns the key path if missing — detect and fall back to raw
-    return result === key || result.startsWith(key) ? raw : result;
+    if (typeof result !== "string") return raw;
+    return result === key ? raw : result;
   } catch {
     return raw;
   }
