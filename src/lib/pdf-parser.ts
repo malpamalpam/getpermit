@@ -308,10 +308,15 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   }
 
   // --- Rodzaj umowy: "na podstawie Umowa o dzieło[dup] (rodzaj umowy..." ---
-  // Use last occurrence — first "Na podstawie art..." is legal basis, second is contract type
-  const umowaMatches = [...normalized.matchAll(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/gi)];
-  if (umowaMatches.length > 0) {
-    result.rodzajUmowy = dedup(umowaMatches[umowaMatches.length - 1][1].trim());
+  // Search backwards from "(rodzaj umowy" to find "na podstawie VALUE"
+  const rodzajUmowyIdx = normalized.indexOf("(rodzaj umowy");
+  if (rodzajUmowyIdx > 0) {
+    // Take up to 200 chars before "(rodzaj umowy"
+    const before = normalized.substring(Math.max(0, rodzajUmowyIdx - 200), rodzajUmowyIdx);
+    const umowaMatch = before.match(/na\s+podstawie\s+(.+?)$/i);
+    if (umowaMatch) {
+      result.rodzajUmowy = dedup(umowaMatch[1].trim());
+    }
   }
 
   // --- Firma: "po rozpatrzeniu wniosku FIRMA, ul. ..." ---
