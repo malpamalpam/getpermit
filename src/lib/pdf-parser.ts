@@ -308,8 +308,11 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   }
 
   // --- Rodzaj umowy: "na podstawie Umowa o dzieło[dup] (rodzaj umowy..." ---
-  const umowaMatch = normalized.match(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/i);
-  if (umowaMatch) result.rodzajUmowy = dedup(umowaMatch[1].trim());
+  // Use last occurrence — first "Na podstawie art..." is legal basis, second is contract type
+  const umowaMatches = [...normalized.matchAll(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/gi)];
+  if (umowaMatches.length > 0) {
+    result.rodzajUmowy = dedup(umowaMatches[umowaMatches.length - 1][1].trim());
+  }
 
   // --- Firma: "po rozpatrzeniu wniosku FIRMA, ul. ..." ---
   const firmaMatch = normalized.match(/po\s+rozpatrzeniu\s+wniosku\s+(.+?)(?=\s*,\s*(?:ul|al|pl|os)\.?\s)/i);
