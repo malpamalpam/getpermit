@@ -241,11 +241,19 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
     const cleaned = rodzajUmowyMatch[1].replace(/\s+/g, " ").trim();
     if (cleaned.length > 2 && cleaned.length < 300) result.rodzajUmowy = cleaned;
   }
-  // Zezwolenie format: "na podstawie Umowa o dzieło (rodzaj umowy...)"
+  // Zezwolenie format: "na podstawie Umowa o dzieło[Umowa o dzieło] (rodzaj umowy...)"
+  // The PDF may duplicate the value, so we capture up to "(" and take the first half if doubled
   if (!result.rodzajUmowy) {
     const naPodstawieMatch = normalized.match(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/i);
     if (naPodstawieMatch) {
-      const cleaned = naPodstawieMatch[1].replace(/\s+/g, " ").trim();
+      let cleaned = naPodstawieMatch[1].replace(/\s+/g, " ").trim();
+      // Handle doubled text: "Umowa o dziełoUmowa o dzieło" → "Umowa o dzieło"
+      if (cleaned.length >= 6) {
+        const half = Math.floor(cleaned.length / 2);
+        if (cleaned.substring(0, half) === cleaned.substring(half)) {
+          cleaned = cleaned.substring(0, half);
+        }
+      }
       if (cleaned.length > 2 && cleaned.length < 100) result.rodzajUmowy = cleaned;
     }
   }
