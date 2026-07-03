@@ -28,7 +28,7 @@ interface CalendarEventData {
   type: string;
   title: string;
   description: string | null;
-  eventDate: Date;
+  eventDate: string;
   eventTime: string | null;
   place: string | null;
   organ: string | null;
@@ -38,15 +38,15 @@ interface CalendarEventData {
   assignedTo: string | null;
   emailSent: boolean;
   done: boolean;
-  doneAt: Date | null;
-  createdAt: Date;
+  doneAt: string | null;
+  createdAt: string;
 }
 
 interface DocumentExpiry {
   foreignerName: string;
   typLabel: string;
   typ: string;
-  dataDo: Date;
+  dataDo: string;
   daysLeft: number;
 }
 
@@ -65,6 +65,7 @@ interface Props {
   events: CalendarEventData[];
   documentExpiries: DocumentExpiry[];
   foreigners: { id: number; name: string }[];
+  staffList: { id: string; name: string }[];
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -143,7 +144,7 @@ function toLocalDateString(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function CalendarView({ events, documentExpiries, foreigners }: Props) {
+export function CalendarView({ events, documentExpiries, foreigners, staffList }: Props) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<"month" | "week" | "day">("month");
@@ -887,6 +888,12 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
                         {ev.foreignerName}
                       </div>
                     )}
+                    {ev.assignedTo && (
+                      <div className="text-xs text-accent/60 mt-0.5 flex items-center gap-1">
+                        <User className="h-3 w-3 inline" />
+                        Prowadzi: {ev.assignedTo}
+                      </div>
+                    )}
                   </button>
                 );
               })}
@@ -969,7 +976,12 @@ export function CalendarView({ events, documentExpiries, foreigners }: Props) {
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-primary/60">Osoba prowadząca (z działu)</label>
-                <input value={form.assignedTo} onChange={(e) => setForm((p) => ({ ...p, assignedTo: e.target.value }))} className={inputCls} placeholder="np. Jan Kowalski" />
+                <select value={form.assignedTo} onChange={(e) => setForm((p) => ({ ...p, assignedTo: e.target.value }))} className={inputCls}>
+                  <option value="">— brak —</option>
+                  {staffList.map((s) => (
+                    <option key={s.id} value={s.name}>{s.name}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-primary/60">Opis</label>

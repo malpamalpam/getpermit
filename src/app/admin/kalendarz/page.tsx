@@ -18,12 +18,21 @@ export default async function CalendarPage() {
   const start = new Date(now.getFullYear() - 1, 0, 1);
   const end = new Date(now.getFullYear() + 2, 11, 31);
 
-  const events = await db.calendarEvent.findMany({
+  const rawEvents = await db.calendarEvent.findMany({
     where: {
       eventDate: { gte: start, lte: end },
     },
     orderBy: { eventDate: "asc" },
   });
+
+  // Serialize Date objects for client component
+  const events = rawEvents.map((e) => ({
+    ...e,
+    eventDate: e.eventDate.toISOString(),
+    doneAt: e.doneAt?.toISOString() ?? null,
+    createdAt: e.createdAt.toISOString(),
+    updatedAt: e.updatedAt.toISOString(),
+  }));
 
   // Fetch document expiries for the calendar overlay
   const foreigners = await db.fdkForeigner.findMany({
@@ -45,7 +54,7 @@ export default async function CalendarPage() {
     ZGLOSZENIE_UA: "Zgłoszenie UA",
   };
 
-  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: Date; daysLeft: number }[] = [];
+  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: string; daysLeft: number }[] = [];
 
   for (const f of foreigners) {
     for (const b of f.employmentBases) {
@@ -55,7 +64,7 @@ export default async function CalendarPage() {
         foreignerName: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
         typLabel: TYPE_LABELS[b.typ] ?? b.typ,
         typ: b.typ,
-        dataDo: b.dataDo,
+        dataDo: b.dataDo.toISOString(),
         daysLeft,
       });
     }
@@ -66,7 +75,7 @@ export default async function CalendarPage() {
         foreignerName: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
         typLabel: f.typDokumentuPobytowego ?? "Decyzja pobytowa",
         typ: "DECYZJA_POBYTOWA",
-        dataDo: f.decyzjaPobytowaDo,
+        dataDo: f.decyzjaPobytowaDo.toISOString(),
         daysLeft,
       });
     }
@@ -83,6 +92,17 @@ export default async function CalendarPage() {
     name: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
   }));
 
+  // Fetch staff for assignee dropdown
+  const staffUsers = await db.user.findMany({
+    where: { role: { in: ["STAFF", "ADMIN"] } },
+    select: { id: true, firstName: true, lastName: true },
+    orderBy: { firstName: "asc" },
+  });
+  const staffList = staffUsers.map((s) => ({
+    id: s.id,
+    name: `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || s.id,
+  }));
+
   return (
     <>
       <AdminHeader user={user} active="calendar" />
@@ -92,6 +112,7 @@ export default async function CalendarPage() {
           events={events}
           documentExpiries={documentExpiries}
           foreigners={foreignerList}
+          staffList={staffList}
         />
       </Container>
     </>

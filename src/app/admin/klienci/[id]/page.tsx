@@ -1,13 +1,28 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { AdminHeader } from "@/components/admin/AdminHeader";
-import { requireStaff } from "@/lib/auth";
+import { requireAdmin, requireStaff } from "@/lib/auth";
 import { getPanelLocale } from "@/lib/panel-locale";
 import { db } from "@/lib/db";
 import { ArrowLeft, User as UserIcon, Mail, Phone, CheckCircle2, XCircle, CreditCard } from "lucide-react";
+
+async function setClientAmountAction(fd: FormData) {
+  "use server";
+  await requireAdmin();
+  const userId = fd.get("userId") as string;
+  const amountPln = parseFloat(fd.get("amountPln") as string);
+  if (!userId || isNaN(amountPln) || amountPln < 0) return;
+  await db.userAgreement.upsert({
+    where: { userId },
+    create: { userId, amount: Math.round(amountPln * 100) },
+    update: { amount: Math.round(amountPln * 100) },
+  });
+  revalidatePath(`/admin/klienci/${userId}`);
+}
 
 export const metadata = {
   robots: { index: false, follow: false },
@@ -26,6 +41,17 @@ function boolLabel(val: boolean | null | undefined, t: (k: string) => string): s
   if (val === true) return t("yes");
   if (val === false) return t("no");
   return "\u2014";
+}
+
+/** Safe translation: returns the raw value if key doesn't resolve to a known translation. */
+function safeT(t: (k: string) => string, key: string, raw: string): string {
+  try {
+    const result = t(key);
+    // next-intl returns the key path if missing — detect and fall back to raw
+    return result === key || result.startsWith(key) ? raw : result;
+  } catch {
+    return raw;
+  }
 }
 
 function StatusBadge({ label, ok, icon }: { label: string; ok: boolean; icon: ReactNode }) {
@@ -137,23 +163,8 @@ export default async function ClientDetailPage({
         </div>
 
         {/* Admin: ustaw kwotę */}
-        <form
-          action={async (fd: FormData) => {
-            "use server";
-            const { requireAdmin: ra } = await import("@/lib/auth");
-            const { db: database } = await import("@/lib/db");
-            await ra();
-            const amountPln = parseFloat(fd.get("amountPln") as string);
-            if (!isNaN(amountPln) && amountPln >= 0) {
-              await database.userAgreement.upsert({
-                where: { userId: id },
-                create: { userId: id, amount: Math.round(amountPln * 100) },
-                update: { amount: Math.round(amountPln * 100) },
-              });
-            }
-          }}
-          className="mt-4 flex items-center gap-2"
-        >
+        <form action={setClientAmountAction} className="mt-4 flex items-center gap-2">
+          <input type="hidden" name="userId" value={id} />
           <label className="text-xs font-medium text-primary/60">Ustaw kwotę (PLN):</label>
           <input
             name="amountPln"
@@ -187,14 +198,14 @@ export default async function ClientDetailPage({
                 <Field label={t("sectionA.firstNameLatin")} value={pd.firstNameLatin} />
                 <Field label={t("sectionA.lastNameLatin")} value={pd.lastNameLatin} />
                 <Field label={t("sectionA.nativeFullName")} value={pd.nativeFullName} />
-                <Field label={t("sectionA.gender")} value={pd.gender ? t(`sectionA.options.gender.${pd.gender}`) : null} />
+                <Field label={t("sectionA.gender")} value={pd.gender ? safeT(t, `sectionA.options.gender.${pd.gender}`, pd.gender) : null} />
                 <Field label={t("sectionA.dateOfBirth")} value={formatDate(pd.dateOfBirth)} />
                 <Field label={t("sectionA.placeOfBirth")} value={pd.placeOfBirth} />
                 <Field label={t("sectionA.countryOfBirth")} value={pd.countryOfBirth} />
                 <Field label={t("sectionA.citizenship")} value={pd.citizenship} />
                 <Field label={t("sectionA.secondCitizenship")} value={pd.secondCitizenship} />
                 <Field label={t("sectionA.nationality")} value={pd.nationality} />
-                <Field label={t("sectionA.maritalStatus")} value={pd.maritalStatus ? t(`sectionA.options.maritalStatus.${pd.maritalStatus}`) : null} />
+                <Field label={t("sectionA.maritalStatus")} value={pd.maritalStatus ? safeT(t, `sectionA.options.maritalStatus.${pd.maritalStatus}`, pd.maritalStatus) : null} />
                 <Field label={t("sectionA.fatherName")} value={pd.fatherName} />
                 <Field label={t("sectionA.motherName")} value={pd.motherName} />
                 <Field label={t("sectionA.motherMaidenName")} value={pd.motherMaidenName} />
@@ -216,7 +227,7 @@ export default async function ClientDetailPage({
                 <Field label={t("sectionB.residenceCardNumber")} value={pd.residenceCardNumber} />
                 <Field label={t("sectionB.residenceCardExpiry")} value={formatDate(pd.residenceCardExpiry)} />
                 <Field label={t("sectionB.visaNumber")} value={pd.visaNumber} />
-                <Field label={t("sectionB.visaType")} value={pd.visaType ? t(`sectionB.options.visaType.${pd.visaType}`) : null} />
+                <Field label={t("sectionB.visaType")} value={pd.visaType ? safeT(t, `sectionB.options.visaType.${pd.visaType}`, pd.visaType) : null} />
                 <Field label={t("sectionB.visaExpiry")} value={formatDate(pd.visaExpiry)} />
               </dl>
             </section>
@@ -232,7 +243,7 @@ export default async function ClientDetailPage({
                 <Field label={t("sectionC.apartmentNumber")} value={pd.apartmentNumber} />
                 <Field label={t("sectionC.postalCode")} value={pd.postalCode} />
                 <Field label={t("sectionC.city")} value={pd.city} />
-                <Field label={t("sectionC.voivodeship")} value={pd.voivodeship ? t(`sectionC.options.voivodeship.${pd.voivodeship}`) : null} />
+                <Field label={t("sectionC.voivodeship")} value={pd.voivodeship ? safeT(t, `sectionC.options.voivodeship.${pd.voivodeship}`, pd.voivodeship) : null} />
                 <Field label={t("sectionC.registrationAddress")} value={pd.registrationAddress} />
                 <Field label={t("sectionC.correspondenceAddress")} value={pd.correspondenceAddress} />
               </dl>
@@ -247,7 +258,7 @@ export default async function ClientDetailPage({
                 <Field label={t("sectionD.phoneNumber")} value={pd.phoneNumber} />
                 <Field label={t("sectionD.contactEmail")} value={pd.contactEmail} />
                 <Field label={t("sectionD.additionalPhone")} value={pd.additionalPhone} />
-                <Field label={t("sectionD.preferredLanguage")} value={pd.preferredLanguage ? t(`sectionD.options.preferredLanguage.${pd.preferredLanguage}`) : null} />
+                <Field label={t("sectionD.preferredLanguage")} value={pd.preferredLanguage ? safeT(t, `sectionD.options.preferredLanguage.${pd.preferredLanguage}`, pd.preferredLanguage) : null} />
               </dl>
             </section>
 
@@ -259,11 +270,11 @@ export default async function ClientDetailPage({
               <dl className="grid gap-4 md:grid-cols-3">
                 <Field label={t("sectionE.firstEntryDate")} value={formatDate(pd.firstEntryDate)} />
                 <Field label={t("sectionE.lastEntryDate")} value={formatDate(pd.lastEntryDate)} />
-                <Field label={t("sectionE.purposeOfStay")} value={pd.purposeOfStay ? t(`sectionE.options.purposeOfStay.${pd.purposeOfStay}`) : null} />
-                <Field label={t("sectionE.currentResidenceTitle")} value={pd.currentResidenceTitle ? t(`sectionE.options.residenceTitle.${pd.currentResidenceTitle}`) : null} />
+                <Field label={t("sectionE.purposeOfStay")} value={pd.purposeOfStay ? safeT(t, `sectionE.options.purposeOfStay.${pd.purposeOfStay}`, pd.purposeOfStay) : null} />
+                <Field label={t("sectionE.currentResidenceTitle")} value={pd.currentResidenceTitle ? safeT(t, `sectionE.options.residenceTitle.${pd.currentResidenceTitle}`, pd.currentResidenceTitle) : null} />
                 <Field label={t("sectionE.pendingProceedings")} value={boolLabel(pd.pendingProceedings, t)} />
                 <Field label={t("sectionE.caseNumberAtOffice")} value={pd.caseNumberAtOffice} />
-                <Field label={t("sectionE.handlingOffice")} value={pd.handlingOffice ? t(`sectionE.options.handlingOffice.${pd.handlingOffice}`) : null} />
+                <Field label={t("sectionE.handlingOffice")} value={pd.handlingOffice ? safeT(t, `sectionE.options.handlingOffice.${pd.handlingOffice}`, pd.handlingOffice) : null} />
                 <Field label={t("sectionE.criminalRecord")} value={boolLabel(pd.criminalRecord, t)} />
                 <Field label={t("sectionE.deportationProceedings")} value={boolLabel(pd.deportationProceedings, t)} />
                 <Field label={t("sectionE.plannedStayDuration")} value={pd.plannedStayDuration} />
@@ -285,7 +296,7 @@ export default async function ClientDetailPage({
                 <Field label={t("sectionF.employerCity")} value={pd.employerCity} />
                 <Field label={t("sectionF.employerPhone")} value={pd.employerPhone} />
                 <Field label={t("sectionF.employerEmail")} value={pd.employerEmail} />
-                <Field label={t("sectionF.contractType")} value={pd.contractType ? t(`sectionF.options.contractType.${pd.contractType}`) : null} />
+                <Field label={t("sectionF.contractType")} value={pd.contractType ? safeT(t, `sectionF.options.contractType.${pd.contractType}`, pd.contractType) : null} />
                 <Field label={t("sectionF.contractFrom")} value={formatDate(pd.contractFrom)} />
                 <Field label={t("sectionF.contractTo")} value={pd.contractIndefinite ? t("sectionF.contractIndefinite") : formatDate(pd.contractTo)} />
                 <Field label={t("sectionF.salary")} value={pd.salary} />

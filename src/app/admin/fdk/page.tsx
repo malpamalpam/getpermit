@@ -209,10 +209,10 @@ export default async function FdkPage({
                 const latestDate = latestBase?.dataDo;
 
                 return (
-                  <tr key={f.id} className="transition-colors hover:bg-accent/5">
+                  <tr key={f.id} className="group relative cursor-pointer transition-colors hover:bg-accent/5">
                     <td className="px-4 py-3 text-primary/40">{(page - 1) * PAGE_SIZE + idx + 1}</td>
                     <td className="px-4 py-3 font-medium text-primary">
-                      <Link href={`/admin/fdk/${f.id}`} className="hover:text-accent hover:underline">
+                      <Link href={`/admin/fdk/${f.id}`} className="hover:text-accent hover:underline after:absolute after:inset-0 after:content-['']">
                         {f.nazwisko}
                       </Link>
                     </td>

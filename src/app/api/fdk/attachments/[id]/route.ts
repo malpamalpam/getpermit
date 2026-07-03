@@ -107,14 +107,17 @@ export async function GET(
     // Determine document type from content or default to OSWIADCZENIE
     const docType = parsed.detectedType ?? "OSWIADCZENIE";
 
-    // Check for duplicate: same foreigner, same type, same date range
+    // Check for duplicate: same foreigner + type.
+    // If dates available, match on dates too. Otherwise match any record with same type.
     const existingBase = await db.fdkEmploymentBase.findFirst({
       where: {
         foreignerId: attachment.foreignerId,
         typ: docType,
-        ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
-        ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
+        ...(parsed.dataOd && parsed.dataDo
+          ? { dataOd: new Date(parsed.dataOd), dataDo: new Date(parsed.dataDo) }
+          : {}),
       },
+      orderBy: { createdAt: "desc" },
     });
 
     // Build type-specific data — don't mix zezwolenie and oświadczenie fields
@@ -137,20 +140,25 @@ export async function GET(
       baseData.nrDecyzji = parsed.nrDecyzji || null;
     }
 
-    // Map wynagrodzenie to stawka if available
+    // Store wynagrodzenie as text
     if (parsed.wynagrodzenie) {
-      const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
-      if (numMatch) {
-        baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
+      baseData.wynagrodzenie = parsed.wynagrodzenie;
+      // Also set stawka as number if it's a Blue Card
+      if (docType === "BLUE_CARD") {
+        const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
+        if (numMatch) {
+          baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
+        }
       }
     }
 
     let baseId: number;
     if (existingBase) {
       // Update existing record instead of creating duplicate
+      const { foreignerId: _fid, ...updateData } = baseData;
       await db.fdkEmploymentBase.update({
         where: { id: existingBase.id },
-        data: baseData,
+        data: updateData,
       });
       baseId = existingBase.id;
     } else {

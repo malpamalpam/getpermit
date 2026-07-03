@@ -37,7 +37,8 @@ export type OswiadczenieData = ParsedDocumentData;
  * Parse date in various Polish formats to YYYY-MM-DD
  */
 function parseDatePL(raw: string): string | undefined {
-  const match = raw.match(/(\d{1,2})\s*[./]\s*(\d{1,2})\s*[./]\s*(\d{4})/);
+  // Try dd.mm.yyyy / dd/mm/yyyy / dd-mm-yyyy (with optional spaces)
+  const match = raw.match(/(\d{1,2})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{4})/);
   if (match) {
     const [, day, month, year] = match;
     return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
@@ -45,6 +46,18 @@ function parseDatePL(raw: string): string | undefined {
   // Try yyyy-mm-dd format
   const isoMatch = raw.match(/(\d{4})-(\d{2})-(\d{2})/);
   if (isoMatch) return isoMatch[0];
+  // Try Polish word dates: "1 stycznia 2026"
+  const monthNames: Record<string, string> = {
+    "stycznia": "01", "lutego": "02", "marca": "03", "kwietnia": "04",
+    "maja": "05", "czerwca": "06", "lipca": "07", "sierpnia": "08",
+    "wrze[śs]nia": "09", "pa[źz]dziernika": "10", "listopada": "11", "grudnia": "12",
+  };
+  for (const [pattern, num] of Object.entries(monthNames)) {
+    const wordMatch = raw.match(new RegExp(`(\\d{1,2})\\s+${pattern}\\s+(\\d{4})`, "i"));
+    if (wordMatch) {
+      return `${wordMatch[2]}-${num}-${wordMatch[1].padStart(2, "0")}`;
+    }
+  }
   return undefined;
 }
 
@@ -60,11 +73,16 @@ function titleCase(s: string): string {
  */
 function detectDocumentType(text: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | undefined {
   const lower = text.toLowerCase();
-  if (lower.includes("oświadczenie") && lower.includes("powierzeniu")) return "OSWIADCZENIE";
-  if (lower.includes("oswiadczenie") && lower.includes("powierzeniu")) return "OSWIADCZENIE";
+  // Check zezwolenie first — avoid false positive from "oświadczenie" appearing in zezwolenie documents
   if (lower.includes("zezwolenie na pracę") || lower.includes("zezwolenia na pracę")) return "ZEZWOLENIE";
-  if (lower.includes("zezwolenie na prace")) return "ZEZWOLENIE";
-  if (lower.includes("karta pobytu") || lower.includes("pobyt czasowy") || lower.includes("decyzja") && lower.includes("pobyt")) return "KARTA_POBYTU";
+  if (lower.includes("zezwolenie na prace") || lower.includes("zezwolenia na prace")) return "ZEZWOLENIE";
+  if (/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text)) return "ZEZWOLENIE";
+  if (/typ\s+[a-e]/i.test(text) && lower.includes("zezwoleni")) return "ZEZWOLENIE";
+  // Oświadczenie — must have "powierzeniu" to avoid matching other "oświadczenie" mentions
+  if ((lower.includes("oświadczenie") || lower.includes("oswiadczenie")) && lower.includes("powierzeniu")) return "OSWIADCZENIE";
+  // Karta pobytu / decyzja pobytowa
+  if (lower.includes("karta pobytu") || lower.includes("pobyt czasowy")) return "KARTA_POBYTU";
+  if (lower.includes("decyzja") && lower.includes("pobyt")) return "KARTA_POBYTU";
   if (lower.includes("zezwolenie na pobyt")) return "KARTA_POBYTU";
   return undefined;
 }
@@ -103,9 +121,9 @@ function extractPersonalData(normalized: string, result: ParsedDocumentData): vo
  * Extract date range (Od...Do) common to all document types.
  */
 function extractDateRange(normalized: string, result: ParsedDocumentData): void {
-  // Standard format: "Od ... Do ..."
+  // Standard format: "Od ... Do ..." or "od dnia ... do dnia ..."
   const dateRangeMatch = normalized.match(
-    /[Oo]d\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})\s+[Dd]o\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})/
+    /[Oo]d\s*(?:dnia\s+)?(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})\s*(?:r\.?\s+)?[Dd]o\s*(?:dnia\s+)?(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/
   );
   if (dateRangeMatch) {
     result.dataOd = parseDatePL(dateRangeMatch[1]);
@@ -165,15 +183,17 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   extractPersonalData(normalized, result);
   extractDateRange(normalized, result);
 
-  // --- Nr oświadczenia (only for OSWIADCZENIE documents) ---
-  if (result.detectedType !== "ZEZWOLENIE" && result.detectedType !== "KARTA_POBYTU") {
+  // --- Nr oświadczenia (ONLY for OSWIADCZENIE documents) ---
+  if (result.detectedType === "OSWIADCZENIE") {
     const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
     if (nrWpisuMatch) result.nrOswiadczenia = nrWpisuMatch[1].trim();
   }
 
   // --- Nr decyzji (for zezwolenie / karta pobytu) ---
-  const nrDecyzjiMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura)[.:\s]+([A-Z0-9/.\-]+)/i);
-  if (nrDecyzjiMatch) result.nrDecyzji = nrDecyzjiMatch[1].trim();
+  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "KARTA_POBYTU") {
+    const nrDecyzjiMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
+    if (nrDecyzjiMatch) result.nrDecyzji = nrDecyzjiMatch[1].trim();
+  }
 
   // --- Stanowisko / rodzaj pracy (pkt 3.1) ---
   const rodzajPracyMatch = normalized.match(/3\.1[.\s]*(?:Stanowisko\s*\/?\s*)?(?:[Rr]odzaj\s+pracy[^:]*)?[:\s]+(.+?)(?=\s*3\.2\b)/);
@@ -208,6 +228,11 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   // --- Firma / pracodawca ---
   const firmaMatch = normalized.match(/(?:1\.1[.\s]*)?[Nn]azwa[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][^\n,]{3,100}?)(?=\s*1\.2|\s*[Aa]dres)/);
   if (firmaMatch) result.firma = firmaMatch[1].trim();
+  // Fallback for zezwolenie: "nazwa podmiotu", "pracodawca"
+  if (!result.firma) {
+    const pracodawcaMatch = normalized.match(/(?:[Pp]racodawc[aąy]|[Nn]azwa\s+podmiotu|[Pp]odmiot\s+powierzaj[aą]cy)[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ0-9][^\n]{3,120}?)(?=\s*(?:adres|siedzib|NIP|REGON|[,.]|\d\.))/i);
+    if (pracodawcaMatch) result.firma = pracodawcaMatch[1].trim();
+  }
 
   // --- Wynagrodzenie ---
   const wynagrodzenieMatch = normalized.match(

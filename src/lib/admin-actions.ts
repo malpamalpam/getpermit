@@ -145,6 +145,7 @@ const eventSchema = z.object({
   title: z.string().trim().min(2).max(200),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   eventDate: z.string().min(1),
+  assignedToId: z.string().uuid().optional().or(z.literal("")),
 });
 
 export async function createEventAction(input: z.infer<typeof eventSchema>) {
@@ -163,6 +164,7 @@ export async function createEventAction(input: z.infer<typeof eventSchema>) {
       description: parsed.data.description || null,
       eventDate: new Date(parsed.data.eventDate),
       createdByStaffId: staff.id,
+      assignedToId: parsed.data.assignedToId || null,
     },
   });
 

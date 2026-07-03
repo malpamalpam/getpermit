@@ -49,6 +49,11 @@ interface EmploymentBase {
   sygnatura: string | null;
   brakujaceDokumenty: string | null;
   uwagiKp: string | null;
+  wynagrodzenie: string | null;
+  dataZgloszeniaUmowy: Date | null;
+  dataPodjPracy: Date | null;
+  dataNiepodjPracy: Date | null;
+  dataZakPracy: Date | null;
   decyzjaOdebrana: Date | null;
   stanowisko: string | null;
   stawka: unknown;
@@ -137,6 +142,13 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
   // Zgłoszenie UA
   const [dataPodjecia, setDataPodjecia] = useState(fmtDate(base?.dataPodjecia));
   const [uwagiUa, setUwagiUa] = useState(base?.uwagiUa ?? "");
+  // Wynagrodzenie (wspólne)
+  const [wynagrodzenie, setWynagrodzenie] = useState(base?.wynagrodzenie ?? "");
+  // Daty zgłoszeniowe
+  const [dataZgloszeniaUmowy, setDataZgloszeniaUmowy] = useState(fmtDate(base?.dataZgloszeniaUmowy));
+  const [dataPodjPracy, setDataPodjPracy] = useState(fmtDate(base?.dataPodjPracy));
+  const [dataNiepodjPracy, setDataNiepodjPracy] = useState(fmtDate(base?.dataNiepodjPracy));
+  const [dataZakPracy, setDataZakPracy] = useState(fmtDate(base?.dataZakPracy));
   // Ogólne
   const [uwagi, setUwagi] = useState(base?.uwagi ?? "");
 
@@ -177,6 +189,11 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
       stawka,
       dataPodjecia,
       uwagiUa,
+      wynagrodzenie,
+      dataZgloszeniaUmowy,
+      dataPodjPracy,
+      dataNiepodjPracy,
+      dataZakPracy,
       uwagi,
     };
 
@@ -265,6 +282,32 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
             <div>
               <label className={labelCls}>Rodzaj umowy</label>
               <input value={rodzajUmowy} onChange={(e) => setRodzajUmowy(e.target.value)} className={inputCls} placeholder="np. umowa o pracę" />
+            </div>
+          </div>
+
+          {/* Wynagrodzenie */}
+          <div>
+            <label className={labelCls}>Wysokość wynagrodzenia</label>
+            <input value={wynagrodzenie} onChange={(e) => setWynagrodzenie(e.target.value)} className={inputCls} placeholder="np. 5 000 PLN brutto" />
+          </div>
+
+          {/* Daty zgłoszeniowe */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div>
+              <label className={labelCls}>Data zgłoszenia umowy</label>
+              <input type="date" value={dataZgloszeniaUmowy} onChange={(e) => setDataZgloszeniaUmowy(e.target.value)} className={inputCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Data podjęcia pracy</label>
+              <input type="date" value={dataPodjPracy} onChange={(e) => setDataPodjPracy(e.target.value)} className={inputCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Data niepodjęcia pracy</label>
+              <input type="date" value={dataNiepodjPracy} onChange={(e) => setDataNiepodjPracy(e.target.value)} className={inputCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Data zakończenia pracy</label>
+              <input type="date" value={dataZakPracy} onChange={(e) => setDataZakPracy(e.target.value)} className={inputCls} />
             </div>
           </div>
 

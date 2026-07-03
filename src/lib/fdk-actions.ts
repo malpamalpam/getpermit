@@ -73,6 +73,13 @@ const employmentBaseSchema = z.object({
   // Zgłoszenie UA
   dataPodjecia: optDate,
   uwagiUa: optStr,
+  // Wynagrodzenie
+  wynagrodzenie: optStr,
+  // Daty zgłoszeniowe
+  dataZgloszeniaUmowy: optDate,
+  dataPodjPracy: optDate,
+  dataNiepodjPracy: optDate,
+  dataZakPracy: optDate,
   // Ogólne
   uwagi: optStr,
 });
@@ -132,6 +139,13 @@ function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
     // Zgłoszenie UA
     dataPodjecia: toDate(d.dataPodjecia),
     uwagiUa: d.uwagiUa || null,
+    // Wynagrodzenie
+    wynagrodzenie: d.wynagrodzenie || null,
+    // Daty zgłoszeniowe
+    dataZgloszeniaUmowy: toDate(d.dataZgloszeniaUmowy),
+    dataPodjPracy: toDate(d.dataPodjPracy),
+    dataNiepodjPracy: toDate(d.dataNiepodjPracy),
+    dataZakPracy: toDate(d.dataZakPracy),
     // Ogólne
     uwagi: d.uwagi || null,
   };

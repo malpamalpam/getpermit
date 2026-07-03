@@ -36,6 +36,11 @@ interface EmploymentBase {
   sygnatura: string | null;
   brakujaceDokumenty: string | null;
   uwagiKp: string | null;
+  wynagrodzenie: string | null;
+  dataZgloszeniaUmowy: Date | null;
+  dataPodjPracy: Date | null;
+  dataNiepodjPracy: Date | null;
+  dataZakPracy: Date | null;
   decyzjaOdebrana: Date | null;
   stanowisko: string | null;
   stawka: unknown;
@@ -128,6 +133,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
               {[
                 ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
                 ["Rodzaj umowy", b.rodzajUmowy],
+                ["Wynagrodzenie", b.wynagrodzenie],
                 ["Firma", b.firma],
                 ["Stanowisko", b.stanowisko],
                 ["Urząd", b.urzad],
@@ -153,6 +159,10 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
                 ["Powiadomienie do", b.powiadomienieDo ? fmt(b.powiadomienieDo) : null],
                 ["Decyzja odebrana", b.decyzjaOdebrana ? fmt(b.decyzjaOdebrana) : null],
                 ["Stawka", b.stawka ? `${Number(b.stawka).toLocaleString("pl-PL")} PLN` : null],
+                ["Data zgłoszenia umowy", b.dataZgloszeniaUmowy ? fmt(b.dataZgloszeniaUmowy) : null],
+                ["Data podjęcia pracy", b.dataPodjPracy ? fmt(b.dataPodjPracy) : null],
+                ["Data niepodjęcia pracy", b.dataNiepodjPracy ? fmt(b.dataNiepodjPracy) : null],
+                ["Data zakończenia pracy", b.dataZakPracy ? fmt(b.dataZakPracy) : null],
                 ["Data podjęcia (UA)", b.dataPodjecia ? fmt(b.dataPodjecia) : null],
                 ["Uwagi KP", b.uwagiKp],
                 ["Uwagi UA", b.uwagiUa],

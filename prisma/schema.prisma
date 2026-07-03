@@ -115,6 +115,8 @@ model User {
   assignedCases Case[] @relation("AssignedStaff")
   // utworzone eventy (staff)
   createdEvents CaseEvent[] @relation("EventCreator")
+  // przypisane eventy (staff)
+  assignedEvents CaseEvent[] @relation("EventAssignee")
   // uploadowane dokumenty (staff)
   uploadedDocuments Document[] @relation("DocumentUploader")
   // uploadowane dokumenty (klient)
@@ -168,10 +170,12 @@ model CaseEvent {
   description       String?
   eventDate         DateTime  @map("event_date")
   createdByStaffId  String?   @map("created_by_staff_id") @db.Uuid
+  assignedToId      String?   @map("assigned_to_id") @db.Uuid
   createdAt         DateTime  @default(now()) @map("created_at")
 
   case             Case  @relation(fields: [caseId], references: [id], onDelete: Cascade)
   createdByStaff   User? @relation("EventCreator", fields: [createdByStaffId], references: [id], onDelete: SetNull)
+  assignedTo       User? @relation("EventAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
 
   @@index([caseId])
   @@index([eventDate])
@@ -457,6 +461,15 @@ model FdkEmploymentBase {
   sygnatura          String?
   brakujaceDokumenty String?  @map("brakujace_dokumenty") @db.Text
   uwagiKp            String?  @map("uwagi_kp") @db.Text
+
+  // Wynagrodzenie (wspólne dla zezwolenia/oświadczenia/blue card)
+  wynagrodzenie      String?
+
+  // Daty zgłoszeniowe (kalendarz)
+  dataZgloszeniaUmowy    DateTime? @map("data_zgloszenia_umowy")
+  dataPodjPracy          DateTime? @map("data_podjecia_pracy")
+  dataNiepodjPracy       DateTime? @map("data_niepodjecia_pracy")
+  dataZakPracy           DateTime? @map("data_zakonczenia_pracy")
 
   // Blue Card
   decyzjaOdebrana    DateTime? @map("decyzja_odebrana")

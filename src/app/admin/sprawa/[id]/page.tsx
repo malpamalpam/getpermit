@@ -32,7 +32,10 @@ export default async function EditCasePage({
     db.case.findUnique({
       where: { id },
       include: {
-        events: { orderBy: { eventDate: "desc" } },
+        events: {
+        orderBy: { eventDate: "desc" },
+        include: { assignedTo: { select: { id: true, firstName: true, lastName: true } } },
+      },
         documents: { orderBy: { uploadedAt: "desc" } },
         messages: {
           orderBy: { createdAt: "asc" },
@@ -101,7 +104,7 @@ export default async function EditCasePage({
               <h2 className="mb-6 font-display text-lg font-bold text-primary">
                 {t("section.events")}
               </h2>
-              <EventsManager caseId={caseRecord.id} events={caseRecord.events} />
+              <EventsManager caseId={caseRecord.id} events={caseRecord.events} staff={staff} />
             </section>
 
             <section className="rounded-2xl border border-primary/10 bg-white p-8 shadow-sm">

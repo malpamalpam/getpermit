@@ -8,9 +8,17 @@ import { createEventAction, deleteEventAction } from "@/lib/admin-actions";
 import { EventType, type CaseEvent } from "@prisma/client";
 import { Plus, Trash2 } from "lucide-react";
 
+interface StaffMember {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+}
+
 interface Props {
   caseId: string;
-  events: CaseEvent[];
+  events: (CaseEvent & { assignedTo?: { id: string; firstName: string | null; lastName: string | null } | null })[];
+  staff: StaffMember[];
 }
 
 function formatDate(date: Date): string {
@@ -21,7 +29,7 @@ function formatDate(date: Date): string {
   }).format(date);
 }
 
-export function EventsManager({ caseId, events }: Props) {
+export function EventsManager({ caseId, events, staff }: Props) {
   const t = useTranslations("admin.eventForm");
   const tEvent = useTranslations("eventType");
   const router = useRouter();
@@ -35,6 +43,7 @@ export function EventsManager({ caseId, events }: Props) {
   const [eventDate, setEventDate] = useState(
     new Date().toLocaleDateString("sv")
   );
+  const [assignedToId, setAssignedToId] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const handleAdd = (e: React.FormEvent) => {
@@ -46,11 +55,13 @@ export function EventsManager({ caseId, events }: Props) {
         title,
         description,
         eventDate,
+        assignedToId,
       });
       if (result.ok) {
         setTitle("");
         setDescription("");
         setEventDate(new Date().toLocaleDateString("sv"));
+        setAssignedToId("");
         setShowForm(false);
         router.refresh();
       }
@@ -150,6 +161,23 @@ export function EventsManager({ caseId, events }: Props) {
               className={`${inputBase} resize-none`}
             />
           </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-primary">
+              Osoba prowadząca
+            </label>
+            <select
+              value={assignedToId}
+              onChange={(e) => setAssignedToId(e.target.value)}
+              className={inputBase}
+            >
+              <option value="">— brak —</option>
+              {staff.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.firstName ?? ""} {s.lastName ?? ""} ({s.email})
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex gap-2">
             <Button type="submit" variant="accent" size="sm" disabled={isPending}>
               {isPending ? t("saving") : t("save")}
@@ -192,6 +220,11 @@ export function EventsManager({ caseId, events }: Props) {
                 </h4>
                 {event.description && (
                   <p className="mt-1 text-sm text-ink/70">{event.description}</p>
+                )}
+                {event.assignedTo && (
+                  <p className="mt-1 text-xs text-accent">
+                    Prowadzi: {event.assignedTo.firstName ?? ""} {event.assignedTo.lastName ?? ""}
+                  </p>
                 )}
               </div>
               <button

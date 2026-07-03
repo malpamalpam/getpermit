@@ -239,7 +239,29 @@ export default async function FdkForeignerPage({
 
         {activeTab === "documents" && (
           <div className="space-y-4">
-            {foreigner.detailedDocuments.length === 0 && (
+            {/* Podsumowanie dat z podstaw zatrudnienia */}
+            {foreigner.employmentBases.length > 0 && (
+              <div className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
+                <h3 className="mb-3 font-display text-sm font-bold text-primary/70 uppercase tracking-wider">Daty z podstaw zatrudnienia</h3>
+                <div className="space-y-3">
+                  {foreigner.employmentBases.map((b) => (
+                    <div key={b.id} className="flex flex-wrap items-center gap-x-6 gap-y-1 border-b border-primary/5 pb-2 last:border-0 text-sm">
+                      <span className="font-medium text-primary min-w-[120px]">
+                        {b.typ === "ZEZWOLENIE" ? "Zezwolenie" : b.typ === "OSWIADCZENIE" ? "Oświadczenie" : b.typ}
+                        {b.nrDecyzji ? ` ${b.nrDecyzji}` : b.nrOswiadczenia ? ` ${b.nrOswiadczenia}` : ""}
+                      </span>
+                      <span className="text-primary/60">Okres: {fmt(b.dataOd)} – {fmt(b.dataDo)}</span>
+                      {b.wynagrodzenie && <span className="text-primary/60">Wynagrodzenie: {b.wynagrodzenie}</span>}
+                      {b.dataZgloszeniaUmowy && <span className="text-primary/60">Zgłoszenie umowy: {fmt(b.dataZgloszeniaUmowy)}</span>}
+                      {b.dataPodjPracy && <span className="text-primary/60">Podjęcie pracy: {fmt(b.dataPodjPracy)}</span>}
+                      {b.dataNiepodjPracy && <span className="text-primary/60">Niepodjęcie pracy: {fmt(b.dataNiepodjPracy)}</span>}
+                      {b.dataZakPracy && <span className="text-primary/60">Zakończenie pracy: {fmt(b.dataZakPracy)}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {foreigner.detailedDocuments.length === 0 && foreigner.employmentBases.length === 0 && (
               <p className="py-12 text-center text-primary/40">Brak dokumentów szczegółowych</p>
             )}
             {foreigner.detailedDocuments.map((doc) => {
