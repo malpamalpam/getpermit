@@ -95,12 +95,12 @@ export default async function CalendarPage() {
   // Fetch staff for assignee dropdown
   const staffUsers = await db.user.findMany({
     where: { role: { in: ["STAFF", "ADMIN"] } },
-    select: { id: true, firstName: true, lastName: true },
+    select: { id: true, firstName: true, lastName: true, email: true },
     orderBy: { firstName: "asc" },
   });
   const staffList = staffUsers.map((s) => ({
     id: s.id,
-    name: `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || s.id,
+    name: `${s.firstName ?? ""} ${s.lastName ?? ""}`.trim() || s.email,
   }));
 
   return (

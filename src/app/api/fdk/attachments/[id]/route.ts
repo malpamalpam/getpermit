@@ -104,12 +104,12 @@ export async function GET(
       await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: updateData });
     }
 
-    // Determine document type from content or default to OSWIADCZENIE
+    // Determine document type — require positive detection, don't default to OSWIADCZENIE
     const docType = parsed.detectedType ?? "OSWIADCZENIE";
 
-    // Check for duplicate: same foreigner + type.
-    // If dates available, match on dates too. Otherwise match any record with same type.
-    const existingBase = await db.fdkEmploymentBase.findFirst({
+    // Check for duplicate: same foreigner + type (+ dates if available).
+    // Also check for any existing base with same type to update instead of creating duplicates.
+    let existingBase = await db.fdkEmploymentBase.findFirst({
       where: {
         foreignerId: attachment.foreignerId,
         typ: docType,
@@ -119,6 +119,18 @@ export async function GET(
       },
       orderBy: { createdAt: "desc" },
     });
+
+    // Fallback: if no exact date match, find any base with same type for this foreigner
+    if (!existingBase) {
+      existingBase = await db.fdkEmploymentBase.findFirst({
+        where: {
+          foreignerId: attachment.foreignerId,
+          typ: docType,
+          status: "BRAK_DANYCH",
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
 
     // Build type-specific data — don't mix zezwolenie and oświadczenie fields
     const baseData: Record<string, unknown> = {
@@ -135,9 +147,13 @@ export async function GET(
     if (docType === "OSWIADCZENIE") {
       baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
       baseData.podjeciePracy = parsed.rodzajPracy || null;
+      // Ensure zezwolenie fields are cleared
+      baseData.nrDecyzji = null;
     } else {
       // ZEZWOLENIE, KARTA_POBYTU — no oświadczenie fields
       baseData.nrDecyzji = parsed.nrDecyzji || null;
+      // Ensure oświadczenie fields are cleared
+      baseData.nrOswiadczenia = null;
     }
 
     // Store wynagrodzenie as text
