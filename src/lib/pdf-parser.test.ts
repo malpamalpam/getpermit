@@ -192,4 +192,43 @@ describe("parseOswiadczenieText", () => {
     expect(result.dataOd).toBe("2026-06-01");
     expect(result.dataDo).toBe("2027-05-31");
   });
+
+  it("parses real zezwolenie typ A (Abraham) — firma, stanowisko, umowa, nr decyzji", () => {
+    const text = `WRP-II.8671.42150.2025
+Warszawa, dnia 20.10.2025 r.
+Identyfikator w systemie centralnym: nr dok 69056/202569056/2025 kod jednostki 14UW014UW0
+ZEZWOLENIE ZEZWOLENIE
+na pracę cudzoziemca na rzecz polskiego podmiotu powierzającego pracę cudzoziemcowi na pracę cudzoziemca na rzecz polskiego podmiotu powierzającego pracę cudzoziemcowi
+na terytorium Rzeczypospolitej Polskiej na terytorium Rzeczypospolitej Polskiej
+(typu A) nr 69056/2025(typu A) nr 69056/2025
+po rozpatrzeniu wniosku
+FUNDACJA FIRMA DLA KAŻDEGO, ul. Lwowska 17 lok. 4, 00-660 Warszawa, tel.: 791643000, e-mail:FUNDACJA FIRMA DLA KAŻDEGO, ul. Lwowska 17 lok. 4, 00-660 Warszawa, tel.: 791643000, e-mail:
+m.glapinska@firmadlakazdego.plm.glapinska@firmadlakazdego.pl
+(imię lub imiona i nazwisko/nazwa, adres zamieszkania /
+siedziba podmiotu powierzającego wykonywanie pracy cudzoziemcowi, telefon, e-mail)
+wydaję zezwolenie na pracę na terytorium Rzeczypospolitej Polskiej dlawydaję zezwolenie na pracę na terytorium Rzeczypospolitej Polskiej dla
+Pana/Pani DANIEL DOMINIC ABRAHAM -DANIEL DOMINIC ABRAHAM -
+(imię lub imiona i nazwisko cudzoziemca)
+obywatela/obywatelki MalezjaMalezja
+(obywatelstwo)
+data urodzenia 25.04.1993 r.25.04.1993 r.
+na stanowisku / w charakterze Twórca podcastów edukacyjnych z języka angielskiegoTwórca podcastów edukacyjnych z języka angielskiego
+(stanowisko, rodzaj wykonywanej pracy, pełniona funkcja)
+na podstawie Umowa o dziełoUmowa o dzieło
+(rodzaj umowy / stosunku prawnego)
+za miesięcznym wynagrodzeniem brutto nie niższym niż: 4 666,00 PLN/miesięcznie4 666,00 PLN/miesięcznie
+Zezwolenie na pracę jest ważne od 01.11.2025 r. do 31.10.2026 r.Zezwolenie na pracę jest ważne od 01.11.2025 r. do 31.10.2026 r.`;
+
+    const result = parseOswiadczenieText(text);
+
+    expect(result.detectedType).toBe("ZEZWOLENIE");
+    expect(result.firma).toBe("FUNDACJA FIRMA DLA KAŻDEGO");
+    expect(result.stanowisko).toBe("Twórca podcastów edukacyjnych z języka angielskiego");
+    expect(result.rodzajUmowy).toBe("Umowa o dzieło");
+    expect(result.nrDecyzji).toBe("69056/2025");
+    expect(result.dataOd).toBe("2025-11-01");
+    expect(result.dataDo).toBe("2026-10-31");
+    expect(result.wynagrodzenie).toContain("4 666,00 PLN");
+    expect(result.nrOswiadczenia).toBeUndefined();
+  });
 });
