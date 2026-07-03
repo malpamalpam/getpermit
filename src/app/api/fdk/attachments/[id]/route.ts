@@ -143,13 +143,6 @@ export async function GET(
     // Store wynagrodzenie as text
     if (parsed.wynagrodzenie) {
       baseData.wynagrodzenie = parsed.wynagrodzenie;
-      // Also set stawka as number if it's a Blue Card
-      if (docType === "BLUE_CARD") {
-        const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
-        if (numMatch) {
-          baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
-        }
-      }
     }
 
     let baseId: number;
