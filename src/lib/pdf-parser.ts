@@ -172,11 +172,30 @@ function extractDateRange(normalized: string, result: ParsedDocumentData): void 
   }
 }
 
+/**
+ * Remove inline doubled text from PDF rendering artifacts.
+ * E.g. "Umowa o dziełoUmowa o dzieło" → "Umowa o dzieło"
+ */
+function dedup(s: string): string {
+  const trimmed = s.trim();
+  if (trimmed.length < 4) return trimmed;
+  const half = Math.floor(trimmed.length / 2);
+  // Exact halving
+  if (trimmed.substring(0, half) === trimmed.substring(half)) {
+    return trimmed.substring(0, half);
+  }
+  // Try with ±1 char tolerance (odd length)
+  if (trimmed.length % 2 === 1) {
+    if (trimmed.substring(0, half) === trimmed.substring(half + 1)) {
+      return trimmed.substring(0, half);
+    }
+  }
+  return trimmed;
+}
+
 export function parseOswiadczenieText(text: string): ParsedDocumentData {
   const result: ParsedDocumentData = {};
-  // Deduplicate doubled text (PDF rendering artifact: "valuevalue" → "value")
-  const deduped = text.replace(/(.{15,}?)\1/g, "$1");
-  const normalized = deduped.replace(/\s+/g, " ").trim();
+  const normalized = text.replace(/\s+/g, " ").trim();
 
   // Detect document type
   result.detectedType = detectDocumentType(normalized);
@@ -222,8 +241,9 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   // Zezwolenie format: "na stanowisku / w charakterze VALUE (stanowisko...)"
   if (!result.stanowisko) {
     const stanowiskoWP = normalized.match(/na\s+stanowisku\s*\/?\s*w\s+charakterze\s+(.+?)(?=\s*\(stanowisko)/i);
-    if (stanowiskoWP && stanowiskoWP[1].trim().length > 2) {
-      result.stanowisko = stanowiskoWP[1].trim();
+    if (stanowiskoWP) {
+      const cleaned = dedup(stanowiskoWP[1]);
+      if (cleaned.length > 2) result.stanowisko = cleaned;
     }
   }
   // Generic "stanowisko:" fallback
@@ -241,19 +261,11 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
     const cleaned = rodzajUmowyMatch[1].replace(/\s+/g, " ").trim();
     if (cleaned.length > 2 && cleaned.length < 300) result.rodzajUmowy = cleaned;
   }
-  // Zezwolenie format: "na podstawie Umowa o dzieło[Umowa o dzieło] (rodzaj umowy...)"
-  // The PDF may duplicate the value, so we capture up to "(" and take the first half if doubled
+  // Zezwolenie format: "na podstawie Umowa o dzieło[Umowa o dzieło] \n (rodzaj umowy / stosunku prawnego...)"
   if (!result.rodzajUmowy) {
     const naPodstawieMatch = normalized.match(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/i);
     if (naPodstawieMatch) {
-      let cleaned = naPodstawieMatch[1].replace(/\s+/g, " ").trim();
-      // Handle doubled text: "Umowa o dziełoUmowa o dzieło" → "Umowa o dzieło"
-      if (cleaned.length >= 6) {
-        const half = Math.floor(cleaned.length / 2);
-        if (cleaned.substring(0, half) === cleaned.substring(half)) {
-          cleaned = cleaned.substring(0, half);
-        }
-      }
+      const cleaned = dedup(naPodstawieMatch[1]);
       if (cleaned.length > 2 && cleaned.length < 100) result.rodzajUmowy = cleaned;
     }
   }
@@ -270,7 +282,7 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   // Zezwolenie format: "po rozpatrzeniu wniosku FIRMA, ul. Adres..."
   if (!result.firma) {
     const wniosekMatch = normalized.match(/po\s+rozpatrzeniu\s+wniosku\s+([A-ZĄĆĘŁŃÓŚŹŻ0-9][^,]{3,120}?)(?=\s*,\s*(?:ul|al|pl|os)\b)/i);
-    if (wniosekMatch) result.firma = wniosekMatch[1].trim();
+    if (wniosekMatch) result.firma = dedup(wniosekMatch[1]);
   }
   // Fallback: "nazwa podmiotu", "pracodawca", "podmiot powierzający"
   if (!result.firma) {
