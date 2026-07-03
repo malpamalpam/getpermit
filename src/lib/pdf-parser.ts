@@ -200,36 +200,28 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   // Detect document type
   result.detectedType = detectDocumentType(normalized);
 
-  // Extract common data
+  // === ZEZWOLENIE-specific extraction (different layout than oświadczenie) ===
+  if (result.detectedType === "ZEZWOLENIE") {
+    return parseZezwolenie(normalized, result);
+  }
+
+  // === OŚWIADCZENIE / KARTA_POBYTU / unknown ===
   extractPersonalData(normalized, result);
   extractDateRange(normalized, result);
 
-  // --- Nr oświadczenia (ONLY for OSWIADCZENIE documents) ---
+  // Nr oświadczenia (ONLY for OSWIADCZENIE)
   if (result.detectedType === "OSWIADCZENIE") {
     const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
     if (nrWpisuMatch) result.nrOswiadczenia = nrWpisuMatch[1].trim();
   }
 
-  // --- Nr decyzji (for zezwolenie / karta pobytu) ---
-  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "KARTA_POBYTU") {
-    // Try "nr decyzji:", "numer decyzji:", "sygnatura:", "znak sprawy:"
+  // Nr decyzji (for karta pobytu)
+  if (result.detectedType === "KARTA_POBYTU") {
     const nrDecyzjiMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
-    if (nrDecyzjiMatch) {
-      result.nrDecyzji = nrDecyzjiMatch[1].trim();
-    } else {
-      // Zezwolenie typ A format: "(typu A) nr 69056/2025"
-      const typAMatch = normalized.match(/\(typu\s+[A-E]\)\s+nr\s+(\d+\/\d+)/i);
-      if (typAMatch) result.nrDecyzji = typAMatch[1].trim();
-    }
-    // Also try document header: "WRP-II.8671.42150.2025"
-    if (!result.nrDecyzji) {
-      const sygnaturaMatch = normalized.match(/([A-Z]{2,5}[-.](?:[A-Z]*\.?\d+\.?)+\.\d{4})/);
-      if (sygnaturaMatch) result.nrDecyzji = sygnaturaMatch[1].trim();
-    }
+    if (nrDecyzjiMatch) result.nrDecyzji = nrDecyzjiMatch[1].trim();
   }
 
-  // --- Stanowisko / rodzaj pracy ---
-  // Oświadczenie format: "3.1. Stanowisko / rodzaj pracy ... : VALUE 3.2."
+  // Stanowisko / rodzaj pracy (oświadczenie pkt 3.1)
   const rodzajPracyMatch = normalized.match(/3\.1[.\s]*(?:Stanowisko\s*\/?\s*)?(?:[Rr]odzaj\s+pracy[^:]*)?[:\s]+(.+?)(?=\s*3\.2\b)/);
   if (rodzajPracyMatch) {
     const cleaned = rodzajPracyMatch[1].replace(/\s+/g, " ").trim();
@@ -238,15 +230,6 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
       result.stanowisko = cleaned;
     }
   }
-  // Zezwolenie format: "na stanowisku / w charakterze VALUE (stanowisko...)"
-  if (!result.stanowisko) {
-    const stanowiskoWP = normalized.match(/na\s+stanowisku\s*\/?\s*w\s+charakterze\s+(.+?)(?=\s*\(stanowisko)/i);
-    if (stanowiskoWP) {
-      const cleaned = dedup(stanowiskoWP[1]);
-      if (cleaned.length > 2) result.stanowisko = cleaned;
-    }
-  }
-  // Generic "stanowisko:" fallback
   if (!result.stanowisko) {
     const stanowiskoMatch = normalized.match(/[Ss]tanowisko[:\s]+([^,.\n]+)/);
     if (stanowiskoMatch && stanowiskoMatch[1].trim().length > 2) {
@@ -254,50 +237,100 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
     }
   }
 
-  // --- Rodzaj umowy ---
-  // Oświadczenie format: "3.6. Rodzaj umowy ... : VALUE 3.7."
+  // Rodzaj umowy (oświadczenie pkt 3.6)
   const rodzajUmowyMatch = normalized.match(/3\.6[.\s]*(?:[Rr]odzaj\s+umowy[^:]*)?[:\s]+(.+?)(?=\s*3\.7\b)/);
   if (rodzajUmowyMatch) {
     const cleaned = rodzajUmowyMatch[1].replace(/\s+/g, " ").trim();
     if (cleaned.length > 2 && cleaned.length < 300) result.rodzajUmowy = cleaned;
   }
-  // Zezwolenie format: "na podstawie Umowa o dzieło[Umowa o dzieło] \n (rodzaj umowy / stosunku prawnego...)"
-  if (!result.rodzajUmowy) {
-    const naPodstawieMatch = normalized.match(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/i);
-    if (naPodstawieMatch) {
-      const cleaned = dedup(naPodstawieMatch[1]);
-      if (cleaned.length > 2 && cleaned.length < 100) result.rodzajUmowy = cleaned;
-    }
-  }
-  // Generic fallback
-  if (!result.rodzajUmowy) {
-    const umowyFallback = normalized.match(/[Rr]odzaj\s+umowy[:\s]+([^,(]{3,100})/);
-    if (umowyFallback) result.rodzajUmowy = umowyFallback[1].trim();
-  }
 
-  // --- Firma / pracodawca ---
-  // Oświadczenie format: "1.1. Nazwa: VALUE 1.2."
+  // Firma (oświadczenie pkt 1.1)
   const firmaMatch = normalized.match(/(?:1\.1[.\s]*)?[Nn]azwa[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][^\n,]{3,100}?)(?=\s*1\.2|\s*[Aa]dres)/);
   if (firmaMatch) result.firma = firmaMatch[1].trim();
-  // Zezwolenie format: "po rozpatrzeniu wniosku FIRMA, ul. Adres..."
-  if (!result.firma) {
-    const wniosekMatch = normalized.match(/po\s+rozpatrzeniu\s+wniosku\s+([A-ZĄĆĘŁŃÓŚŹŻ0-9][^,]{3,120}?)(?=\s*,\s*(?:ul|al|pl|os)\b)/i);
-    if (wniosekMatch) result.firma = dedup(wniosekMatch[1]);
-  }
-  // Fallback: "nazwa podmiotu", "pracodawca", "podmiot powierzający"
-  if (!result.firma) {
-    const pracodawcaMatch = normalized.match(/(?:[Pp]racodawc[aąy]|[Nn]azwa\s+podmiotu|[Pp]odmiot\s+powierzaj[aą]cy)[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ0-9][^\n]{3,120}?)(?=\s*(?:adres|siedzib|NIP|REGON|[,.]|\d\.))/i);
-    if (pracodawcaMatch) result.firma = pracodawcaMatch[1].trim();
-  }
 
-  // --- Wynagrodzenie ---
+  // Wynagrodzenie (oświadczenie pkt 3.8)
   const wynagrodzenieMatch = normalized.match(
-    /(?:[Ww]ynagrodzeni[ea]|[Ww]ysoko[śs][ćc]\s+wynagrodzenia|[Ss]tawka|3\.8[.\s]*(?:[Nn]ajni[żz]sze\s+)?[Ww]ynagrodzeni[ea])[^:]*[:\s]+([0-9][0-9\s,.]*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie|godzin[ęe]|za\s+godzin[ęe])?(?:\s*\/?\s*(?:PLN|brutto|netto|miesi[ęe]cznie))*)/i
+    /(?:[Ww]ynagrodzeni[ea]|3\.8[.\s]*(?:[Nn]ajni[żz]sze\s+)?[Ww]ynagrodzeni[ea])[^:]*[:\s]+([0-9][0-9\s,.]*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie)?(?:\s*\/?\s*(?:PLN|brutto|netto|miesi[ęe]cznie))*)/i
   );
   if (wynagrodzenieMatch) {
     const cleaned = wynagrodzenieMatch[1].replace(/\s+/g, " ").trim();
     if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
   }
+
+  return result;
+}
+
+/**
+ * Parse zezwolenie na pracę (typ A/B/C) — different layout from oświadczenie.
+ * Field values appear BEFORE the field label in parentheses.
+ */
+function parseZezwolenie(normalized: string, result: ParsedDocumentData): ParsedDocumentData {
+  // --- Nr decyzji: "(typu A) nr 69056/2025" ---
+  const typNrMatch = normalized.match(/\(typu\s+[A-E]\)\s+nr\s+(\d+\/\d+)/i);
+  if (typNrMatch) result.nrDecyzji = typNrMatch[1].trim();
+  if (!result.nrDecyzji) {
+    const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
+    if (nrDecMatch) result.nrDecyzji = nrDecMatch[1].trim();
+  }
+  // Fallback: document header sygnatura "WRP-II.8671.42150.2025"
+  if (!result.nrDecyzji) {
+    const sygMatch = normalized.match(/([A-Z]{2,5}[-.](?:[A-Z]*\.?\d+\.?)+\.\d{4})/);
+    if (sygMatch) result.nrDecyzji = sygMatch[1].trim();
+  }
+
+  // --- Imię i nazwisko: "Pana/Pani DANIEL DOMINIC ABRAHAM -" or "Pana/Pani IMIE NAZWISKO" ---
+  const panMatch = normalized.match(/Pana\/Pani\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ\s-]+?)(?:\s*-\s*|\s*\()/);
+  if (panMatch) {
+    const fullName = dedup(panMatch[1].trim().replace(/\s*-\s*$/, ""));
+    const parts = fullName.split(/\s+/);
+    if (parts.length >= 2) {
+      result.nazwisko = titleCase(parts[parts.length - 1]);
+      result.imie = titleCase(parts.slice(0, -1).join(" "));
+    } else if (parts.length === 1) {
+      result.nazwisko = titleCase(parts[0]);
+    }
+  }
+
+  // --- Obywatelstwo: "obywatela/obywatelki MalezjaMalezja" ---
+  const obywMatch = normalized.match(/obywatela\/obywatelki\s+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)/i);
+  if (obywMatch) result.obywatelstwo = dedup(obywMatch[1].trim());
+
+  // --- Data urodzenia: "data urodzenia 25.04.1993 r." ---
+  const dobMatch = normalized.match(/data\s+urodzenia\s+(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i);
+  if (dobMatch) result.dataUrodzenia = parseDatePL(dobMatch[1]);
+
+  // --- Stanowisko: "na stanowisku / w charakterze VALUE (stanowisko...)" ---
+  const stanMatch = normalized.match(/na\s+stanowisku\s*\/?\s*w\s+charakterze\s+(.+?)(?=\s*\(stanowisko)/i);
+  if (stanMatch) result.stanowisko = dedup(stanMatch[1].trim());
+  if (!result.stanowisko) {
+    const stanFallback = normalized.match(/na\s+stanowisku\s*\/?\s*w\s+charakterze\s+(.+?)(?=\s*\()/i);
+    if (stanFallback) result.stanowisko = dedup(stanFallback[1].trim());
+  }
+
+  // --- Rodzaj umowy: "na podstawie Umowa o dzieło[dup] (rodzaj umowy..." ---
+  const umowaMatch = normalized.match(/na\s+podstawie\s+(.+?)(?=\s*\(rodzaj\s+umowy)/i);
+  if (umowaMatch) result.rodzajUmowy = dedup(umowaMatch[1].trim());
+
+  // --- Firma: "po rozpatrzeniu wniosku FIRMA, ul. ..." ---
+  const firmaMatch = normalized.match(/po\s+rozpatrzeniu\s+wniosku\s+(.+?)(?=\s*,\s*(?:ul|al|pl|os)\.?\s)/i);
+  if (firmaMatch) result.firma = dedup(firmaMatch[1].trim());
+
+  // --- Wynagrodzenie: "wynagrodzeniem brutto nie niższym niż: 4 666,00 PLN/miesięcznie" ---
+  const wynMatch = normalized.match(/wynagrodzeni\w+[^:]*:\s*([0-9][0-9\s,.]*(?:PLN|z[łl])?(?:\s*\/?\s*(?:miesi[ęe]cznie|brutto|netto|godzin[ęe]))*)/i);
+  if (wynMatch) {
+    const cleaned = dedup(wynMatch[1].replace(/\s+/g, " ").trim());
+    if (cleaned.length > 2) result.wynagrodzenie = cleaned;
+  }
+
+  // --- Daty: "ważne od 01.11.2025 r. do 31.10.2026 r." ---
+  extractDateRange(normalized, result);
+
+  // --- Paszport ---
+  const paszMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
+  if (paszMatch) result.nrPaszportu = paszMatch[1].trim();
+
+  // Ensure no oświadczenie fields leak
+  result.nrOswiadczenia = undefined;
 
   return result;
 }

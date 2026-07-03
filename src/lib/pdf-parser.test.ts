@@ -222,6 +222,10 @@ Zezwolenie na pracę jest ważne od 01.11.2025 r. do 31.10.2026 r.Zezwolenie na 
     const result = parseOswiadczenieText(text);
 
     expect(result.detectedType).toBe("ZEZWOLENIE");
+    expect(result.imie).toBe("Daniel Dominic");
+    expect(result.nazwisko).toBe("Abraham");
+    expect(result.dataUrodzenia).toBe("1993-04-25");
+    expect(result.obywatelstwo).toBe("Malezja");
     expect(result.firma).toBe("FUNDACJA FIRMA DLA KAŻDEGO");
     expect(result.stanowisko).toBe("Twórca podcastów edukacyjnych z języka angielskiego");
     expect(result.rodzajUmowy).toBe("Umowa o dzieło");
