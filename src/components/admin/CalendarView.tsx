@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction, toggleCalendarEventDoneAction } from "@/lib/fdk-actions";
+import { createCalendarEventAction, updateCalendarEventAction, deleteCalendarEventAction, toggleCalendarEventDoneAction, updateEmploymentBaseNoteAction } from "@/lib/fdk-actions";
 import {
   ChevronLeft,
   ChevronRight,
@@ -21,6 +21,8 @@ import {
   Check,
   Filter,
   Search,
+  Save,
+  StickyNote,
 } from "lucide-react";
 
 interface CalendarEventData {
@@ -48,17 +50,32 @@ interface DocumentExpiry {
   typ: string;
   dataDo: string;
   daysLeft: number;
+  rodzajUmowy: string | null;
+  baseId: number | null;
+  notes: string | null;
+}
+
+function isExpired(exp: DocumentExpiry): boolean {
+  return exp.daysLeft < 0;
+}
+
+function expiryColors(exp: DocumentExpiry) {
+  if (isExpired(exp)) {
+    return { bg: "bg-red-100", bgLight: "bg-red-50", text: "text-red-700", border: "border-l-red-500", dot: "bg-red-500", subtext: "text-red-600/70" };
+  }
+  return { bg: "bg-orange-100", bgLight: "bg-orange-50", text: "text-orange-700", border: "border-l-orange-500", dot: "bg-orange-500", subtext: "text-orange-600/70" };
 }
 
 function expiryTooltip(exp: DocumentExpiry): string {
   const dateStr = new Date(exp.dataDo).toLocaleDateString("pl-PL");
+  const umowa = exp.rodzajUmowy ? ` | ${exp.rodzajUmowy}` : "";
   if (exp.daysLeft < 0) {
-    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName} — wygasło ${Math.abs(exp.daysLeft)} dni temu (${dateStr})`;
+    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName}${umowa} — wygasło ${Math.abs(exp.daysLeft)} dni temu (${dateStr})`;
   }
   if (exp.daysLeft === 0) {
-    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName} — wygasa DZIŚ (${dateStr})`;
+    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName}${umowa} — wygasa DZIŚ (${dateStr})`;
   }
-  return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName} — za ${exp.daysLeft} dni (${dateStr})`;
+  return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName}${umowa} — za ${exp.daysLeft} dni (${dateStr})`;
 }
 
 interface Props {
@@ -79,33 +96,33 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  OFFICE_VISIT: "bg-blue-500",
+  OFFICE_VISIT: "bg-green-600",
   OFFICE_MEETING: "bg-green-500",
   DOCUMENT_EXPIRY: "bg-red-500",
-  WORK_START_REMINDER: "bg-orange-500",
-  CONTRACT_REMINDER: "bg-purple-500",
-  WORK_NOTIFICATION: "bg-teal-500",
-  OTHER: "bg-gray-500",
+  WORK_START_REMINDER: "bg-green-700",
+  CONTRACT_REMINDER: "bg-green-500",
+  WORK_NOTIFICATION: "bg-green-600",
+  OTHER: "bg-green-400",
 };
 
 const TYPE_BORDER_COLORS: Record<string, string> = {
-  OFFICE_VISIT: "border-l-blue-500",
+  OFFICE_VISIT: "border-l-green-600",
   OFFICE_MEETING: "border-l-green-500",
   DOCUMENT_EXPIRY: "border-l-red-500",
-  WORK_START_REMINDER: "border-l-orange-500",
-  CONTRACT_REMINDER: "border-l-purple-500",
-  WORK_NOTIFICATION: "border-l-teal-500",
-  OTHER: "border-l-gray-500",
+  WORK_START_REMINDER: "border-l-green-700",
+  CONTRACT_REMINDER: "border-l-green-500",
+  WORK_NOTIFICATION: "border-l-green-600",
+  OTHER: "border-l-green-400",
 };
 
 const TYPE_BG_LIGHT: Record<string, string> = {
-  OFFICE_VISIT: "bg-blue-50 hover:bg-blue-100",
+  OFFICE_VISIT: "bg-green-50 hover:bg-green-100",
   OFFICE_MEETING: "bg-green-50 hover:bg-green-100",
   DOCUMENT_EXPIRY: "bg-red-50 hover:bg-red-100",
-  WORK_START_REMINDER: "bg-orange-50 hover:bg-orange-100",
-  CONTRACT_REMINDER: "bg-purple-50 hover:bg-purple-100",
-  WORK_NOTIFICATION: "bg-teal-50 hover:bg-teal-100",
-  OTHER: "bg-gray-50 hover:bg-gray-100",
+  WORK_START_REMINDER: "bg-green-50 hover:bg-green-100",
+  CONTRACT_REMINDER: "bg-green-50 hover:bg-green-100",
+  WORK_NOTIFICATION: "bg-green-50 hover:bg-green-100",
+  OTHER: "bg-green-50 hover:bg-green-100",
 };
 
 const ALL_EVENT_TYPES = Object.keys(TYPE_LABELS);
@@ -162,6 +179,19 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<CalendarEventData[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  // Expiry filters
+  const [expiryFilterExpired, setExpiryFilterExpired] = useState(false);
+  const [expiryFilterDays, setExpiryFilterDays] = useState("");
+  // Expiry note modal
+  const [noteExpiry, setNoteExpiry] = useState<DocumentExpiry | null>(null);
+  const [noteText, setNoteText] = useState("");
+  const [expiryNotes, setExpiryNotes] = useState<Record<number, string>>(() => {
+    const notes: Record<number, string> = {};
+    for (const exp of documentExpiries) {
+      if (exp.baseId && exp.notes) notes[exp.baseId] = exp.notes;
+    }
+    return notes;
+  });
 
   const emptyForm = {
     type: "OFFICE_VISIT" as string,
@@ -229,8 +259,18 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
     return events.filter((e) => sameDay(new Date(e.eventDate), day) && visibleTypes.has(e.type));
   }
 
+  // Apply expiry filters
+  const filteredExpiries = documentExpiries.filter((exp) => {
+    if (expiryFilterExpired && exp.daysLeft >= 0) return false;
+    if (expiryFilterDays) {
+      const maxDays = parseInt(expiryFilterDays, 10);
+      if (!isNaN(maxDays) && exp.daysLeft > maxDays) return false;
+    }
+    return true;
+  });
+
   function getExpiriesForDay(day: Date) {
-    return documentExpiries.filter((e) => sameDay(new Date(e.dataDo), day));
+    return filteredExpiries.filter((e) => sameDay(new Date(e.dataDo), day));
   }
 
   const handleSubmitEvent = (e: React.FormEvent) => {
@@ -530,8 +570,34 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
           <span className="mx-2 h-4 border-l border-primary/15" />
           <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-700">
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500" />
-            Koniec dokumentu (expiry)
+            Wygasłe
           </span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-1 text-[11px] font-semibold text-orange-700">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-orange-500" />
+            Przed wygaśnięciem
+          </span>
+          <span className="mx-2 h-4 border-l border-primary/15" />
+          <label className="inline-flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={expiryFilterExpired}
+              onChange={(e) => setExpiryFilterExpired(e.target.checked)}
+              className="h-3.5 w-3.5 rounded border-primary/30 text-red-500 focus:ring-red-500/30"
+            />
+            <span className="text-[11px] font-medium text-primary/60">Tylko wygasłe</span>
+          </label>
+          <div className="inline-flex items-center gap-1">
+            <span className="text-[11px] text-primary/50">Do</span>
+            <input
+              type="number"
+              min="0"
+              value={expiryFilterDays}
+              onChange={(e) => setExpiryFilterDays(e.target.value)}
+              placeholder="∞"
+              className="w-14 rounded border border-primary/15 px-1.5 py-0.5 text-[11px] text-center focus:border-accent focus:outline-none"
+            />
+            <span className="text-[11px] text-primary/50">dni</span>
+          </div>
         </div>
       )}
 
@@ -597,15 +663,21 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                         +{dayEvents.length - 3} więcej
                       </span>
                     )}
-                    {dayExpiries.slice(0, 2).map((exp, i) => (
-                      <div
-                        key={`exp-${i}`}
-                        className="truncate rounded bg-red-100 px-1.5 py-1 text-[11px] font-medium text-red-700"
-                        title={expiryTooltip(exp)}
-                      >
-                        {exp.foreignerName} — {exp.typLabel}
-                      </div>
-                    ))}
+                    {dayExpiries.slice(0, 2).map((exp, i) => {
+                      const ec = expiryColors(exp);
+                      return (
+                        <button
+                          key={`exp-${i}`}
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); if (exp.baseId) { setNoteExpiry(exp); setNoteText(expiryNotes[exp.baseId] ?? ""); } }}
+                          className={`truncate rounded px-1.5 py-1 text-[11px] font-medium text-left w-full ${ec.bg} ${ec.text}`}
+                          title={expiryTooltip(exp)}
+                        >
+                          {exp.foreignerName} — {exp.typLabel}
+                          {exp.baseId && expiryNotes[exp.baseId] && <StickyNote className="inline h-3 w-3 ml-1 opacity-60" />}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               );
@@ -645,11 +717,14 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                           {ev.done && <Check className="inline h-2.5 w-2.5 mr-0.5" />}{ev.title}
                         </button>
                       ))}
-                      {expiries.map((exp, i) => (
-                        <div key={`exp-${i}`} className="truncate rounded bg-red-100 px-1.5 py-0.5 mb-0.5 text-[10px] font-medium text-red-700" title={expiryTooltip(exp)}>
-                          {exp.foreignerName} — {exp.typLabel}
-                        </div>
-                      ))}
+                      {expiries.map((exp, i) => {
+                        const ec = expiryColors(exp);
+                        return (
+                          <div key={`exp-${i}`} className={`truncate rounded px-1.5 py-0.5 mb-0.5 text-[10px] font-medium ${ec.bg} ${ec.text}`} title={expiryTooltip(exp)}>
+                            {exp.foreignerName} — {exp.typLabel}
+                          </div>
+                        );
+                      })}
                     </div>
                   ))}
                 </div>
@@ -795,18 +870,38 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                   {ev.foreignerName && <div className="text-xs text-primary/50 mt-0.5">{ev.foreignerName}</div>}
                 </button>
               ))}
-              {dayViewExpiries.map((exp, i) => (
-                <div key={`exp-${i}`} className="rounded-lg border-l-4 border-l-red-500 bg-red-50 p-3 text-xs font-medium text-red-700" title={expiryTooltip(exp)}>
-                  <div>{exp.foreignerName} — {exp.typLabel}</div>
-                  <div className="mt-0.5 text-red-600/70 font-normal">
-                    {exp.daysLeft < 0
-                      ? `Wygasło ${Math.abs(exp.daysLeft)} dni temu`
-                      : exp.daysLeft === 0
-                        ? "Wygasa DZIŚ"
-                        : `Pozostało ${exp.daysLeft} dni`}
-                  </div>
-                </div>
-              ))}
+              {dayViewExpiries.map((exp, i) => {
+                const ec = expiryColors(exp);
+                return (
+                  <button
+                    key={`exp-${i}`}
+                    type="button"
+                    onClick={() => { if (exp.baseId) { setNoteExpiry(exp); setNoteText(expiryNotes[exp.baseId] ?? ""); } }}
+                    className={`rounded-lg border-l-4 ${ec.border} ${ec.bgLight} p-3 text-xs font-medium ${ec.text} text-left w-full`}
+                    title={expiryTooltip(exp)}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div>{exp.foreignerName} — {exp.typLabel}</div>
+                        {exp.rodzajUmowy && <div className={`mt-0.5 ${ec.subtext} font-normal`}>Umowa: {exp.rodzajUmowy}</div>}
+                        <div className={`mt-0.5 ${ec.subtext} font-normal`}>
+                          {exp.daysLeft < 0
+                            ? `Wygasło ${Math.abs(exp.daysLeft)} dni temu`
+                            : exp.daysLeft === 0
+                              ? "Wygasa DZIŚ"
+                              : `Pozostało ${exp.daysLeft} dni`}
+                        </div>
+                      </div>
+                      {exp.baseId && expiryNotes[exp.baseId] && (
+                        <div className="flex-shrink-0 max-w-[200px] rounded bg-white/60 px-2 py-1 text-[11px] text-primary/70 font-normal">
+                          <StickyNote className="inline h-3 w-3 mr-0.5 opacity-50" />
+                          {expiryNotes[exp.baseId]}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
 
@@ -1137,6 +1232,56 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                   <Pencil className="h-4 w-4" /> Edytuj
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expiry Note Modal */}
+      {noteExpiry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setNoteExpiry(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-display text-lg font-bold text-primary">Notatka do dokumentu</h3>
+              <button onClick={() => setNoteExpiry(null)} className="rounded-lg p-1.5 text-primary/40 hover:bg-primary/5">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="mb-4 text-sm text-primary/70">
+              <div className="font-medium text-primary">{noteExpiry.foreignerName} — {noteExpiry.typLabel}</div>
+              <div className="text-xs text-primary/50 mt-1">
+                Ważne do: {new Date(noteExpiry.dataDo).toLocaleDateString("pl-PL")}
+                {noteExpiry.rodzajUmowy && ` | ${noteExpiry.rodzajUmowy}`}
+              </div>
+            </div>
+            <textarea
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="Wpisz notatkę..."
+              className="w-full rounded-lg border border-primary/15 bg-white px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/20"
+              rows={4}
+              autoFocus
+            />
+            <div className="mt-4 flex justify-end gap-3">
+              <button type="button" onClick={() => setNoteExpiry(null)} className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5">
+                Anuluj
+              </button>
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => {
+                  if (!noteExpiry.baseId) return;
+                  startTransition(async () => {
+                    await updateEmploymentBaseNoteAction(noteExpiry.baseId!, noteText);
+                    setExpiryNotes((prev) => ({ ...prev, [noteExpiry.baseId!]: noteText }));
+                    setNoteExpiry(null);
+                  });
+                }}
+                className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50"
+              >
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                Zapisz
+              </button>
             </div>
           </div>
         </div>

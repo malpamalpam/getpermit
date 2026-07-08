@@ -7,6 +7,7 @@ import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "l
 import { withComputedStatuses } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
+export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 50;
 

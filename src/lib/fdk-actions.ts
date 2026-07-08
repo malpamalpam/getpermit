@@ -571,6 +571,14 @@ export async function deleteEmploymentBaseAction(id: number): Promise<FdkResult>
   return { ok: true };
 }
 
+export async function updateEmploymentBaseNoteAction(id: number, note: string): Promise<FdkResult> {
+  await requireAdmin();
+  const base = await db.fdkEmploymentBase.findUnique({ where: { id } });
+  if (!base) return { ok: false, error: "not_found" };
+  await db.fdkEmploymentBase.update({ where: { id }, data: { uwagi: note || null } });
+  return { ok: true };
+}
+
 // =============================================================================
 // HR — WYŚLIJ DANE DO PRZYGOTOWANIA UMOWY (Z PODGLĄDEM)
 // =============================================================================

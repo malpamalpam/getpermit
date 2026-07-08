@@ -54,7 +54,7 @@ export default async function CalendarPage() {
     ZGLOSZENIE_UA: "Zgłoszenie UA",
   };
 
-  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: string; daysLeft: number }[] = [];
+  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: string; daysLeft: number; rodzajUmowy: string | null; baseId: number | null; notes: string | null }[] = [];
 
   for (const f of foreigners) {
     for (const b of f.employmentBases) {
@@ -66,6 +66,9 @@ export default async function CalendarPage() {
         typ: b.typ,
         dataDo: b.dataDo.toISOString(),
         daysLeft,
+        rodzajUmowy: b.rodzajUmowy ?? null,
+        baseId: b.id,
+        notes: b.uwagi ?? null,
       });
     }
     // Add residence permit expiry
@@ -77,6 +80,9 @@ export default async function CalendarPage() {
         typ: "DECYZJA_POBYTOWA",
         dataDo: f.decyzjaPobytowaDo.toISOString(),
         daysLeft,
+        rodzajUmowy: null,
+        baseId: null,
+        notes: null,
       });
     }
   }
