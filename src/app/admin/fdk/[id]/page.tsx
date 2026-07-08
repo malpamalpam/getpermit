@@ -326,7 +326,7 @@ export default async function FdkForeignerPage({
                   <h3 className="mb-3 font-display text-lg font-bold text-primary">
                     {CATEGORY_LABELS[cat] ?? cat}
                   </h3>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     {files.map((f) => (
                       <div key={f.id} className="flex items-start gap-3 rounded-lg border border-primary/10 bg-white p-4 shadow-sm">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent/10 text-xs font-bold uppercase text-accent">
@@ -335,7 +335,7 @@ export default async function FdkForeignerPage({
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
                           {f.opis && <p className="mt-0.5 text-xs text-primary/50">{f.opis}</p>}
-                          <div className="mt-2 flex items-center gap-2">
+                          <div className="mt-2 flex flex-wrap items-center gap-2">
                             <a
                               href={`/api/fdk/attachments/${f.id}?action=preview`}
                               target="_blank"
