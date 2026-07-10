@@ -187,6 +187,13 @@ async function logChanges(
   }
 }
 
+/** Log a single action (create, delete) to the change log. */
+async function logAction(foreignerId: number, changedBy: string, field: string, description: string) {
+  await db.fdkChangeLog.create({
+    data: { foreignerId, changedBy, field, oldValue: null, newValue: description },
+  });
+}
+
 // =============================================================================
 // FOREIGNERS CRUD
 // =============================================================================
@@ -275,7 +282,8 @@ export async function updateForeignerAction(
 }
 
 export async function deleteForeignerAction(id: number): Promise<FdkResult> {
-  await requireAdmin();
+  const user = await requireAdmin();
+  await logAction(id, user.email, "foreigner_delete", "Usunięto profil cudzoziemca");
   await db.fdkForeigner.delete({ where: { id } });
   revalidateFdk();
   return { ok: true };
@@ -504,6 +512,8 @@ export async function createEmploymentBaseAction(
     user.id
   );
 
+  await logAction(d.foreignerId, user.email, "employment_base_create", `Dodano podstawę zatrudnienia: ${d.typ} (${d.dataOd || "?"} – ${d.dataDo || "?"})`);
+
   revalidateFdk(d.foreignerId);
   return { ok: true };
 }
@@ -525,13 +535,14 @@ export async function updateEmploymentBaseAction(
 
   await db.fdkEmploymentBase.update({ where: { id }, data: newData });
 
-  // Audit log on the foreigner
-  await logChanges(
-    d.foreignerId,
-    user.email,
-    { [`base_${id}_status`]: old.status, [`base_${id}_dataDo`]: old.dataDo },
-    { [`base_${id}_status`]: newData.status, [`base_${id}_dataDo`]: newData.dataDo }
-  );
+  // Audit log — compare all fields with prefix
+  const oldPrefixed: Record<string, unknown> = {};
+  const newPrefixed: Record<string, unknown> = {};
+  for (const key of Object.keys(newData)) {
+    oldPrefixed[`base_${id}_${key}`] = (old as Record<string, unknown>)[key];
+    newPrefixed[`base_${id}_${key}`] = (newData as Record<string, unknown>)[key];
+  }
+  await logChanges(d.foreignerId, user.email, oldPrefixed, newPrefixed);
 
   // Manage WP reminder (55-day work start)
   await manageWpReminder(
@@ -563,9 +574,10 @@ export async function updateEmploymentBaseAction(
 }
 
 export async function deleteEmploymentBaseAction(id: number): Promise<FdkResult> {
-  await requireAdmin();
+  const user = await requireAdmin();
   const base = await db.fdkEmploymentBase.findUnique({ where: { id } });
   if (!base) return { ok: false, error: "not_found" };
+  await logAction(base.foreignerId, user.email, "employment_base_delete", `Usunięto podstawę zatrudnienia: ${base.typ}`);
   await db.fdkEmploymentBase.delete({ where: { id } });
   revalidateFdk(base.foreignerId);
   return { ok: true };
@@ -744,6 +756,13 @@ export async function createCalendarEventAction(
     });
   }
 
+  // Notify assigned staff member by email
+  if (d.assignedTo) {
+    void sendAssigneeNotification(d.assignedTo, d.title, new Date(d.eventDate), d.eventTime || null, d.place || null).catch((err) => {
+      console.error("[calendar] Failed to send assignee notification:", err);
+    });
+  }
+
   revalidatePath("/admin/kalendarz");
   return { ok: true, id: event.id };
 }
@@ -849,6 +868,47 @@ async function sendOfficeVisitNotification(
     to: email,
     subject: subjects[effectiveLang],
     text: bodies[effectiveLang],
+  });
+}
+
+/**
+ * Send notification email to the assigned staff member when they're assigned to a calendar event.
+ * Looks up staff email by name match in the users table.
+ */
+async function sendAssigneeNotification(
+  assignedTo: string,
+  title: string,
+  date: Date,
+  time: string | null,
+  place: string | null
+) {
+  // Find staff user by name or email
+  const staffUser = await db.user.findFirst({
+    where: {
+      role: { in: ["STAFF", "ADMIN"] },
+      OR: [
+        { email: assignedTo },
+        { email: { contains: assignedTo.split("@")[0], mode: "insensitive" } },
+      ],
+    },
+    select: { email: true, firstName: true },
+  });
+
+  if (!staffUser?.email) return;
+
+  const { Resend } = await import("resend");
+  const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+  if (!resend) return;
+
+  const dateStr = date.toLocaleDateString("pl-PL");
+  const timeStr = time ? ` o godz. ${time}` : "";
+  const from = process.env.CONTACT_EMAIL_FROM ?? "noreply@getpermit.pl";
+
+  await resend.emails.send({
+    from,
+    to: staffUser.email,
+    subject: `Przypisano Ci wydarzenie: ${title}`,
+    text: `Cześć${staffUser.firstName ? ` ${staffUser.firstName}` : ""},\n\nZostałeś/aś przypisany/a jako osoba prowadząca wydarzenie:\n\nTytuł: ${title}\nData: ${dateStr}${timeStr}\n${place ? `Miejsce: ${place}\n` : ""}\nSprawdź szczegóły w kalendarzu: ${process.env.NEXT_PUBLIC_BASE_URL ?? "https://getpermit.pl"}/admin/kalendarz\n\nPozdrawiamy,\nSystem getpermit.pl`,
   });
 }
 

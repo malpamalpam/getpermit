@@ -254,7 +254,7 @@ export default async function FdkForeignerPage({
                       {b.wynagrodzenie && <span className="text-primary/60">Wynagrodzenie: {b.wynagrodzenie}</span>}
                       {b.dataZgloszeniaUmowy && <span className="text-primary/60">Zgłoszenie umowy: {fmt(b.dataZgloszeniaUmowy)}</span>}
                       {b.dataPodjPracy && <span className="text-primary/60">Podjęcie pracy: {fmt(b.dataPodjPracy)}</span>}
-                      {b.dataNiepodjPracy && <span className="text-primary/60">Niepodjęcie pracy: {fmt(b.dataNiepodjPracy)}</span>}
+                      {b.dataNiepodjPracy && <span className="text-primary/60">Zgłosić niepodjęcie do: {fmt(b.dataNiepodjPracy)}</span>}
                       {b.dataZakPracy && <span className="text-primary/60">Zakończenie pracy: {fmt(b.dataZakPracy)}</span>}
                     </div>
                   ))}

@@ -302,7 +302,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
               <input type="date" value={dataPodjPracy} onChange={(e) => setDataPodjPracy(e.target.value)} className={inputCls} />
             </div>
             <div>
-              <label className={labelCls}>Data niepodjęcia pracy</label>
+              <label className={labelCls}>Zgłosić niepodjęcie do</label>
               <input type="date" value={dataNiepodjPracy} onChange={(e) => setDataNiepodjPracy(e.target.value)} className={inputCls} />
             </div>
             <div>

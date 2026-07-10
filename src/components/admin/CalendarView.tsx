@@ -49,33 +49,23 @@ interface DocumentExpiry {
   typLabel: string;
   typ: string;
   dataDo: string;
+  reminderDate: string;
   daysLeft: number;
+  reminderMessage: string;
   rodzajUmowy: string | null;
   baseId: number | null;
   notes: string | null;
 }
 
-function isExpired(exp: DocumentExpiry): boolean {
-  return exp.daysLeft < 0;
-}
-
 function expiryColors(exp: DocumentExpiry) {
-  if (isExpired(exp)) {
+  if (exp.daysLeft <= 0) {
     return { bg: "bg-red-100", bgLight: "bg-red-50", text: "text-red-700", border: "border-l-red-500", dot: "bg-red-500", subtext: "text-red-600/70" };
   }
   return { bg: "bg-orange-100", bgLight: "bg-orange-50", text: "text-orange-700", border: "border-l-orange-500", dot: "bg-orange-500", subtext: "text-orange-600/70" };
 }
 
 function expiryTooltip(exp: DocumentExpiry): string {
-  const dateStr = new Date(exp.dataDo).toLocaleDateString("pl-PL");
-  const umowa = exp.rodzajUmowy ? ` | ${exp.rodzajUmowy}` : "";
-  if (exp.daysLeft < 0) {
-    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName}${umowa} — wygasło ${Math.abs(exp.daysLeft)} dni temu (${dateStr})`;
-  }
-  if (exp.daysLeft === 0) {
-    return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName}${umowa} — wygasa DZIŚ (${dateStr})`;
-  }
-  return `Koniec ${exp.typLabel.toLowerCase()}: ${exp.foreignerName}${umowa} — za ${exp.daysLeft} dni (${dateStr})`;
+  return exp.reminderMessage + (exp.rodzajUmowy ? ` | ${exp.rodzajUmowy}` : "");
 }
 
 interface Props {
@@ -178,6 +168,7 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
   const [showLegend, setShowLegend] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<CalendarEventData[]>([]);
+  const [searchExpiryResults, setSearchExpiryResults] = useState<DocumentExpiry[]>([]);
   const [showSearch, setShowSearch] = useState(false);
   // Expiry filters
   const [expiryFilterExpired, setExpiryFilterExpired] = useState(false);
@@ -270,7 +261,7 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
   });
 
   function getExpiriesForDay(day: Date) {
-    return filteredExpiries.filter((e) => sameDay(new Date(e.dataDo), day));
+    return filteredExpiries.filter((e) => sameDay(new Date(e.reminderDate), day));
   }
 
   const handleSubmitEvent = (e: React.FormEvent) => {
@@ -377,6 +368,7 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
     setSearchQuery(query);
     if (!query.trim()) {
       setSearchResults([]);
+      setSearchExpiryResults([]);
       return;
     }
     const q = query.toLowerCase();
@@ -387,6 +379,14 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
       (TYPE_LABELS[ev.type] ?? "").toLowerCase().includes(q)
     );
     setSearchResults(results.sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()));
+    // Also search document expiries
+    const expiryResults = documentExpiries.filter((exp) =>
+      exp.foreignerName.toLowerCase().includes(q) ||
+      exp.typLabel.toLowerCase().includes(q) ||
+      exp.reminderMessage.toLowerCase().includes(q) ||
+      (exp.rodzajUmowy && exp.rodzajUmowy.toLowerCase().includes(q))
+    );
+    setSearchExpiryResults(expiryResults.sort((a, b) => new Date(a.reminderDate).getTime() - new Date(b.reminderDate).getTime()));
   };
 
   const jumpToEvent = (ev: CalendarEventData) => {
@@ -520,11 +520,11 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
           </div>
           {searchQuery && (
             <div className="mt-2 max-h-[300px] overflow-y-auto">
-              {searchResults.length === 0 ? (
+              {searchResults.length === 0 && searchExpiryResults.length === 0 ? (
                 <p className="py-3 text-center text-sm text-primary/40">Brak wyników</p>
               ) : (
                 <div className="space-y-1">
-                  <p className="text-xs text-primary/40 mb-1">{searchResults.length} wyników</p>
+                  <p className="text-xs text-primary/40 mb-1">{searchResults.length + searchExpiryResults.length} wyników</p>
                   {searchResults.map((ev) => (
                     <button
                       key={ev.id}
@@ -543,6 +543,26 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                       </div>
                     </button>
                   ))}
+                  {searchExpiryResults.map((exp, i) => {
+                    const ec = expiryColors(exp);
+                    return (
+                      <button
+                        key={`exp-${i}`}
+                        type="button"
+                        onClick={() => { setCurrentDate(new Date(exp.reminderDate)); setView("day"); setShowSearch(false); setSearchQuery(""); setSearchResults([]); setSearchExpiryResults([]); }}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-accent/5 transition-colors"
+                      >
+                        <span className={`inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full ${ec.dot}`} />
+                        <div className="min-w-0 flex-1">
+                          <div className={`font-medium ${ec.text} truncate`}>{exp.reminderMessage}</div>
+                          <div className="text-xs text-primary/50">
+                            Przypomnienie: {new Date(exp.reminderDate).toLocaleDateString("pl-PL")}
+                            {` · Ważne do: ${new Date(exp.dataDo).toLocaleDateString("pl-PL")}`}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -882,14 +902,10 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <div>{exp.foreignerName} — {exp.typLabel}</div>
+                        <div className="font-medium">{exp.reminderMessage}</div>
                         {exp.rodzajUmowy && <div className={`mt-0.5 ${ec.subtext} font-normal`}>Umowa: {exp.rodzajUmowy}</div>}
                         <div className={`mt-0.5 ${ec.subtext} font-normal`}>
-                          {exp.daysLeft < 0
-                            ? `Wygasło ${Math.abs(exp.daysLeft)} dni temu`
-                            : exp.daysLeft === 0
-                              ? "Wygasa DZIŚ"
-                              : `Pozostało ${exp.daysLeft} dni`}
+                          Ważne do: {new Date(exp.dataDo).toLocaleDateString("pl-PL")}
                         </div>
                       </div>
                       {exp.baseId && expiryNotes[exp.baseId] && (

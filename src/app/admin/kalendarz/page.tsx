@@ -54,18 +54,43 @@ export default async function CalendarPage() {
     ZGLOSZENIE_UA: "Zgłoszenie UA",
   };
 
-  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: string; daysLeft: number; rodzajUmowy: string | null; baseId: number | null; notes: string | null }[] = [];
+  // Reminder lead times per document type (days before expiry)
+  const REMINDER_DAYS: Record<string, number> = {
+    OSWIADCZENIE: 60,
+    ZEZWOLENIE: 180,
+    KARTA_POBYTU: 90,
+    BLUE_CARD: 180,
+    ZGLOSZENIE_UA: 60,
+    DECYZJA_POBYTOWA: 90,
+  };
+
+  const REMINDER_MESSAGES: Record<string, string> = {
+    OSWIADCZENIE: "weryfikacja uzyskania nowego",
+    ZEZWOLENIE: "weryfikacja wyrobienia nowego",
+    KARTA_POBYTU: "weryfikacja przedłużenia",
+    BLUE_CARD: "weryfikacja przedłużenia",
+    ZGLOSZENIE_UA: "weryfikacja przedłużenia",
+    DECYZJA_POBYTOWA: "weryfikacja przedłużenia pobytu",
+  };
+
+  const documentExpiries: { foreignerName: string; typLabel: string; typ: string; dataDo: string; reminderDate: string; daysLeft: number; reminderMessage: string; rodzajUmowy: string | null; baseId: number | null; notes: string | null }[] = [];
 
   for (const f of foreigners) {
     for (const b of f.employmentBases) {
       if (!b.dataDo) continue;
       const daysLeft = Math.ceil((b.dataDo.getTime() - now.getTime()) / 86400000);
+      const leadDays = REMINDER_DAYS[b.typ] ?? 60;
+      const reminderDate = new Date(b.dataDo.getTime() - leadDays * 86400000);
+      const name = `${f.imie ?? ""} ${f.nazwisko}`.trim();
+      const message = REMINDER_MESSAGES[b.typ] ?? "weryfikacja";
       documentExpiries.push({
-        foreignerName: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
+        foreignerName: name,
         typLabel: TYPE_LABELS[b.typ] ?? b.typ,
         typ: b.typ,
         dataDo: b.dataDo.toISOString(),
+        reminderDate: reminderDate.toISOString(),
         daysLeft,
+        reminderMessage: `Koniec ${(TYPE_LABELS[b.typ] ?? b.typ).toLowerCase()} dla ${name} za ${Math.max(0, daysLeft)} dni — ${message}`,
         rodzajUmowy: b.rodzajUmowy ?? null,
         baseId: b.id,
         notes: b.uwagi ?? null,
@@ -74,12 +99,17 @@ export default async function CalendarPage() {
     // Add residence permit expiry
     if (f.decyzjaPobytowaDo && f.decyzjaPobytowaDo >= start && f.decyzjaPobytowaDo <= end) {
       const daysLeft = Math.ceil((f.decyzjaPobytowaDo.getTime() - now.getTime()) / 86400000);
+      const leadDays = REMINDER_DAYS.DECYZJA_POBYTOWA;
+      const reminderDate = new Date(f.decyzjaPobytowaDo.getTime() - leadDays * 86400000);
+      const name = `${f.imie ?? ""} ${f.nazwisko}`.trim();
       documentExpiries.push({
-        foreignerName: `${f.imie ?? ""} ${f.nazwisko}`.trim(),
+        foreignerName: name,
         typLabel: f.typDokumentuPobytowego ?? "Decyzja pobytowa",
         typ: "DECYZJA_POBYTOWA",
         dataDo: f.decyzjaPobytowaDo.toISOString(),
+        reminderDate: reminderDate.toISOString(),
         daysLeft,
+        reminderMessage: `Koniec decyzji pobytowej dla ${name} za ${Math.max(0, daysLeft)} dni — ${REMINDER_MESSAGES.DECYZJA_POBYTOWA}`,
         rodzajUmowy: null,
         baseId: null,
         notes: null,

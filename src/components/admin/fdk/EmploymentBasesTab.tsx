@@ -160,7 +160,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
                 ["Stawka", b.stawka ? `${Number(b.stawka).toLocaleString("pl-PL")} PLN` : null],
                 ["Data zgłoszenia umowy", b.dataZgloszeniaUmowy ? fmt(b.dataZgloszeniaUmowy) : null],
                 ["Data podjęcia pracy", b.dataPodjPracy ? fmt(b.dataPodjPracy) : null],
-                ["Data niepodjęcia pracy", b.dataNiepodjPracy ? fmt(b.dataNiepodjPracy) : null],
+                ["Zgłosić niepodjęcie do", b.dataNiepodjPracy ? fmt(b.dataNiepodjPracy) : null],
                 ["Data zakończenia pracy", b.dataZakPracy ? fmt(b.dataZakPracy) : null],
                 ["Data podjęcia (UA)", b.dataPodjecia ? fmt(b.dataPodjecia) : null],
                 ["Uwagi KP", b.uwagiKp],
