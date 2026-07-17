@@ -9,7 +9,7 @@
 export interface ParsedDocumentData {
   // Detected document type
   // ODWOLANIE = appeal/complaint, no employment base should be created
-  detectedType?: "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "ODWOLANIE";
+  detectedType?: "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE";
   // Foreigner data
   imie?: string;
   nazwisko?: string;
@@ -74,16 +74,21 @@ function titleCase(s: string): string {
  * Order matters: odwołanie/zażalenie must be checked FIRST because appeal documents
  * often contain phrases like "zezwolenie na pracę" or "zezwolenie na pobyt" in context.
  */
-function detectDocumentType(text: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "ODWOLANIE" | undefined {
+function detectDocumentType(text: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | undefined {
   const lower = text.toLowerCase();
 
   // === ODWOŁANIE / ZAŻALENIE — check first! ===
-  // Appeal documents mention "odwołanie" prominently (heading or early in text)
   if (lower.includes("odwołanie od decyzji") || lower.includes("odwolanie od decyzji")) return "ODWOLANIE";
   if (lower.includes("zażalenie na decyzję") || lower.includes("zazalenie na decyzje")) return "ODWOLANIE";
   if (lower.includes("procedura odwoławcza") || lower.includes("procedura odwolawcza")) return "ODWOLANIE";
   // Standalone "odwołanie" near the start of the document (first 500 chars)
   if (/^.{0,500}odwo[łl]anie/si.test(text)) return "ODWOLANIE";
+
+  // === EU BLUE CARD — check before generic karta pobytu ===
+  if (lower.includes("niebieska karta") || lower.includes("blue card")) return "BLUE_CARD";
+  if (lower.includes("eu blue card") || lower.includes("karta ue")) return "BLUE_CARD";
+  // Blue Card decree often says "zezwolenie na pobyt czasowy i pracę" for highly skilled
+  if (lower.includes("pobyt czasowy i prac") && (lower.includes("niebiesk") || lower.includes("blue"))) return "BLUE_CARD";
 
   // === ZEZWOLENIE NA PRACĘ ===
   if (lower.includes("zezwolenie na pracę") || lower.includes("zezwolenia na pracę")) return "ZEZWOLENIE";
@@ -220,8 +225,8 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
     return result;
   }
 
-  // === ZEZWOLENIE-specific extraction (different layout than oświadczenie) ===
-  if (result.detectedType === "ZEZWOLENIE") {
+  // === ZEZWOLENIE / BLUE_CARD — same structured layout (decision documents) ===
+  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "BLUE_CARD") {
     return parseZezwolenie(normalized, result);
   }
 
@@ -378,29 +383,34 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
     const client = new Anthropic({ apiKey });
     const base64 = Buffer.from(buffer).toString("base64");
 
-    const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 4096,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "document",
-              source: {
-                type: "base64",
-                media_type: "application/pdf",
-                data: base64,
+    // Use Sonnet for better OCR quality on scanned documents.
+    // PDF document blocks require the pdfs beta header.
+    const response = await client.messages.create(
+      {
+        model: "claude-sonnet-4-6",
+        max_tokens: 4096,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "document",
+                source: {
+                  type: "base64",
+                  media_type: "application/pdf",
+                  data: base64,
+                },
+              } as never,
+              {
+                type: "text",
+                text: "Przepisz dosłownie cały tekst z tego dokumentu. Zachowaj oryginalne sformułowania i kolejność. Zwróć tylko tekst, bez żadnych komentarzy ani nagłówków.",
               },
-            } as never,
-            {
-              type: "text",
-              text: "Przepisz dosłownie cały tekst z tego dokumentu. Zachowaj oryginalne sformułowania i kolejność. Zwróć tylko tekst, bez żadnych komentarzy ani nagłówków.",
-            },
-          ],
-        },
-      ],
-    });
+            ],
+          },
+        ],
+      },
+      { headers: { "anthropic-beta": "pdfs-2024-09-25" } }
+    );
 
     const content = response.content[0];
     if (content.type === "text" && content.text.length > 20) {
@@ -417,16 +427,20 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
 /**
  * Parse PDF buffer and extract document data.
  * Supports oświadczenia, zezwolenia na pracę, and decyzje pobytowe.
- * Falls back to Claude OCR for scanned PDFs without text layer.
+ * @param ocrFallback - if true (default), attempt Claude OCR when no text layer detected.
+ *   Set to false on upload (fast path) — user can trigger OCR explicitly via Scrape button.
  */
-export async function parseOswiadczeniePdf(buffer: ArrayBuffer): Promise<ParsedDocumentData | null> {
+export async function parseOswiadczeniePdf(
+  buffer: ArrayBuffer,
+  { ocrFallback = true }: { ocrFallback?: boolean } = {}
+): Promise<ParsedDocumentData | null> {
   try {
     const pdfParse = (await import("pdf-parse")).default;
     const pdfData = await pdfParse(Buffer.from(buffer));
     let text = pdfData.text;
 
-    // If no text extracted (scanned PDF), try Claude OCR
-    if (!text || text.length < 20) {
+    // If no text extracted (scanned PDF), optionally try Claude OCR
+    if ((!text || text.length < 20) && ocrFallback) {
       console.log("[pdf-parser] No text layer detected, attempting OCR via Claude...");
       text = (await ocrWithClaude(buffer)) ?? "";
     }

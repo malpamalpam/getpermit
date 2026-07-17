@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
 
+// Allow up to 60s for scrape action (OCR via Claude can take 20-40s)
+export const maxDuration = 60;
+
 /**
  * GET /api/fdk/attachments/[id]?action=download|preview
  *
@@ -124,8 +127,9 @@ export async function GET(
       });
     }
 
-    // Determine document type — require positive detection, don't default to OSWIADCZENIE
-    const docType = parsed.detectedType ?? "OSWIADCZENIE";
+    // Determine document type — require positive detection, don't default to OSWIADCZENIE.
+    // ODWOLANIE is already handled above (early return), so remaining types are valid FdkBaseType.
+    const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
     // Check for duplicate: same foreigner + type (+ dates if available).
     // Also check for any existing base with same type to update instead of creating duplicates.
@@ -209,8 +213,8 @@ export async function GET(
       },
     });
 
-    // Also update foreigner's decyzjaPobytowaDo if this is a residence permit
-    if (docType === "KARTA_POBYTU" && parsed.dataDo) {
+    // Also update foreigner's decyzjaPobytowaDo if this is a residence permit (Karta pobytu or Blue Card)
+    if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
       const dataDo = new Date(parsed.dataDo);
       if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
         await db.fdkForeigner.update({

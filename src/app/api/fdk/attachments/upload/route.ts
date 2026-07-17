@@ -12,7 +12,8 @@ import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
  * FormData: file, foreignerId, kategoria, nazwaWyswietlana, opis?
  */
 export async function POST(request: NextRequest) {
-  await requireAdmin();
+  const adminUser = await requireAdmin();
+  const changedBy = adminUser.email ?? adminUser.id ?? "system";
 
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
@@ -71,11 +72,23 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  // Auto-extract data from PDF attachments (oświadczenia)
+  // Log upload to history
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId,
+      changedBy,
+      field: "attachment_upload",
+      oldValue: null,
+      newValue: `Wgrano załącznik: ${nazwaWyswietlana} (${kategoria})`,
+    },
+  });
+
+  // Auto-extract data from PDF attachments (text layer only — no OCR on upload for speed).
+  // Use the Scrape button to trigger full OCR for scanned PDFs.
   let extracted = null;
   if (typPliku === "pdf") {
     try {
-      const parsed = await parseOswiadczeniePdf(arrayBuffer);
+      const parsed = await parseOswiadczeniePdf(arrayBuffer, { ocrFallback: false });
       if (parsed) {
         extracted = parsed;
 
@@ -94,7 +107,7 @@ export async function POST(request: NextRequest) {
         // Create employment base with detected type (prevent duplicates)
         // ODWOLANIE = appeal/complaint — skip employment base creation
         if (parsed.detectedType !== "ODWOLANIE") {
-          const docType = parsed.detectedType ?? "OSWIADCZENIE";
+          const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
           const existingBase = await db.fdkEmploymentBase.findFirst({
             where: {
@@ -132,17 +145,33 @@ export async function POST(request: NextRequest) {
             }
           }
 
+          let baseId: number;
           if (existingBase) {
             await db.fdkEmploymentBase.update({
               where: { id: existingBase.id },
               data: baseData,
             });
+            baseId = existingBase.id;
           } else {
-            await db.fdkEmploymentBase.create({ data: baseData as never });
+            const base = await db.fdkEmploymentBase.create({ data: baseData as never });
+            baseId = base.id;
           }
 
-          // Update decyzjaPobytowaDo for residence permits
-          if (docType === "KARTA_POBYTU" && parsed.dataDo) {
+          // Log auto-created employment base
+          await db.fdkChangeLog.create({
+            data: {
+              foreignerId,
+              changedBy,
+              field: "scrape",
+              oldValue: null,
+              newValue: existingBase
+                ? `Zaktualizowano podstawę zatrudnienia #${baseId} (${docType}) przy wgraniu: ${file.name}`
+                : `Utworzono podstawę zatrudnienia #${baseId} (${docType}) przy wgraniu: ${file.name}`,
+            },
+          });
+
+          // Update decyzjaPobytowaDo for residence permits (Karta pobytu + Blue Card)
+          if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
             const dataDo = new Date(parsed.dataDo);
             if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
               await db.fdkForeigner.update({
@@ -151,6 +180,17 @@ export async function POST(request: NextRequest) {
               });
             }
           }
+        } else {
+          // ODWOLANIE — log that it was recognized as appeal
+          await db.fdkChangeLog.create({
+            data: {
+              foreignerId,
+              changedBy,
+              field: "scrape",
+              oldValue: null,
+              newValue: `Rozpoznano odwołanie/zażalenie przy wgraniu: ${file.name} — nie utworzono podstawy zatrudnienia`,
+            },
+          });
         }
       }
     } catch (err) {

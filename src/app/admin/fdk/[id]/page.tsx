@@ -319,7 +319,12 @@ export default async function FdkForeignerPage({
                 glowne: "Dokumenty główne",
                 wp_2023: "WP 2023",
                 wp_2024: "WP 2024",
+                wp_2025: "WP 2025",
                 trc_2024: "TRC 2024",
+                trc_2025: "TRC 2025",
+                trc_2026: "TRC 2026",
+                hr: "HR",
+                inne: "Inne",
               };
               return Array.from(groups.entries()).map(([cat, files]) => (
                 <div key={cat}>
