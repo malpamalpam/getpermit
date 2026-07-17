@@ -92,61 +92,64 @@ export async function POST(request: NextRequest) {
         }
 
         // Create employment base with detected type (prevent duplicates)
-        const docType = parsed.detectedType ?? "OSWIADCZENIE";
+        // ODWOLANIE = appeal/complaint — skip employment base creation
+        if (parsed.detectedType !== "ODWOLANIE") {
+          const docType = parsed.detectedType ?? "OSWIADCZENIE";
 
-        const existingBase = await db.fdkEmploymentBase.findFirst({
-          where: {
+          const existingBase = await db.fdkEmploymentBase.findFirst({
+            where: {
+              foreignerId,
+              typ: docType,
+              ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
+              ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
+            },
+          });
+
+          // Build type-specific data
+          const baseData: Record<string, unknown> = {
             foreignerId,
             typ: docType,
-            ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
-            ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
-          },
-        });
+            status: "BRAK_DANYCH",
+            dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+            dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+            rodzajUmowy: parsed.rodzajUmowy || null,
+            stanowisko: parsed.stanowisko || null,
+            firma: parsed.firma || null,
+          };
 
-        // Build type-specific data
-        const baseData: Record<string, unknown> = {
-          foreignerId,
-          typ: docType,
-          status: "BRAK_DANYCH",
-          dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
-          dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
-          rodzajUmowy: parsed.rodzajUmowy || null,
-          stanowisko: parsed.stanowisko || null,
-          firma: parsed.firma || null,
-        };
-
-        if (docType === "OSWIADCZENIE") {
-          baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
-          baseData.podjeciePracy = parsed.rodzajPracy || null;
-        } else {
-          baseData.nrDecyzji = parsed.nrDecyzji || null;
-        }
-
-        // Map wynagrodzenie to stawka if available
-        if (parsed.wynagrodzenie) {
-          const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
-          if (numMatch) {
-            baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
+          if (docType === "OSWIADCZENIE") {
+            baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
+            baseData.podjeciePracy = parsed.rodzajPracy || null;
+          } else {
+            baseData.nrDecyzji = parsed.nrDecyzji || null;
           }
-        }
 
-        if (existingBase) {
-          await db.fdkEmploymentBase.update({
-            where: { id: existingBase.id },
-            data: baseData,
-          });
-        } else {
-          await db.fdkEmploymentBase.create({ data: baseData as never });
-        }
+          // Map wynagrodzenie to stawka if available
+          if (parsed.wynagrodzenie) {
+            const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
+            if (numMatch) {
+              baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
+            }
+          }
 
-        // Update decyzjaPobytowaDo for residence permits
-        if (docType === "KARTA_POBYTU" && parsed.dataDo) {
-          const dataDo = new Date(parsed.dataDo);
-          if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
-            await db.fdkForeigner.update({
-              where: { id: foreignerId },
-              data: { decyzjaPobytowaDo: dataDo },
+          if (existingBase) {
+            await db.fdkEmploymentBase.update({
+              where: { id: existingBase.id },
+              data: baseData,
             });
+          } else {
+            await db.fdkEmploymentBase.create({ data: baseData as never });
+          }
+
+          // Update decyzjaPobytowaDo for residence permits
+          if (docType === "KARTA_POBYTU" && parsed.dataDo) {
+            const dataDo = new Date(parsed.dataDo);
+            if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
+              await db.fdkForeigner.update({
+                where: { id: foreignerId },
+                data: { decyzjaPobytowaDo: dataDo },
+              });
+            }
           }
         }
       }
