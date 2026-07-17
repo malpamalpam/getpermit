@@ -14,7 +14,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  await requireAdmin();
+  const adminUser = await requireAdmin();
+  const changedBy = adminUser.email ?? adminUser.id ?? "system";
 
   const { id: idStr } = await params;
   const id = parseInt(idStr, 10);
@@ -84,7 +85,7 @@ export async function GET(
     const parsed = await parseOswiadczeniePdf(buffer);
 
     if (!parsed) {
-      return NextResponse.json({ error: "Nie udało się wyciągnąć danych z PDF. Plik może być skanem bez warstwy tekstowej." }, { status: 422 });
+      return NextResponse.json({ error: "Nie udało się wyciągnąć danych z PDF. Sprawdź czy plik zawiera tekst lub ustaw klucz ANTHROPIC_API_KEY aby włączyć OCR dla skanów." }, { status: 422 });
     }
 
     const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
@@ -93,15 +94,34 @@ export async function GET(
     }
 
     // Auto-fill foreigner data if fields are empty
-    const updateData: Record<string, unknown> = {};
-    if (parsed.imie && !foreigner.imie) updateData.imie = parsed.imie;
-    if (parsed.nazwisko && foreigner.nazwisko === "Nowy") updateData.nazwisko = parsed.nazwisko;
-    if (parsed.dataUrodzenia && !foreigner.dataUrodzenia) updateData.dataUrodzenia = new Date(parsed.dataUrodzenia);
-    if (parsed.obywatelstwo && !foreigner.obywatelstwo) updateData.obywatelstwo = parsed.obywatelstwo;
-    if (parsed.nrPaszportu && !foreigner.nrPaszportu) updateData.nrPaszportu = parsed.nrPaszportu;
+    const foreignerUpdateData: Record<string, unknown> = {};
+    if (parsed.imie && !foreigner.imie) foreignerUpdateData.imie = parsed.imie;
+    if (parsed.nazwisko && foreigner.nazwisko === "Nowy") foreignerUpdateData.nazwisko = parsed.nazwisko;
+    if (parsed.dataUrodzenia && !foreigner.dataUrodzenia) foreignerUpdateData.dataUrodzenia = new Date(parsed.dataUrodzenia);
+    if (parsed.obywatelstwo && !foreigner.obywatelstwo) foreignerUpdateData.obywatelstwo = parsed.obywatelstwo;
+    if (parsed.nrPaszportu && !foreigner.nrPaszportu) foreignerUpdateData.nrPaszportu = parsed.nrPaszportu;
 
-    if (Object.keys(updateData).length > 0) {
-      await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: updateData });
+    if (Object.keys(foreignerUpdateData).length > 0) {
+      await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: foreignerUpdateData });
+    }
+
+    // === ODWOŁANIE / ZAŻALENIE — do NOT create employment base ===
+    if (parsed.detectedType === "ODWOLANIE") {
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Wgrano dokument: odwołanie/zażalenie (${attachment.nazwaPliku}) — nie utworzono podstawy zatrudnienia`,
+        },
+      });
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        message: "Dokument jest odwołaniem lub zażaleniem — nie utworzono podstawy zatrudnienia.",
+        foreignerUpdated: Object.keys(foreignerUpdateData),
+      });
     }
 
     // Determine document type — require positive detection, don't default to OSWIADCZENIE
@@ -162,18 +182,32 @@ export async function GET(
     }
 
     let baseId: number;
+    let scrapeAction: string;
     if (existingBase) {
       // Update existing record instead of creating duplicate
-      const { foreignerId: _fid, ...updateData } = baseData;
+      const { foreignerId: _fid, ...updateFields } = baseData;
       await db.fdkEmploymentBase.update({
         where: { id: existingBase.id },
-        data: updateData,
+        data: updateFields,
       });
       baseId = existingBase.id;
+      scrapeAction = `Zaktualizowano podstawę zatrudnienia #${baseId} (${docType}) na podstawie pliku: ${attachment.nazwaPliku}`;
     } else {
       const base = await db.fdkEmploymentBase.create({ data: baseData as never });
       baseId = base.id;
+      scrapeAction = `Utworzono podstawę zatrudnienia #${baseId} (${docType}) na podstawie pliku: ${attachment.nazwaPliku}`;
     }
+
+    // Log the scrape action to history
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId: attachment.foreignerId,
+        changedBy,
+        field: "scrape",
+        oldValue: null,
+        newValue: scrapeAction,
+      },
+    });
 
     // Also update foreigner's decyzjaPobytowaDo if this is a residence permit
     if (docType === "KARTA_POBYTU" && parsed.dataDo) {
@@ -189,7 +223,7 @@ export async function GET(
     return NextResponse.json({
       ok: true,
       extracted: parsed,
-      foreignerUpdated: Object.keys(updateData),
+      foreignerUpdated: Object.keys(foreignerUpdateData),
       employmentBaseCreated: baseId,
     });
   }
