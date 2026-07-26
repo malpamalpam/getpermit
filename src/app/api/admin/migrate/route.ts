@@ -1,35 +1,38 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { exec } from "child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
+import { db } from "@/lib/db";
 
 /**
  * POST /api/admin/migrate
- * Run `prisma migrate deploy` on the production database.
- * Admin-only. Use when migrations are pending after deploy.
+ * Add missing enum values directly via SQL.
+ * Admin-only. Safe to run multiple times (IF NOT EXISTS equivalent).
  */
 export async function POST(request: NextRequest) {
   await requireAdmin();
 
+  const results: string[] = [];
+
   try {
-    const { stdout, stderr } = await execAsync("npx prisma migrate deploy", {
-      timeout: 30000,
-      env: { ...process.env },
-    });
+    // Check current enum values
+    const currentValues = await db.$queryRawUnsafe<{ unnest: string }[]>(
+      `SELECT unnest(enum_range(NULL::"FdkStatus"))::text as unnest`
+    );
+    const existing = currentValues.map((r) => r.unnest);
+    results.push(`Current FdkStatus values: ${existing.join(", ")}`);
 
-    console.log("[migrate] stdout:", stdout);
-    if (stderr) console.warn("[migrate] stderr:", stderr);
+    // Add NIEAKTYWNE if missing
+    if (!existing.includes("NIEAKTYWNE")) {
+      await db.$executeRawUnsafe(`ALTER TYPE "FdkStatus" ADD VALUE 'NIEAKTYWNE'`);
+      results.push("Added NIEAKTYWNE to FdkStatus enum");
+    } else {
+      results.push("NIEAKTYWNE already exists in FdkStatus");
+    }
 
-    return NextResponse.json({
-      ok: true,
-      output: stdout,
-      warnings: stderr || null,
-    });
+    return NextResponse.json({ ok: true, results });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[migrate] failed:", msg);
-    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+    results.push(`Error: ${msg}`);
+    return NextResponse.json({ ok: false, error: msg, results }, { status: 500 });
   }
 }
