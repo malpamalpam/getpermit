@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
-import type { FdkResult } from "@/lib/fdk-queries";
+import { type FdkResult, deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
 // =============================================================================
 // SCHEMAS
@@ -93,6 +93,7 @@ function toDate(v: string | undefined | null): Date | null {
   const d = new Date(v);
   return isNaN(d.getTime()) ? null : d;
 }
+
 
 function revalidateFdk(id?: number) {
   revalidatePath("/admin/fdk");
@@ -513,6 +514,11 @@ export async function createEmploymentBaseAction(
   );
 
   await logAction(d.foreignerId, user.email, "employment_base_create", `Dodano podstawę zatrudnienia: ${d.typ} (${d.dataOd || "?"} – ${d.dataDo || "?"})`);
+
+  // Deactivate other active residence permits if this is a KARTA_POBYTU or BLUE_CARD
+  if (d.typ === "KARTA_POBYTU" || d.typ === "BLUE_CARD") {
+    await deactivatePreviousResidencePermits(d.foreignerId, created.id, user.email);
+  }
 
   revalidateFdk(d.foreignerId);
   return { ok: true };

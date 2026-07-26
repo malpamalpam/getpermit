@@ -72,12 +72,12 @@ export default async function FdkForeignerPage({
 
   const activeTab: TabKey = TABS.some((t) => t.key === sp.tab) ? (sp.tab as TabKey) : "overview";
 
-  // Check if foreigner has active residence permit
+  // Check if foreigner has active residence permit (KARTA_POBYTU or BLUE_CARD)
   const now = new Date();
   const hasActiveResidence =
     (foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo > now) ||
     foreigner.employmentBases.some(
-      (b) => b.typ === "KARTA_POBYTU" && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
+      (b) => (b.typ === "KARTA_POBYTU" || b.typ === "BLUE_CARD") && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
     );
 
   return (
@@ -161,14 +161,19 @@ export default async function FdkForeignerPage({
                     )}
                   </div>
                 )}
-                <div className="text-sm text-primary/60">Podstawy zatrudnienia</div>
+                <div className="text-sm text-primary/60">Aktywne podstawy zatrudnienia</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {foreigner.employmentBases.length === 0 && <span className="text-sm text-primary/40">Brak</span>}
-                  {[...new Set(foreigner.employmentBases.map((b) => b.typ))].map((t) => (
-                    <span key={t} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[t]?.cls ?? "bg-gray-100"}`}>
-                      {TYPE_BADGES[t]?.label ?? t}
-                    </span>
-                  ))}
+                  {(() => {
+                    const activeBases = foreigner.employmentBases.filter(
+                      (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE" || b.status === "BRAK_DANYCH"
+                    );
+                    if (activeBases.length === 0) return <span className="text-sm text-primary/40">Brak</span>;
+                    return [...new Set(activeBases.map((b) => b.typ))].map((t) => (
+                      <span key={t} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[t]?.cls ?? "bg-gray-100"}`}>
+                        {TYPE_BADGES[t]?.label ?? t}
+                      </span>
+                    ));
+                  })()}
                 </div>
                 <div className="text-sm text-primary/60">Załączniki: {foreigner.attachments.length}</div>
                 <div className="text-sm text-primary/60">Kontrakty HR: {foreigner.hrContracts.length}</div>

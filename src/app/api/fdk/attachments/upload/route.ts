@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { randomUUID } from "crypto";
 import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
+import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
 /**
  * POST /api/fdk/attachments/upload
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
   let extracted = null;
   if (typPliku === "pdf") {
     try {
-      const parsed = await parseOswiadczeniePdf(arrayBuffer, { ocrFallback: false });
+      const parsed = await parseOswiadczeniePdf(arrayBuffer, { ocrFallback: false, filename: file.name });
       if (parsed) {
         extracted = parsed;
 
@@ -195,6 +196,8 @@ export async function POST(request: NextRequest) {
               data: { decyzjaPobytowaDo: dataDo },
             });
           }
+          // Deactivate other active residence permits — only one can be active
+          await deactivatePreviousResidencePermits(foreignerId, baseId, changedBy);
         }
       }
     } catch (err) {

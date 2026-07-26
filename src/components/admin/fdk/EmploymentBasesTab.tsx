@@ -83,9 +83,10 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
   const [showCreate, setShowCreate] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
-  // Only show one (most recent) active KARTA_POBYTU in main view
-  const activeKarty = bases.filter((b) => b.typ === "KARTA_POBYTU" && b.status === "AKTYWNE");
-  const latestActiveKarta = activeKarty.length > 0 ? activeKarty[0] : null; // already sorted desc
+  // Only show one (most recent) active residence permit (KARTA_POBYTU or BLUE_CARD) in main view
+  const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];
+  const activeResidence = bases.filter((b) => residenceTypes.includes(b.typ) && b.status === "AKTYWNE");
+  const latestActiveResidence = activeResidence.length > 0 ? activeResidence[0] : null; // already sorted desc
 
   // Determine which bases to show as "active employment bases"
   const visibleBases = showAll
@@ -95,12 +96,12 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
         if (hasActiveResidence && b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE" && b.status !== "UCHYLONE" && b.status !== "UMORZONE") {
           return false;
         }
-        // Hide inactive OŚW (zakończenie pracy)
-        if (b.typ === "OSWIADCZENIE" && b.status === "NIEAKTYWNE") {
+        // Hide inactive/wygasle/nieaktywne bases
+        if (b.status === "NIEAKTYWNE" || b.status === "WYGASLE") {
           return false;
         }
-        // Show only the most recent active KARTA_POBYTU, hide other active ones
-        if (b.typ === "KARTA_POBYTU" && b.status === "AKTYWNE" && latestActiveKarta && b.id !== latestActiveKarta.id) {
+        // Show only the most recent active residence permit, hide other active ones
+        if (residenceTypes.includes(b.typ) && b.status === "AKTYWNE" && latestActiveResidence && b.id !== latestActiveResidence.id) {
           return false;
         }
         return true;
@@ -172,6 +173,11 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
               {isSuperseded && (
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
                   Wchłonięte przez decyzję pobytową
+                </span>
+              )}
+              {b.status === "BRAK_DANYCH" && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 animate-pulse">
+                  Uzupelnij daty
                 </span>
               )}
               <button

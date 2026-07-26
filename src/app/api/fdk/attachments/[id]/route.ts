@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
+import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
 // Allow up to 60s for scrape action (OCR via Claude can take 20-40s)
 export const maxDuration = 60;
@@ -85,7 +86,7 @@ export async function GET(
     }
 
     const buffer = await fileData.arrayBuffer();
-    const parsed = await parseOswiadczeniePdf(buffer);
+    const parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
 
     if (!parsed) {
       return NextResponse.json({
@@ -212,7 +213,7 @@ export async function GET(
       },
     });
 
-    // Also update foreigner's decyzjaPobytowaDo if this is a residence permit (Karta pobytu or Blue Card)
+    // For residence permits: update decyzjaPobytowaDo + deactivate previous active permits
     if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
       const dataDo = new Date(parsed.dataDo);
       if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
@@ -221,6 +222,8 @@ export async function GET(
           data: { decyzjaPobytowaDo: dataDo },
         });
       }
+      // Deactivate other active residence permits — only one can be active
+      await deactivatePreviousResidencePermits(attachment.foreignerId, baseId, changedBy);
     }
 
     // Build list of fields that could NOT be extracted (for user feedback)

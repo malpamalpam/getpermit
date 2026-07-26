@@ -29,6 +29,8 @@ export interface ParsedDocumentData {
   nrDecyzji?: string;
   // Salary
   wynagrodzenie?: string;
+  // Confidence flag — if true, dates may be unreliable and need manual verification
+  lowConfidence?: boolean;
 }
 
 // Keep backward compatibility
@@ -74,13 +76,24 @@ function titleCase(s: string): string {
  * Order matters: odwołanie/zażalenie must be checked FIRST because appeal documents
  * often contain phrases like "zezwolenie na pracę" or "zezwolenie na pobyt" in context.
  */
-function detectDocumentType(text: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | undefined {
+function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | undefined {
   const lower = text.toLowerCase();
+  const filenameLower = (filenameHint ?? "").toLowerCase();
 
   // === ODWOŁANIE / ZAŻALENIE — check first! ===
-  if (lower.includes("odwołanie od decyzji") || lower.includes("odwolanie od decyzji")) return "ODWOLANIE";
-  if (lower.includes("zażalenie na decyzję") || lower.includes("zazalenie na decyzje")) return "ODWOLANIE";
-  if (lower.includes("procedura odwoławcza") || lower.includes("procedura odwolawcza")) return "ODWOLANIE";
+  // Filename hint — strongest signal (user named the file with "odwolanie")
+  if (filenameLower.includes("odwolanie") || filenameLower.includes("odwo\u0142anie")) return "ODWOLANIE";
+  // Text content patterns
+  if (lower.includes("odwo\u0142anie od decyzji") || lower.includes("odwolanie od decyzji")) return "ODWOLANIE";
+  if (lower.includes("za\u017Calenie na decyzj\u0119") || lower.includes("zazalenie na decyzje")) return "ODWOLANIE";
+  if (lower.includes("procedura odwo\u0142awcza") || lower.includes("procedura odwolawcza")) return "ODWOLANIE";
+  // "wnoszę odwołanie" / "składam odwołanie" / "odwołuję się"
+  if (/wnosz[ęe]\s+odwo[łl]anie/i.test(text)) return "ODWOLANIE";
+  if (/sk[łl]adam\s+odwo[łl]anie/i.test(text)) return "ODWOLANIE";
+  if (/odwo[łl]uj[ęe]\s+si[ęe]/i.test(text)) return "ODWOLANIE";
+  // "organ odwoławczy" / "UDSC" (Urząd do Spraw Cudzoziemców handles appeals)
+  if (lower.includes("organ odwo\u0142awczy") || lower.includes("organ odwolawczy")) return "ODWOLANIE";
+  if (lower.includes("udsc") && (lower.includes("odwo\u0142") || lower.includes("odwol"))) return "ODWOLANIE";
   // Standalone "odwołanie" near the start of the document (first 500 chars)
   if (/^.{0,500}odwo[łl]anie/si.test(text)) return "ODWOLANIE";
 
@@ -216,20 +229,67 @@ function dedup(s: string): string {
   return trimmed;
 }
 
-export function parseOswiadczenieText(text: string): ParsedDocumentData {
+export function parseOswiadczenieText(text: string, filenameHint?: string): ParsedDocumentData {
   const result: ParsedDocumentData = {};
   const normalized = text.replace(/\s+/g, " ").trim();
 
   // Detect document type
-  result.detectedType = detectDocumentType(normalized);
+  result.detectedType = detectDocumentType(normalized, filenameHint);
 
-  // === ODWOŁANIE / ZAŻALENIE — extract dates + decision number, then return ===
+  // === ODWOLANIE / ZAŻALENIE — extract dates + decision number, then return ===
   if (result.detectedType === "ODWOLANIE") {
     extractPersonalData(normalized, result);
-    extractDateRange(normalized, result);
+
+    // For appeals, extract the appeal deadline/validity date specifically.
+    // Look for "do dnia DD.MM.YYYY" or "termin ... DD.MM.YYYY" patterns first.
+    const terminMatch = normalized.match(/(?:termin|do\s+dnia|wa[żz]n[eao]\s+do|obowi[aą]zuje\s+do)\s*[:\s]*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i);
+    if (terminMatch) {
+      result.dataDo = parseDatePL(terminMatch[1]);
+    }
+
+    // Try generic date range extraction only if we didn't find specific dates
+    if (!result.dataDo) {
+      extractDateRange(normalized, result);
+    }
+
+    // If multiple dates found, prefer the latest one as dataDo for appeals
+    // (the appeal deadline is typically the furthest future date)
+    const allDates: string[] = [];
+    const dateRegex = /(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/g;
+    let dateMatch: RegExpExecArray | null;
+    while ((dateMatch = dateRegex.exec(normalized)) !== null) {
+      const parsed = parseDatePL(dateMatch[1]);
+      if (parsed) allDates.push(parsed);
+    }
+    // Also try Polish word dates
+    const wordDateRegex = /(\d{1,2})\s+(stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|wrze[śs]nia|pa[źz]dziernika|listopada|grudnia)\s+(\d{4})/gi;
+    while ((dateMatch = wordDateRegex.exec(normalized)) !== null) {
+      const parsed = parseDatePL(dateMatch[0]);
+      if (parsed) allDates.push(parsed);
+    }
+
+    if (allDates.length > 0) {
+      // Sort dates descending, take the latest as dataDo (appeal validity/deadline)
+      allDates.sort((a, b) => b.localeCompare(a));
+      if (!result.dataDo || allDates[0] > result.dataDo) {
+        result.dataDo = allDates[0];
+      }
+      // Take earliest as dataOd (when the appeal was filed)
+      if (!result.dataOd && allDates.length > 1) {
+        allDates.sort((a, b) => a.localeCompare(b));
+        result.dataOd = allDates[0];
+      }
+    }
+
     // Try to extract the original decision number being appealed
-    const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy|decyzji\s+nr)[.:\s]+([A-Z]{2,}[-./][A-Z0-9./\-]{4,})/i);
+    const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy|decyzji\s+nr|decyzj[ięi]\s+nr)[.:\s]+([A-Z0-9]{2,}[-./][A-Z0-9./\-]{3,})/i);
     if (nrDecMatch) result.nrDecyzji = nrDecMatch[1].trim();
+
+    // For odwolanie, mark as low confidence if we couldn't extract personal data
+    if (!result.imie && !result.nazwisko) {
+      result.lowConfidence = true;
+    }
+
     return result;
   }
 
@@ -440,7 +500,7 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
  */
 export async function parseOswiadczeniePdf(
   buffer: ArrayBuffer,
-  { ocrFallback = true }: { ocrFallback?: boolean } = {}
+  { ocrFallback = true, filename }: { ocrFallback?: boolean; filename?: string } = {}
 ): Promise<ParsedDocumentData | null> {
   try {
     const pdfParse = (await import("pdf-parse")).default;
@@ -455,7 +515,7 @@ export async function parseOswiadczeniePdf(
 
     if (!text || text.length < 20) return null;
 
-    const result = parseOswiadczenieText(text);
+    const result = parseOswiadczenieText(text, filename);
 
     // ODWOLANIE detection: return partial result so caller knows to skip employment base
     if (result.detectedType === "ODWOLANIE") {

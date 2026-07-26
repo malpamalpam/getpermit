@@ -2,27 +2,28 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, X, AlertTriangle } from "lucide-react";
 import { deleteFdkAttachmentAction } from "@/lib/fdk-actions";
 
 export function DeleteAttachmentButton({ attachmentId, nazwa }: { attachmentId: number; nazwa: string }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleDelete = () => {
-    if (!confirm(`Na pewno usunąć załącznik "${nazwa}"?`)) return;
     setError(null);
     startTransition(async () => {
       try {
         const result = await deleteFdkAttachmentAction(attachmentId);
         if (result.ok) {
+          setShowConfirm(false);
           router.refresh();
         } else {
-          setError("Nie udało się usunąć pliku.");
+          setError("Nie udalo sie usunac pliku.");
         }
       } catch {
-        setError("Błąd połączenia.");
+        setError("Blad polaczenia.");
       }
     });
   };
@@ -31,14 +32,65 @@ export function DeleteAttachmentButton({ attachmentId, nazwa }: { attachmentId: 
     <>
       <button
         type="button"
-        onClick={handleDelete}
-        disabled={isPending}
-        className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
-        title="Usuń plik"
+        onClick={() => setShowConfirm(true)}
+        className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-100"
+        title="Usun plik"
       >
-        {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />} Usuń
+        <Trash2 className="h-3 w-3" /> Usun
       </button>
-      {error && <span className="text-[10px] text-red-500">{error}</span>}
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-primary">Usunac zalacznik?</h3>
+                <p className="mt-1 text-sm text-primary/60">
+                  Czy na pewno chcesz usunac plik{" "}
+                  <span className="font-semibold text-primary">&quot;{nazwa}&quot;</span>?
+                  Operacja jest nieodwracalna.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowConfirm(false)}
+                className="rounded-lg p-1 text-primary/40 hover:bg-primary/5"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {error && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirm(false)}
+                disabled={isPending}
+                className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5"
+              >
+                Anuluj
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isPending}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                {isPending ? "Usuwanie..." : "Usun"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

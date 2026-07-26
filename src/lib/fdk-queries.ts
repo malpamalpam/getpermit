@@ -11,12 +11,13 @@ export type FdkResult = { ok: true } | { ok: false; error: string };
 /**
  * Compute document status from dates.
  * Manual overrides (UCHYLONE, UMORZONE) are preserved.
- * Everything else is derived from dataOd / dataDo relative to today.
+ * Everything else is derived from dataOd / dataDo / dataZakPracy relative to today.
  */
 export function computeStatus(base: {
   status: string;
   dataOd: Date | null;
   dataDo: Date | null;
+  dataZakPracy?: Date | null;
 }): string {
   // Preserve manual statuses that don't depend on dates
   if (base.status === "UCHYLONE" || base.status === "UMORZONE" || base.status === "NIEAKTYWNE") {
@@ -26,6 +27,14 @@ export function computeStatus(base: {
   const now = new Date();
   // Normalize to start of day for fair comparison
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // If dataZakPracy exists and is in the past → NIEAKTYWNE (work ended)
+  if (base.dataZakPracy) {
+    const zakPracy = new Date(base.dataZakPracy.getFullYear(), base.dataZakPracy.getMonth(), base.dataZakPracy.getDate());
+    if (zakPracy <= today) {
+      return "NIEAKTYWNE";
+    }
+  }
 
   const dataOd = base.dataOd
     ? new Date(base.dataOd.getFullYear(), base.dataOd.getMonth(), base.dataOd.getDate())
@@ -57,7 +66,7 @@ export function computeStatus(base: {
  * Apply computeStatus to an array of employment bases.
  * Returns new array with computed status field.
  */
-export function withComputedStatuses<T extends { status: string; dataOd: Date | null; dataDo: Date | null }>(
+export function withComputedStatuses<T extends { status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null }>(
   bases: T[]
 ): T[] {
   return bases.map((b) => ({ ...b, status: computeStatus(b) as typeof b.status }));
@@ -69,7 +78,7 @@ export function withComputedStatuses<T extends { status: string; dataOd: Date | 
  */
 export function hasActiveResidencePermit(foreigner: {
   decyzjaPobytowaDo: Date | null;
-  employmentBases?: { typ: string; status: string; dataOd: Date | null; dataDo: Date | null }[];
+  employmentBases?: { typ: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null }[];
 }): boolean {
   const now = new Date();
 
@@ -88,6 +97,45 @@ export function hasActiveResidencePermit(foreigner: {
   }
 
   return false;
+}
+
+/**
+ * Deactivate other active residence permits (KARTA_POBYTU, BLUE_CARD) for a foreigner
+ * when a new one becomes active. Only one can be active at a time.
+ * Returns the number of deactivated bases.
+ */
+export async function deactivatePreviousResidencePermits(
+  foreignerId: number,
+  newBaseId: number,
+  changedBy: string
+): Promise<number> {
+  const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];
+  const otherActive = await db.fdkEmploymentBase.findMany({
+    where: {
+      foreignerId,
+      id: { not: newBaseId },
+      typ: { in: residenceTypes },
+      status: { in: ["AKTYWNE", "BRAK_DANYCH"] },
+    },
+  });
+
+  for (const base of otherActive) {
+    await db.fdkEmploymentBase.update({
+      where: { id: base.id },
+      data: { status: "NIEAKTYWNE" },
+    });
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId,
+        changedBy,
+        field: "employment_base_auto",
+        oldValue: base.status,
+        newValue: `Podstawa #${base.id} (${base.typ}) dezaktywowana - zastapiona przez nowa decyzje pobytowa #${newBaseId}`,
+      },
+    });
+  }
+
+  return otherActive.length;
 }
 
 export async function getNotificationSettings() {
