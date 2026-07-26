@@ -89,7 +89,7 @@ export async function GET(
 
     if (!parsed) {
       return NextResponse.json({
-        error: "Nie udało się wyciągnąć danych z PDF. Sprawdź czy plik zawiera tekst lub ustaw klucz ANTHROPIC_API_KEY aby włączyć OCR dla skanów. Możesz wprowadzić dane ręcznie w zakładce „Podstawy zatrudnienia".",
+        error: "Nie udalo sie wyciagnac danych z PDF. Sprawdz czy plik zawiera tekst lub ustaw klucz ANTHROPIC_API_KEY aby wlaczyc OCR dla skanow. Mozesz wprowadzic dane recznie w zakladce Podstawy zatrudnienia.",
         manualEntryRequired: true,
       }, { status: 422 });
     }
