@@ -115,7 +115,7 @@ function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
   return {
     foreignerId: d.foreignerId,
     typ: d.typ,
-    status: resolvedStatus,
+    status: resolvedStatus as typeof d.status,
     // Wspólne
     rodzajUmowy: d.rodzajUmowy || null,
     dataOd: toDate(d.dataOd),
