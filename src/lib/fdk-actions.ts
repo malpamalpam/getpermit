@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
-import { type FdkResult, deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
+import { type FdkResult, deactivatePreviousResidencePermits, computeStatus } from "@/lib/fdk-queries";
 
 // =============================================================================
 // SCHEMAS
@@ -101,10 +101,21 @@ function revalidateFdk(id?: number) {
 }
 
 function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
+  // Recompute status from dates — only preserve manually-set statuses (UCHYLONE, UMORZONE)
+  const manualStatuses = ["UCHYLONE", "UMORZONE"];
+  const resolvedStatus = manualStatuses.includes(d.status)
+    ? d.status
+    : computeStatus({
+        status: d.status,
+        dataOd: toDate(d.dataOd),
+        dataDo: toDate(d.dataDo),
+        dataZakPracy: toDate(d.dataZakPracy),
+      });
+
   return {
     foreignerId: d.foreignerId,
     typ: d.typ,
-    status: d.status,
+    status: resolvedStatus,
     // Wspólne
     rodzajUmowy: d.rodzajUmowy || null,
     dataOd: toDate(d.dataOd),
