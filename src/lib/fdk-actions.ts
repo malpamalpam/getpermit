@@ -580,7 +580,14 @@ export async function updateEmploymentBaseAction(
   return { ok: true };
   } catch (err) {
     console.error("[fdk] updateEmploymentBaseAction error:", err);
-    return { ok: false, error: err instanceof Error ? err.message : "unknown_error" };
+    // Sanitize: never expose raw Prisma/DB errors to the user
+    const rawMsg = err instanceof Error ? err.message : String(err);
+    let userMsg = "Blad zapisu. Sprobuj ponownie.";
+    if (rawMsg.includes("invalid input value for enum")) {
+      userMsg = "Blad bazy danych: nieznana wartosc statusu. Wymagana migracja bazy (prisma migrate deploy).";
+    }
+    console.error("[fdk] Raw error for debugging:", rawMsg);
+    return { ok: false, error: userMsg };
   }
 }
 

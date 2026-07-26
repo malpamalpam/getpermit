@@ -504,53 +504,126 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
     lastOcrError = { type: "no_key" };
     return null;
   }
+
+  const fileSizeMB = (buffer.byteLength / 1024 / 1024).toFixed(1);
+  console.log(`[pdf-parser] PDF size: ${fileSizeMB} MB`);
+
+  // Reject files over 30 MB (API limit is 32 MB for base64 ≈ 24 MB raw)
+  if (buffer.byteLength > 30 * 1024 * 1024) {
+    const msg = `PDF too large for OCR: ${fileSizeMB} MB (limit 30 MB)`;
+    console.warn(`[pdf-parser] ${msg}`);
+    lastOcrError = { type: "api_error", message: msg };
+    return null;
+  }
+
   try {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey });
     const base64 = Buffer.from(buffer).toString("base64");
-    const fileSizeMB = (buffer.byteLength / 1024 / 1024).toFixed(1);
-    console.log(`[pdf-parser] Sending ${fileSizeMB} MB PDF to Claude OCR...`);
 
-    // Use Sonnet for better OCR quality on scanned documents.
-    // PDF document blocks require the pdfs beta header.
-    const response = await client.messages.create(
-      {
-        model: "claude-sonnet-4-6",
-        max_tokens: 4096,
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "document",
-                source: {
-                  type: "base64",
-                  media_type: "application/pdf",
-                  data: base64,
-                },
-              } as never,
-              {
-                type: "text",
-                text: "Przepisz dosłownie cały tekst z tego dokumentu. Zachowaj oryginalne sformułowania i kolejność. Zwróć tylko tekst, bez żadnych komentarzy ani nagłówków.",
+    console.log(`[pdf-parser] Sending PDF to Claude API (model: claude-sonnet-4-6, beta: pdfs-2024-09-25)...`);
+
+    const requestBody = {
+      model: "claude-sonnet-4-6",
+      max_tokens: 4096,
+      messages: [
+        {
+          role: "user" as const,
+          content: [
+            {
+              type: "document" as const,
+              source: {
+                type: "base64" as const,
+                media_type: "application/pdf" as const,
+                data: base64,
               },
-            ],
-          },
-        ],
-      },
-      { headers: { "anthropic-beta": "pdfs-2024-09-25" } }
-    );
+            },
+            {
+              type: "text" as const,
+              text: "Przepisz doslownie caly tekst z tego dokumentu PDF. Zachowaj oryginalne sformulowania i kolejnosc. Zwroc tylko tekst, bez zadnych komentarzy ani naglowkow.",
+            },
+          ],
+        },
+      ],
+    };
 
-    const content = response.content[0];
-    if (content.type === "text" && content.text.length > 20) {
-      console.log(`[pdf-parser] Claude OCR extracted ${content.text.length} chars`);
-      return content.text;
+    // Try with PDF document support (beta)
+    let response;
+    try {
+      response = await (client.messages.create as Function)(
+        requestBody,
+        { headers: { "anthropic-beta": "pdfs-2024-09-25" } }
+      );
+      console.log(`[pdf-parser] API response: stop_reason=${response.stop_reason}, content_blocks=${response.content?.length}`);
+    } catch (betaErr) {
+      const betaMsg = betaErr instanceof Error ? betaErr.message : String(betaErr);
+      console.warn(`[pdf-parser] PDF beta failed: ${betaMsg}`);
+
+      // Fallback: try sending as image (first page) if PDF beta not supported
+      console.log("[pdf-parser] Falling back to image-based OCR...");
+      try {
+        const imgResponse = await client.messages.create({
+          model: "claude-sonnet-4-6",
+          max_tokens: 4096,
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "image",
+                  source: {
+                    type: "base64",
+                    media_type: "application/pdf",
+                    data: base64,
+                  },
+                } as never,
+                {
+                  type: "text",
+                  text: "Przepisz doslownie caly tekst z tego dokumentu. Zachowaj oryginalne sformulowania i kolejnosc. Zwroc tylko tekst.",
+                },
+              ],
+            },
+          ],
+        });
+        response = imgResponse;
+        console.log(`[pdf-parser] Image fallback response: stop_reason=${response.stop_reason}`);
+      } catch (imgErr) {
+        const imgMsg = imgErr instanceof Error ? imgErr.message : String(imgErr);
+        console.error(`[pdf-parser] Image fallback also failed: ${imgMsg}`);
+        lastOcrError = { type: "api_error", message: `PDF beta: ${betaMsg}; Image fallback: ${imgMsg}` };
+        return null;
+      }
     }
-    console.warn("[pdf-parser] Claude OCR returned empty/short response");
-    lastOcrError = { type: "api_error", message: "OCR returned empty response" };
+
+    // Extract text from response
+    if (!response?.content || response.content.length === 0) {
+      console.warn("[pdf-parser] API returned no content blocks");
+      lastOcrError = { type: "api_error", message: "API returned no content blocks" };
+      return null;
+    }
+
+    const textBlocks = response.content.filter((b: { type: string }) => b.type === "text");
+    const fullText = textBlocks.map((b: { text: string }) => b.text).join("\n");
+
+    console.log(`[pdf-parser] OCR extracted ${fullText.length} chars from ${textBlocks.length} text blocks`);
+
+    if (fullText.length > 20) {
+      return fullText;
+    }
+
+    console.warn(`[pdf-parser] OCR text too short (${fullText.length} chars): "${fullText.substring(0, 100)}"`);
+    lastOcrError = { type: "api_error", message: `OCR returned only ${fullText.length} chars` };
     return null;
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     console.error("[pdf-parser] Claude OCR failed:", errMsg);
+    // Log full error for debugging
+    if (err && typeof err === "object" && "status" in err) {
+      console.error(`[pdf-parser] HTTP status: ${(err as { status: number }).status}`);
+    }
+    if (err && typeof err === "object" && "error" in err) {
+      console.error(`[pdf-parser] API error body:`, JSON.stringify((err as { error: unknown }).error));
+    }
     lastOcrError = { type: "api_error", message: errMsg };
     return null;
   }
