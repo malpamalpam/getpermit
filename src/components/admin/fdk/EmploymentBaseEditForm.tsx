@@ -208,10 +208,14 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
           onClose();
           router.refresh();
         } else {
-          setError("Nie udało się zapisać. Sprawdź wymagane pola.");
+          const errMsg = "error" in result && result.error
+            ? `Blad zapisu: ${result.error}`
+            : "Nie udalo sie zapisac. Sprawdz wymagane pola.";
+          setError(errMsg);
         }
-      } catch {
-        setError("Wystąpił błąd połączenia.");
+      } catch (err) {
+        console.error("[form] save error:", err);
+        setError("Blad serwera. Sprobuj ponownie.");
       }
     });
   };

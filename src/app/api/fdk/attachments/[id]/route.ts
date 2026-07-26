@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
+import { parseOswiadczeniePdf, getLastOcrError } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
 // Allow up to 60s for scrape action (OCR via Claude can take 20-40s)
@@ -89,9 +89,19 @@ export async function GET(
     const parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
 
     if (!parsed) {
+      const ocrErr = getLastOcrError();
+      let errorMsg: string;
+      if (ocrErr?.type === "no_key") {
+        errorMsg = "Brak klucza ANTHROPIC_API_KEY w srodowisku serwera. OCR nie moze dzialac bez niego. Skontaktuj sie z administratorem.";
+      } else if (ocrErr?.type === "api_error") {
+        errorMsg = `OCR nie powiodl sie: ${ocrErr.message}. Sprobuj ponownie lub wprowadz dane recznie.`;
+      } else {
+        errorMsg = "Nie udalo sie wyciagnac danych z PDF (brak warstwy tekstowej i OCR nie zwrocil danych). Wprowadz dane recznie w zakladce Podstawy zatrudnienia.";
+      }
       return NextResponse.json({
-        error: "Nie udalo sie wyciagnac danych z PDF. Sprawdz czy plik zawiera tekst lub ustaw klucz ANTHROPIC_API_KEY aby wlaczyc OCR dla skanow. Mozesz wprowadzic dane recznie w zakladce Podstawy zatrudnienia.",
+        error: errorMsg,
         manualEntryRequired: true,
+        ocrDiagnostic: ocrErr?.type ?? "no_text_layer",
       }, { status: 422 });
     }
 
@@ -124,8 +134,28 @@ export async function GET(
       }
     }
 
-    // All detected types (including ODWOLANIE) map to a valid FdkBaseType now.
-    const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE";
+    // ODWOLANIE: do NOT create an employment base — just log and return extracted data
+    if (parsed.detectedType === "ODWOLANIE") {
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Rozpoznano odwolanie od decyzji w pliku: ${attachment.nazwaPliku}. Podstawa zatrudnienia NIE utworzona.`,
+        },
+      });
+
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        foreignerUpdated: Object.keys(foreignerUpdateData),
+        employmentBaseCreated: null,
+      });
+    }
+
+    // All other detected types create/update employment base
+    const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
     // Check for duplicate: same foreigner + type (+ dates if available).
     // Also check for any existing base with same type to update instead of creating duplicates.
@@ -156,8 +186,7 @@ export async function GET(
     const baseData: Record<string, unknown> = {
       foreignerId: attachment.foreignerId,
       typ: docType,
-      // ODWOLANIE always W_TRAKCIE (appeal pending); others default to BRAK_DANYCH
-      status: docType === "ODWOLANIE" ? "W_TRAKCIE" : "BRAK_DANYCH",
+      status: "BRAK_DANYCH",
       dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
       dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
       rodzajUmowy: parsed.rodzajUmowy || null,
@@ -169,11 +198,6 @@ export async function GET(
       baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
       baseData.podjeciePracy = parsed.rodzajPracy || null;
       baseData.nrDecyzji = null;
-    } else if (docType === "ODWOLANIE") {
-      // Store the appealed decision number + mark as appeal
-      baseData.nrDecyzji = parsed.nrDecyzji || null;
-      baseData.rodzajSprawy = "Procedura odwoławcza";
-      baseData.nrOswiadczenia = null;
     } else {
       // ZEZWOLENIE, KARTA_POBYTU, BLUE_CARD
       baseData.nrDecyzji = parsed.nrDecyzji || null;

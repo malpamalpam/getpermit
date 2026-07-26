@@ -89,7 +89,7 @@ const employmentBaseSchema = z.object({
 // =============================================================================
 
 function toDate(v: string | undefined | null): Date | null {
-  if (!v) return null;
+  if (!v || v.trim() === "") return null;
   const d = new Date(v);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -528,9 +528,10 @@ export async function updateEmploymentBaseAction(
   id: number,
   input: z.infer<typeof employmentBaseSchema>
 ): Promise<FdkResult> {
+  try {
   const user = await requireAdmin();
   const parsed = employmentBaseSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "validation" };
+  if (!parsed.success) return { ok: false, error: "validation: " + parsed.error.message };
 
   const old = await db.fdkEmploymentBase.findUnique({ where: { id } });
   if (!old) return { ok: false, error: "not_found" };
@@ -577,6 +578,10 @@ export async function updateEmploymentBaseAction(
 
   revalidateFdk(d.foreignerId);
   return { ok: true };
+  } catch (err) {
+    console.error("[fdk] updateEmploymentBaseAction error:", err);
+    return { ok: false, error: err instanceof Error ? err.message : "unknown_error" };
+  }
 }
 
 export async function deleteEmploymentBaseAction(id: number): Promise<FdkResult> {

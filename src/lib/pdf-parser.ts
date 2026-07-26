@@ -269,15 +269,26 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     }
 
     if (allDates.length > 0) {
-      // Sort dates descending, take the latest as dataDo (appeal validity/deadline)
-      allDates.sort((a, b) => b.localeCompare(a));
-      if (!result.dataDo || allDates[0] > result.dataDo) {
-        result.dataDo = allDates[0];
-      }
-      // Take earliest as dataOd (when the appeal was filed)
-      if (!result.dataOd && allDates.length > 1) {
-        allDates.sort((a, b) => a.localeCompare(b));
-        result.dataOd = allDates[0];
+      // Filter out dates that are clearly NOT document period dates:
+      // - Dates before 2000 (likely DOB or historical references)
+      // - The person's date of birth (if extracted)
+      const validDates = allDates.filter((d) => {
+        if (d < "2000-01-01") return false;
+        if (result.dataUrodzenia && d === result.dataUrodzenia) return false;
+        return true;
+      });
+
+      if (validDates.length > 0) {
+        // Sort dates descending, take the latest as dataDo (appeal deadline)
+        validDates.sort((a, b) => b.localeCompare(a));
+        if (!result.dataDo || validDates[0] > result.dataDo) {
+          result.dataDo = validDates[0];
+        }
+        // Take earliest valid date as dataOd (when appeal was filed)
+        if (!result.dataOd && validDates.length > 1) {
+          validDates.sort((a, b) => a.localeCompare(b));
+          result.dataOd = validDates[0];
+        }
       }
     }
 
@@ -290,12 +301,15 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
       result.lowConfidence = true;
     }
 
+    sanitizeDates(result);
     return result;
   }
 
   // === ZEZWOLENIE / BLUE_CARD — same structured layout (decision documents) ===
   if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "BLUE_CARD") {
-    return parseZezwolenie(normalized, result);
+    const zezResult = parseZezwolenie(normalized, result);
+    sanitizeDates(zezResult);
+    return zezResult;
   }
 
   // === OŚWIADCZENIE / KARTA_POBYTU / unknown ===
@@ -350,7 +364,40 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
   }
 
+  sanitizeDates(result);
   return result;
+}
+
+/**
+ * Sanity-check extracted dates. Remove clearly invalid values.
+ */
+function sanitizeDates(result: ParsedDocumentData): void {
+  // dataOd before 2000 is almost certainly a parsing error (e.g. DOB picked up)
+  if (result.dataOd && result.dataOd < "2000-01-01") {
+    result.dataOd = undefined;
+    result.lowConfidence = true;
+  }
+  // dataDo before 2000 is also invalid for document periods
+  if (result.dataDo && result.dataDo < "2000-01-01") {
+    result.dataDo = undefined;
+    result.lowConfidence = true;
+  }
+  // dataOd must not equal the person's DOB
+  if (result.dataOd && result.dataUrodzenia && result.dataOd === result.dataUrodzenia) {
+    result.dataOd = undefined;
+    result.lowConfidence = true;
+  }
+  // dataDo must not equal DOB
+  if (result.dataDo && result.dataUrodzenia && result.dataDo === result.dataUrodzenia) {
+    result.dataDo = undefined;
+    result.lowConfidence = true;
+  }
+  // dataOd must be before dataDo (if both exist)
+  if (result.dataOd && result.dataDo && result.dataOd > result.dataDo) {
+    // Swap or clear — likely parsing confusion
+    result.dataOd = undefined;
+    result.lowConfidence = true;
+  }
 }
 
 /**
@@ -440,16 +487,29 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
  * OCR fallback using Claude API for scanned PDFs (no text layer).
  * Requires ANTHROPIC_API_KEY environment variable.
  */
+/** OCR error details for caller to distinguish "no key" from "API error" */
+export type OcrError = { type: "no_key" } | { type: "api_error"; message: string } | null;
+let lastOcrError: OcrError = null;
+export function getLastOcrError(): OcrError { return lastOcrError; }
+
 async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
+  lastOcrError = null;
   const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  // Diagnostic log (never log the actual key)
+  console.log(`[pdf-parser] OCR: ANTHROPIC_API_KEY present=${!!apiKey}, length=${apiKey?.length ?? 0}`);
+
   if (!apiKey) {
     console.warn("[pdf-parser] ANTHROPIC_API_KEY not set — skipping OCR fallback");
+    lastOcrError = { type: "no_key" };
     return null;
   }
   try {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey });
     const base64 = Buffer.from(buffer).toString("base64");
+    const fileSizeMB = (buffer.byteLength / 1024 / 1024).toFixed(1);
+    console.log(`[pdf-parser] Sending ${fileSizeMB} MB PDF to Claude OCR...`);
 
     // Use Sonnet for better OCR quality on scanned documents.
     // PDF document blocks require the pdfs beta header.
@@ -485,9 +545,13 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
       console.log(`[pdf-parser] Claude OCR extracted ${content.text.length} chars`);
       return content.text;
     }
+    console.warn("[pdf-parser] Claude OCR returned empty/short response");
+    lastOcrError = { type: "api_error", message: "OCR returned empty response" };
     return null;
   } catch (err) {
-    console.error("[pdf-parser] Claude OCR failed:", err);
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.error("[pdf-parser] Claude OCR failed:", errMsg);
+    lastOcrError = { type: "api_error", message: errMsg };
     return null;
   }
 }

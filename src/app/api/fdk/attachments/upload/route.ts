@@ -117,8 +117,12 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Create employment base for all detected types (including ODWOLANIE)
-        const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE";
+        // ODWOLANIE: do NOT create employment base on upload either
+        if (parsed.detectedType === "ODWOLANIE") {
+          // Skip — just keep the attachment and foreigner data updates above
+        } else {
+        // Create employment base for non-ODWOLANIE types
+        const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
         const existingBase = await db.fdkEmploymentBase.findFirst({
           where: {
@@ -133,7 +137,7 @@ export async function POST(request: NextRequest) {
         const baseData: Record<string, unknown> = {
           foreignerId,
           typ: docType,
-          status: docType === "ODWOLANIE" ? "W_TRAKCIE" : "BRAK_DANYCH",
+          status: "BRAK_DANYCH",
           dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
           dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
           rodzajUmowy: parsed.rodzajUmowy || null,
@@ -145,10 +149,6 @@ export async function POST(request: NextRequest) {
           baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
           baseData.podjeciePracy = parsed.rodzajPracy || null;
           baseData.nrDecyzji = null;
-        } else if (docType === "ODWOLANIE") {
-          baseData.nrDecyzji = parsed.nrDecyzji || null;
-          baseData.rodzajSprawy = "Procedura odwoławcza";
-          baseData.nrOswiadczenia = null;
         } else {
           baseData.nrDecyzji = parsed.nrDecyzji || null;
           baseData.nrOswiadczenia = null;
@@ -199,6 +199,7 @@ export async function POST(request: NextRequest) {
           // Deactivate other active residence permits — only one can be active
           await deactivatePreviousResidencePermits(foreignerId, baseId, changedBy);
         }
+        } // end else (non-ODWOLANIE)
       }
     } catch (err) {
       console.error("[fdk/upload] PDF parsing error (non-fatal):", err);

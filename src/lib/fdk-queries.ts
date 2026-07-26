@@ -65,11 +65,33 @@ export function computeStatus(base: {
 /**
  * Apply computeStatus to an array of employment bases.
  * Returns new array with computed status field.
+ * Also enforces: only one residence permit (KARTA_POBYTU/BLUE_CARD) can be AKTYWNE.
+ * Others are marked NIEAKTYWNE (superseded by the newest one).
  */
-export function withComputedStatuses<T extends { status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null }>(
+export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null }>(
   bases: T[]
 ): T[] {
-  return bases.map((b) => ({ ...b, status: computeStatus(b) as typeof b.status }));
+  const computed = bases.map((b) => ({ ...b, status: computeStatus(b) as typeof b.status }));
+
+  // Enforce only one active residence permit — mark older ones as NIEAKTYWNE
+  const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];
+  const activeResidence = computed.filter(
+    (b) => b.typ && residenceTypes.includes(b.typ) && b.status === "AKTYWNE"
+  );
+  if (activeResidence.length > 1) {
+    // Keep the one with the latest dataDo (or latest dataOd) as active
+    activeResidence.sort((a, b) => {
+      const aDate = a.dataDo ?? a.dataOd ?? new Date(0);
+      const bDate = b.dataDo ?? b.dataOd ?? new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+    // Mark all but the first (newest) as NIEAKTYWNE
+    for (let i = 1; i < activeResidence.length; i++) {
+      (activeResidence[i] as { status: string }).status = "NIEAKTYWNE";
+    }
+  }
+
+  return computed;
 }
 
 /**
