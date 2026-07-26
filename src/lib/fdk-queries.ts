@@ -109,13 +109,12 @@ export async function deactivatePreviousResidencePermits(
   newBaseId: number,
   changedBy: string
 ): Promise<number> {
-  const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];
   const otherActive = await db.fdkEmploymentBase.findMany({
     where: {
       foreignerId,
       id: { not: newBaseId },
-      typ: { in: residenceTypes },
-      status: { in: ["AKTYWNE", "BRAK_DANYCH"] },
+      typ: { in: ["KARTA_POBYTU", "BLUE_CARD"] as const },
+      status: { in: ["AKTYWNE", "BRAK_DANYCH"] as const },
     },
   });
 
