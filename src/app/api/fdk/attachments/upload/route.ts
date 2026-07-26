@@ -102,95 +102,99 @@ export async function POST(request: NextRequest) {
 
         if (Object.keys(updateData).length > 0) {
           await db.fdkForeigner.update({ where: { id: foreignerId }, data: updateData });
+          // Log auto-filled foreigner fields
+          for (const [key, value] of Object.entries(updateData)) {
+            await db.fdkChangeLog.create({
+              data: {
+                foreignerId,
+                changedBy,
+                field: key,
+                oldValue: null,
+                newValue: value instanceof Date ? value.toISOString().slice(0, 10) : String(value),
+              },
+            });
+          }
         }
 
-        // Create employment base with detected type (prevent duplicates)
-        // ODWOLANIE = appeal/complaint — skip employment base creation
-        if (parsed.detectedType !== "ODWOLANIE") {
-          const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
+        // Create employment base for all detected types (including ODWOLANIE)
+        const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE";
 
-          const existingBase = await db.fdkEmploymentBase.findFirst({
-            where: {
-              foreignerId,
-              typ: docType,
-              ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
-              ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
-            },
-          });
-
-          // Build type-specific data
-          const baseData: Record<string, unknown> = {
+        const existingBase = await db.fdkEmploymentBase.findFirst({
+          where: {
             foreignerId,
             typ: docType,
-            status: "BRAK_DANYCH",
-            dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
-            dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
-            rodzajUmowy: parsed.rodzajUmowy || null,
-            stanowisko: parsed.stanowisko || null,
-            firma: parsed.firma || null,
-          };
+            ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
+            ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
+          },
+        });
 
-          if (docType === "OSWIADCZENIE") {
-            baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
-            baseData.podjeciePracy = parsed.rodzajPracy || null;
-          } else {
-            baseData.nrDecyzji = parsed.nrDecyzji || null;
-          }
+        // Build type-specific data
+        const baseData: Record<string, unknown> = {
+          foreignerId,
+          typ: docType,
+          status: docType === "ODWOLANIE" ? "W_TRAKCIE" : "BRAK_DANYCH",
+          dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+          dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
+          rodzajUmowy: parsed.rodzajUmowy || null,
+          stanowisko: parsed.stanowisko || null,
+          firma: parsed.firma || null,
+        };
 
-          // Map wynagrodzenie to stawka if available
-          if (parsed.wynagrodzenie) {
-            const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
-            if (numMatch) {
-              baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
-            }
-          }
-
-          let baseId: number;
-          if (existingBase) {
-            await db.fdkEmploymentBase.update({
-              where: { id: existingBase.id },
-              data: baseData,
-            });
-            baseId = existingBase.id;
-          } else {
-            const base = await db.fdkEmploymentBase.create({ data: baseData as never });
-            baseId = base.id;
-          }
-
-          // Log auto-created employment base
-          await db.fdkChangeLog.create({
-            data: {
-              foreignerId,
-              changedBy,
-              field: "scrape",
-              oldValue: null,
-              newValue: existingBase
-                ? `Zaktualizowano podstawę zatrudnienia #${baseId} (${docType}) przy wgraniu: ${file.name}`
-                : `Utworzono podstawę zatrudnienia #${baseId} (${docType}) przy wgraniu: ${file.name}`,
-            },
-          });
-
-          // Update decyzjaPobytowaDo for residence permits (Karta pobytu + Blue Card)
-          if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
-            const dataDo = new Date(parsed.dataDo);
-            if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
-              await db.fdkForeigner.update({
-                where: { id: foreignerId },
-                data: { decyzjaPobytowaDo: dataDo },
-              });
-            }
-          }
+        if (docType === "OSWIADCZENIE") {
+          baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
+          baseData.podjeciePracy = parsed.rodzajPracy || null;
+          baseData.nrDecyzji = null;
+        } else if (docType === "ODWOLANIE") {
+          baseData.nrDecyzji = parsed.nrDecyzji || null;
+          baseData.rodzajSprawy = "Procedura odwoławcza";
+          baseData.nrOswiadczenia = null;
         } else {
-          // ODWOLANIE — log that it was recognized as appeal
-          await db.fdkChangeLog.create({
-            data: {
-              foreignerId,
-              changedBy,
-              field: "scrape",
-              oldValue: null,
-              newValue: `Rozpoznano odwołanie/zażalenie przy wgraniu: ${file.name} — nie utworzono podstawy zatrudnienia`,
-            },
+          baseData.nrDecyzji = parsed.nrDecyzji || null;
+          baseData.nrOswiadczenia = null;
+        }
+
+        // Map wynagrodzenie to stawka if available
+        if (parsed.wynagrodzenie) {
+          const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
+          if (numMatch) {
+            baseData.stawka = parseFloat(numMatch[1].replace(",", "."));
+          }
+        }
+
+        let baseId: number;
+        if (existingBase) {
+          await db.fdkEmploymentBase.update({
+            where: { id: existingBase.id },
+            data: baseData,
           });
+          baseId = existingBase.id;
+        } else {
+          const base = await db.fdkEmploymentBase.create({ data: baseData as never });
+          baseId = base.id;
+        }
+
+        // Log auto-created/updated employment base
+        await db.fdkChangeLog.create({
+          data: {
+            foreignerId,
+            changedBy,
+            field: "employment_base_auto",
+            oldValue: null,
+            newValue: existingBase
+              ? `Zaktualizowano podstawę #${baseId} (${docType}) przy wgraniu: ${file.name}`
+              : `Utworzono podstawę #${baseId} (${docType}) przy wgraniu: ${file.name}`,
+          },
+        });
+
+        // Update decyzjaPobytowaDo for residence permits (Karta pobytu + Blue Card)
+        if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
+          const dataDo = new Date(parsed.dataDo);
+          if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
+            await db.fdkForeigner.update({
+              where: { id: foreignerId },
+              data: { decyzjaPobytowaDo: dataDo },
+            });
+          }
         }
       }
     } catch (err) {
@@ -198,5 +202,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, id: attachment.id, extracted });
+  // Build info about partial extraction
+  let extractionMessage: string | undefined;
+  if (extracted) {
+    const expectedFields = ["detectedType", "dataOd", "dataDo"];
+    const missing = expectedFields.filter((f) => !extracted[f as keyof typeof extracted]);
+    if (missing.length > 0) {
+      extractionMessage = `Ekstrakcja częściowa — nie odczytano: ${missing.join(", ")}. Uzupełnij dane ręcznie w zakładce „Podstawy zatrudnienia".`;
+    }
+  }
+
+  return NextResponse.json({ ok: true, id: attachment.id, extracted, message: extractionMessage });
 }

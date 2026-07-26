@@ -13,8 +13,8 @@ import { Pencil, Plus, Trash2, X, Loader2, Save } from "lucide-react";
 // Types
 // ---------------------------------------------------------------------------
 
-type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA";
-type StatusType = "AKTYWNE" | "WYGASLE" | "UCHYLONE" | "UMORZONE" | "W_TRAKCIE" | "BRAK_DANYCH";
+type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA" | "ODWOLANIE";
+type StatusType = "AKTYWNE" | "NIEAKTYWNE" | "WYGASLE" | "UCHYLONE" | "UMORZONE" | "W_TRAKCIE" | "BRAK_DANYCH";
 
 interface EmploymentBase {
   id: number;
@@ -81,12 +81,14 @@ const TYPE_OPTIONS: { value: BaseType; label: string }[] = [
   { value: "ZEZWOLENIE", label: "Zezwolenie na pracę" },
   { value: "OSWIADCZENIE", label: "Oświadczenie" },
   { value: "KARTA_POBYTU", label: "Karta pobytu" },
-  { value: "BLUE_CARD", label: "Blue Card" },
+  { value: "BLUE_CARD", label: "EU Blue Card" },
   { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
+  { value: "ODWOLANIE", label: "Odwołanie / procedura odwoławcza" },
 ];
 
 const STATUS_OPTIONS: { value: StatusType; label: string }[] = [
   { value: "AKTYWNE", label: "Aktywne" },
+  { value: "NIEAKTYWNE", label: "Nieaktywne (zakończenie pracy)" },
   { value: "WYGASLE", label: "Wygasłe" },
   { value: "UCHYLONE", label: "Uchylone" },
   { value: "UMORZONE", label: "Umorzone" },

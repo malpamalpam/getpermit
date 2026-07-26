@@ -36,8 +36,8 @@ const optDate = z.string().optional().or(z.literal(""));
 
 const employmentBaseSchema = z.object({
   foreignerId: z.number().int(),
-  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA"]),
-  status: z.enum(["AKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
+  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA", "ODWOLANIE"]),
+  status: z.enum(["AKTYWNE", "NIEAKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
   // Wspólne
   rodzajUmowy: optStr,
   dataOd: optDate,
@@ -945,12 +945,29 @@ export async function updateNotificationSettingsAction(
 // =============================================================================
 
 export async function deleteFdkAttachmentAction(id: number): Promise<FdkResult> {
-  await requireAdmin();
+  const user = await requireAdmin();
   const att = await db.fdkAttachment.findUnique({ where: { id } });
   if (!att) return { ok: false, error: "not_found" };
 
-  // TODO: Delete from Supabase Storage
+  // Delete from Supabase Storage
+  try {
+    const { createSupabaseAdminClient } = await import("@/lib/supabase/admin");
+    const supabase = createSupabaseAdminClient();
+    await supabase.storage.from("fdk-attachments").remove([att.storagePath]);
+  } catch (err) {
+    console.error("[fdk] Storage deletion failed (non-fatal):", err);
+  }
+
   await db.fdkAttachment.delete({ where: { id } });
+
+  // Log deletion to history
+  await logAction(
+    att.foreignerId,
+    user.email,
+    "attachment_delete",
+    `Usunięto załącznik: ${att.nazwaWyswietlana} (${att.kategoria})`
+  );
+
   revalidateFdk(att.foreignerId);
   return { ok: true };
 }

@@ -51,13 +51,18 @@ export function ScrapeButton({ attachmentId, typPliku }: Props) {
         if (data.extracted?.rodzajUmowy) parts.push(data.extracted.rodzajUmowy);
         if (data.employmentBaseCreated) parts.push("✓ dodano do podstaw zatrudnienia");
 
-        // Show message (e.g. appeal)
-        if (data.message) parts.push(data.message);
+        // Show partial extraction warning
+        if (data.missingFields && data.missingFields.length > 0) {
+          parts.push(`⚠ Nie odczytano: ${data.missingFields.join(", ")} — uzupełnij ręcznie`);
+        }
 
         setResult({ text: parts.join(" | ") || "Wyciągnięto dane", isError: false });
         router.refresh();
       } else {
-        setResult({ text: data.error || "Nie udało się", isError: true });
+        const errorMsg = data.manualEntryRequired
+          ? `${data.error}\n→ Wprowadź dane ręcznie w zakładce „Podstawy zatrudnienia".`
+          : data.error || "Nie udało się wyciągnąć danych";
+        setResult({ text: errorMsg, isError: true });
       }
     } catch {
       setResult({ text: "Błąd połączenia", isError: true });

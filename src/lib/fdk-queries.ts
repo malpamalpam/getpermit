@@ -19,7 +19,7 @@ export function computeStatus(base: {
   dataDo: Date | null;
 }): string {
   // Preserve manual statuses that don't depend on dates
-  if (base.status === "UCHYLONE" || base.status === "UMORZONE") {
+  if (base.status === "UCHYLONE" || base.status === "UMORZONE" || base.status === "NIEAKTYWNE") {
     return base.status;
   }
 

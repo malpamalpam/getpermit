@@ -90,19 +90,22 @@ function detectDocumentType(text: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KART
   // Blue Card decree often says "zezwolenie na pobyt czasowy i pracę" for highly skilled
   if (lower.includes("pobyt czasowy i prac") && (lower.includes("niebiesk") || lower.includes("blue"))) return "BLUE_CARD";
 
+  // === KARTA POBYTU / DECYZJA POBYTOWA — check BEFORE zezwolenie na pracę ===
+  // "zezwolenie na pobyt czasowy i pracę" is a RESIDENCE PERMIT, not a work permit
+  if (lower.includes("karta pobytu")) return "KARTA_POBYTU";
+  if (lower.includes("zezwolenie na pobyt") || lower.includes("zezwolenia na pobyt")) return "KARTA_POBYTU";
+  if (lower.includes("pobyt czasowy") && !lower.includes("niebiesk") && !lower.includes("blue")) return "KARTA_POBYTU";
+  if (lower.includes("decyzja") && lower.includes("pobyt")) return "KARTA_POBYTU";
+
   // === ZEZWOLENIE NA PRACĘ ===
+  // Must NOT match "zezwolenie na pobyt czasowy i pracę" (already caught above)
   if (lower.includes("zezwolenie na pracę") || lower.includes("zezwolenia na pracę")) return "ZEZWOLENIE";
   if (lower.includes("zezwolenie na prace") || lower.includes("zezwolenia na prace")) return "ZEZWOLENIE";
-  if (/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text)) return "ZEZWOLENIE";
-  if (/typ\s+[a-e]/i.test(text) && lower.includes("zezwoleni")) return "ZEZWOLENIE";
+  if (/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt")) return "ZEZWOLENIE";
+  if (/typ\s+[a-e]/i.test(text) && lower.includes("zezwoleni") && !lower.includes("na pobyt")) return "ZEZWOLENIE";
 
   // === OŚWIADCZENIE — must have "powierzeniu" to avoid matching other mentions ===
   if ((lower.includes("oświadczenie") || lower.includes("oswiadczenie")) && lower.includes("powierzeniu")) return "OSWIADCZENIE";
-
-  // === KARTA POBYTU / DECYZJA POBYTOWA ===
-  if (lower.includes("karta pobytu") || lower.includes("pobyt czasowy")) return "KARTA_POBYTU";
-  if (lower.includes("decyzja") && lower.includes("pobyt")) return "KARTA_POBYTU";
-  if (lower.includes("zezwolenie na pobyt")) return "KARTA_POBYTU";
 
   return undefined;
 }
@@ -220,8 +223,13 @@ export function parseOswiadczenieText(text: string): ParsedDocumentData {
   // Detect document type
   result.detectedType = detectDocumentType(normalized);
 
-  // === ODWOŁANIE / ZAŻALENIE — return immediately, no employment base should be created ===
+  // === ODWOŁANIE / ZAŻALENIE — extract dates + decision number, then return ===
   if (result.detectedType === "ODWOLANIE") {
+    extractPersonalData(normalized, result);
+    extractDateRange(normalized, result);
+    // Try to extract the original decision number being appealed
+    const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy|decyzji\s+nr)[.:\s]+([A-Z]{2,}[-./][A-Z0-9./\-]{4,})/i);
+    if (nrDecMatch) result.nrDecyzji = nrDecMatch[1].trim();
     return result;
   }
 

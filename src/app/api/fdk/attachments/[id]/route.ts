@@ -88,7 +88,10 @@ export async function GET(
     const parsed = await parseOswiadczeniePdf(buffer);
 
     if (!parsed) {
-      return NextResponse.json({ error: "Nie udało się wyciągnąć danych z PDF. Sprawdź czy plik zawiera tekst lub ustaw klucz ANTHROPIC_API_KEY aby włączyć OCR dla skanów." }, { status: 422 });
+      return NextResponse.json({
+        error: "Nie udało się wyciągnąć danych z PDF. Sprawdź czy plik zawiera tekst lub ustaw klucz ANTHROPIC_API_KEY aby włączyć OCR dla skanów. Możesz wprowadzić dane ręcznie w zakładce „Podstawy zatrudnienia".",
+        manualEntryRequired: true,
+      }, { status: 422 });
     }
 
     const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
@@ -106,30 +109,22 @@ export async function GET(
 
     if (Object.keys(foreignerUpdateData).length > 0) {
       await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: foreignerUpdateData });
+      // Log auto-filled foreigner fields from scrape
+      for (const [key, value] of Object.entries(foreignerUpdateData)) {
+        await db.fdkChangeLog.create({
+          data: {
+            foreignerId: attachment.foreignerId,
+            changedBy,
+            field: key,
+            oldValue: null,
+            newValue: value instanceof Date ? (value as Date).toISOString().slice(0, 10) : String(value),
+          },
+        });
+      }
     }
 
-    // === ODWOŁANIE / ZAŻALENIE — do NOT create employment base ===
-    if (parsed.detectedType === "ODWOLANIE") {
-      await db.fdkChangeLog.create({
-        data: {
-          foreignerId: attachment.foreignerId,
-          changedBy,
-          field: "scrape",
-          oldValue: null,
-          newValue: `Wgrano dokument: odwołanie/zażalenie (${attachment.nazwaPliku}) — nie utworzono podstawy zatrudnienia`,
-        },
-      });
-      return NextResponse.json({
-        ok: true,
-        extracted: parsed,
-        message: "Dokument jest odwołaniem lub zażaleniem — nie utworzono podstawy zatrudnienia.",
-        foreignerUpdated: Object.keys(foreignerUpdateData),
-      });
-    }
-
-    // Determine document type — require positive detection, don't default to OSWIADCZENIE.
-    // ODWOLANIE is already handled above (early return), so remaining types are valid FdkBaseType.
-    const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
+    // All detected types (including ODWOLANIE) map to a valid FdkBaseType now.
+    const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE";
 
     // Check for duplicate: same foreigner + type (+ dates if available).
     // Also check for any existing base with same type to update instead of creating duplicates.
@@ -156,11 +151,12 @@ export async function GET(
       });
     }
 
-    // Build type-specific data — don't mix zezwolenie and oświadczenie fields
+    // Build type-specific data
     const baseData: Record<string, unknown> = {
       foreignerId: attachment.foreignerId,
       typ: docType,
-      status: "BRAK_DANYCH" as const,
+      // ODWOLANIE always W_TRAKCIE (appeal pending); others default to BRAK_DANYCH
+      status: docType === "ODWOLANIE" ? "W_TRAKCIE" : "BRAK_DANYCH",
       dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
       dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
       rodzajUmowy: parsed.rodzajUmowy || null,
@@ -171,12 +167,15 @@ export async function GET(
     if (docType === "OSWIADCZENIE") {
       baseData.nrOswiadczenia = parsed.nrOswiadczenia || null;
       baseData.podjeciePracy = parsed.rodzajPracy || null;
-      // Ensure zezwolenie fields are cleared
       baseData.nrDecyzji = null;
-    } else {
-      // ZEZWOLENIE, KARTA_POBYTU — no oświadczenie fields
+    } else if (docType === "ODWOLANIE") {
+      // Store the appealed decision number + mark as appeal
       baseData.nrDecyzji = parsed.nrDecyzji || null;
-      // Ensure oświadczenie fields are cleared
+      baseData.rodzajSprawy = "Procedura odwoławcza";
+      baseData.nrOswiadczenia = null;
+    } else {
+      // ZEZWOLENIE, KARTA_POBYTU, BLUE_CARD
+      baseData.nrDecyzji = parsed.nrDecyzji || null;
       baseData.nrOswiadczenia = null;
     }
 
@@ -224,11 +223,19 @@ export async function GET(
       }
     }
 
+    // Build list of fields that could NOT be extracted (for user feedback)
+    const expectedFields = ["detectedType", "dataOd", "dataDo", "imie", "nazwisko"];
+    const missingFields = expectedFields.filter((f) => !parsed[f as keyof typeof parsed]);
+
     return NextResponse.json({
       ok: true,
       extracted: parsed,
       foreignerUpdated: Object.keys(foreignerUpdateData),
       employmentBaseCreated: baseId,
+      missingFields: missingFields.length > 0 ? missingFields : undefined,
+      message: missingFields.length > 0
+        ? `Ekstrakcja częściowa — nie udało się odczytać: ${missingFields.join(", ")}. Uzupełnij brakujące dane ręcznie.`
+        : undefined,
     });
   }
 

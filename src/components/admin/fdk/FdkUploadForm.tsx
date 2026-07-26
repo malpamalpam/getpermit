@@ -20,6 +20,7 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [kategoria, setKategoria] = useState("glowne");
   const [nazwaWyswietlana, setNazwaWyswietlana] = useState("");
   const [opis, setOpis] = useState("");
@@ -31,6 +32,7 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
 
     setUploading(true);
     setError(null);
+    setInfo(null);
 
     const fd = new FormData();
     fd.append("file", file);
@@ -45,6 +47,10 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
       if (!res.ok) {
         setError(json.error ?? "Upload failed");
         return;
+      }
+      // Show extraction info if partial
+      if (json.message) {
+        setInfo(json.message);
       }
       // Reset form
       setNazwaWyswietlana("");
@@ -110,6 +116,7 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
         </div>
       </div>
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {info && <p className="mt-3 text-sm text-amber-700 bg-amber-50 rounded-md p-2 border border-amber-200">{info}</p>}
       <button
         type="submit"
         disabled={uploading}

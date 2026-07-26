@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { ArrowLeft, Eye, Download, FileText, Shield } from "lucide-react";
 import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 import { ScrapeButton } from "@/components/admin/fdk/ScrapeButton";
+import { DeleteAttachmentButton } from "@/components/admin/fdk/DeleteAttachmentButton";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
@@ -30,8 +31,9 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   ZEZWOLENIE: { label: "Zezwolenie", cls: "bg-blue-100 text-blue-800" },
   OSWIADCZENIE: { label: "Oświadczenie", cls: "bg-green-100 text-green-800" },
   KARTA_POBYTU: { label: "Karta pobytu", cls: "bg-yellow-100 text-yellow-800" },
-  BLUE_CARD: { label: "Blue Card", cls: "bg-purple-100 text-purple-800" },
+  BLUE_CARD: { label: "EU Blue Card", cls: "bg-purple-100 text-purple-800" },
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
+  ODWOLANIE: { label: "Odwołanie", cls: "bg-orange-100 text-orange-800" },
 };
 
 
@@ -152,9 +154,9 @@ export default async function FdkForeignerPage({
                     <div className="text-blue-700">
                       Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}
                     </div>
-                    {hasActiveResidence && (
+                    {hasActiveResidence && foreigner.employmentBases.some((b) => b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE") && (
                       <div className="mt-1 text-xs text-blue-600">
-                        WP i OŚW dezaktywowane — decyzja pobytowa wchłania wcześniejsze dokumenty
+                        Zezwolenia na pracę wchłonięte przez decyzję pobytową
                       </div>
                     )}
                   </div>
@@ -356,6 +358,7 @@ export default async function FdkForeignerPage({
                               <Download className="h-3 w-3" /> Pobierz
                             </a>
                             <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
+                            <DeleteAttachmentButton attachmentId={f.id} nazwa={f.nazwaWyswietlana} />
                           </div>
                         </div>
                       </div>

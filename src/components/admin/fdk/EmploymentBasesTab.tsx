@@ -59,12 +59,14 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   ZEZWOLENIE: { label: "Zezwolenie", cls: "bg-blue-100 text-blue-800" },
   OSWIADCZENIE: { label: "Oświadczenie", cls: "bg-green-100 text-green-800" },
   KARTA_POBYTU: { label: "Karta pobytu", cls: "bg-yellow-100 text-yellow-800" },
-  BLUE_CARD: { label: "Blue Card", cls: "bg-purple-100 text-purple-800" },
+  BLUE_CARD: { label: "EU Blue Card", cls: "bg-purple-100 text-purple-800" },
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
+  ODWOLANIE: { label: "Odwołanie", cls: "bg-orange-100 text-orange-800" },
 };
 
 const STATUS_COLORS: Record<string, string> = {
   AKTYWNE: "bg-green-100 text-green-800",
+  NIEAKTYWNE: "bg-gray-100 text-gray-700",
   WYGASLE: "bg-red-100 text-red-800",
   UCHYLONE: "bg-red-100 text-red-800",
   UMORZONE: "bg-red-100 text-red-800",
@@ -79,10 +81,56 @@ function fmt(d: Date | null | undefined): string {
 export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: Props) {
   const [editingBase, setEditingBase] = useState<EmploymentBase | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  // Only show one (most recent) active KARTA_POBYTU in main view
+  const activeKarty = bases.filter((b) => b.typ === "KARTA_POBYTU" && b.status === "AKTYWNE");
+  const latestActiveKarta = activeKarty.length > 0 ? activeKarty[0] : null; // already sorted desc
+
+  // Determine which bases to show as "active employment bases"
+  const visibleBases = showAll
+    ? bases
+    : bases.filter((b) => {
+        // Hide superseded WP (wchłonięte by active residence)
+        if (hasActiveResidence && b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE" && b.status !== "UCHYLONE" && b.status !== "UMORZONE") {
+          return false;
+        }
+        // Hide inactive OŚW (zakończenie pracy)
+        if (b.typ === "OSWIADCZENIE" && b.status === "NIEAKTYWNE") {
+          return false;
+        }
+        // Show only the most recent active KARTA_POBYTU, hide other active ones
+        if (b.typ === "KARTA_POBYTU" && b.status === "AKTYWNE" && latestActiveKarta && b.id !== latestActiveKarta.id) {
+          return false;
+        }
+        return true;
+      });
+
+  const hiddenCount = bases.length - visibleBases.length;
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {hiddenCount > 0 && !showAll && (
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              className="text-xs text-accent hover:underline"
+            >
+              Pokaż wszystkie ({bases.length}) — ukrytych: {hiddenCount} (wchłonięte/nieaktywne)
+            </button>
+          )}
+          {showAll && hiddenCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAll(false)}
+              className="text-xs text-accent hover:underline"
+            >
+              Pokaż tylko aktywne podstawy
+            </button>
+          )}
+        </div>
         <button
           type="button"
           onClick={() => setShowCreate(true)}
@@ -92,14 +140,19 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
         </button>
       </div>
 
-      {bases.length === 0 && (
-        <p className="py-12 text-center text-primary/40">Brak podstaw zatrudnienia</p>
+      {visibleBases.length === 0 && (
+        <p className="py-12 text-center text-primary/40">Brak aktywnych podstaw zatrudnienia</p>
       )}
 
-      {bases.map((b) => {
+      {visibleBases.map((b) => {
+        // Only ZEZWOLENIE is "wchłonięte" by active residence permit.
+        // OŚW is never wchłonięte — it gets NIEAKTYWNE status after zakończenie pracy.
         const isSuperseded =
           hasActiveResidence &&
-          (b.typ === "ZEZWOLENIE" || b.typ === "OSWIADCZENIE");
+          b.typ === "ZEZWOLENIE" &&
+          b.status !== "WYGASLE" &&
+          b.status !== "UCHYLONE" &&
+          b.status !== "UMORZONE";
         return (
           <div
             key={b.id}
