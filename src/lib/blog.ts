@@ -51,7 +51,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         id: "dlaczego-ochrona",
         heading: "Dlaczego ochrona czasowa dla obywateli Ukrainy nadal obowiązuje po 4 marca 2026 r.",
-        content: `<p>Ochrona czasowa pozostaje aktywna dzięki decyzji Rady Unii Europejskiej przedłużającej ją do <strong>4 marca 2027 roku</strong>. Podstawą jest decyzja wykonawcza 2024/1836 z czerwca 2024 r., która przedłuża mechanizm ochronny wynikający z dyrektywy 2001/55/WE dotyczącej tymczasowej ochrony w razie masowego napływu wysiedleńców.</p>
+        content: `<p>Ochrona czasowa pozostaje aktywna dzięki decyzji Rady Unii Europejskiej przedłużającej ją do <strong>4 marca 2027 roku</strong>. Podstawą jest decyzja wykonawcza Rady (UE) 2025/1460 z 15.07.2025 (wcześniejsza decyzja 2024/1836 przedłużała ochronę tylko do 4.03.2026), która przedłuża mechanizm ochronny wynikający z dyrektywy 2001/55/WE dotyczącej tymczasowej ochrony w razie masowego napływu wysiedleńców.</p>
 <p>Konflikt zbrojny na Ukrainie pozostaje głównym uzasadnieniem utrzymania systemu. Instytucje UE wskazują, że skala zagrożenia uniemożliwia bezpieczny powrót wielu osób do kraju pochodzenia.</p>`,
       },
       {
@@ -64,7 +64,7 @@ export const BLOG_POSTS: BlogPost[] = [
 <li>Mechanizmy przeniesiono do ustawy o udzielaniu cudzoziemcom ochrony z 2003 r.</li>
 <li>Obywatele Ukrainy funkcjonują w jednym systemie razem z innymi chronionymi cudzoziemcami</li>
 </ul>
-<p>Prezydent Karol Nawrocki podpisał ustawę 19 lutego 2026 r., która kończy etap nadzwyczajnej pomocy.</p>`,
+<p>Podstawą prawną jest ustawa z dnia 23 stycznia 2026 r. (Dz.U. 2026 poz. 203), która kończy etap nadzwyczajnej pomocy.</p>`,
       },
       {
         id: "status-ukr",
@@ -76,7 +76,9 @@ export const BLOG_POSTS: BlogPost[] = [
 <li>Wyjazd z Polski na okres dłuższy niż 30 dni</li>
 <li>Niespełnienie obowiązków rejestracyjnych</li>
 </ul>
-<p>Osoby już przebywające w Polsce mogą zachować legalność pobytu aż do 4 marca 2027 r.</p>`,
+<p>Osoby już przebywające w Polsce mogą zachować legalność pobytu aż do 4 marca 2027 r.</p>
+<p><strong>Termin 31 sierpnia 2026 r.:</strong> osoby z PESEL UKR nadanym bez okazania paszportu, dzieci potwierdzone wpisem w paszporcie rodzica oraz osoby z nowym paszportem muszą osobiście zaktualizować dokument podróży w dowolnym urzędzie gminy — pod rygorem <strong>utraty statusu UKR i ochrony czasowej</strong> (bezpłatne).</p>
+<p><em>Uwaga: zasady „30 dni na PESEL od wjazdu" i „utrata statusu po wyjeździe >30 dni" pochodzą z wygaszanej specustawy — ich aktualny status należy potwierdzić w komunikatach UdSC (stan prawny: sierpień 2026).</em></p>`,
       },
       {
         id: "diia-mobywatel",
@@ -142,7 +144,10 @@ export const BLOG_POSTS: BlogPost[] = [
 <li>Statusem rezydenta długoterminowego (karta stałego pobytu)</li>
 <li>Zezwoleniami związanymi z pracą, edukacją lub prowadzeniem działalności</li>
 </ul>
-<p>Instytucje UE wskazują, że państwa członkowskie powinny przygotować mechanizmy umożliwiające przejście z ochrony czasowej do standardowych form pobytu. Nasz zespół pomoże Ci w przejściu na odpowiedni tytuł pobytowy — <a href="/pl/uslugi">sprawdź nasze usługi</a>.</p>`,
+<p>Warto rozważyć <strong>kartę CUKR</strong> — zezwolenie na pobyt czasowy na 3 lata dla osób długotrwale posiadających status UKR — jako ścieżkę po zakończeniu ochrony czasowej.</p>
+<p>Instytucje UE wskazują, że państwa członkowskie powinny przygotować mechanizmy umożliwiające przejście z ochrony czasowej do standardowych form pobytu. Nasz zespół pomoże Ci w przejściu na odpowiedni tytuł pobytowy — <a href="/pl/uslugi">sprawdź nasze usługi</a>.</p>
+<p><em>(stan prawny: sierpień 2026)</em></p>
+<p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>`,
       },
       {
         id: "faq",

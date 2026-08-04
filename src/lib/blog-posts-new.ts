@@ -80,12 +80,13 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         content: `<p>Proces uzyskania karty pobytu czasowego sk\u0142ada si\u0119 z nast\u0119puj\u0105cych etap\u00f3w:</p>
 <ol>
 <li><strong>Przygotowanie dokument\u00f3w</strong> \u2014 skompletowanie wszystkich wymaganych za\u0142\u0105cznik\u00f3w</li>
-<li><strong>Z\u0142o\u017cenie wniosku</strong> \u2014 wy\u0142\u0105cznie przez system MOS (od 27 kwietnia 2025 r.)</li>
+<li><strong>Z\u0142o\u017cenie wniosku</strong> \u2014 wy\u0142\u0105cznie przez system MOS (od 27 kwietnia 2026 r.)</li>
 <li><strong>Pobranie odcisk\u00f3w palc\u00f3w</strong> \u2014 biometria pobierana w urz\u0119dzie</li>
 <li><strong>Otrzymanie stempla w paszporcie</strong> \u2014 potwierdzenie z\u0142o\u017cenia wniosku, legalizuje pobyt na czas post\u0119powania</li>
 <li><strong>Oczekiwanie na decyzj\u0119</strong> \u2014 urz\u0105d mo\u017ce wzywa\u0107 do uzupe\u0142nienia dokument\u00f3w</li>
 <li><strong>Odbi\u00f3r karty pobytu</strong> \u2014 po pozytywnej decyzji, karta jest produkowana przez urz\u0105d (czas zale\u017cy od obci\u0105\u017cenia)</li>
 </ol>
+<p>Wyj\u0105tki od wy\u0142\u0105czno\u015bci elektronicznej (nadal papierowo): wnioski ICT i mobilno\u015b\u0107 d\u0142ugoterminowa, \u0142\u0105czenie rodzin gdy wnioskodawca przebywa za granic\u0105, cz\u0142onkowie rodzin obywateli RP/UE/UK.</p>
 <p>Wa\u017cne: stempel w paszporcie pozwala na legalne przebywanie i prac\u0119 w Polsce przez ca\u0142y czas trwania post\u0119powania. Jest to kluczowa informacja dla pracodawc\u00f3w.</p>`,
       },
       {
@@ -98,10 +99,10 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>Op\u0142ata skarbowa \u2014 pobyt czasowy</td><td><strong>340 z\u0142</strong></td></tr>
 <tr><td>Op\u0142ata skarbowa \u2014 pobyt i praca (jednolite zezwolenie)</td><td><strong>440 z\u0142</strong></td></tr>
 <tr><td>Wydanie karty pobytu (plastikowy dokument)</td><td><strong>100 z\u0142</strong></td></tr>
-<tr><td>T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w (orientacyjnie)</td><td>50\u2013150 z\u0142 za stron\u0119</td></tr>
+<tr><td>T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w (orientacyjnie)</td><td>50\u2013150 z\u0142 za stron\u0119 <em>(szacunek rynkowy)</em></td></tr>
 </tbody>
 </table>
-<p>\u0141\u0105czny koszt procesu, w\u0142\u0105cznie z t\u0142umaczeniami i pomoc\u0105 prawn\u0105, wynosi zwykle <strong>od 800 do 2500 z\u0142</strong> w zale\u017cno\u015bci od z\u0142o\u017cono\u015bci sprawy. <a href="/pl/kontakt">Skontaktuj si\u0119 z nami po bezp\u0142atn\u0105 wycen\u0119</a>.</p>`,
+<p>\u0141\u0105czny koszt procesu, w\u0142\u0105cznie z t\u0142umaczeniami i pomoc\u0105 prawn\u0105, wynosi zwykle <strong>od 800 do 2500 z\u0142</strong> <em>(szacunek rynkowy, obejmuje t\u0142umaczenia i pomoc prawn\u0105 \u2014 nie jest to op\u0142ata urz\u0119dowa)</em> w zale\u017cno\u015bci od z\u0142o\u017cono\u015bci sprawy. <a href="/pl/kontakt">Skontaktuj si\u0119 z nami po bezp\u0142atn\u0105 wycen\u0119</a>.</p>`,
       },
       {
         id: "czas-oczekiwania",
@@ -136,7 +137,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <p>Karta pobytu czasowego jest wydawana na okres od 3 miesi\u0119cy do 3 lat, zgodnie z celem pobytu okre\u015blonym we wniosku.</p></details>
 <details><summary><strong>Czy musz\u0119 mie\u0107 zameldowanie?</strong></summary>
 <p>Nie jest wymagane zameldowanie, ale nale\u017cy wykaza\u0107 miejsce zamieszkania \u2014 np. umow\u0105 najmu lub o\u015bwiadczeniem w\u0142a\u015bciciela lokalu.</p></details>
-</div>`,
+</div><p><em>(stan prawny na sierpie\u0144 2026)</em></p><p class="disclaimer"><em>Niniejszy materia\u0142 ma charakter wy\u0142\u0105cznie informacyjny i nie stanowi porady prawnej. Ostateczn\u0105 decyzj\u0119 podejmuje w\u0142a\u015bciwy organ (wojewoda).</em></p>`,
       },
     ],
   },
@@ -183,10 +184,12 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <ul>
 <li><strong>Polskie pochodzenie</strong> \u2014 potwierdzenie korzeni polskich (np. rodzice lub dziadkowie byli obywatelami polskimi)</li>
 <li><strong>Karta Polaka</strong> \u2014 posiadacz Karty Polaka zamierzaj\u0105cy osiedli\u0107 si\u0119 w Polsce na sta\u0142e</li>
-<li><strong>Ma\u0142\u017ce\u0144stwo z obywatelem RP</strong> \u2014 minimum 3 lata ma\u0142\u017ce\u0144stwa + 2 lata pobytu w Polsce na karcie czasowej</li>
+<li><strong>Ma\u0142\u017ce\u0144stwo z obywatelem RP</strong> \u2014 minimum 3 lata ma\u0142\u017ce\u0144stwa + 2 lata nieprzerwanego pobytu bezpo\u015brednio przed z\u0142o\u017ceniem wniosku <strong>na podstawie zezwolenia udzielonego w zwi\u0105zku z ma\u0142\u017ce\u0144stwem</strong> (lub statusu uchod\u017acy / ochrony uzupe\u0142niaj\u0105cej / zgody na pobyt humanitarny) \u2014 art. 195 ust. 1 pkt 4. <em>Uwaga: pobyt na karcie czasowej z innego tytu\u0142u (np. praca) nie spe\u0142nia tego warunku.</em></li>
 <li><strong>Ofiara handlu lud\u017ami</strong> \u2014 w ramach ochrony prawnej</li>
-<li><strong>Dziecko cudzoziemca</strong> z pobytem sta\u0142ym, urodzone w Polsce</li>
+<li><strong>Dziecko cudzoziemca</strong> z pobytem sta\u0142ym \u2014 decyduje <strong>moment urodzenia</strong> (po udzieleniu rodzicowi pobytu sta\u0142ego lub w okresie wa\u017cno\u015bci jego zezwolenia czasowego), nie miejsce urodzenia \u2014 art. 195 ust. 1 pkt 1</li>
 <li><strong>Pobyt na podstawie azylu</strong></li>
+<li><strong>Ochrona mi\u0119dzynarodowa</strong> \u2014 status uchod\u017acy lub ochrona uzupe\u0142niaj\u0105ca (5 lat pobytu)</li>
+<li><strong>Pobyt tolerowany</strong> \u2014 10 lat nieprzerwanego pobytu tolerowanego</li>
 </ul>
 <p>Wa\u017cne: pobyt sta\u0142y <strong>nie wymaga</strong> wcze\u015bniejszego 5-letniego pobytu w Polsce (to warunek dla rezydenta d\u0142ugoterminowego UE, nie dla pobytu sta\u0142ego).</p>
 <p><a href="/pl/uslugi/pobyt-staly">Sprawd\u017a, czy kwalifikujesz si\u0119 \u2014 bezp\u0142atna konsultacja</a>.</p>`,
@@ -296,13 +299,14 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "Nowe zasady EU Blue Card od 2025 roku \u2014 co si\u0119 zmieni\u0142o",
         content: `<p>Od <strong>1 czerwca 2025 roku</strong> obowi\u0105zuj\u0105 zmienione przepisy wynikaj\u0105ce z implementacji dyrektywy 2021/1883. Kluczowe zmiany:</p>
 <ul>
-<li><strong>Obni\u017cony pr\u00f3g wynagrodzenia</strong> \u2014 zamiast 1,5-krotno\u015bci \u015bredniego wynagrodzenia, wymagane jest 1,0-krotno\u015b\u0107 (w sektorach deficytowych nawet 0,8)</li>
-<li><strong>Rozszerzony katalog kwalifikacji</strong> \u2014 opr\u00f3cz dyplomu wy\u017cszej uczelni, akceptowane jest minimum 3 lata do\u015bwiadczenia zawodowego w bran\u017cy IT</li>
+<li><strong>Pr\u00f3g wynagrodzenia</strong> \u2014 150% przeci\u0119tnego rocznego wynagrodzenia (w 2026: ok. 160 264 z\u0142/rok \u2248 13 355,34 z\u0142 brutto/miesi\u0105c, wg komunikatu GUS z 9.02.2026: \u015brednia 8 903,56 z\u0142). Pr\u00f3g jest jednolity \u2014 Polska nie wprowadzi\u0142a obni\u017conego progu 0,8 dla zawod\u00f3w deficytowych</li>
+<li><strong>Rozszerzony katalog kwalifikacji</strong> \u2014 opr\u00f3cz dyplomu wy\u017cszej uczelni, w zawodach deficytowych (np. IT) akceptowane jest minimum 3 lata do\u015bwiadczenia zawodowego (z\u0142agodzenie dotyczy wymogu kwalifikacji, nie progu p\u0142acowego)</li>
 <li><strong>Kontrakty kr\u00f3tkoterminowe</strong> \u2014 umowa na minimum 6 miesi\u0119cy (wcze\u015bniej 12)</li>
 <li><strong>Mobilno\u015b\u0107 kr\u00f3tkoterminowa</strong> \u2014 do 90 dni pracy w innym pa\u0144stwie UE bez dodatkowych formalno\u015bci</li>
 <li><strong>Samozatrudnienie</strong> \u2014 ograniczona mo\u017cliwo\u015b\u0107 r\u00f3wnoleg\u0142ego prowadzenia dzia\u0142alno\u015bci</li>
 </ul>
-<p>Te zmiany czyni\u0105 Blue Card bardziej dost\u0119pn\u0105, szczeg\u00f3lnie dla specjalist\u00f3w IT i in\u017cynier\u00f3w.</p>`,
+<p>Te zmiany czyni\u0105 Blue Card bardziej dost\u0119pn\u0105, szczeg\u00f3lnie dla specjalist\u00f3w IT i in\u017cynier\u00f3w.</p>
+<p><em>(stan prawny: sierpie\u0144 2026)</em></p>`,
       },
       {
         id: "wymagania-blue",
@@ -311,7 +315,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <ol>
 <li><strong>Wy\u017csze wykszta\u0142cenie</strong> (dyplom uko\u0144czenia studi\u00f3w wy\u017cszych, min. 3-letni cykl) <strong>lub min. 3 lata do\u015bwiadczenia</strong> w zawodach IT (po zmianach 2025)</li>
 <li><strong>Umowa o prac\u0119</strong> na co najmniej 6 miesi\u0119cy z polskim pracodawc\u0105</li>
-<li><strong>Wynagrodzenie</strong> r\u00f3wne lub wy\u017csze ni\u017c <strong>1,0-krotno\u015b\u0107</strong> przeci\u0119tnego rocznego wynagrodzenia (ok. 7500 z\u0142 brutto/miesi\u0105c w 2026)</li>
+<li><strong>Wynagrodzenie</strong> brutto r\u00f3wne lub wy\u017csze ni\u017c <strong>150% przeci\u0119tnego rocznego wynagrodzenia</strong> (\u2265 160 264 z\u0142/rok, tj. \u2265 13 355,34 z\u0142 brutto/miesi\u0105c w 2026)</li>
 <li><strong>Ubezpieczenie zdrowotne</strong></li>
 <li><strong>Miejsce zamieszkania</strong> w Polsce</li>
 </ol>
@@ -350,7 +354,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         content: `<table>
 <thead><tr><th>Cecha</th><th>Blue Card</th><th>Pobyt i praca</th></tr></thead>
 <tbody>
-<tr><td>Pr\u00f3g wynagrodzenia</td><td>~7500 z\u0142 brutto/mc</td><td>Brak progu</td></tr>
+<tr><td>Pr\u00f3g wynagrodzenia</td><td>\u2265 13 355,34 z\u0142 brutto/mc (150% \u015bredniej)</td><td>Brak progu</td></tr>
 <tr><td>Wykszta\u0142cenie</td><td>Wy\u017csze lub 3 lata do\u015bwiadczenia IT</td><td>Dowolne</td></tr>
 <tr><td>Test rynku pracy</td><td>Zniesiony</td><td>Zniesiony</td></tr>
 <tr><td>Mobilno\u015b\u0107 w UE</td><td>Tak</td><td>Nie</td></tr>
@@ -366,14 +370,16 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "FAQ \u2014 Niebieska Karta UE w Polsce",
         content: `<div class="faq-list">
 <details><summary><strong>Jakie wynagrodzenie jest wymagane do Blue Card w 2026?</strong></summary>
-<p>Pr\u00f3g wynosi 1,0-krotno\u015b\u0107 przeci\u0119tnego rocznego wynagrodzenia, co w 2026 odpowiada ok. 7500 z\u0142 brutto miesi\u0119cznie. W zawodach deficytowych (IT, in\u017cynieria) pr\u00f3g jest ni\u017cszy \u2014 0,8-krotno\u015b\u0107.</p></details>
+<p>Pr\u00f3g wynosi 150% przeci\u0119tnego rocznego wynagrodzenia, co w 2026 odpowiada \u2265 13 355,34 z\u0142 brutto miesi\u0119cznie (ok. 160 264 z\u0142/rok). Pr\u00f3g jest jednolity dla wszystkich zawod\u00f3w. W zawodach deficytowych (np. IT) z\u0142agodzono wym\u00f3g kwalifikacji (3 lata do\u015bwiadczenia zamiast dyplomu), ale nie pr\u00f3g wynagrodzenia.</p></details>
 <details><summary><strong>Czy programista bez dyplomu mo\u017ce dosta\u0107 Blue Card?</strong></summary>
 <p>Tak, od 2025 roku specjali\u015bci IT z minimum 3-letnim do\u015bwiadczeniem zawodowym mog\u0105 ubiega\u0107 si\u0119 o Blue Card bez dyplomu uczelni wy\u017cszej.</p></details>
 <details><summary><strong>Czy mog\u0119 zmieni\u0107 pracodawc\u0119 maj\u0105c Blue Card?</strong></summary>
 <p>Przez pierwsze 12 miesi\u0119cy zmiana pracodawcy wymaga nowego zezwolenia. Po roku mo\u017cesz zmieni\u0107 prac\u0119 powiadamiaj\u0105c urz\u0105d, pod warunkiem spe\u0142nienia progu wynagrodzenia.</p></details>
 <details><summary><strong>Ile trwa procedura uzyskania Blue Card?</strong></summary>
 <p>Czas oczekiwania zale\u017cy od indywidualnej sprawy i obci\u0105\u017cenia urz\u0119du, ale Blue Card jest zazwyczaj rozpatrywana szybciej ni\u017c standardowe zezwolenie na pobyt i prac\u0119.</p></details>
-</div>`,
+</div>
+<p><em>(stan prawny: sierpie\u0144 2026)</em></p>
+<p class="disclaimer"><em>Powy\u017csza tre\u015b\u0107 ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja nale\u017cy do w\u0142a\u015bciwego organu (wojewoda).</em></p>`,
       },
     ],
   },
@@ -410,9 +416,9 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li>Zezwolenie na pobyt czasowy (karta pobytu czasowego)</li>
 <li>Zezwolenie na pobyt sta\u0142y</li>
 <li>Zezwolenie na pobyt rezydenta d\u0142ugoterminowego UE</li>
-<li>Przed\u0142u\u017cenie wizy</li>
+<li>Przed\u0142u\u017cenie wizy <em>(do weryfikacji na mos.cudzoziemcy.gov.pl)</em></li>
 </ul>
-<p>System dost\u0119pny jest pod adresem <strong>mos.cudzoziemcy.gov.pl</strong> i dzia\u0142a w j\u0119zykach: polskim, angielskim, rosyjskim i ukrai\u0144skim.</p>`,
+<p>System dost\u0119pny jest pod adresem <strong>mos.cudzoziemcy.gov.pl</strong> i dzia\u0142a w 7 wersjach j\u0119zykowych: polskiej, angielskiej, ukrai\u0144skiej, rosyjskiej, francuskiej, wietnamskiej i arabskiej.</p>`,
       },
       {
         id: "jak-zalozyc",
@@ -446,7 +452,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "zalaczniki",
         heading: "Za\u0142\u0105czniki do e-wniosku \u2014 co i jak doda\u0107",
-        content: `<p>MOS akceptuje pliki w formatach PDF, JPG i PNG. Ka\u017cdy za\u0142\u0105cznik nie mo\u017ce przekracza\u0107 <strong>10 MB</strong>. Wymagane dokumenty:</p>
+        content: `<p>MOS akceptuje pliki w formatach PDF, JPG i PNG. Ka\u017cdy za\u0142\u0105cznik nie mo\u017ce przekracza\u0107 <strong>10 MB</strong> <em>(szczeg\u00f3\u0142y do weryfikacji na mos.cudzoziemcy.gov.pl)</em>. Wymagane dokumenty:</p>
 <ul>
 <li>Skan paszportu (wszystkie strony z danymi)</li>
 <li>Zdj\u0119cie biometryczne (35\u00d745 mm, format cyfrowy)</li>
@@ -475,10 +481,10 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         content: `<p>Na podstawie do\u015bwiadcze\u0144 naszych klient\u00f3w, najcz\u0119stsze problemy to:</p>
 <ul>
 <li><strong>Przeci\u0105\u017cenie systemu</strong> \u2014 pr\u00f3buj sk\u0142ada\u0107 wniosek w godzinach wieczornych lub w weekendy</li>
-<li><strong>Problemy z za\u0142\u0105cznikami</strong> \u2014 upewnij si\u0119, \u017ce pliki nie przekraczaj\u0105 10 MB i s\u0105 w formacie PDF/JPG</li>
+<li><strong>Problemy z za\u0142\u0105cznikami</strong> \u2014 upewnij si\u0119, \u017ce pliki nie przekraczaj\u0105 10 MB <em>(do weryfikacji)</em> i s\u0105 w formacie PDF/JPG</li>
 <li><strong>B\u0142\u0119dy walidacji</strong> \u2014 sprawd\u017a formatowanie dat (DD-MM-RRRR) i numer\u00f3w</li>
 <li><strong>Brak potwierdzenia e-mail</strong> \u2014 sprawd\u017a folder spam</li>
-<li><strong>Sesja wygas\u0142a</strong> \u2014 system wylogowuje po 30 minutach nieaktywno\u015bci; zapisuj robocze wersje cz\u0119sto</li>
+<li><strong>Sesja wygas\u0142a</strong> \u2014 system wylogowuje po 30 minutach nieaktywno\u015bci <em>(szczeg\u00f3\u0142y do weryfikacji na mos.cudzoziemcy.gov.pl)</em>; zapisuj robocze wersje cz\u0119sto</li>
 </ul>
 <p>Je\u015bli masz problemy techniczne z MOS, <a href="/pl/kontakt">nasz zesp\u00f3\u0142 pomo\u017ce Ci z\u0142o\u017cy\u0107 wniosek prawid\u0142owo</a>.</p>`,
       },
@@ -493,8 +499,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <details><summary><strong>Co je\u015bli MOS nie dzia\u0142a w ostatnim dniu mojego legalnego pobytu?</strong></summary>
 <p>W takiej sytuacji nale\u017cy niezw\u0142ocznie skontaktowa\u0107 si\u0119 z urz\u0119dem wojew\u00f3dzkim i udokumentowa\u0107 pr\u00f3b\u0119 z\u0142o\u017cenia wniosku (np. screenshoty b\u0142\u0119d\u00f3w). Mo\u017cliwe jest z\u0142o\u017cenie wniosku papierowego w trybie awaryjnym.</p></details>
 <details><summary><strong>W jakim j\u0119zyku jest MOS?</strong></summary>
-<p>System dost\u0119pny jest w j\u0119zyku polskim, angielskim, rosyjskim i ukrai\u0144skim. Formularz wniosku nale\u017cy wype\u0142ni\u0107 po polsku.</p></details>
-</div>`,
+<p>System dost\u0119pny jest w 7 wersjach j\u0119zykowych: polskiej, angielskiej, ukrai\u0144skiej, rosyjskiej, francuskiej, wietnamskiej i arabskiej. Formularz wniosku nale\u017cy wype\u0142ni\u0107 po polsku.</p></details>
+</div><p><em>(stan prawny na sierpie\u0144 2026)</em></p><p class="disclaimer"><em>Niniejszy materia\u0142 ma charakter wy\u0142\u0105cznie informacyjny i nie stanowi porady prawnej. Ostateczn\u0105 decyzj\u0119 podejmuje w\u0142a\u015bciwy organ (wojewoda).</em></p>`,
       },
     ],
   },
@@ -526,7 +532,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
       { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — 250 zł (ok. 15 min, w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na konsultację</a>.</p>` },
       { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
-      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div>` },
+      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div><p>Dodatkowe informacje: przy decyzji odmownej przysługuje zwrot 50% opłaty skarbowej (na wniosek). Zwolnienie z opłaty skarbowej przysługuje m.in. posiadaczom Karty Polaka (przy pobycie stałym). Opłata za wydanie karty pobytu dla dzieci poniżej 16 lat wynosi 50 zł (zamiast 100 zł).</p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>` },
     ],
   },
 
@@ -551,7 +557,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "nowa-procedura",
         heading: "Od 27 kwietnia 2026 wnioski pobytowe wyłącznie online przez MOS",
-        content: `<p>Rewolucja w legalizacji pobytu stała się faktem. Od 27 kwietnia 2026 r. wnioski o zezwolenie na pobyt czasowy, pobyt stały oraz pobyt rezydenta długoterminowego UE można składać <strong>wyłącznie elektronicznie</strong> — przez system MOS (Moduł Obsługi Spraw).</p>`,
+        content: `<p>Rewolucja w legalizacji pobytu stała się faktem. Od 27 kwietnia 2026 r. wnioski o zezwolenie na pobyt czasowy, pobyt stały oraz pobyt rezydenta długoterminowego UE można składać <strong>wyłącznie elektronicznie</strong> — przez system MOS (Moduł Obsługi Spraw).</p><p>Wyjątki od wyłączności elektronicznej (nadal papierowo): wnioski ICT i mobilność długoterminowa, łączenie rodzin gdy wnioskodawca przebywa za granicą, członkowie rodzin obywateli RP/UE/UK.</p>`,
       },
       {
         id: "wnioski-papierowe",
@@ -566,7 +572,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "praktyka",
         heading: "Co to oznacza w praktyce?",
-        content: `<p>Koniec kolejek przed urzędami i wniosków wysyłanych „na ostatnią chwilę" listem poleconym. Ale też nowe ryzyka: błędy w e-wniosku, problemy z podpisem elektronicznym pracodawcy czy brakujące załączniki mogą opóźnić wszczęcie postępowania.</p><p><strong>Potrzebujesz pomocy ze złożeniem wniosku w MOS? Umów konsultację z getpermit.pl — przeprowadzimy Cię przez całą procedurę.</strong></p>`,
+        content: `<p>Koniec kolejek przed urzędami i wniosków wysyłanych „na ostatnią chwilę" listem poleconym. Ale też nowe ryzyka: błędy w e-wniosku, problemy z podpisem elektronicznym pracodawcy czy brakujące załączniki mogą opóźnić wszczęcie postępowania.</p><p><strong>Potrzebujesz pomocy ze złożeniem wniosku w MOS? Umów konsultację z getpermit.pl — przeprowadzimy Cię przez całą procedurę.</strong></p><p><em>(stan prawny na sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczną decyzję podejmuje właściwy organ (wojewoda).</em></p>`,
       },
     ],
   },
@@ -607,7 +613,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "bilans",
         heading: "Bilans dla pracodawców i cudzoziemców",
-        content: `<p>Procedury są szybsze i tańsze logistycznie, ale wymagają dyscypliny cyfrowej: profil na praca.gov.pl, podpis elektroniczny i pilnowanie terminów to dziś podstawa legalnego zatrudnienia.</p><p><strong>Zatrudniasz cudzoziemców? getpermit.pl poprowadzi cały proces — od oświadczenia po kartę pobytu pracownika.</strong></p>`,
+        content: `<p>Procedury są szybsze i tańsze logistycznie, ale wymagają dyscypliny cyfrowej: profil na praca.gov.pl, podpis elektroniczny i pilnowanie terminów to dziś podstawa legalnego zatrudnienia.</p><p>Warto też wiedzieć: w miejsce testu rynku pracy starosta może prowadzić listę zawodów, dla których odmawia się wydania zezwoleń (art. 31 ust. 3 ustawy z 20.03.2025).</p><p><strong>Zatrudniasz cudzoziemców? getpermit.pl poprowadzi cały proces — od oświadczenia po kartę pobytu pracownika.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
       },
     ],
   },
@@ -618,7 +624,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
   {
     slug: "oplata-400-zl-oswiadczenia-zezwolenia-na-prace",
     title: "400 zł zamiast 100 zł — opłaty za legalizację pracy cudzoziemców po podwyżce",
-    description: "Od 1 grudnia 2025 opłata za oświadczenie o powierzeniu pracy i wnioski o zezwolenie na pracę wzrosła ze 100 do 400 zł. Sprawdź aktualny cennik.",
+    description: "Od 1 grudnia 2025 opłata za oświadczenie o powierzeniu pracy wzrosła ze 100 do 400 zł. Zezwolenia na pracę: 200/400/800 zł. Sprawdź aktualny cennik.",
     date: "2026-06-03",
     imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1600&q=80",
     imageAlt: "Kalkulator i dokumenty — wyższe opłaty za legalizację pracy cudzoziemców",
@@ -632,7 +638,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "co-podrozalo",
         heading: "Co podrożało od 1 grudnia 2025?",
-        content: `<p>Od 1 grudnia 2025 r. obowiązują rozporządzenia podnoszące opłaty za dokumenty legalizujące pracę cudzoziemców. Opłata za złożenie oświadczenia o powierzeniu wykonywania pracy cudzoziemcowi oraz za wnioski o wydanie zezwolenia na pracę wzrosła <strong>ze 100 zł do 400 zł</strong>. Opłatę wnosi się na konto właściwego powiatowego urzędu pracy.</p>`,
+        content: `<p>Od 1 grudnia 2025 r. obowiązują nowe stawki opłat za dokumenty legalizujące pracę cudzoziemców (rozporządzenie z 20.11.2025, Dz.U. 2025 poz. 1622). Podwyżka ze 100 do 400 zł dotyczy <strong>wyłącznie oświadczeń o powierzeniu pracy</strong>. Opłaty za zezwolenia na pracę mają odrębną siatkę (stan prawny: sierpień 2026):</p><table><thead><tr><th>Dokument</th><th>Opłata</th></tr></thead><tbody><tr><td>Oświadczenie o powierzeniu pracy</td><td><strong>400 zł</strong></td></tr><tr><td>Zezwolenie na pracę — do 3 mies.</td><td><strong>200 zł</strong></td></tr><tr><td>Zezwolenie na pracę — powyżej 3 mies.</td><td><strong>400 zł</strong></td></tr><tr><td>Zezwolenie na pracę — delegowanie</td><td><strong>800 zł</strong></td></tr><tr><td>Zezwolenie na pracę sezonową</td><td><strong>100 zł</strong> (bez zmian)</td></tr></tbody></table><p>Opłaty za oświadczenia i zezwolenia sezonowe wnosi się na konto <strong>powiatowego urzędu pracy (PUP)</strong>; opłaty za zezwolenia na pracę typu A–E — na konto <strong>urzędu wojewódzkiego</strong>.</p>`,
       },
       {
         id: "kto-ponosi",
@@ -642,7 +648,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "jak-ograniczyc",
         heading: "Jak ograniczyć wydatki?",
-        content: `<p>Czterokrotnie wyższa stawka oznacza, że błędy formalne kosztują realne pieniądze. Odrzucone oświadczenie z powodu braków to konieczność ponownej opłaty. Warto: weryfikować dane przed wysyłką w praca.gov.pl, wybierać właściwy typ dokumentu (oświadczenie vs zezwolenie) i planować zatrudnienie z wyprzedzeniem.</p><p><strong>Nie chcesz płacić podwójnie za błędy we wnioskach? Zespół getpermit.pl przygotuje dokumenty poprawnie za pierwszym razem.</strong></p>`,
+        content: `<p>Czterokrotnie wyższa stawka oznacza, że błędy formalne kosztują realne pieniądze. Odrzucone oświadczenie z powodu braków to konieczność ponownej opłaty. Warto: weryfikować dane przed wysyłką w praca.gov.pl, wybierać właściwy typ dokumentu (oświadczenie vs zezwolenie) i planować zatrudnienie z wyprzedzeniem.</p><p><strong>Nie chcesz płacić podwójnie za błędy we wnioskach? Zespół getpermit.pl przygotuje dokumenty poprawnie za pierwszym razem.</strong></p><p><em>Niniejszy artykuł ma charakter informacyjny i nie stanowi porady prawnej. Stan prawny na sierpień 2026 — przepisy mogą ulec zmianie. W indywidualnych sprawach zalecamy konsultację z prawnikiem.</em></p>`,
       },
     ],
   },
@@ -677,7 +683,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "co-powinien-pracodawca",
         heading: "Co powinien zrobić pracodawca?",
-        content: `<p>Zaplanować procedurę z wyprzedzeniem: postępowanie o zezwolenie na pracę trwa dłużej niż rejestracja oświadczenia, a wniosek składa się elektronicznie przez praca.gov.pl (opłata 400 zł). Pracownikom z kończącymi się oświadczeniami warto od razu wszcząć procedurę pobytowo-pracowniczą przez <a href="/pl/blog/wnioski-pobytowe-mos-2026">MOS</a>.</p><p><strong>Zatrudniasz obywateli Gruzji? Sprawdzimy ich sytuację i poprowadzimy właściwą procedurę — umów konsultację z getpermit.pl.</strong></p>`,
+        content: `<p>Zaplanować procedurę z wyprzedzeniem: postępowanie o zezwolenie na pracę trwa dłużej niż rejestracja oświadczenia, a wniosek składa się elektronicznie przez praca.gov.pl (opłata: 200 zł do 3 mies. / 400 zł powyżej 3 mies. / 800 zł delegowanie — Dz.U. 2025 poz. 1622). Pracownikom z kończącymi się oświadczeniami warto od razu wszcząć procedurę pobytowo-pracowniczą przez <a href="/pl/blog/wnioski-pobytowe-mos-2026">MOS</a>. Wniosek o zezwolenie jednolite na pobyt i pracę składa <strong>cudzoziemiec</strong> (nie pracodawca) do wojewody, elektronicznie przez MOS (Moduł Obsługi Spraw, mos.cudzoziemcy.gov.pl); opłata 440 zł + 100 zł karta pobytu.</p><p><strong>Zatrudniasz obywateli Gruzji? Sprawdzimy ich sytuację i poprowadzimy właściwą procedurę — umów konsultację z getpermit.pl.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
       },
     ],
   },
@@ -712,7 +718,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "posiadacze-kart",
         heading: "Co z posiadaczami kart pobytu?",
-        content: `<p>Cudzoziemcy posiadający polską kartę pobytu lub wizę długoterminową <strong>nie podlegają rejestracji w EES</strong> — system dotyczy pobytów krótkoterminowych. To kolejny argument, by uporządkować swój status pobytowy zamiast funkcjonować na ruchu bezwizowym.</p><p><strong>Kończy Ci się limit 90/180? Pomożemy zalegalizować pobyt długoterminowo — umów konsultację z getpermit.pl.</strong></p>`,
+        content: `<p>Cudzoziemcy posiadający polską kartę pobytu lub wizę długoterminową <strong>nie podlegają rejestracji w EES</strong> — system dotyczy pobytów krótkoterminowych. To kolejny argument, by uporządkować swój status pobytowy zamiast funkcjonować na ruchu bezwizowym.</p><p>Uwaga: koniec stempli dotyczy <strong>stempli granicznych Schengen</strong>. Krajowy stempel wojewody w paszporcie (potwierdzający złożenie wniosku pobytowego) nadal istnieje i legalizuje pobyt do wydania decyzji.</p><p><strong>Kończy Ci się limit 90/180? Pomożemy zalegalizować pobyt długoterminowo — umów konsultację z getpermit.pl.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
       },
     ],
   },
@@ -772,7 +778,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "nowy-prog",
         heading: "Nowy próg: 13 355,34 zł brutto",
-        content: `<p>Specjaliści ubiegający się o Niebieską Kartę UE w Polsce muszą w 2026 r. wykazać wyższe wynagrodzenie. Zgodnie z komunikatem GUS z 9 lutego 2026 r. przeciętne wynagrodzenie w gospodarce narodowej w 2025 r. wyniosło 8 903,56 zł brutto. Próg dla Blue Card to 150% tej kwoty — w postępowaniach wszczętych w 2026 r. wynagrodzenie musi wynosić co najmniej <strong>13 355,34 zł brutto miesięcznie</strong>.</p>`,
+        content: `<p>Specjaliści ubiegający się o Niebieską Kartę UE w Polsce muszą w 2026 r. wykazać wyższe wynagrodzenie. Zgodnie z komunikatem GUS z 9 lutego 2026 r. przeciętne wynagrodzenie w gospodarce narodowej w 2025 r. wyniosło 8 903,56 zł brutto. Próg dla Blue Card to 150% tej kwoty, czyli <strong>160 264,08 zł brutto rocznie</strong> (150% × 12 × 8 903,56 zł). W przeliczeniu na miesiące: <strong>≥ 13 355,34 zł brutto/miesiąc</strong>. Uwaga: próg ustawowy odnosi się do wynagrodzenia rocznego — przy zmiennych składnikach (premie, nadgodziny) liczy się suma roczna.</p>
+<p><em>(stan prawny: sierpień 2026)</em></p>`,
       },
       {
         id: "lagodniejsze-warunki",
@@ -782,7 +789,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "dlaczego-warto",
         heading: "Dlaczego warto ubiegać się o Blue Card?",
-        content: `<p>Blue Card daje szybszą ścieżkę do statusu rezydenta długoterminowego UE, ułatwioną mobilność do innych państw członkowskich i korzystniejsze zasady łączenia rodzin. Kartę wydaje się maksymalnie na 3 lata z możliwością przedłużenia.</p><p><strong>Spełniasz warunki Blue Card? Sprawdzimy Twoją sytuację i poprowadzimy wniosek w MOS — umów konsultację z getpermit.pl.</strong></p>`,
+        content: `<p>Blue Card daje szybszą ścieżkę do statusu rezydenta długoterminowego UE, ułatwioną mobilność do innych państw członkowskich i korzystniejsze zasady łączenia rodzin. Kartę wydaje się maksymalnie na 3 lata z możliwością przedłużenia.</p><p><strong>Spełniasz warunki Blue Card? Sprawdzimy Twoją sytuację i poprowadzimy wniosek w MOS — umów konsultację z getpermit.pl.</strong></p>
+<p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>`,
       },
     ],
   },
@@ -809,17 +817,17 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "czym-jest-single",
         heading: "Czym jest jednolite zezwolenie na pobyt i pracę (single permit)?",
-        content: `<p>Jednolite zezwolenie (single permit) to jeden dokument — karta pobytu — łączący prawo do zamieszkania i pracy w Polsce. Zastępuje osobne procedury: zezwolenie na pobyt i oddzielne zezwolenie na pracę. Od 22 maja 2026 r. Polska stosuje znowelizowaną dyrektywę 2024/1233, aktualizującą wcześniejszą dyrektywę 2011/98/UE.</p>`,
+        content: `<p>Jednolite zezwolenie (single permit) to jeden dokument — karta pobytu — łączący prawo do zamieszkania i pracy w Polsce. Zastępuje osobne procedury: zezwolenie na pobyt i oddzielne zezwolenie na pracę. Termin transpozycji dyrektywy 2024/1233 upłynął 21.05.2026; zakres i data polskich przepisów wdrażających — do potwierdzenia w Dzienniku Ustaw.</p>`,
       },
       {
         id: "co-zmienia-dyrektywa",
         heading: "Co zmienia dyrektywa 2024/1233?",
-        content: `<ul><li><strong>Ujednolicone okienko</strong> — jeden organ prowadzi całą procedurę pobytowo-pracowniczą</li><li><strong>Uproszczony dostęp do informacji</strong> — cudzoziemiec musi otrzymać pisemne wyjaśnienie o przysługujących mu prawach</li><li><strong>Równe traktowanie</strong> — pracownicy z single permit mają takie same prawa do szkoleń, urlopów i świadczeń jak obywatele UE</li><li><strong>Ochrona przed nadużyciami</strong> — pracodawca nie może uzależniać kontynuacji pracy od nieudzielenia informacji o warunkach zatrudnienia</li></ul>`,
+        content: `<ul><li><strong>Ujednolicone okienko</strong> — jeden organ prowadzi całą procedurę pobytowo-pracowniczą</li><li><strong>Uproszczony dostęp do informacji</strong> — cudzoziemiec musi otrzymać pisemne wyjaśnienie o przysługujących mu prawach</li><li><strong>Równe traktowanie</strong> — pracownicy z single permit mają równe traktowanie <strong>z obywatelami polskimi</strong> (państwa pobytu) w zakresie szkoleń, urlopów i świadczeń — art. 12 dyrektywy 2024/1233</li><li><strong>Ochrona przed nadużyciami</strong> — pracodawca nie może uzależniać kontynuacji pracy od nieudzielenia informacji o warunkach zatrudnienia</li></ul>`,
       },
       {
         id: "terminy",
         heading: "Krótsze terminy rozpatrywania",
-        content: `<p>Dyrektywa 2024/1233 zobowiązuje państwa członkowskie do rozpatrzenia wniosków o single permit w ciągu <strong>90 dni</strong> od dnia złożenia kompletnej dokumentacji. W Polsce termin ustawowy wynosił dotychczas 1 miesiąc (z możliwością przedłużenia do 2), ale w praktyce urzędy często go przekraczały. Nowe przepisy wzmacniają uprawnienia do składania ponagleń.</p>`,
+        content: `<p>Dyrektywa 2024/1233 zobowiązuje państwa członkowskie do rozpatrzenia wniosków o single permit w ciągu <strong>90 dni</strong> od dnia złożenia kompletnej dokumentacji. Wcześniejsza dyrektywa 2011/98/UE przewidywała <strong>4 miesiące</strong>; w polskiej ustawie obowiązuje termin szczególny <strong>60 dni</strong> (art. 112a ustawy o cudzoziemcach). Nowe przepisy wzmacniają uprawnienia do składania ponagleń.</p>`,
       },
       {
         id: "prawa-pracownika",
@@ -829,7 +837,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "praktyczne-skutki",
         heading: "Praktyczne skutki dla pracodawców",
-        content: `<p>Pracodawca musi zadbać o to, by cudzoziemiec z single permit nie był dyskryminowany w zakresie wynagrodzenia i warunków pracy. Obowiązuje też zakaz pobierania od pracownika opłat za koszty rekrutacji i legalizacji. Naruszenie tych zasad może skutkować karami finansowymi i utratą możliwości zatrudniania cudzoziemców.</p><p><strong>Masz pytania dotyczące jednolitego zezwolenia po zmianach? Skontaktuj się z getpermit.pl — doradzimy pracodawcom i pracownikom.</strong></p>`,
+        content: `<p>Pracodawca musi zadbać o to, by cudzoziemiec z single permit nie był dyskryminowany w zakresie wynagrodzenia i warunków pracy. Obowiązuje też zakaz pobierania od pracownika opłat za koszty rekrutacji i legalizacji. Naruszenie tych zasad może skutkować karami finansowymi i utratą możliwości zatrudniania cudzoziemców.</p><p><strong>Masz pytania dotyczące jednolitego zezwolenia po zmianach? Skontaktuj się z getpermit.pl — doradzimy pracodawcom i pracownikom.</strong></p><p><em>Niniejszy artykuł ma charakter informacyjny i nie stanowi porady prawnej. Stan prawny na sierpień 2026 — przepisy mogą ulec zmianie. W indywidualnych sprawach zalecamy konsultację z prawnikiem.</em></p>`,
       },
     ],
   },
@@ -855,12 +863,12 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "aktualne-stawki",
         heading: "Aktualne stawki od 1 stycznia 2026",
-        content: `<p>Od 1 stycznia 2026 r. obowiązuje minimalne wynagrodzenie za pracę w wysokości <strong>4806 zł brutto</strong> miesięcznie oraz minimalna stawka godzinowa <strong>31,40 zł brutto</strong>. Wzrost o ponad 5% w stosunku do 2025 r. przekłada się bezpośrednio na warunki legalizacji pracy cudzoziemców.</p>`,
+        content: `<p>Od 1 stycznia 2026 r. obowiązuje minimalne wynagrodzenie za pracę w wysokości <strong>4 806 zł brutto</strong> miesięcznie oraz minimalna stawka godzinowa <strong>31,40 zł brutto</strong>. Oznacza to wzrost o <strong>140 zł, tj. 3,0%</strong> w stosunku do 2025 r. (2025: 4 666 zł / 30,50 zł — Dz.U. 2024 poz. 1362; 2026: 4 806 zł / 31,40 zł — Dz.U. 2025 poz. 1242). Zmiana przekłada się bezpośrednio na warunki legalizacji pracy cudzoziemców (stan prawny: sierpień 2026).</p>`,
       },
       {
         id: "wplyw-na-oswiadczenia",
         heading: "Wpływ na oświadczenia o powierzeniu pracy",
-        content: `<p>Oświadczenie o powierzeniu pracy musi wskazywać wynagrodzenie co najmniej równe minimalnemu. Jeśli wcześniej złożone oświadczenie wskazuje wynagrodzenie niższe niż 4806 zł brutto, może to prowadzić do problemów podczas kontroli PIP. Pracodawcy powinni aktualizować warunki zatrudnienia aneksem lub nowym oświadczeniem.</p>`,
+        content: `<p>Oświadczenie o powierzeniu pracy musi wskazywać wynagrodzenie co najmniej równe minimalnemu. Jeśli wcześniej złożone oświadczenie wskazuje wynagrodzenie niższe niż 4 806 zł brutto, może to prowadzić do problemów podczas kontroli PIP. W takim przypadku <strong>wystarczy aneks do umowy</strong> — podwyższenie wynagrodzenia (w tym do nowego minimum) NIE wymaga nowego oświadczenia ani nowej opłaty 400 zł.</p>`,
       },
       {
         id: "wplyw-na-zezwolenia",
@@ -870,7 +878,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "obowiazki-pracodawcy",
         heading: "Obowiązki pracodawcy",
-        content: `<p>Pracodawca zatrudniający cudzoziemca nie może wypłacać wynagrodzenia niższego od ustawowego minimum, niezależnie od tego, co wskazuje oświadczenie lub zezwolenie. Niedostosowanie warunków grozi:</p><ul><li>Karą grzywny za naruszenie przepisów o minimalnym wynagrodzeniu</li><li>Cofnięciem zezwolenia na pracę</li><li>Wpisem na listę podmiotów z ograniczeniami w zatrudnianiu cudzoziemców</li></ul><p><strong>Chcesz upewnić się, że Twoje dokumenty pracownicze są zgodne z aktualnymi przepisami? Skonsultuj się z getpermit.pl.</strong></p>`,
+        content: `<p>Pracodawca zatrudniający cudzoziemca nie może wypłacać wynagrodzenia niższego od ustawowego minimum, niezależnie od tego, co wskazuje oświadczenie lub zezwolenie. Niedostosowanie warunków grozi:</p><ul><li>Grzywną za naruszenie przepisów o minimalnym wynagrodzeniu</li><li>Uchyleniem zezwolenia na pracę</li><li>Odmową wydania kolejnych zezwoleń</li></ul><p><strong>Chcesz upewnić się, że Twoje dokumenty pracownicze są zgodne z aktualnymi przepisami? Skonsultuj się z getpermit.pl.</strong></p><p><em>Niniejszy artykuł ma charakter informacyjny i nie stanowi porady prawnej. Stan prawny może ulec zmianie — w indywidualnych sprawach zalecamy konsultację z prawnikiem.</em></p>`,
       },
     ],
   },
@@ -896,22 +904,22 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "jak-dziala-link",
         heading: "Jak działa link pracodawcy w systemie MOS?",
-        content: `<p>W procedurach związanych z legalizacją pracy przez system MOS pracodawca jest aktywnym uczestnikiem — nie tylko wystawia dokumenty, ale musi potwierdzić swój udział elektronicznie. Gdy cudzoziemiec złoży wniosek w MOS, system automatycznie generuje <strong>indywidualny link</strong> i wysyła go na adres e-mail pracodawcy wskazany we wniosku. Pod tym linkiem pracodawca loguje się na swoje konto i podpisuje wymagane dokumenty.</p>`,
+        content: `<p>W procedurach związanych z legalizacją pracy przez system MOS pracodawca jest aktywnym uczestnikiem — nie tylko wystawia dokumenty, ale musi potwierdzić swój udział elektronicznie. Gdy cudzoziemiec złoży wniosek w MOS, system automatycznie generuje <strong>indywidualny link</strong> i wysyła go na adres e-mail pracodawcy wskazany we wniosku. Pracodawca <strong>nie musi posiadać konta w MOS</strong> — po kliknięciu w link wypełnia formularz (załącznik nr 1) i podpisuje go elektronicznie. W przypadku reprezentacji łącznej link wysyłany jest osobno do każdej osoby uprawnionej do podpisu.</p>`,
       },
       {
         id: "co-podpisuje",
         heading: "Co podpisuje pracodawca?",
-        content: `<p>W zależności od rodzaju procedury pracodawca potwierdza elektronicznie:</p><ul><li>Treść oświadczenia o powierzeniu pracy — zgodność danych z umową i rzeczywistymi warunkami zatrudnienia</li><li>Załącznik nr 1 do wniosku o zezwolenie na pobyt i pracę — dane pracodawcy i warunki zatrudnienia</li><li>Zobowiązanie do zatrudnienia cudzoziemca na warunkach wskazanych we wniosku</li></ul>`,
+        content: `<p>Pracodawca wypełnia i podpisuje w systemie MOS <strong>wyłącznie załącznik nr 1</strong> do wniosku o zezwolenie na pobyt czasowy i pracę:</p><ul><li>Załącznik nr 1 — dane pracodawcy i warunki zatrudnienia cudzoziemca</li><li>Zobowiązanie do zatrudnienia cudzoziemca na warunkach wskazanych we wniosku</li></ul><p>Oświadczenie o powierzeniu wykonywania pracy to odrębna procedura prowadzona wyłącznie przez portal <strong>praca.gov.pl</strong>.</p>`,
       },
       {
         id: "podpis-elektroniczny",
         heading: "Wymagany podpis elektroniczny",
-        content: `<p>System MOS akceptuje następujące formy podpisu pracodawcy:</p><ul><li><strong>Profil Zaufany</strong> — bezpłatny podpis elektroniczny potwierdzony przez ePUAP, dostępny przez e-banking lub dowód osobisty z chipem</li><li><strong>Kwalifikowany podpis elektroniczny</strong> — płatna usługa certyfikowanych dostawców (np. Certum, Autenti), równoważna podpisowi własnoręcznemu</li></ul><p>Pracodawca musi posiadać konto w MOS lub zarejestrować się przed podpisaniem. Czas na podpisanie dokumentów jest ograniczony — zwykle 7-14 dni od wysłania linku.</p>`,
+        content: `<p>System MOS akceptuje następujące formy podpisu pracodawcy:</p><ul><li><strong>Podpis zaufany (Profil Zaufany)</strong> — bezpłatny podpis elektroniczny potwierdzony przez ePUAP, dostępny przez e-banking lub dowód osobisty z chipem</li><li><strong>Podpis osobisty (e-dowód)</strong> — podpis składany przy użyciu dowodu osobistego z warstwą elektroniczną</li><li><strong>Kwalifikowany podpis elektroniczny</strong> — płatna usługa dostawców z rejestru NCCert (np. Certum), równoważna podpisowi własnoręcznemu</li></ul><p>Link jest aktywny <strong>30 dni</strong>; UdSC zaleca podpisanie jak najszybciej. (stan prawny: sierpień 2026)</p>`,
       },
       {
         id: "co-jesli-odmowa",
         heading: "Co jeśli pracodawca odmówi podpisania lub nie zareaguje?",
-        content: `<p>Brak podpisu pracodawcy w wyznaczonym terminie powoduje <strong>zawieszenie lub umorzenie postępowania</strong>. Oznacza to, że wniosek cudzoziemca nie będzie rozpatrywany do czasu uzupełnienia brakującego elementu. Pracodawca, który systematycznie odmawia udziału w procedurach MOS, może zostać wpisany na listę podmiotów z ograniczeniami w zatrudnianiu cudzoziemców.</p><p><strong>Potrzebujesz pomocy z rejestracją pracodawcy w MOS lub podpisem elektronicznym? Nasz zespół przeprowadzi Cię przez cały proces — skontaktuj się z getpermit.pl.</strong></p>`,
+        content: `<p>Bez podpisanego przez pracodawcę załącznika nr 1 wniosek nie może zostać skutecznie złożony — stanowi to <strong>brak formalny</strong> (art. 64 § 2 KPA). Organ wzywa do uzupełnienia braku, a w razie jego nieuzupełnienia <strong>pozostawia wniosek bez rozpoznania</strong>.</p><p>Niezależnie od procedury administracyjnej, za nielegalne powierzenie pracy cudzoziemcowi grozi <strong>grzywna od 3 000 do 50 000 zł</strong>. (stan prawny: sierpień 2026)</p><p><strong>Potrzebujesz pomocy z załącznikiem pracodawcy w MOS lub podpisem elektronicznym? Nasz zespół przeprowadzi Cię przez cały proces — skontaktuj się z getpermit.pl.</strong></p><p><em>Niniejszy artykuł ma charakter informacyjny i nie stanowi porady prawnej. W indywidualnych sprawach zalecamy konsultację z prawnikiem specjalizującym się w prawie migracyjnym.</em></p>`,
       },
     ],
   },
