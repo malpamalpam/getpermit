@@ -308,3 +308,80 @@ export async function GET(
 
   return new NextResponse(data, { headers });
 }
+
+/**
+ * POST /api/fdk/attachments/[id]?action=confirm-upload
+ *
+ * Confirms a presigned upload completed — triggers text-layer parsing (no OCR).
+ * Called after the client uploads a large file directly to Supabase Storage.
+ */
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const adminUser = await requireAdmin();
+  const changedBy = adminUser.email ?? adminUser.id ?? "system";
+
+  const { id: idStr } = await params;
+  const id = parseInt(idStr, 10);
+  if (isNaN(id)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  const action = request.nextUrl.searchParams.get("action");
+  if (action !== "confirm-upload") {
+    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+  }
+
+  const attachment = await db.fdkAttachment.findUnique({ where: { id } });
+  if (!attachment) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // Only run text-layer parsing for PDFs (no OCR — user can trigger via Scrape button)
+  let extracted = null;
+  if (attachment.typPliku === "pdf") {
+    try {
+      const supabase = createSupabaseAdminClient();
+      const { data: fileData } = await supabase.storage
+        .from("fdk-attachments")
+        .download(attachment.storagePath);
+
+      if (fileData) {
+        const buffer = await fileData.arrayBuffer();
+        const parsed = await parseOswiadczeniePdf(buffer, { ocrFallback: false, filename: attachment.nazwaPliku });
+        if (parsed) {
+          extracted = parsed;
+
+          // Auto-fill foreigner data
+          const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
+          if (foreigner) {
+            const updateData: Record<string, unknown> = {};
+            if (parsed.imie && !foreigner.imie) updateData.imie = parsed.imie;
+            if (parsed.nazwisko && foreigner.nazwisko === "Nowy") updateData.nazwisko = parsed.nazwisko;
+            if (parsed.dataUrodzenia && !foreigner.dataUrodzenia) updateData.dataUrodzenia = new Date(parsed.dataUrodzenia);
+            if (parsed.obywatelstwo && !foreigner.obywatelstwo) updateData.obywatelstwo = parsed.obywatelstwo;
+            if (parsed.nrPaszportu && !foreigner.nrPaszportu) updateData.nrPaszportu = parsed.nrPaszportu;
+
+            if (Object.keys(updateData).length > 0) {
+              await db.fdkForeigner.update({ where: { id: attachment.foreignerId }, data: updateData });
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error("[fdk/confirm-upload] PDF parsing error (non-fatal):", err);
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    id: attachment.id,
+    extracted,
+    message: attachment.typPliku !== "pdf"
+      ? "Plik wgrany. Użyj przycisku „Zescrapuj dane" aby odczytać treść dokumentu."
+      : extracted
+        ? undefined
+        : "Plik wgrany (brak warstwy tekstowej). Użyj przycisku „Zescrapuj dane" aby uruchomić OCR.",
+  });
+}

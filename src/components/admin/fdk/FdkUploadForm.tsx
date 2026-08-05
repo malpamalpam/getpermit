@@ -15,6 +15,11 @@ const CATEGORIES = [
   { value: "inne", label: "Inne" },
 ];
 
+// Vercel Hobby plan has ~4.5 MB body limit for serverless functions.
+// Files larger than this are uploaded via presigned URL directly to Supabase Storage.
+const DIRECT_UPLOAD_THRESHOLD = 4 * 1024 * 1024; // 4 MB
+const MAX_FILE_SIZE_MB = 25;
+
 export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -34,37 +39,73 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
     setError(null);
     setInfo(null);
 
-    const MAX_FILE_SIZE_MB = 20;
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
       setError(`Plik jest za duży (${(file.size / 1024 / 1024).toFixed(1)} MB). Maksymalny rozmiar: ${MAX_FILE_SIZE_MB} MB.`);
       setUploading(false);
       return;
     }
 
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("foreignerId", String(foreignerId));
-    fd.append("kategoria", kategoria);
-    fd.append("nazwaWyswietlana", nazwaWyswietlana || file.name);
-    if (opis) fd.append("opis", opis);
-
     try {
-      const res = await fetch("/api/fdk/attachments/upload", { method: "POST", body: fd });
-      if (res.status === 413) {
-        setError(`Plik jest za duży. Maksymalny rozmiar to ok. 4 MB. Zmniejsz rozdzielczość skanu lub użyj kompresji PDF.`);
-        return;
-      }
       let json;
-      try {
-        json = await res.json();
-      } catch {
-        setError(`Błąd serwera (HTTP ${res.status}). Spróbuj ponownie.`);
-        return;
+
+      if (file.size > DIRECT_UPLOAD_THRESHOLD) {
+        // Large file: use presigned upload to bypass Vercel body limit
+        // Step 1: Get presigned URL from API
+        const metaRes = await fetch("/api/fdk/attachments/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            foreignerId,
+            kategoria,
+            nazwaWyswietlana: nazwaWyswietlana || file.name,
+            opis: opis || undefined,
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.type || "application/octet-stream",
+            presigned: true,
+          }),
+        });
+
+        let metaJson;
+        try { metaJson = await metaRes.json(); } catch { setError(`Błąd serwera (HTTP ${metaRes.status}).`); return; }
+        if (!metaRes.ok) { setError(metaJson.error ?? "Nie udało się przygotować uploadu."); return; }
+
+        // Step 2: Upload file directly to Supabase Storage
+        const uploadRes = await fetch(metaJson.signedUrl, {
+          method: "PUT",
+          headers: { "Content-Type": file.type || "application/octet-stream" },
+          body: file,
+        });
+
+        if (!uploadRes.ok) {
+          setError(`Błąd przesyłania pliku do storage (HTTP ${uploadRes.status}). Spróbuj ponownie.`);
+          return;
+        }
+
+        // Step 3: Confirm upload and trigger parsing
+        const confirmRes = await fetch(`/api/fdk/attachments/${metaJson.attachmentId}?action=confirm-upload`, {
+          method: "POST",
+        });
+        try { json = await confirmRes.json(); } catch { setError(`Błąd potwierdzenia uploadu (HTTP ${confirmRes.status}).`); return; }
+        if (!confirmRes.ok) { setError(json.error ?? "Potwierdzenie uploadu nie powiodło się."); return; }
+      } else {
+        // Small file: standard FormData upload
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("foreignerId", String(foreignerId));
+        fd.append("kategoria", kategoria);
+        fd.append("nazwaWyswietlana", nazwaWyswietlana || file.name);
+        if (opis) fd.append("opis", opis);
+
+        const res = await fetch("/api/fdk/attachments/upload", { method: "POST", body: fd });
+        if (res.status === 413) {
+          setError("Plik jest za duży dla tego trybu. Spróbuj ponownie — system użyje alternatywnej metody.");
+          return;
+        }
+        try { json = await res.json(); } catch { setError(`Błąd serwera (HTTP ${res.status}). Spróbuj ponownie.`); return; }
+        if (!res.ok) { setError(json.error ?? "Upload failed"); return; }
       }
-      if (!res.ok) {
-        setError(json.error ?? "Upload failed");
-        return;
-      }
+
       // Show extraction info if partial
       if (json.message) {
         setInfo(json.message);

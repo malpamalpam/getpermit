@@ -587,7 +587,7 @@ export async function ocrImageWithClaude(buffer: ArrayBuffer, fileType: string):
     const client = new Anthropic({ apiKey });
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-5-20241022",
+      model: "claude-sonnet-4-6",
       max_tokens: 4096,
       messages: [
         {
@@ -654,8 +654,8 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey });
 
-    // Use claude-sonnet-4-5-20241022 (stable) with PDF beta
-    const model = "claude-sonnet-4-5-20241022";
+    // Use claude-sonnet-4-6 (stable) with PDF beta
+    const model = "claude-sonnet-4-6";
     console.log(`[pdf-parser] Calling API: model=${model}, beta=pdfs-2024-09-25`);
 
     const response = await client.beta.messages.create(

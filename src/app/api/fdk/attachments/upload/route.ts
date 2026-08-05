@@ -19,6 +19,12 @@ export async function POST(request: NextRequest) {
   const adminUser = await requireAdmin();
   const changedBy = adminUser.email ?? adminUser.id ?? "system";
 
+  // Check if this is a presigned upload request (JSON body, for large files)
+  const contentType = request.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    return handlePresignedUpload(request, changedBy);
+  }
+
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
   const foreignerIdStr = formData.get("foreignerId") as string | null;
@@ -242,4 +248,75 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, id: attachment.id, extracted, message: extractionMessage });
+}
+
+/**
+ * Handle presigned upload for large files (>4 MB).
+ * Step 1: Create DB record + generate Supabase signed upload URL.
+ * Step 2: Client uploads directly to Supabase Storage using the signed URL.
+ * Step 3: Client calls confirm-upload to trigger parsing.
+ */
+async function handlePresignedUpload(request: NextRequest, changedBy: string) {
+  const body = await request.json();
+  const { foreignerId, kategoria, nazwaWyswietlana, opis, fileName, fileSize, fileType } = body;
+
+  if (!foreignerId || !fileName) {
+    return NextResponse.json({ error: "foreignerId and fileName required" }, { status: 400 });
+  }
+
+  const fid = parseInt(String(foreignerId), 10);
+  if (isNaN(fid)) {
+    return NextResponse.json({ error: "Invalid foreignerId" }, { status: 400 });
+  }
+
+  const foreigner = await db.fdkForeigner.findUnique({ where: { id: fid } });
+  if (!foreigner) {
+    return NextResponse.json({ error: "Foreigner not found" }, { status: 404 });
+  }
+
+  const ext = fileName.split(".").pop()?.toLowerCase() ?? "bin";
+  const typPliku = ext === "jpg" ? "jpeg" : ext;
+  const storagePath = `${fid}/${randomUUID()}-${fileName.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+  const supabase = createSupabaseAdminClient();
+
+  // Generate signed upload URL (valid 10 minutes)
+  const { data: signedData, error: signError } = await supabase.storage
+    .from("fdk-attachments")
+    .createSignedUploadUrl(storagePath);
+
+  if (signError || !signedData) {
+    console.error("[fdk/upload] Signed URL error:", signError?.message);
+    return NextResponse.json({ error: "Could not generate upload URL" }, { status: 500 });
+  }
+
+  // Create DB record (file not yet uploaded — will be confirmed in step 3)
+  const attachment = await db.fdkAttachment.create({
+    data: {
+      foreignerId: fid,
+      kategoria: kategoria ?? "glowne",
+      nazwaWyswietlana: nazwaWyswietlana ?? fileName,
+      nazwaPliku: fileName,
+      opis: opis || null,
+      typPliku,
+      storagePath,
+      rozmiarBytes: fileSize ?? 0,
+    },
+  });
+
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId: fid,
+      changedBy,
+      field: "attachment_upload",
+      oldValue: null,
+      newValue: `Wgrano załącznik (presigned): ${nazwaWyswietlana ?? fileName} (${kategoria ?? "glowne"})`,
+    },
+  });
+
+  return NextResponse.json({
+    ok: true,
+    attachmentId: attachment.id,
+    signedUrl: signedData.signedUrl,
+    storagePath,
+  });
 }
