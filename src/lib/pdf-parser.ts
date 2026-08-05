@@ -83,25 +83,38 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
   // === ODWOŁANIE / ZAŻALENIE — check first! ===
   // Filename hint — strongest signal (user named the file with "odwolanie")
   if (filenameLower.includes("odwolanie") || filenameLower.includes("odwo\u0142anie")) return "ODWOLANIE";
-  // Text content patterns
-  if (lower.includes("odwo\u0142anie od decyzji") || lower.includes("odwolanie od decyzji")) return "ODWOLANIE";
-  if (lower.includes("za\u017Calenie na decyzj\u0119") || lower.includes("zazalenie na decyzje")) return "ODWOLANIE";
-  if (lower.includes("procedura odwo\u0142awcza") || lower.includes("procedura odwolawcza")) return "ODWOLANIE";
-  // "wnoszę odwołanie" / "składam odwołanie" / "odwołuję się"
-  if (/wnosz[ęe]\s+odwo[łl]anie/i.test(text)) return "ODWOLANIE";
-  if (/sk[łl]adam\s+odwo[łl]anie/i.test(text)) return "ODWOLANIE";
-  if (/odwo[łl]uj[ęe]\s+si[ęe]/i.test(text)) return "ODWOLANIE";
-  // "organ odwoławczy" / "UDSC" (Urząd do Spraw Cudzoziemców handles appeals)
-  if (lower.includes("organ odwo\u0142awczy") || lower.includes("organ odwolawczy")) return "ODWOLANIE";
-  if (lower.includes("udsc") && (lower.includes("odwo\u0142") || lower.includes("odwol"))) return "ODWOLANIE";
-  // Standalone "odwołanie" near the start of the document (first 500 chars)
-  if (/^.{0,500}odwo[łl]anie/si.test(text)) return "ODWOLANIE";
+
+  // === POSITIVE DECISION markers — check BEFORE odwołanie text checks! ===
+  // Every positive decision contains a standard Pouczenie mentioning "odwołanie"
+  // (right to appeal), which must NOT trigger ODWOLANIE classification.
+  const isPositiveDecision = /u\s*d\s*z\s*i\s*e\s*l\s*a\s*m/i.test(text)
+    || lower.includes("udziela się")
+    || lower.includes("zezwalam")
+    || lower.includes("udzielam zezwolenia")
+    || (lower.includes("decyzja") && /udziel[ae]/i.test(text));
+
+  if (!isPositiveDecision) {
+    // Text content patterns
+    if (lower.includes("odwo\u0142anie od decyzji") || lower.includes("odwolanie od decyzji")) return "ODWOLANIE";
+    if (lower.includes("za\u017Calenie na decyzj\u0119") || lower.includes("zazalenie na decyzje")) return "ODWOLANIE";
+    if (lower.includes("procedura odwo\u0142awcza") || lower.includes("procedura odwolawcza")) return "ODWOLANIE";
+    // "wnoszę odwołanie" / "składam odwołanie" / "odwołuję się"
+    if (/wnosz[ęe]\s+odwo[łl]anie/i.test(text)) return "ODWOLANIE";
+    if (/sk[łl]adam\s+odwo[łl]anie/i.test(text)) return "ODWOLANIE";
+    if (/odwo[łl]uj[ęe]\s+si[ęe]/i.test(text)) return "ODWOLANIE";
+    // "organ odwoławczy"
+    if (lower.includes("organ odwo\u0142awczy") || lower.includes("organ odwolawczy")) return "ODWOLANIE";
+    // Standalone "odwołanie" near the start of the document (first 500 chars)
+    if (/^.{0,500}odwo[łl]anie/si.test(text)) return "ODWOLANIE";
+  }
 
   // === EU BLUE CARD — check before generic karta pobytu ===
   if (lower.includes("niebieska karta") || lower.includes("blue card")) return "BLUE_CARD";
   if (lower.includes("eu blue card") || lower.includes("karta ue")) return "BLUE_CARD";
   // Blue Card decree often says "zezwolenie na pobyt czasowy i pracę" for highly skilled
   if (lower.includes("pobyt czasowy i prac") && (lower.includes("niebiesk") || lower.includes("blue"))) return "BLUE_CARD";
+  // "wysokie kwalifikacje" / art. 127 — Blue Card regime
+  if (lower.includes("wysokich kwalifikacji") || lower.includes("wysokie kwalifikacje")) return "BLUE_CARD";
 
   // === KARTA POBYTU / DECYZJA POBYTOWA — check BEFORE zezwolenie na pracę ===
   // "zezwolenie na pobyt czasowy i pracę" is a RESIDENCE PERMIT, not a work permit
@@ -363,6 +376,12 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
   }
 
+  // Clean up wynagrodzenie — remove trailing section numbers and dots
+  if (result.wynagrodzenie) {
+    result.wynagrodzenie = result.wynagrodzenie.replace(/\s+\d+\.\s*$/, "").trim();
+    result.wynagrodzenie = result.wynagrodzenie.replace(/\.\s*$/, "").trim();
+  }
+
   sanitizeDates(result);
   return result;
 }
@@ -435,9 +454,30 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     }
   }
 
+  // Fallback for decyzja format: "Panu/Pani IMIE NAZWISKO" (without trailing dash/paren)
+  if (!result.imie && !result.nazwisko) {
+    const panuMatch = normalized.match(/Pan[iu]\s+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ]+)/);
+    if (panuMatch) {
+      result.imie = titleCase(panuMatch[1].trim());
+      result.nazwisko = titleCase(panuMatch[2].trim());
+    }
+  }
+
   // --- Obywatelstwo: "obywatela/obywatelki MalezjaMalezja" ---
   const obywMatch = normalized.match(/obywatela\/obywatelki\s+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)/i);
   if (obywMatch) result.obywatelstwo = dedup(obywMatch[1].trim());
+
+  // Fallback for decyzja format: "Obywatelstwo Białoruś"
+  if (!result.obywatelstwo) {
+    const obywFallback = normalized.match(/[Oo]bywatelstwo\s+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)/);
+    if (obywFallback) {
+      const val = obywFallback[1].trim();
+      // Validate it's a country name, not a legal term
+      if (!/^(zezwoleni|pobyt|prac|decyzj|czasow|kart)/i.test(val)) {
+        result.obywatelstwo = val;
+      }
+    }
+  }
 
   // --- Data urodzenia: "data urodzenia 25.04.1993 r." ---
   const dobMatch = normalized.match(/data\s+urodzenia\s+(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i);
@@ -474,8 +514,28 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     if (cleaned.length > 2) result.wynagrodzenie = cleaned;
   }
 
+  // --- Wynagrodzenie fallback for decyzja format: "12272,58 zł brutto miesięcznie" ---
+  if (!result.wynagrodzenie) {
+    const wynFallback = normalized.match(/(\d[\d\s,.]+)\s*(?:PLN|z[łl])\s*(?:brutto|netto)?(?:\s*miesi[ęe]cznie)?/i);
+    if (wynFallback) {
+      const cleaned = wynFallback[0].replace(/\s+/g, " ").trim();
+      if (cleaned.length > 3) result.wynagrodzenie = cleaned;
+    }
+  }
+
   // --- Daty: "ważne od 01.11.2025 r. do 31.10.2026 r." ---
   extractDateRange(normalized, result);
+
+  // Fallback for decyzja: "do dnia DD.MM.YYYY" without a matching "od"
+  if (!result.dataDo) {
+    const doDniaMatch = normalized.match(/do\s+dnia\s+(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i);
+    if (doDniaMatch) result.dataDo = parseDatePL(doDniaMatch[1]);
+  }
+  // For decisions, dataOd can be the decision date: "Warszawa, DD MONTH YYYY"
+  if (!result.dataOd) {
+    const decDateMatch = normalized.match(/Warszawa,?\s+(?:dnia\s+)?(\d{1,2}\s+\w+\s+\d{4})/i);
+    if (decDateMatch) result.dataOd = parseDatePL(decDateMatch[1]);
+  }
 
   // --- Paszport ---
   const paszMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
@@ -483,6 +543,12 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
 
   // Ensure no oświadczenie fields leak
   result.nrOswiadczenia = undefined;
+
+  // Clean up wynagrodzenie — remove trailing section numbers and dots
+  if (result.wynagrodzenie) {
+    result.wynagrodzenie = result.wynagrodzenie.replace(/\s+\d+\.\s*$/, "").trim();
+    result.wynagrodzenie = result.wynagrodzenie.replace(/\.\s*$/, "").trim();
+  }
 
   return result;
 }

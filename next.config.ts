@@ -28,6 +28,11 @@ const LOCALES = ["pl", "en", "ru", "uk"] as const;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '20mb',
+    },
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,

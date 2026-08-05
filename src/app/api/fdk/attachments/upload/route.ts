@@ -6,6 +6,9 @@ import { randomUUID } from "crypto";
 import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
+// Allow up to 60s for upload (large scanned documents from phones can be 5-10 MB)
+export const maxDuration = 60;
+
 /**
  * POST /api/fdk/attachments/upload
  *
@@ -124,14 +127,28 @@ export async function POST(request: NextRequest) {
         // Create employment base for non-ODWOLANIE types
         const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
-        const existingBase = await db.fdkEmploymentBase.findFirst({
-          where: {
-            foreignerId,
-            typ: docType,
-            ...(parsed.dataOd ? { dataOd: new Date(parsed.dataOd) } : {}),
-            ...(parsed.dataDo ? { dataDo: new Date(parsed.dataDo) } : {}),
-          },
-        });
+        // Match existing base by DOCUMENT NUMBER first, then by dates
+        let existingBase = null;
+        if (docType === "OSWIADCZENIE" && parsed.nrOswiadczenia) {
+          existingBase = await db.fdkEmploymentBase.findFirst({
+            where: { foreignerId, typ: docType, nrOswiadczenia: parsed.nrOswiadczenia },
+          });
+        } else if (docType !== "OSWIADCZENIE" && parsed.nrDecyzji) {
+          existingBase = await db.fdkEmploymentBase.findFirst({
+            where: { foreignerId, typ: docType, nrDecyzji: parsed.nrDecyzji },
+          });
+        }
+        // Fallback: match by exact dates (both must be present and match)
+        if (!existingBase && parsed.dataOd && parsed.dataDo) {
+          existingBase = await db.fdkEmploymentBase.findFirst({
+            where: {
+              foreignerId,
+              typ: docType,
+              dataOd: new Date(parsed.dataOd),
+              dataDo: new Date(parsed.dataDo),
+            },
+          });
+        }
 
         // Build type-specific data
         const baseData: Record<string, unknown> = {
@@ -164,9 +181,17 @@ export async function POST(request: NextRequest) {
 
         let baseId: number;
         if (existingBase) {
+          // Only update fields that have new non-null values — never null-out existing data
+          const updateFields: Record<string, unknown> = {};
+          for (const [key, value] of Object.entries(baseData)) {
+            if (key === "foreignerId") continue; // skip FK
+            if (value !== null && value !== undefined) {
+              updateFields[key] = value;
+            }
+          }
           await db.fdkEmploymentBase.update({
             where: { id: existingBase.id },
-            data: baseData,
+            data: updateFields,
           });
           baseId = existingBase.id;
         } else {

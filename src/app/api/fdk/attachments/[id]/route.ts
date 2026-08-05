@@ -174,18 +174,28 @@ export async function GET(
     // All other detected types create/update employment base
     const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
-    // Check for duplicate: same foreigner + type (+ dates if available).
-    // Also check for any existing base with same type to update instead of creating duplicates.
-    let existingBase = await db.fdkEmploymentBase.findFirst({
-      where: {
-        foreignerId: attachment.foreignerId,
-        typ: docType,
-        ...(parsed.dataOd && parsed.dataDo
-          ? { dataOd: new Date(parsed.dataOd), dataDo: new Date(parsed.dataDo) }
-          : {}),
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    // Match existing base by DOCUMENT NUMBER first, then by dates
+    let existingBase = null;
+    if (docType === "OSWIADCZENIE" && parsed.nrOswiadczenia) {
+      existingBase = await db.fdkEmploymentBase.findFirst({
+        where: { foreignerId: attachment.foreignerId, typ: docType, nrOswiadczenia: parsed.nrOswiadczenia },
+      });
+    } else if (docType !== "OSWIADCZENIE" && parsed.nrDecyzji) {
+      existingBase = await db.fdkEmploymentBase.findFirst({
+        where: { foreignerId: attachment.foreignerId, typ: docType, nrDecyzji: parsed.nrDecyzji },
+      });
+    }
+    // Fallback: match by exact dates (both must be present and match)
+    if (!existingBase && parsed.dataOd && parsed.dataDo) {
+      existingBase = await db.fdkEmploymentBase.findFirst({
+        where: {
+          foreignerId: attachment.foreignerId,
+          typ: docType,
+          dataOd: new Date(parsed.dataOd),
+          dataDo: new Date(parsed.dataDo),
+        },
+      });
+    }
 
     // Build type-specific data
     const baseData: Record<string, unknown> = {
@@ -217,8 +227,14 @@ export async function GET(
     let baseId: number;
     let scrapeAction: string;
     if (existingBase) {
-      // Update existing record instead of creating duplicate
-      const { foreignerId: _fid, ...updateFields } = baseData;
+      // Only update fields that have new non-null values — never null-out existing data
+      const updateFields: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(baseData)) {
+        if (key === "foreignerId") continue; // skip FK
+        if (value !== null && value !== undefined) {
+          updateFields[key] = value;
+        }
+      }
       await db.fdkEmploymentBase.update({
         where: { id: existingBase.id },
         data: updateFields,

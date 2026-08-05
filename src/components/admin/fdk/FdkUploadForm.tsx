@@ -34,6 +34,13 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
     setError(null);
     setInfo(null);
 
+    const MAX_FILE_SIZE_MB = 20;
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setError(`Plik jest za duży (${(file.size / 1024 / 1024).toFixed(1)} MB). Maksymalny rozmiar: ${MAX_FILE_SIZE_MB} MB.`);
+      setUploading(false);
+      return;
+    }
+
     const fd = new FormData();
     fd.append("file", file);
     fd.append("foreignerId", String(foreignerId));
@@ -43,7 +50,17 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
 
     try {
       const res = await fetch("/api/fdk/attachments/upload", { method: "POST", body: fd });
-      const json = await res.json();
+      if (res.status === 413) {
+        setError(`Plik jest za duży. Maksymalny rozmiar to ok. 4 MB. Zmniejsz rozdzielczość skanu lub użyj kompresji PDF.`);
+        return;
+      }
+      let json;
+      try {
+        json = await res.json();
+      } catch {
+        setError(`Błąd serwera (HTTP ${res.status}). Spróbuj ponownie.`);
+        return;
+      }
       if (!res.ok) {
         setError(json.error ?? "Upload failed");
         return;
@@ -57,8 +74,12 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
       setOpis("");
       if (fileRef.current) fileRef.current.value = "";
       router.refresh();
-    } catch {
-      setError("Błąd połączenia");
+    } catch (err) {
+      if (err instanceof TypeError && err.message.includes("fetch")) {
+        setError("Błąd połączenia z serwerem. Sprawdź połączenie internetowe.");
+      } else {
+        setError("Błąd wysyłania pliku. Spróbuj ponownie lub zmniejsz rozmiar pliku.");
+      }
     } finally {
       setUploading(false);
     }
