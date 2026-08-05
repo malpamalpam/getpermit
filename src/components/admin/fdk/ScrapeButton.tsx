@@ -34,7 +34,21 @@ export function ScrapeButton({ attachmentId, typPliku }: Props) {
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
-      const data = await res.json();
+
+      // Handle HTTP errors that may not have JSON body
+      if (res.status === 504 || res.status === 502 || res.status === 503) {
+        setResult({ text: "Przetwarzanie trwalo zbyt dlugo. Sprobuj ponownie na mniejszym pliku lub wprowadz dane recznie.", isError: true });
+        return;
+      }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setResult({ text: `Blad serwera (HTTP ${res.status}). Sprobuj ponownie.`, isError: true });
+        return;
+      }
+
       if (data.ok) {
         const parts: string[] = [];
 

@@ -563,6 +563,157 @@ let lastOcrError: OcrError = null;
 export function getLastOcrError(): OcrError { return lastOcrError; }
 
 /**
+ * Structured OCR extraction using Claude Vision/PDF API.
+ * Instead of transcribing text and then parsing with regex,
+ * ask Claude to directly extract structured fields.
+ */
+export async function ocrExtractStructured(
+  buffer: ArrayBuffer,
+  mediaType: "application/pdf" | "image/jpeg" | "image/png",
+  filename?: string
+): Promise<ParsedDocumentData | null> {
+  lastOcrError = null;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!apiKey) {
+    lastOcrError = { type: "no_key" };
+    return null;
+  }
+
+  const fileSizeMB = buffer.byteLength / 1024 / 1024;
+  console.log(`[pdf-parser] OCR structured extraction: ${fileSizeMB.toFixed(2)} MB, type=${mediaType}`);
+
+  if (buffer.byteLength > 25 * 1024 * 1024) {
+    lastOcrError = { type: "api_error", message: `File too large: ${fileSizeMB.toFixed(1)} MB (max 25 MB)` };
+    return null;
+  }
+
+  const base64 = Buffer.from(buffer).toString("base64");
+
+  const extractionPrompt = `Przeanalizuj ten dokument i wyciagnij z niego dane w formacie JSON. Dokument to prawdopodobnie polski dokument imigracyjny (oswiadczenie o powierzeniu pracy, zezwolenie na prace, decyzja pobytowa, wiza, karta pobytu lub Niebieska Karta UE).
+
+Zwroc TYLKO obiekt JSON (bez komentarzy, bez markdown) z nastepujacymi polami (puste/nieznalezione pola = null):
+
+{
+  "detectedType": "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | null,
+  "imie": "imie cudzoziemca",
+  "nazwisko": "nazwisko cudzoziemca",
+  "dataUrodzenia": "YYYY-MM-DD",
+  "obywatelstwo": "kraj obywatelstwa (tylko nazwa kraju, bez dodatkowego tekstu)",
+  "nrPaszportu": "numer paszportu",
+  "dataOd": "YYYY-MM-DD (poczatek waznosci dokumentu/zezwolenia)",
+  "dataDo": "YYYY-MM-DD (koniec waznosci dokumentu/zezwolenia)",
+  "stanowisko": "stanowisko/rodzaj pracy",
+  "rodzajUmowy": "typ umowy",
+  "firma": "nazwa pracodawcy/podmiotu",
+  "nrDecyzji": "numer decyzji lub sygnatura sprawy",
+  "nrOswiadczenia": "numer wpisu oswiadczenia",
+  "wynagrodzenie": "kwota z waluta, np. 4806,00 PLN brutto"
+}
+
+Zasady:
+- detectedType: OSWIADCZENIE = oswiadczenie o powierzeniu pracy; ZEZWOLENIE = zezwolenie na prace typ A-E; KARTA_POBYTU = decyzja o zezwoleniu na pobyt czasowy/staly; BLUE_CARD = Niebieska Karta UE lub zezwolenie na pobyt w celu wykonywania pracy wymagajacej wysokich kwalifikacji
+- Jesli dokument zawiera "udzielam" / "udziela sie" to jest decyzja pozytywna (KARTA_POBYTU lub BLUE_CARD), NIE odwolanie
+- Jesli dokument mowi o "wysokich kwalifikacjach" lub art. 127, typ = BLUE_CARD
+- obywatelstwo: TYLKO nazwa kraju (np. "Bialorus", "Ukraina"), bez zadnych dodatkowych slow
+- Daty w formacie YYYY-MM-DD
+- Dla decyzji pobytowej: dataOd = data wydania decyzji, dataDo = data waznosci zezwolenia ("do dnia...")
+- nrDecyzji: numer decyzji lub sygnatura sprawy (np. "WSC-II-P.6151.34116.2025")`;
+
+  try {
+    const Anthropic = (await import("@anthropic-ai/sdk")).default;
+    const client = new Anthropic({ apiKey });
+
+    const isPdf = mediaType === "application/pdf";
+
+    const contentBlock = isPdf
+      ? { type: "document" as const, source: { type: "base64" as const, media_type: "application/pdf" as const, data: base64 } }
+      : { type: "image" as const, source: { type: "base64" as const, media_type: mediaType as "image/jpeg" | "image/png", data: base64 } };
+
+    let response;
+    if (isPdf) {
+      response = await client.beta.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2048,
+        betas: ["pdfs-2024-09-25"],
+        messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
+      });
+    } else {
+      response = await client.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2048,
+        messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
+      });
+    }
+
+    const textBlocks = response.content.filter((b: { type: string }) => b.type === "text");
+    const fullText = textBlocks.map((b: { type: string; text?: string }) => b.text ?? "").join("\n").trim();
+
+    console.log(`[pdf-parser] OCR structured response (${fullText.length} chars): ${fullText.substring(0, 300)}`);
+
+    // Parse JSON from response (may be wrapped in ```json ... ```)
+    let jsonStr = fullText;
+    const jsonMatch = fullText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) jsonStr = jsonMatch[0];
+
+    try {
+      const data = JSON.parse(jsonStr);
+      const result: ParsedDocumentData = {};
+
+      if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD"].includes(data.detectedType)) {
+        result.detectedType = data.detectedType;
+      }
+      if (data.imie && typeof data.imie === "string") result.imie = data.imie.trim();
+      if (data.nazwisko && typeof data.nazwisko === "string") result.nazwisko = data.nazwisko.trim();
+      if (data.dataUrodzenia && /^\d{4}-\d{2}-\d{2}$/.test(data.dataUrodzenia)) result.dataUrodzenia = data.dataUrodzenia;
+      if (data.obywatelstwo && typeof data.obywatelstwo === "string") {
+        // Clean citizenship — only country name
+        let cit = data.obywatelstwo.trim();
+        cit = cit.replace(/\s+(zezwolenie|pobyt|prac|decyzj|czasow|kart|na|do|dnia|terytorium).*$/i, "").trim();
+        if (cit.length > 1) result.obywatelstwo = cit;
+      }
+      if (data.nrPaszportu && typeof data.nrPaszportu === "string") result.nrPaszportu = data.nrPaszportu.trim();
+      if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) result.dataOd = data.dataOd;
+      if (data.dataDo && /^\d{4}-\d{2}-\d{2}$/.test(data.dataDo)) result.dataDo = data.dataDo;
+      if (data.stanowisko && typeof data.stanowisko === "string") result.stanowisko = data.stanowisko.trim();
+      if (data.rodzajUmowy && typeof data.rodzajUmowy === "string") result.rodzajUmowy = data.rodzajUmowy.trim();
+      if (data.firma && typeof data.firma === "string") result.firma = data.firma.trim();
+      if (data.nrDecyzji && typeof data.nrDecyzji === "string") result.nrDecyzji = data.nrDecyzji.trim();
+      if (data.nrOswiadczenia && typeof data.nrOswiadczenia === "string") result.nrOswiadczenia = data.nrOswiadczenia.trim();
+      if (data.wynagrodzenie && typeof data.wynagrodzenie === "string") {
+        let wyn = data.wynagrodzenie.trim();
+        wyn = wyn.replace(/\s+\d+\.\s*$/, "").replace(/\.\s*$/, "").trim();
+        if (wyn.length > 2) result.wynagrodzenie = wyn;
+      }
+
+      // Validate dates
+      sanitizeDates(result);
+
+      const hasAnyData = result.dataOd || result.dataDo || result.nazwisko || result.imie
+        || result.stanowisko || result.nrPaszportu || result.nrDecyzji || result.wynagrodzenie;
+
+      return hasAnyData ? result : null;
+    } catch (parseErr) {
+      console.error(`[pdf-parser] Failed to parse OCR JSON: ${parseErr}`);
+      // Fallback: return the raw text for regex parsing
+      console.log("[pdf-parser] Falling back to regex parsing of OCR text");
+      const result = parseOswiadczenieText(fullText, filename);
+      const hasAnyData = result.dataOd || result.dataDo || result.nazwisko || result.imie
+        || result.rodzajPracy || result.rodzajUmowy || result.nrPaszportu
+        || result.nrDecyzji || result.stanowisko || result.wynagrodzenie;
+      return hasAnyData ? result : null;
+    }
+
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.error(`[pdf-parser] OCR structured extraction error: ${errMsg}`);
+    lastOcrError = { type: "api_error", message: errMsg };
+    return null;
+  }
+}
+
+/**
+ * @deprecated Use ocrExtractStructured() instead. Kept for backward compatibility.
  * OCR for image files (JPG, PNG) using Claude Vision API.
  */
 export async function ocrImageWithClaude(buffer: ArrayBuffer, fileType: string): Promise<string | null> {
@@ -624,6 +775,7 @@ export async function ocrImageWithClaude(buffer: ArrayBuffer, fileType: string):
   }
 }
 
+/** @deprecated Use ocrExtractStructured() instead. Kept for backward compatibility. */
 async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
   lastOcrError = null;
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -741,10 +893,12 @@ export async function parseOswiadczeniePdf(
     const pdfData = await pdfParse(Buffer.from(buffer));
     let text = pdfData.text;
 
-    // If no text extracted (scanned PDF), optionally try Claude OCR
+    // If no text extracted (scanned PDF), optionally try structured OCR extraction
     if ((!text || text.length < 20) && ocrFallback) {
-      console.log("[pdf-parser] No text layer detected, attempting OCR via Claude...");
-      text = (await ocrWithClaude(buffer)) ?? "";
+      console.log("[pdf-parser] No text layer detected, attempting structured OCR extraction...");
+      const ocrResult = await ocrExtractStructured(buffer, "application/pdf", filename);
+      if (ocrResult) return ocrResult;
+      return null;
     }
 
     if (!text || text.length < 20) return null;

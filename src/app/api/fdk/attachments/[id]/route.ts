@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { parseOswiadczeniePdf, parseOswiadczenieText, ocrImageWithClaude, getLastOcrError } from "@/lib/pdf-parser";
+import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
 // Allow up to 60s for scrape action (OCR via Claude can take 20-40s)
@@ -90,17 +90,9 @@ export async function GET(
     const isImage = ["jpeg", "jpg", "png"].includes(attachment.typPliku);
     let parsed;
     if (isImage) {
-      // Images go directly to OCR (Claude Vision)
-      const ocrText = await ocrImageWithClaude(buffer, attachment.typPliku);
-      if (ocrText) {
-        parsed = parseOswiadczenieText(ocrText, attachment.nazwaPliku);
-        const hasAnyData = parsed.dataOd || parsed.dataDo || parsed.nazwisko || parsed.imie
-          || parsed.rodzajPracy || parsed.rodzajUmowy || parsed.nrPaszportu
-          || parsed.nrDecyzji || parsed.stanowisko || parsed.wynagrodzenie;
-        if (!hasAnyData) parsed = null;
-      } else {
-        parsed = null;
-      }
+      // Images go directly to structured OCR extraction (Claude Vision)
+      const mediaType = attachment.typPliku === "png" ? "image/png" as const : "image/jpeg" as const;
+      parsed = await ocrExtractStructured(buffer, mediaType, attachment.nazwaPliku);
     } else {
       parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
     }
