@@ -145,8 +145,13 @@ function extractPersonalData(normalized: string, result: ParsedDocumentData): vo
   if (dobMatch) result.dataUrodzenia = parseDatePL(dobMatch[1]);
 
   // Obywatelstwo
-  const obywMatch = normalized.match(/[Oo]bywatelstwo[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:[\s][a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ]+)*)/);
-  if (obywMatch) result.obywatelstwo = obywMatch[1].trim();
+  const obywMatch = normalized.match(/[Oo]bywatelstwo[:\s]+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+(?:[\s][A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+){0,2})(?=\s|$|[,;.\d])/);
+  if (obywMatch) {
+    let citizenship = obywMatch[1].trim();
+    // Remove trailing words that are clearly not part of citizenship
+    citizenship = citizenship.replace(/\s+(zezwolenie|pobyt|prac[aęy]|decyzj[aięy]|czasow[aąeiy]|sta[łl][aąeiy]|kart[aąeiy]|na).*$/i, "").trim();
+    if (citizenship.length > 1) result.obywatelstwo = citizenship;
+  }
 
   // Paszport
   const paszportMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
@@ -306,13 +311,13 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   }
 
   // === ZEZWOLENIE / BLUE_CARD — same structured layout (decision documents) ===
-  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "BLUE_CARD") {
+  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "BLUE_CARD" || result.detectedType === "KARTA_POBYTU") {
     const zezResult = parseZezwolenie(normalized, result);
     sanitizeDates(zezResult);
     return zezResult;
   }
 
-  // === OŚWIADCZENIE / KARTA_POBYTU / unknown ===
+  // === OŚWIADCZENIE / unknown ===
   extractPersonalData(normalized, result);
   extractDateRange(normalized, result);
 
@@ -320,12 +325,6 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   if (result.detectedType === "OSWIADCZENIE") {
     const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
     if (nrWpisuMatch) result.nrOswiadczenia = nrWpisuMatch[1].trim();
-  }
-
-  // Nr decyzji (for karta pobytu)
-  if (result.detectedType === "KARTA_POBYTU") {
-    const nrDecyzjiMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
-    if (nrDecyzjiMatch) result.nrDecyzji = nrDecyzjiMatch[1].trim();
   }
 
   // Stanowisko / rodzaj pracy (oświadczenie pkt 3.1)
@@ -417,6 +416,11 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     const sygMatch = normalized.match(/([A-Z]{2,5}[-.](?:[A-Z]*\.?\d+\.?)+\.\d{4})/);
     if (sygMatch) result.nrDecyzji = sygMatch[1].trim();
   }
+  // Residence decision sygnatura: "nr sprawy: XXXX/2025" or "Decyzja nr ..."
+  if (!result.nrDecyzji) {
+    const decNrMatch = normalized.match(/(?:decyzja|decyzji)\s+nr\s*[.:\s]*([A-Z0-9/.\-]+)/i);
+    if (decNrMatch) result.nrDecyzji = decNrMatch[1].trim();
+  }
 
   // --- Imię i nazwisko: "Pana/Pani DANIEL DOMINIC ABRAHAM -" or "Pana/Pani IMIE NAZWISKO" ---
   const panMatch = normalized.match(/Pana\/Pani\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ\s-]+?)(?:\s*-\s*|\s*\()/);
@@ -491,6 +495,68 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
 export type OcrError = { type: "no_key" } | { type: "api_error"; message: string } | null;
 let lastOcrError: OcrError = null;
 export function getLastOcrError(): OcrError { return lastOcrError; }
+
+/**
+ * OCR for image files (JPG, PNG) using Claude Vision API.
+ */
+export async function ocrImageWithClaude(buffer: ArrayBuffer, fileType: string): Promise<string | null> {
+  lastOcrError = null;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    lastOcrError = { type: "no_key" };
+    return null;
+  }
+
+  const fileSizeBytes = buffer.byteLength;
+  if (fileSizeBytes > 20 * 1024 * 1024) {
+    lastOcrError = { type: "api_error", message: `Image too large: ${(fileSizeBytes / 1024 / 1024).toFixed(2)} MB` };
+    return null;
+  }
+
+  const base64 = Buffer.from(buffer).toString("base64");
+  const mediaType = fileType === "png" ? "image/png" : "image/jpeg";
+
+  try {
+    const Anthropic = (await import("@anthropic-ai/sdk")).default;
+    const client = new Anthropic({ apiKey });
+
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-5-20241022",
+      max_tokens: 4096,
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: mediaType,
+                data: base64,
+              },
+            },
+            {
+              type: "text",
+              text: "Przepisz doslownie caly tekst z tego dokumentu. Zachowaj oryginalne sformulowania i kolejnosc. Zwroc tylko tekst, bez zadnych komentarzy ani naglowkow.",
+            },
+          ],
+        },
+      ],
+    });
+
+    const textBlocks = response.content.filter((b: { type: string }) => b.type === "text");
+    const fullText = textBlocks.map((b: { type: string; text?: string }) => b.text ?? "").join("\n");
+
+    if (fullText.length > 20) return fullText;
+
+    lastOcrError = { type: "api_error", message: `OCR returned only ${fullText.length} chars` };
+    return null;
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    lastOcrError = { type: "api_error", message: errMsg };
+    return null;
+  }
+}
 
 async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
   lastOcrError = null;

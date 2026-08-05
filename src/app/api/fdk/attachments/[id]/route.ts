@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { parseOswiadczeniePdf, getLastOcrError } from "@/lib/pdf-parser";
+import { parseOswiadczeniePdf, parseOswiadczenieText, ocrImageWithClaude, getLastOcrError } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
 // Allow up to 60s for scrape action (OCR via Claude can take 20-40s)
@@ -54,7 +54,7 @@ export async function GET(
   // Debug — show raw text extracted from PDF (for debugging parser)
   if (action === "debug-text") {
     if (attachment.typPliku !== "pdf") {
-      return NextResponse.json({ error: "Only PDF" }, { status: 400 });
+      return NextResponse.json({ error: "Only PDF files support debug-text (use scrape for images)" }, { status: 400 });
     }
     const { data: fileData, error: dlError } = await supabase.storage
       .from("fdk-attachments")
@@ -71,10 +71,11 @@ export async function GET(
     }
   }
 
-  // Scrape — parse PDF and auto-fill foreigner + create employment base
+  // Scrape — parse PDF/image and auto-fill foreigner + create employment base
   if (action === "scrape") {
-    if (attachment.typPliku !== "pdf") {
-      return NextResponse.json({ error: "Only PDF files can be scraped" }, { status: 400 });
+    const scrapableTypes = ["pdf", "jpeg", "jpg", "png"];
+    if (!scrapableTypes.includes(attachment.typPliku)) {
+      return NextResponse.json({ error: "Only PDF and image files (JPG, PNG) can be scraped" }, { status: 400 });
     }
 
     const { data: fileData, error: dlError } = await supabase.storage
@@ -86,7 +87,23 @@ export async function GET(
     }
 
     const buffer = await fileData.arrayBuffer();
-    const parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
+    const isImage = ["jpeg", "jpg", "png"].includes(attachment.typPliku);
+    let parsed;
+    if (isImage) {
+      // Images go directly to OCR (Claude Vision)
+      const ocrText = await ocrImageWithClaude(buffer, attachment.typPliku);
+      if (ocrText) {
+        parsed = parseOswiadczenieText(ocrText, attachment.nazwaPliku);
+        const hasAnyData = parsed.dataOd || parsed.dataDo || parsed.nazwisko || parsed.imie
+          || parsed.rodzajPracy || parsed.rodzajUmowy || parsed.nrPaszportu
+          || parsed.nrDecyzji || parsed.stanowisko || parsed.wynagrodzenie;
+        if (!hasAnyData) parsed = null;
+      } else {
+        parsed = null;
+      }
+    } else {
+      parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
+    }
 
     if (!parsed) {
       const ocrErr = getLastOcrError();
@@ -169,18 +186,6 @@ export async function GET(
       },
       orderBy: { createdAt: "desc" },
     });
-
-    // Fallback: if no exact date match, find any base with same type for this foreigner
-    if (!existingBase) {
-      existingBase = await db.fdkEmploymentBase.findFirst({
-        where: {
-          foreignerId: attachment.foreignerId,
-          typ: docType,
-          status: "BRAK_DANYCH",
-        },
-        orderBy: { createdAt: "desc" },
-      });
-    }
 
     // Build type-specific data
     const baseData: Record<string, unknown> = {

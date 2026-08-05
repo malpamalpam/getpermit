@@ -22,13 +22,18 @@ export function ScrapeButton({ attachmentId, typPliku }: Props) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ text: string; isError: boolean } | null>(null);
 
-  if (typPliku !== "pdf") return null;
+  if (!["pdf", "jpeg", "jpg", "png"].includes(typPliku)) return null;
 
   const handleScrape = async () => {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch(`/api/fdk/attachments/${attachmentId}?action=scrape`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90_000);
+      const res = await fetch(`/api/fdk/attachments/${attachmentId}?action=scrape`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
       const data = await res.json();
       if (data.ok) {
         const parts: string[] = [];
@@ -64,8 +69,12 @@ export function ScrapeButton({ attachmentId, typPliku }: Props) {
           : data.error || "Nie udało się wyciągnąć danych";
         setResult({ text: errorMsg, isError: true });
       }
-    } catch {
-      setResult({ text: "Błąd połączenia", isError: true });
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setResult({ text: "Przekroczono czas oczekiwania — plik może być za duży lub serwer jest przeciążony. Spróbuj ponownie lub wprowadź dane ręcznie.", isError: true });
+      } else {
+        setResult({ text: "Błąd połączenia z serwerem. Sprawdź połączenie internetowe i spróbuj ponownie.", isError: true });
+      }
     } finally {
       setLoading(false);
     }
