@@ -379,9 +379,9 @@ export async function POST(
     id: attachment.id,
     extracted,
     message: attachment.typPliku !== "pdf"
-      ? "Plik wgrany. Użyj przycisku „Zescrapuj dane" aby odczytać treść dokumentu."
+      ? "Plik wgrany. Uzyj przycisku Zescrapuj dane aby odczytac tresc dokumentu."
       : extracted
         ? undefined
-        : "Plik wgrany (brak warstwy tekstowej). Użyj przycisku „Zescrapuj dane" aby uruchomić OCR.",
+        : "Plik wgrany (brak warstwy tekstowej). Uzyj przycisku Zescrapuj dane aby uruchomic OCR.",
   });
 }
