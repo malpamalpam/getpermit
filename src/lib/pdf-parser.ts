@@ -1099,21 +1099,21 @@ export async function parseOswiadczeniePdf(
 
     // If no text extracted (scanned PDF), optionally try structured OCR extraction
     if ((!text || text.length < 20) && ocrFallback) {
-      console.log("[pdf-parser] No text layer detected, attempting structured OCR extraction...");
+      const sizeMB = buffer.byteLength / 1024 / 1024;
+      console.log(`[pdf-parser] No text layer detected (${sizeMB.toFixed(1)} MB), attempting OCR...`);
 
-      // Try 1: Send full PDF to Claude PDF beta (always uses Sonnet)
-      const ocrResult = await ocrExtractStructured(buffer, "application/pdf", filename);
-      if (ocrResult) return ocrResult;
-      console.log(`[pdf-parser] PDF beta OCR returned null. lastOcrError=${JSON.stringify(lastOcrError)}`);
+      // Strategy: for large PDFs (>1 MB), SKIP the PDF beta entirely and go straight
+      // to JPEG extraction + rotation. Reason: PDF beta on large scanned PDFs eats
+      // the entire Vercel timeout (~60s) leaving no time for the JPEG fallback.
+      // For small PDFs (<1 MB), PDF beta is fast and works well.
 
-      // Try 2: Extract embedded JPEG images and process them individually
-      // This handles PDFs with rotated/embedded images that the PDF beta can't read
-      console.log("[pdf-parser] PDF OCR failed, trying JPEG extraction from PDF binary...");
+      // Try 1: JPEG extraction FIRST for large files, PDF beta first for small files
       const jpegs = await extractJpegsFromPdf(buffer);
       console.log(`[pdf-parser] Found ${jpegs.length} embedded JPEG images in PDF`);
 
       if (jpegs.length > 0) {
-        // Process each JPEG image and merge results
+        // Process extracted JPEGs with rotation — this is the reliable path
+        console.log("[pdf-parser] Using JPEG extraction + rotation path...");
         let bestResult: ParsedDocumentData | null = null;
 
         for (let i = 0; i < jpegs.length; i++) {
@@ -1209,6 +1209,15 @@ export async function parseOswiadczeniePdf(
           sanitizeDates(bestResult);
           return bestResult;
         }
+        console.log("[pdf-parser] JPEG extraction path produced no results");
+      }
+
+      // Fallback: try PDF beta OCR for small files without extractable JPEGs
+      if (jpegs.length === 0 && sizeMB < 2) {
+        console.log("[pdf-parser] No JPEGs found, trying PDF beta OCR (small file)...");
+        const ocrResult = await ocrExtractStructured(buffer, "application/pdf", filename);
+        if (ocrResult) return ocrResult;
+        console.log(`[pdf-parser] PDF beta OCR also returned null. lastOcrError=${JSON.stringify(lastOcrError)}`);
       }
 
       return null;
