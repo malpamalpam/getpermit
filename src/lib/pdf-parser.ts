@@ -524,15 +524,19 @@ function sanitizeDates(result: ParsedDocumentData): void {
 
 /**
  * Extract embedded JPEG images from PDF binary data.
- * Scanned PDFs typically store each page as a JPEG image.
+ * Handles both raw DCTDecode streams (JPEG markers visible) and
+ * FlateDecode+DCTDecode streams (JPEG compressed inside zlib — common in Word-generated PDFs).
  * Returns the largest images found (likely the page scans).
  */
 function extractJpegsFromPdf(buffer: ArrayBuffer): Buffer[] {
+  const zlib = require("zlib") as typeof import("zlib");
   const data = Buffer.from(buffer);
   const jpegs: Buffer[] = [];
   const SOI = Buffer.from([0xFF, 0xD8]); // JPEG Start of Image
   const EOI = Buffer.from([0xFF, 0xD9]); // JPEG End of Image
+  const MIN_SIZE = 10 * 1024; // 10 KB — skip thumbnails
 
+  // --- Pass 1: Find raw JPEG markers (DCTDecode-only streams) ---
   let searchFrom = 0;
   while (searchFrom < data.length - 2) {
     const soiIdx = data.indexOf(SOI, searchFrom);
@@ -542,14 +546,66 @@ function extractJpegsFromPdf(buffer: ArrayBuffer): Buffer[] {
     if (eoiIdx === -1) break;
 
     const jpegEnd = eoiIdx + 2;
-    const jpegSize = jpegEnd - soiIdx;
-
-    // Only keep images > 10 KB (skip thumbnails and tiny embedded images)
-    if (jpegSize > 10 * 1024) {
+    if (jpegEnd - soiIdx > MIN_SIZE) {
       jpegs.push(data.subarray(soiIdx, jpegEnd));
     }
-
     searchFrom = jpegEnd;
+  }
+
+  // --- Pass 2: Find FlateDecode-compressed streams and decompress ---
+  // Word-generated PDFs often use [/FlateDecode /DCTDecode] — the JPEG is zlib-compressed.
+  // Look for "stream\r\n" or "stream\n" followed by zlib magic bytes, decompress, check for JPEG.
+  if (jpegs.length === 0) {
+    console.log("[pdf-parser] No raw JPEGs found, trying FlateDecode stream decompression...");
+    const streamMarker = Buffer.from("stream\n");
+    const streamMarkerCRLF = Buffer.from("stream\r\n");
+    const endstreamMarker = Buffer.from("\nendstream");
+    const endstreamMarkerCR = Buffer.from("\r\nendstream");
+
+    let pos = 0;
+    let decompressAttempts = 0;
+    while (pos < data.length && decompressAttempts < 50) {
+      // Find next "stream\n" or "stream\r\n"
+      let streamStart = data.indexOf(streamMarkerCRLF, pos);
+      let markerLen = streamMarkerCRLF.length;
+      if (streamStart === -1) {
+        streamStart = data.indexOf(streamMarker, pos);
+        markerLen = streamMarker.length;
+      }
+      if (streamStart === -1) break;
+
+      const dataStart = streamStart + markerLen;
+
+      // Find "endstream"
+      let streamEnd = data.indexOf(endstreamMarkerCR, dataStart);
+      if (streamEnd === -1) streamEnd = data.indexOf(endstreamMarker, dataStart);
+      if (streamEnd === -1) { pos = dataStart + 1; continue; }
+
+      const streamData = data.subarray(dataStart, streamEnd);
+      pos = streamEnd + 10;
+
+      // Skip small streams (< 10 KB compressed — unlikely to be a page scan)
+      if (streamData.length < 5000) continue;
+
+      // Check for zlib magic bytes (78 9C, 78 01, 78 DA, 78 5E)
+      if (streamData.length < 2 || streamData[0] !== 0x78) continue;
+      if (![0x01, 0x5E, 0x9C, 0xDA].includes(streamData[1])) continue;
+
+      decompressAttempts++;
+      try {
+        const decompressed = zlib.inflateSync(streamData);
+
+        // Check if decompressed data is a JPEG
+        if (decompressed.length > MIN_SIZE &&
+            decompressed[0] === 0xFF && decompressed[1] === 0xD8) {
+          console.log(`[pdf-parser] Found FlateDecode JPEG: ${(decompressed.length / 1024).toFixed(0)} KB`);
+          jpegs.push(decompressed);
+        }
+      } catch {
+        // Not valid zlib — skip
+      }
+    }
+    console.log(`[pdf-parser] FlateDecode pass: ${decompressAttempts} streams tried, ${jpegs.length} JPEGs found`);
   }
 
   // Sort by size descending — largest images are most likely page scans
@@ -739,6 +795,8 @@ export async function ocrExtractStructured(
   console.log(`[pdf-parser] Using model: ${model} (file ${fileSizeMB.toFixed(1)} MB, pdf=${isPdf}, haiku=${useHaiku})`);
 
   const extractionPrompt = `Przeanalizuj ten dokument i wyciagnij z niego dane w formacie JSON. Dokument to prawdopodobnie polski dokument imigracyjny (oswiadczenie o powierzeniu pracy, zezwolenie na prace, decyzja pobytowa, wiza, karta pobytu lub Niebieska Karta UE).
+
+UWAGA: Obraz dokumentu moze byc OBROCONY o 90, 180 lub 270 stopni (zdjecie zrobione telefonem na lezaco). Odczytaj tekst niezaleznie od orientacji obrazu.
 
 Zwroc TYLKO obiekt JSON (bez komentarzy, bez markdown) z nastepujacymi polami (puste/nieznalezione pola = null):
 
