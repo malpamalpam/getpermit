@@ -160,6 +160,16 @@ function extractPersonalData(normalized: string, result: ParsedDocumentData): vo
     if (fallback) result.nazwisko = titleCase(fallback[1].trim());
   }
 
+  // Fallback: ALL CAPS words after "Imię" or "Nazwisko" label (any format)
+  if (!result.imie) {
+    const imieAllCaps = normalized.match(/[Ii]mi[ęe][^:]*[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ]{2,})/);
+    if (imieAllCaps) result.imie = titleCase(imieAllCaps[1].trim());
+  }
+  if (!result.nazwisko) {
+    const nazwiskoAllCaps = normalized.match(/[Nn]azwisko[^:]*[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ]{2,})/);
+    if (nazwiskoAllCaps) result.nazwisko = titleCase(nazwiskoAllCaps[1].trim());
+  }
+
   // Data urodzenia
   const dobMatch = normalized.match(/[Dd]ata\s+urodzenia\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})/);
   if (dobMatch) result.dataUrodzenia = parseDatePL(dobMatch[1]);
@@ -191,6 +201,17 @@ function extractDateRange(normalized: string, result: ParsedDocumentData): void 
     result.dataDo = parseDatePL(dateRangeMatch[2]);
   }
 
+  // ISO format: "Od: YYYY-MM-DD ... Do: YYYY-MM-DD" (OP.G format)
+  if (!result.dataOd) {
+    const isoRangeMatch = normalized.match(
+      /[Oo]d\s*(?:\(.*?\))?[:\s]*(\d{4}-\d{2}-\d{2})\s+[Dd]o\s*(?:\(.*?\))?[:\s]*(\d{4}-\d{2}-\d{2})/
+    );
+    if (isoRangeMatch) {
+      result.dataOd = isoRangeMatch[1];
+      result.dataDo = isoRangeMatch[2];
+    }
+  }
+
   // Ewidencja dates take priority for oświadczenia
   const ewidencjaMatch = normalized.match(
     /ewidencji\s+o[śs]wiadcze[ńn].*?[Oo]d\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})\s+[Dd]o\s*(?:\(.*?\))?[:\s]*(\d{1,2}\s*[./]\s*\d{1,2}\s*[./]\s*\d{4})/i
@@ -198,6 +219,17 @@ function extractDateRange(normalized: string, result: ParsedDocumentData): void 
   if (ewidencjaMatch) {
     result.dataOd = parseDatePL(ewidencjaMatch[1]);
     result.dataDo = parseDatePL(ewidencjaMatch[2]);
+  }
+
+  // Ewidencja dates in ISO format
+  if (!result.dataOd || (result.dataOd && normalized.includes("ewidencji"))) {
+    const ewidIsoMatch = normalized.match(
+      /ewidencji\s+o[śs]wiadcze[ńn].*?[Oo]d\s*(?:\(.*?\))?[:\s]*(\d{4}-\d{2}-\d{2})\s+[Dd]o\s*(?:\(.*?\))?[:\s]*(\d{4}-\d{2}-\d{2})/i
+    );
+    if (ewidIsoMatch) {
+      result.dataOd = ewidIsoMatch[1];
+      result.dataDo = ewidIsoMatch[2];
+    }
   }
 
   // Try "ważne od ... do ..." or "okres ważności od ... do ..."
@@ -339,13 +371,33 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
 
   // === OŚWIADCZENIE / unknown ===
   extractPersonalData(normalized, result);
+
+  // Fallback: extract names from filename pattern "(IMIE NAZWISKO)"
+  if (!result.imie && !result.nazwisko && filenameHint) {
+    const fnNameMatch = filenameHint.match(/\(([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ]+)\)/);
+    if (fnNameMatch) {
+      result.imie = titleCase(fnNameMatch[1].trim());
+      result.nazwisko = titleCase(fnNameMatch[2].trim());
+    }
+    // Also try "(NAZWISKO IMIE)" — uppercase both parts
+    if (!result.imie) {
+      const fnNameMatch2 = filenameHint.match(/\(([A-ZĄĆĘŁŃÓŚŹŻ]{2,})\s+([A-ZĄĆĘŁŃÓŚŹŻ]{2,})\)/);
+      if (fnNameMatch2) {
+        // Assume IMIE NAZWISKO order (first shorter, second longer or both similar)
+        result.imie = titleCase(fnNameMatch2[1].trim());
+        result.nazwisko = titleCase(fnNameMatch2[2].trim());
+      }
+    }
+  }
+
   extractDateRange(normalized, result);
 
   // Fallback for OP.G format: look for date pairs near "okres" or "powierzenia"
   if (!result.dataOd && result.detectedType === "OSWIADCZENIE") {
     // Try: any "Od" followed by a date, then "Do" followed by a date, within 200 chars
+    const DATE_PATTERN = "(?:\\d{1,2}\\s*[.\\/\\-]\\s*\\d{1,2}\\s*[.\\/\\-]\\s*\\d{4}|\\d{4}-\\d{2}-\\d{2})";
     const looseDateRange = normalized.match(
-      /[Oo]d[^A-Za-z]*(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})[^A-Za-z]*[Dd]o[^A-Za-z]*(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})/
+      new RegExp(`[Oo]d[^A-Za-z]*(${DATE_PATTERN})[^A-Za-z]*[Dd]o[^A-Za-z]*(${DATE_PATTERN})`)
     );
     if (looseDateRange) {
       result.dataOd = parseDatePL(looseDateRange[1]);
@@ -354,8 +406,9 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   }
   // Fallback: look for standalone date pairs in "okres powierzenia pracy" section
   if (!result.dataOd && result.detectedType === "OSWIADCZENIE") {
+    const OKRES_DATE = "(?:\\d{1,2}\\s*[.\\/\\-]\\s*\\d{1,2}\\s*[.\\/\\-]\\s*\\d{4}|\\d{4}-\\d{2}-\\d{2})";
     const okresMatch = normalized.match(
-      /(?:okres|powierzeni)[\s\S]{0,100}?(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})[\s\S]{0,50}?(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})/i
+      new RegExp(`(?:okres|powierzeni)[\\s\\S]{0,100}?(${OKRES_DATE})[\\s\\S]{0,50}?(${OKRES_DATE})`, "i")
     );
     if (okresMatch) {
       const d1 = parseDatePL(okresMatch[1]);
@@ -466,6 +519,43 @@ function sanitizeDates(result: ParsedDocumentData): void {
     result.dataOd = undefined;
     result.lowConfidence = true;
   }
+}
+
+/**
+ * Extract embedded JPEG images from PDF binary data.
+ * Scanned PDFs typically store each page as a JPEG image.
+ * Returns the largest images found (likely the page scans).
+ */
+function extractJpegsFromPdf(buffer: ArrayBuffer): Buffer[] {
+  const data = Buffer.from(buffer);
+  const jpegs: Buffer[] = [];
+  const SOI = Buffer.from([0xFF, 0xD8]); // JPEG Start of Image
+  const EOI = Buffer.from([0xFF, 0xD9]); // JPEG End of Image
+
+  let searchFrom = 0;
+  while (searchFrom < data.length - 2) {
+    const soiIdx = data.indexOf(SOI, searchFrom);
+    if (soiIdx === -1) break;
+
+    const eoiIdx = data.indexOf(EOI, soiIdx + 2);
+    if (eoiIdx === -1) break;
+
+    const jpegEnd = eoiIdx + 2;
+    const jpegSize = jpegEnd - soiIdx;
+
+    // Only keep images > 10 KB (skip thumbnails and tiny embedded images)
+    if (jpegSize > 10 * 1024) {
+      jpegs.push(data.subarray(soiIdx, jpegEnd));
+    }
+
+    searchFrom = jpegEnd;
+  }
+
+  // Sort by size descending — largest images are most likely page scans
+  jpegs.sort((a, b) => b.length - a.length);
+
+  // Return at most 4 largest (first pages usually have the key data)
+  return jpegs.slice(0, 4);
 }
 
 /**
@@ -951,8 +1041,63 @@ export async function parseOswiadczeniePdf(
     // If no text extracted (scanned PDF), optionally try structured OCR extraction
     if ((!text || text.length < 20) && ocrFallback) {
       console.log("[pdf-parser] No text layer detected, attempting structured OCR extraction...");
+
+      // Try 1: Send full PDF to Claude PDF beta
       const ocrResult = await ocrExtractStructured(buffer, "application/pdf", filename);
       if (ocrResult) return ocrResult;
+
+      // Try 2: Extract embedded JPEG images and process them individually
+      // This handles PDFs with rotated/embedded images that the PDF beta can't read
+      console.log("[pdf-parser] PDF OCR failed, trying JPEG extraction from PDF binary...");
+      const jpegs = extractJpegsFromPdf(buffer);
+      console.log(`[pdf-parser] Found ${jpegs.length} embedded JPEG images in PDF`);
+
+      if (jpegs.length > 0) {
+        // Process each JPEG image and merge results
+        let bestResult: ParsedDocumentData | null = null;
+
+        for (let i = 0; i < jpegs.length; i++) {
+          console.log(`[pdf-parser] Processing extracted JPEG ${i + 1}/${jpegs.length} (${(jpegs[i].length / 1024).toFixed(0)} KB)`);
+          const imgResult = await ocrExtractStructured(
+            jpegs[i].buffer.slice(jpegs[i].byteOffset, jpegs[i].byteOffset + jpegs[i].byteLength),
+            "image/jpeg",
+            filename
+          );
+
+          if (imgResult) {
+            if (!bestResult) {
+              bestResult = imgResult;
+            } else {
+              // Merge: fill in missing fields from subsequent pages
+              if (!bestResult.imie && imgResult.imie) bestResult.imie = imgResult.imie;
+              if (!bestResult.nazwisko && imgResult.nazwisko) bestResult.nazwisko = imgResult.nazwisko;
+              if (!bestResult.dataOd && imgResult.dataOd) bestResult.dataOd = imgResult.dataOd;
+              if (!bestResult.dataDo && imgResult.dataDo) bestResult.dataDo = imgResult.dataDo;
+              if (!bestResult.obywatelstwo && imgResult.obywatelstwo) bestResult.obywatelstwo = imgResult.obywatelstwo;
+              if (!bestResult.stanowisko && imgResult.stanowisko) bestResult.stanowisko = imgResult.stanowisko;
+              if (!bestResult.firma && imgResult.firma) bestResult.firma = imgResult.firma;
+              if (!bestResult.wynagrodzenie && imgResult.wynagrodzenie) bestResult.wynagrodzenie = imgResult.wynagrodzenie;
+              if (!bestResult.nrDecyzji && imgResult.nrDecyzji) bestResult.nrDecyzji = imgResult.nrDecyzji;
+              if (!bestResult.nrPaszportu && imgResult.nrPaszportu) bestResult.nrPaszportu = imgResult.nrPaszportu;
+              if (!bestResult.dataUrodzenia && imgResult.dataUrodzenia) bestResult.dataUrodzenia = imgResult.dataUrodzenia;
+              if (!bestResult.detectedType && imgResult.detectedType) bestResult.detectedType = imgResult.detectedType;
+              if (!bestResult.rodzajUmowy && imgResult.rodzajUmowy) bestResult.rodzajUmowy = imgResult.rodzajUmowy;
+            }
+
+            // If we have the essential fields after processing this page, stop early
+            if (bestResult.imie && bestResult.nazwisko && bestResult.dataDo && bestResult.detectedType) {
+              console.log("[pdf-parser] Got all essential fields, stopping image processing");
+              break;
+            }
+          }
+        }
+
+        if (bestResult) {
+          sanitizeDates(bestResult);
+          return bestResult;
+        }
+      }
+
       return null;
     }
 
