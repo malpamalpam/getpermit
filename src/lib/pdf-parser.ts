@@ -108,6 +108,13 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
     if (/^.{0,500}odwo[łl]anie/si.test(text)) return "ODWOLANIE";
   }
 
+  // === OŚWIADCZENIE PSZ-OPWP — form header is strongest signal, check EARLY ===
+  // PSZ-OPWP is the electronic form code from praca.gov.pl for oświadczenia.
+  // Must be checked before KARTA_POBYTU because these documents often mention "pobyt".
+  if (lower.includes("psz-opwp") || lower.includes("psz opwp")) return "OSWIADCZENIE";
+  // "OŚWIADCZENIE PODMIOTU ... O POWIERZENIU" — form header
+  if (/o[śs]wiadczenie\s+podmiotu.*?(?:o\s+)?powierzeniu/i.test(text)) return "OSWIADCZENIE";
+
   // === EU BLUE CARD — check before generic karta pobytu ===
   if (lower.includes("niebieska karta") || lower.includes("blue card")) return "BLUE_CARD";
   if (lower.includes("eu blue card") || lower.includes("karta ue")) return "BLUE_CARD";
@@ -334,10 +341,53 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   extractPersonalData(normalized, result);
   extractDateRange(normalized, result);
 
+  // Fallback for OP.G format: look for date pairs near "okres" or "powierzenia"
+  if (!result.dataOd && result.detectedType === "OSWIADCZENIE") {
+    // Try: any "Od" followed by a date, then "Do" followed by a date, within 200 chars
+    const looseDateRange = normalized.match(
+      /[Oo]d[^A-Za-z]*(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})[^A-Za-z]*[Dd]o[^A-Za-z]*(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})/
+    );
+    if (looseDateRange) {
+      result.dataOd = parseDatePL(looseDateRange[1]);
+      result.dataDo = parseDatePL(looseDateRange[2]);
+    }
+  }
+  // Fallback: look for standalone date pairs in "okres powierzenia pracy" section
+  if (!result.dataOd && result.detectedType === "OSWIADCZENIE") {
+    const okresMatch = normalized.match(
+      /(?:okres|powierzeni)[\s\S]{0,100}?(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})[\s\S]{0,50}?(\d{1,2}\s*[.\/\-]\s*\d{1,2}\s*[.\/\-]\s*\d{4})/i
+    );
+    if (okresMatch) {
+      const d1 = parseDatePL(okresMatch[1]);
+      const d2 = parseDatePL(okresMatch[2]);
+      if (d1 && d2 && d1 < d2) {
+        result.dataOd = d1;
+        result.dataDo = d2;
+      }
+    }
+  }
+
   // Nr oświadczenia (ONLY for OSWIADCZENIE)
   if (result.detectedType === "OSWIADCZENIE") {
-    const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok)[.:\s]+([A-Z0-9.]+)/i);
+    const nrWpisuMatch = normalized.match(/(?:Numer wpisu|nr dok|Numer dokumentu)[.:\s]+([A-Z0-9][A-Z0-9.\-\/]+)/i);
     if (nrWpisuMatch) result.nrOswiadczenia = nrWpisuMatch[1].trim();
+    // PSZ-OPWP header often has "PZC.XXXX.XXXXX.XX.YYYY" or "PZC-XXXX-XXXXX-XX-YYYY"
+    if (!result.nrOswiadczenia) {
+      const pzcMatch = normalized.match(/(PZC[.\-]\d{4}[.\-]\d{3,5}[.\-][A-Z]{2,3}[.\-]\d{4})/i);
+      if (pzcMatch) result.nrOswiadczenia = pzcMatch[1].replace(/-/g, ".").trim();
+    }
+    // Also try OP.G format: "OP.G.4390.XXXXX.XX.YYYY"
+    if (!result.nrOswiadczenia) {
+      const opgMatch = normalized.match(/(OP\.G\.\d{4}\.\d{3,5}\.[A-Z]{2,3}\.\d{4})/i);
+      if (opgMatch) result.nrOswiadczenia = opgMatch[1].trim();
+    }
+    // Fallback: extract from filename if it contains PZC or OP.G pattern
+    if (!result.nrOswiadczenia && filenameHint) {
+      const fnMatch = filenameHint.match(/(PZC[.\-]\d{4}[.\-]\d{3,5}[.\-][A-Z]{2,3}[.\-]\d{4})/i);
+      if (fnMatch) result.nrOswiadczenia = fnMatch[1].replace(/-/g, ".").trim();
+      const fnOpgMatch = filenameHint.match(/(OP\.G\.\d{4}\.\d{3,5}\.[A-Z]{2,3}\.\d{4})/i);
+      if (!result.nrOswiadczenia && fnOpgMatch) result.nrOswiadczenia = fnOpgMatch[1].trim();
+    }
   }
 
   // Stanowisko / rodzaj pracy (oświadczenie pkt 3.1)
@@ -590,6 +640,11 @@ export async function ocrExtractStructured(
 
   const base64 = Buffer.from(buffer).toString("base64");
 
+  // Use faster model (Haiku) for large files to avoid timeout on Vercel (60s limit)
+  const useHaiku = buffer.byteLength > 2 * 1024 * 1024; // >2 MB
+  const model = useHaiku ? "claude-haiku-4-5-20251001" : "claude-sonnet-4-6";
+  console.log(`[pdf-parser] Using model: ${model} (file ${fileSizeMB.toFixed(1)} MB, haiku=${useHaiku})`);
+
   const extractionPrompt = `Przeanalizuj ten dokument i wyciagnij z niego dane w formacie JSON. Dokument to prawdopodobnie polski dokument imigracyjny (oswiadczenie o powierzeniu pracy, zezwolenie na prace, decyzja pobytowa, wiza, karta pobytu lub Niebieska Karta UE).
 
 Zwroc TYLKO obiekt JSON (bez komentarzy, bez markdown) z nastepujacymi polami (puste/nieznalezione pola = null):
@@ -633,14 +688,14 @@ Zasady:
     let response;
     if (isPdf) {
       response = await client.beta.messages.create({
-        model: "claude-sonnet-4-6",
+        model,
         max_tokens: 2048,
         betas: ["pdfs-2024-09-25"],
         messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
       });
     } else {
       response = await client.messages.create({
-        model: "claude-sonnet-4-6",
+        model,
         max_tokens: 2048,
         messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
       });

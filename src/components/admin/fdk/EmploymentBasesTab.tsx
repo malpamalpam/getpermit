@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { EmploymentBaseEditForm } from "./EmploymentBaseEditForm";
-import { Plus, Pencil } from "lucide-react";
+import { deleteEmploymentBaseAction } from "@/lib/fdk-actions";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 
 interface EmploymentBase {
   id: number;
@@ -79,9 +81,20 @@ function fmt(d: Date | null | undefined): string {
 }
 
 export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: Props) {
+  const router = useRouter();
   const [editingBase, setEditingBase] = useState<EmploymentBase | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [showAll, setShowAll] = useState(false);
+
+  const handleDeleteBase = async (baseId: number) => {
+    if (!confirm("Na pewno usunac te podstawe zatrudnienia? Tej operacji nie mozna cofnac.")) return;
+    try {
+      await deleteEmploymentBaseAction(baseId);
+      router.refresh();
+    } catch {
+      alert("Nie udalo sie usunac podstawy.");
+    }
+  };
 
   // Only show one (most recent) active residence permit (KARTA_POBYTU or BLUE_CARD) in main view
   const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];
@@ -186,6 +199,13 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
                 className="ml-auto inline-flex items-center gap-1 rounded-md bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent hover:bg-accent/20"
               >
                 <Pencil className="h-3 w-3" /> Edytuj
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteBase(b.id)}
+                className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-100"
+              >
+                <Trash2 className="h-3 w-3" /> Usun
               </button>
             </div>
             <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">

@@ -5,8 +5,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
 
-// Allow up to 60s for scrape action (OCR via Claude can take 20-40s)
-export const maxDuration = 60;
+// Allow up to 120s for scrape action (OCR via Claude can take 30-60s for large multi-page scans)
+export const maxDuration = 120;
 
 /**
  * GET /api/fdk/attachments/[id]?action=download|preview
