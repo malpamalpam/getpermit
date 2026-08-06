@@ -1059,7 +1059,7 @@ export async function parseOswiadczeniePdf(
         for (let i = 0; i < jpegs.length; i++) {
           console.log(`[pdf-parser] Processing extracted JPEG ${i + 1}/${jpegs.length} (${(jpegs[i].length / 1024).toFixed(0)} KB)`);
           const imgResult = await ocrExtractStructured(
-            jpegs[i].buffer.slice(jpegs[i].byteOffset, jpegs[i].byteOffset + jpegs[i].byteLength),
+            new Uint8Array(jpegs[i]).buffer as ArrayBuffer,
             "image/jpeg",
             filename
           );
