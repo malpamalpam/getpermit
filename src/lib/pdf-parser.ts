@@ -1097,8 +1097,13 @@ export async function parseOswiadczeniePdf(
     const pdfData = await pdfParse(Buffer.from(buffer));
     let text = pdfData.text;
 
-    // If no text extracted (scanned PDF), optionally try structured OCR extraction
-    if ((!text || text.length < 20) && ocrFallback) {
+    // Check MEANINGFUL text length (non-whitespace chars), not raw length.
+    // Scanned PDFs often produce whitespace-only text (e.g. 43 chars of spaces/newlines)
+    // which passes a naive length check but contains no actual content.
+    const meaningfulLength = (text ?? "").replace(/\s/g, "").length;
+
+    // If no meaningful text extracted (scanned PDF), optionally try OCR extraction
+    if (meaningfulLength < 20 && ocrFallback) {
       const sizeMB = buffer.byteLength / 1024 / 1024;
       console.log(`[pdf-parser] No text layer detected (${sizeMB.toFixed(1)} MB), attempting OCR...`);
 
@@ -1223,7 +1228,7 @@ export async function parseOswiadczeniePdf(
       return null;
     }
 
-    if (!text || text.length < 20) return null;
+    if (meaningfulLength < 20) return null;
 
     const result = parseOswiadczenieText(text, filename);
 
