@@ -528,8 +528,8 @@ function sanitizeDates(result: ParsedDocumentData): void {
  * FlateDecode+DCTDecode streams (JPEG compressed inside zlib — common in Word-generated PDFs).
  * Returns the largest images found (likely the page scans).
  */
-function extractJpegsFromPdf(buffer: ArrayBuffer): Buffer[] {
-  const zlib = require("zlib") as typeof import("zlib");
+async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
+  const zlib = await import("zlib");
   const data = Buffer.from(buffer);
   const jpegs: Buffer[] = [];
   const SOI = Buffer.from([0xFF, 0xD8]); // JPEG Start of Image
@@ -1109,7 +1109,7 @@ export async function parseOswiadczeniePdf(
       // Try 2: Extract embedded JPEG images and process them individually
       // This handles PDFs with rotated/embedded images that the PDF beta can't read
       console.log("[pdf-parser] PDF OCR failed, trying JPEG extraction from PDF binary...");
-      const jpegs = extractJpegsFromPdf(buffer);
+      const jpegs = await extractJpegsFromPdf(buffer);
       console.log(`[pdf-parser] Found ${jpegs.length} embedded JPEG images in PDF`);
 
       if (jpegs.length > 0) {
@@ -1117,12 +1117,65 @@ export async function parseOswiadczeniePdf(
         let bestResult: ParsedDocumentData | null = null;
 
         for (let i = 0; i < jpegs.length; i++) {
-          console.log(`[pdf-parser] Processing extracted JPEG ${i + 1}/${jpegs.length} (${(jpegs[i].length / 1024).toFixed(0)} KB)`);
+          const jpegBuf = jpegs[i];
+          console.log(`[pdf-parser] Processing extracted JPEG ${i + 1}/${jpegs.length} (${(jpegBuf.length / 1024).toFixed(0)} KB)`);
+
+          // Auto-rotate: detect landscape images and rotate to portrait
+          // Phone photos taken horizontally produce landscape JPEGs that need 90° CW rotation
+          let imageBuffer: Buffer = jpegBuf;
+          try {
+            const sharp = (await import("sharp")).default;
+            const metadata = await sharp(jpegBuf).metadata();
+            const w = metadata.width ?? 0;
+            const h = metadata.height ?? 0;
+            console.log(`[pdf-parser] JPEG ${i + 1} dimensions: ${w}x${h} (${w > h ? "LANDSCAPE - rotating" : "portrait"})`);
+
+            if (w > h && w > 100) {
+              // Landscape image — rotate 90° clockwise (most common for phone photos)
+              imageBuffer = await sharp(jpegBuf).rotate(90).jpeg({ quality: 85 }).toBuffer();
+              console.log(`[pdf-parser] Rotated JPEG ${i + 1}: ${imageBuffer.length / 1024 | 0} KB`);
+            }
+          } catch (rotErr) {
+            console.warn(`[pdf-parser] Sharp rotation failed, using original: ${rotErr}`);
+          }
+
           const imgResult = await ocrExtractStructured(
-            new Uint8Array(jpegs[i]).buffer as ArrayBuffer,
+            new Uint8Array(imageBuffer).buffer as ArrayBuffer,
             "image/jpeg",
             filename
           );
+
+          // If rotation didn't help, retry with 270° (opposite direction)
+          if (!imgResult && imageBuffer !== jpegBuf) {
+            console.log(`[pdf-parser] OCR failed on 90° rotation, trying 270°...`);
+            try {
+              const sharp = (await import("sharp")).default;
+              const altBuffer = await sharp(jpegBuf).rotate(270).jpeg({ quality: 85 }).toBuffer();
+              const altResult = await ocrExtractStructured(
+                new Uint8Array(altBuffer).buffer as ArrayBuffer,
+                "image/jpeg",
+                filename
+              );
+              if (altResult) {
+                if (!bestResult) { bestResult = altResult; } else {
+                  if (!bestResult.imie && altResult.imie) bestResult.imie = altResult.imie;
+                  if (!bestResult.nazwisko && altResult.nazwisko) bestResult.nazwisko = altResult.nazwisko;
+                  if (!bestResult.dataOd && altResult.dataOd) bestResult.dataOd = altResult.dataOd;
+                  if (!bestResult.dataDo && altResult.dataDo) bestResult.dataDo = altResult.dataDo;
+                  if (!bestResult.detectedType && altResult.detectedType) bestResult.detectedType = altResult.detectedType;
+                  if (!bestResult.firma && altResult.firma) bestResult.firma = altResult.firma;
+                  if (!bestResult.stanowisko && altResult.stanowisko) bestResult.stanowisko = altResult.stanowisko;
+                  if (!bestResult.wynagrodzenie && altResult.wynagrodzenie) bestResult.wynagrodzenie = altResult.wynagrodzenie;
+                  if (!bestResult.nrDecyzji && altResult.nrDecyzji) bestResult.nrDecyzji = altResult.nrDecyzji;
+                }
+                if (bestResult.imie && bestResult.nazwisko && bestResult.dataDo && bestResult.detectedType) {
+                  console.log("[pdf-parser] Got all essential fields after 270° rotation");
+                  break;
+                }
+                continue;
+              }
+            } catch { /* ignore */ }
+          }
 
           if (imgResult) {
             if (!bestResult) {
