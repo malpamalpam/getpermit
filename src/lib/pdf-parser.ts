@@ -91,6 +91,7 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
     || lower.includes("udziela się")
     || lower.includes("zezwalam")
     || lower.includes("udzielam zezwolenia")
+    || lower.includes("orzekam o udzieleniu")
     || (lower.includes("decyzja") && /udziel[ae]/i.test(text));
 
   if (!isPositiveDecision) {
@@ -730,10 +731,12 @@ export async function ocrExtractStructured(
 
   const base64 = Buffer.from(buffer).toString("base64");
 
-  // Use faster model (Haiku) for large files to avoid timeout on Vercel (60s limit)
-  const useHaiku = buffer.byteLength > 2 * 1024 * 1024; // >2 MB
+  // PDF beta (pdfs-2024-09-25) requires Sonnet — Haiku doesn't support it reliably.
+  // Use Haiku only for image OCR (non-PDF), Sonnet for everything else.
+  const isPdf = mediaType === "application/pdf";
+  const useHaiku = !isPdf && buffer.byteLength > 2 * 1024 * 1024; // Haiku only for large images
   const model = useHaiku ? "claude-haiku-4-5-20251001" : "claude-sonnet-4-6";
-  console.log(`[pdf-parser] Using model: ${model} (file ${fileSizeMB.toFixed(1)} MB, haiku=${useHaiku})`);
+  console.log(`[pdf-parser] Using model: ${model} (file ${fileSizeMB.toFixed(1)} MB, pdf=${isPdf}, haiku=${useHaiku})`);
 
   const extractionPrompt = `Przeanalizuj ten dokument i wyciagnij z niego dane w formacie JSON. Dokument to prawdopodobnie polski dokument imigracyjny (oswiadczenie o powierzeniu pracy, zezwolenie na prace, decyzja pobytowa, wiza, karta pobytu lub Niebieska Karta UE).
 
@@ -768,8 +771,6 @@ Zasady:
   try {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey });
-
-    const isPdf = mediaType === "application/pdf";
 
     const contentBlock = isPdf
       ? { type: "document" as const, source: { type: "base64" as const, media_type: "application/pdf" as const, data: base64 } }
@@ -1042,9 +1043,10 @@ export async function parseOswiadczeniePdf(
     if ((!text || text.length < 20) && ocrFallback) {
       console.log("[pdf-parser] No text layer detected, attempting structured OCR extraction...");
 
-      // Try 1: Send full PDF to Claude PDF beta
+      // Try 1: Send full PDF to Claude PDF beta (always uses Sonnet)
       const ocrResult = await ocrExtractStructured(buffer, "application/pdf", filename);
       if (ocrResult) return ocrResult;
+      console.log(`[pdf-parser] PDF beta OCR returned null. lastOcrError=${JSON.stringify(lastOcrError)}`);
 
       // Try 2: Extract embedded JPEG images and process them individually
       // This handles PDFs with rotated/embedded images that the PDF beta can't read
