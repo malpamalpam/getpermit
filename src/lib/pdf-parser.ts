@@ -480,33 +480,26 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
   }
 
-  // PSZ-OPWP format: various wynagrodzenie patterns
+  // PSZ-OPWP format: "stawka godzinowa: 150,00" or "stawka miesięczna: 4806,00" (no PLN suffix)
   if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
-    // Pattern: "Najniższe wynagrodzenie brutto: KWOTA PLN" (PSZ-OPWP label without section number)
-    const wynLabelMatch = normalized.match(/[Nn]ajni[żz]sz[ea]\s+wynagrodzeni[ea][^:]*[:\s]+(\d[\d\s,.]+)\s*(?:PLN|z[łl])/i);
-    if (wynLabelMatch) {
-      result.wynagrodzenie = wynLabelMatch[1].replace(/\s+/g, " ").trim() + " PLN brutto";
+    const stawkaMatch = normalized.match(/stawka\s+(?:godzinowa|miesi[ęe]czna)[:\s]+(\d[\d\s,.]+)/i);
+    if (stawkaMatch) {
+      const isHourly = /godzinowa/i.test(stawkaMatch[0]);
+      result.wynagrodzenie = stawkaMatch[1].replace(/\s+/g, "").trim() + " PLN" + (isHourly ? "/godz. brutto" : " brutto");
     }
   }
+  // PSZ-OPWP: "3.8. Wysokość wynagrodzenia brutto ... stawka godzinowa: NNN,NN"
   if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
-    // Pattern: "KWOTA PLN brutto" or "KWOTA zł brutto" anywhere (standalone)
-    const wynStandaloneMatch = normalized.match(/(\d[\d\s,.]+)\s*(?:PLN|z[łl])\s*(?:brutto|netto)(?:\s*miesi[ęe]cznie)?/i);
-    if (wynStandaloneMatch) {
-      result.wynagrodzenie = wynStandaloneMatch[0].replace(/\s+/g, " ").trim();
+    const wyn38Flex = normalized.match(/3\.8[.\s]*[^:]*[:\s].*?(\d[\d\s,.]+)/i);
+    if (wyn38Flex) {
+      result.wynagrodzenie = wyn38Flex[1].replace(/\s+/g, "").trim() + " PLN brutto";
     }
   }
-  if (!result.wynagrodzenie) {
-    // Pattern: section 3.8 with flexible format
-    const wyn38 = normalized.match(/3\.8[.\s]*[^:]*[:\s]+(\d[\d\s,.]+\s*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie)[^\n]*)/i);
-    if (wyn38) {
-      result.wynagrodzenie = wyn38[1].replace(/\s+/g, " ").trim();
-    }
-  }
+  // Generic: "KWOTA PLN brutto" or "KWOTA zł brutto"
   if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
-    // Last resort: any number >= 100 followed by PLN/zł (skip page numbers etc.)
-    const wynAnyMatch = normalized.match(/(\d{3}[\d\s,.]*)\s*(?:PLN|z[łl])/i);
-    if (wynAnyMatch) {
-      result.wynagrodzenie = wynAnyMatch[0].replace(/\s+/g, " ").trim();
+    const wynGeneric = normalized.match(/(\d[\d\s,.]+)\s*(?:PLN|z[łl])\s*(?:brutto|netto)?/i);
+    if (wynGeneric) {
+      result.wynagrodzenie = wynGeneric[0].replace(/\s+/g, " ").trim();
     }
   }
 
