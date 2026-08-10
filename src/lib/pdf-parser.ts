@@ -636,7 +636,7 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
         if (meta.width && meta.height && meta.width > 100 && meta.height > 100) {
           // Convert grayscale to RGB if needed (Claude API may reject grayscale JPEGs)
           let validBuf = candidate;
-          if (meta.channels === 1 || meta.space === "grey" || meta.space === "b-w") {
+          if (meta.channels === 1 || (meta.space as string) === "grey" || (meta.space as string) === "b-w") {
             console.log(`[pdf-parser] Converting grayscale image (${meta.width}x${meta.height}) to RGB`);
             validBuf = await sharp(candidate).toColourspace("srgb").jpeg({ quality: 85 }).toBuffer();
           }
