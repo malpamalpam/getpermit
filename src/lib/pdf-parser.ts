@@ -1154,12 +1154,18 @@ export async function parseOswiadczeniePdf(
       const sizeMB = buffer.byteLength / 1024 / 1024;
       console.log(`[pdf-parser] No text layer detected (${sizeMB.toFixed(1)} MB), attempting OCR...`);
 
-      // Strategy: for large PDFs (>1 MB), SKIP the PDF beta entirely and go straight
-      // to JPEG extraction + rotation. Reason: PDF beta on large scanned PDFs eats
-      // the entire Vercel timeout (~60s) leaving no time for the JPEG fallback.
-      // For small PDFs (<1 MB), PDF beta is fast and works well.
+      // Try 1: PDF beta OCR — sends full PDF to Claude, best quality (sees all pages at once)
+      console.log("[pdf-parser] Try 1: PDF beta OCR (full document)...");
+      const pdfBetaResult = await ocrExtractStructured(buffer, "application/pdf", filename);
+      if (pdfBetaResult) {
+        console.log("[pdf-parser] PDF beta OCR succeeded");
+        return pdfBetaResult;
+      }
+      console.log(`[pdf-parser] PDF beta OCR returned null. lastOcrError=${JSON.stringify(lastOcrError)}`);
 
-      // Try 1: JPEG extraction FIRST for large files, PDF beta first for small files
+      // Try 2: Extract JPEG images from PDF binary and process per-page with rotation
+      // Fallback for PDFs where PDF beta fails (e.g. rotated images it can't read)
+      console.log("[pdf-parser] Try 2: JPEG extraction + rotation...");
       const jpegs = await extractJpegsFromPdf(buffer);
       console.log(`[pdf-parser] Found ${jpegs.length} embedded JPEG images in PDF`);
 
@@ -1262,14 +1268,6 @@ export async function parseOswiadczeniePdf(
           return bestResult;
         }
         console.log("[pdf-parser] JPEG extraction path produced no results");
-      }
-
-      // Fallback: try PDF beta OCR for small files without extractable JPEGs
-      if (jpegs.length === 0 && sizeMB < 2) {
-        console.log("[pdf-parser] No JPEGs found, trying PDF beta OCR (small file)...");
-        const ocrResult = await ocrExtractStructured(buffer, "application/pdf", filename);
-        if (ocrResult) return ocrResult;
-        console.log(`[pdf-parser] PDF beta OCR also returned null. lastOcrError=${JSON.stringify(lastOcrError)}`);
       }
 
       return null;
