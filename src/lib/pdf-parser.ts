@@ -480,6 +480,24 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
   }
 
+  // PSZ-OPWP format: look for salary near "brutto" or specific section markers
+  if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
+    // Try: number followed by PLN/zł near "brutto" or "miesięcznie"
+    const wynPszMatch = normalized.match(/(?:najni[żz]sze|minimalne)?\s*(?:wynagrodzeni[ea])?\s*(\d[\d\s,.]*)\s*(?:PLN|z[łl])\s*(?:brutto|netto)?/i);
+    if (wynPszMatch) {
+      const cleaned = wynPszMatch[0].replace(/\s+/g, " ").trim();
+      if (cleaned.length > 3) result.wynagrodzenie = cleaned;
+    }
+  }
+  // Also try section 3.8 with more flexible format
+  if (!result.wynagrodzenie) {
+    const wyn38 = normalized.match(/3\.8[.\s]*[^:]*[:\s]+(\d[\d\s,.]+\s*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie)[^\n]*)/i);
+    if (wyn38) {
+      const cleaned = wyn38[1].replace(/\s+/g, " ").trim();
+      if (cleaned.length > 3) result.wynagrodzenie = cleaned;
+    }
+  }
+
   // Clean up wynagrodzenie — remove trailing section numbers and dots
   if (result.wynagrodzenie) {
     result.wynagrodzenie = result.wynagrodzenie.replace(/\s+\d+\.\s*$/, "").trim();
@@ -536,6 +554,9 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
   const EOI = Buffer.from([0xFF, 0xD9]); // JPEG End of Image
   const MIN_SIZE = 10 * 1024; // 10 KB — skip thumbnails
 
+  // We'll validate all candidates with sharp at the end
+  const candidates: Buffer[] = [];
+
   // --- Pass 1: Find raw JPEG markers (DCTDecode-only streams) ---
   let searchFrom = 0;
   while (searchFrom < data.length - 2) {
@@ -547,16 +568,16 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
 
     const jpegEnd = eoiIdx + 2;
     if (jpegEnd - soiIdx > MIN_SIZE) {
-      jpegs.push(data.subarray(soiIdx, jpegEnd));
+      candidates.push(Buffer.from(data.subarray(soiIdx, jpegEnd)));
     }
     searchFrom = jpegEnd;
   }
+  console.log(`[pdf-parser] Pass 1 (raw SOI/EOI): ${candidates.length} candidates`);
 
-  // --- Pass 2: Find FlateDecode-compressed streams and decompress ---
-  // Word-generated PDFs often use [/FlateDecode /DCTDecode] — the JPEG is zlib-compressed.
-  // Look for "stream\r\n" or "stream\n" followed by zlib magic bytes, decompress, check for JPEG.
-  if (jpegs.length === 0) {
-    console.log("[pdf-parser] No raw JPEGs found, trying FlateDecode stream decompression...");
+  // --- Pass 2: ALWAYS run — find FlateDecode-compressed streams and decompress ---
+  // Handles [/FlateDecode /DCTDecode] chains (JPEG inside zlib, common in scanner PDFs).
+  {
+    console.log("[pdf-parser] Pass 2: trying FlateDecode stream decompression...");
     const streamMarker = Buffer.from("stream\n");
     const streamMarkerCRLF = Buffer.from("stream\r\n");
     const endstreamMarker = Buffer.from("\nendstream");
@@ -564,8 +585,8 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
 
     let pos = 0;
     let decompressAttempts = 0;
+    let found = 0;
     while (pos < data.length && decompressAttempts < 50) {
-      // Find next "stream\n" or "stream\r\n"
       let streamStart = data.indexOf(streamMarkerCRLF, pos);
       let markerLen = streamMarkerCRLF.length;
       if (streamStart === -1) {
@@ -575,8 +596,6 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
       if (streamStart === -1) break;
 
       const dataStart = streamStart + markerLen;
-
-      // Find "endstream"
       let streamEnd = data.indexOf(endstreamMarkerCR, dataStart);
       if (streamEnd === -1) streamEnd = data.indexOf(endstreamMarker, dataStart);
       if (streamEnd === -1) { pos = dataStart + 1; continue; }
@@ -584,10 +603,9 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
       const streamData = data.subarray(dataStart, streamEnd);
       pos = streamEnd + 10;
 
-      // Skip small streams (< 10 KB compressed — unlikely to be a page scan)
       if (streamData.length < 5000) continue;
 
-      // Check for zlib magic bytes (78 9C, 78 01, 78 DA, 78 5E)
+      // Check for zlib magic bytes
       if (streamData.length < 2 || streamData[0] !== 0x78) continue;
       if (![0x01, 0x5E, 0x9C, 0xDA].includes(streamData[1])) continue;
 
@@ -595,17 +613,44 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
       try {
         const decompressed = zlib.inflateSync(streamData);
 
-        // Check if decompressed data is a JPEG
         if (decompressed.length > MIN_SIZE &&
             decompressed[0] === 0xFF && decompressed[1] === 0xD8) {
           console.log(`[pdf-parser] Found FlateDecode JPEG: ${(decompressed.length / 1024).toFixed(0)} KB`);
-          jpegs.push(decompressed);
+          candidates.push(decompressed);
+          found++;
         }
       } catch {
         // Not valid zlib — skip
       }
     }
-    console.log(`[pdf-parser] FlateDecode pass: ${decompressAttempts} streams tried, ${jpegs.length} JPEGs found`);
+    console.log(`[pdf-parser] Pass 2: ${decompressAttempts} streams tried, ${found} JPEGs found`);
+  }
+
+  // --- Validate all candidates with sharp (reject corrupt/unreadable images) ---
+  console.log(`[pdf-parser] Validating ${candidates.length} JPEG candidates with sharp...`);
+  try {
+    const sharp = (await import("sharp")).default;
+    for (const candidate of candidates) {
+      try {
+        const meta = await sharp(candidate).metadata();
+        if (meta.width && meta.height && meta.width > 100 && meta.height > 100) {
+          // Convert grayscale to RGB if needed (Claude API may reject grayscale JPEGs)
+          let validBuf = candidate;
+          if (meta.channels === 1 || meta.space === "grey" || meta.space === "b-w") {
+            console.log(`[pdf-parser] Converting grayscale image (${meta.width}x${meta.height}) to RGB`);
+            validBuf = await sharp(candidate).toColourspace("srgb").jpeg({ quality: 85 }).toBuffer();
+          }
+          jpegs.push(validBuf);
+          console.log(`[pdf-parser] Validated JPEG: ${meta.width}x${meta.height} (${(validBuf.length / 1024).toFixed(0)} KB)`);
+        }
+      } catch {
+        console.log(`[pdf-parser] Rejected invalid JPEG candidate (${(candidate.length / 1024).toFixed(0)} KB)`);
+      }
+    }
+  } catch (sharpErr) {
+    // sharp not available — fall back to using all candidates as-is
+    console.warn(`[pdf-parser] sharp validation failed, using raw candidates: ${sharpErr}`);
+    jpegs.push(...candidates);
   }
 
   // Sort by size descending — largest images are most likely page scans
@@ -629,8 +674,13 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   }
   // Fallback: document header sygnatura "WRP-II.8671.42150.2025"
   if (!result.nrDecyzji) {
-    const sygMatch = normalized.match(/([A-Z]{2,5}[-.](?:[A-Z]*\.?\d+\.?)+\.\d{4})/);
+    const sygMatch = normalized.match(/([A-Z]{2,5}(?:[-.](?:[A-Z]+|[IVX]+))*[-.](?:\d+\.?)+\.\d{4})/);
     if (sygMatch) result.nrDecyzji = sygMatch[1].trim();
+  }
+  // Polish administrative signatures: WSC-II-P.6151.34116.2025, DL.WIPO.4100.8583.2024
+  if (!result.nrDecyzji) {
+    const adminSygMatch = normalized.match(/([A-Z]{2,5}[-][A-Z]{1,5}[-.][\w.-]+\.\d{4})/);
+    if (adminSygMatch) result.nrDecyzji = adminSygMatch[1].trim();
   }
   // Residence decision sygnatura: "nr sprawy: XXXX/2025" or "Decyzja nr ..."
   if (!result.nrDecyzji) {
@@ -819,12 +869,16 @@ Zwroc TYLKO obiekt JSON (bez komentarzy, bez markdown) z nastepujacymi polami (p
 
 Zasady:
 - detectedType: OSWIADCZENIE = oswiadczenie o powierzeniu pracy; ZEZWOLENIE = zezwolenie na prace typ A-E; KARTA_POBYTU = decyzja o zezwoleniu na pobyt czasowy/staly; BLUE_CARD = Niebieska Karta UE lub zezwolenie na pobyt w celu wykonywania pracy wymagajacej wysokich kwalifikacji
-- Jesli dokument zawiera "udzielam" / "udziela sie" to jest decyzja pozytywna (KARTA_POBYTU lub BLUE_CARD), NIE odwolanie
+- Jesli dokument zawiera "udzielam" / "udziela sie" / "orzekam o udzieleniu" to jest decyzja pozytywna (KARTA_POBYTU lub BLUE_CARD), NIE odwolanie
 - Jesli dokument mowi o "wysokich kwalifikacjach" lub art. 127, typ = BLUE_CARD
 - obywatelstwo: TYLKO nazwa kraju (np. "Bialorus", "Ukraina"), bez zadnych dodatkowych slow
 - Daty w formacie YYYY-MM-DD
-- Dla decyzji pobytowej: dataOd = data wydania decyzji, dataDo = data waznosci zezwolenia ("do dnia...")
-- nrDecyzji: numer decyzji lub sygnatura sprawy (np. "WSC-II-P.6151.34116.2025")`;
+- WAZNE DLA DECYZJI: wyciagaj dane WYLACZNIE z sentencji rozstrzygniecia (fragment od "postanawiam"/"udzielam"/"orzekam" do "UZASADNIENIE"). NIE bierz wartosci z uzasadnienia ani pouczenia - tam sa odwolania do INNYCH decyzji, STARYCH kwot i INNYCH dat.
+- dataOd = data wydania decyzji z naglowka dokumentu (np. "Warszawa, dnia 12.08.2024 r."), NIE data z tresci uzasadnienia
+- dataDo = data z sentencji: "z terminem waznosci do dnia ..." lub "do dnia ..."
+- firma = PELNA nazwa podmiotu z sentencji: "na rzecz podmiotu NAZWA Sp. z o.o., ul. ..." - podaj CALĄ nazwe wlasna (np. "HYLAND POLAND Sp. z o.o."), nie zaczynaj od "Sp. z o.o."
+- wynagrodzenie = kwota z sentencji przy "za wynagrodzeniem nie nizszym niz ... zl brutto" — IGNORUJ inne kwoty w uzasadnieniu (np. minimalne wynagrodzenie, progi dochodowe)
+- nrDecyzji = PELNY numer decyzji lub sygnatura sprawy z naglowka dokumentu (np. "WSC-II-P.6151.34116.2025", "DL.WIPO.4100.8583.2024") — zachowaj CALY prefiks literowy`;
 
   try {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;

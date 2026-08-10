@@ -587,6 +587,25 @@ export async function updateEmploymentBaseAction(
     user.id
   );
 
+  // Recalculate decyzjaPobytowaDo when type or dates change
+  if (
+    d.typ === "KARTA_POBYTU" || d.typ === "BLUE_CARD" ||
+    old.typ === "KARTA_POBYTU" || old.typ === "BLUE_CARD"
+  ) {
+    const remainingResidence = await db.fdkEmploymentBase.findFirst({
+      where: {
+        foreignerId: d.foreignerId,
+        typ: { in: ["KARTA_POBYTU", "BLUE_CARD"] },
+        dataDo: { not: null },
+      },
+      orderBy: { dataDo: "desc" },
+    });
+    await db.fdkForeigner.update({
+      where: { id: d.foreignerId },
+      data: { decyzjaPobytowaDo: remainingResidence?.dataDo ?? null },
+    });
+  }
+
   revalidateFdk(d.foreignerId);
   return { ok: true };
   } catch (err) {
@@ -608,6 +627,23 @@ export async function deleteEmploymentBaseAction(id: number): Promise<FdkResult>
   if (!base) return { ok: false, error: "not_found" };
   await logAction(base.foreignerId, user.email, "employment_base_delete", `Usunięto podstawę zatrudnienia: ${base.typ}`);
   await db.fdkEmploymentBase.delete({ where: { id } });
+
+  // Recalculate decyzjaPobytowaDo after deletion
+  if (base.typ === "KARTA_POBYTU" || base.typ === "BLUE_CARD") {
+    const remainingResidence = await db.fdkEmploymentBase.findFirst({
+      where: {
+        foreignerId: base.foreignerId,
+        typ: { in: ["KARTA_POBYTU", "BLUE_CARD"] },
+        dataDo: { not: null },
+      },
+      orderBy: { dataDo: "desc" },
+    });
+    await db.fdkForeigner.update({
+      where: { id: base.foreignerId },
+      data: { decyzjaPobytowaDo: remainingResidence?.dataDo ?? null },
+    });
+  }
+
   revalidateFdk(base.foreignerId);
   return { ok: true };
 }
