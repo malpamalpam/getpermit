@@ -71,6 +71,19 @@ export async function GET(
     }
   }
 
+  // Debug OCR — show raw extraction result without creating any records
+  if (action === "debug-ocr") {
+    const { data: fileData, error: dlError } = await supabase.storage
+      .from("fdk-attachments")
+      .download(attachment.storagePath);
+    if (dlError || !fileData) return NextResponse.json({ error: "Download failed" }, { status: 500 });
+    const buf = await fileData.arrayBuffer();
+    const isImg = ["jpeg", "jpg", "png"].includes(attachment.typPliku);
+    const mType = isImg ? (attachment.typPliku === "png" ? "image/png" as const : "image/jpeg" as const) : "application/pdf" as const;
+    const result = await ocrExtractStructured(buf, mType, attachment.nazwaPliku);
+    return NextResponse.json({ raw: result, ocrError: getLastOcrError() });
+  }
+
   // Scrape — parse PDF/image and auto-fill foreigner + create employment base
   if (action === "scrape") {
     const scrapableTypes = ["pdf", "jpeg", "jpg", "png"];
