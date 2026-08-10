@@ -480,21 +480,33 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (cleaned.length > 2 && cleaned.length < 200) result.wynagrodzenie = cleaned;
   }
 
-  // PSZ-OPWP format: look for salary near "brutto" or specific section markers
+  // PSZ-OPWP format: various wynagrodzenie patterns
   if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
-    // Try: number followed by PLN/zł near "brutto" or "miesięcznie"
-    const wynPszMatch = normalized.match(/(?:najni[żz]sze|minimalne)?\s*(?:wynagrodzeni[ea])?\s*(\d[\d\s,.]*)\s*(?:PLN|z[łl])\s*(?:brutto|netto)?/i);
-    if (wynPszMatch) {
-      const cleaned = wynPszMatch[0].replace(/\s+/g, " ").trim();
-      if (cleaned.length > 3) result.wynagrodzenie = cleaned;
+    // Pattern: "Najniższe wynagrodzenie brutto: KWOTA PLN" (PSZ-OPWP label without section number)
+    const wynLabelMatch = normalized.match(/[Nn]ajni[żz]sz[ea]\s+wynagrodzeni[ea][^:]*[:\s]+(\d[\d\s,.]+)\s*(?:PLN|z[łl])/i);
+    if (wynLabelMatch) {
+      result.wynagrodzenie = wynLabelMatch[1].replace(/\s+/g, " ").trim() + " PLN brutto";
     }
   }
-  // Also try section 3.8 with more flexible format
+  if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
+    // Pattern: "KWOTA PLN brutto" or "KWOTA zł brutto" anywhere (standalone)
+    const wynStandaloneMatch = normalized.match(/(\d[\d\s,.]+)\s*(?:PLN|z[łl])\s*(?:brutto|netto)(?:\s*miesi[ęe]cznie)?/i);
+    if (wynStandaloneMatch) {
+      result.wynagrodzenie = wynStandaloneMatch[0].replace(/\s+/g, " ").trim();
+    }
+  }
   if (!result.wynagrodzenie) {
+    // Pattern: section 3.8 with flexible format
     const wyn38 = normalized.match(/3\.8[.\s]*[^:]*[:\s]+(\d[\d\s,.]+\s*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie)[^\n]*)/i);
     if (wyn38) {
-      const cleaned = wyn38[1].replace(/\s+/g, " ").trim();
-      if (cleaned.length > 3) result.wynagrodzenie = cleaned;
+      result.wynagrodzenie = wyn38[1].replace(/\s+/g, " ").trim();
+    }
+  }
+  if (!result.wynagrodzenie && result.detectedType === "OSWIADCZENIE") {
+    // Last resort: any number >= 100 followed by PLN/zł (skip page numbers etc.)
+    const wynAnyMatch = normalized.match(/(\d{3}[\d\s,.]*)\s*(?:PLN|z[łl])/i);
+    if (wynAnyMatch) {
+      result.wynagrodzenie = wynAnyMatch[0].replace(/\s+/g, " ").trim();
     }
   }
 
@@ -844,41 +856,29 @@ export async function ocrExtractStructured(
   const model = useHaiku ? "claude-haiku-4-5-20251001" : "claude-sonnet-4-6";
   console.log(`[pdf-parser] Using model: ${model} (file ${fileSizeMB.toFixed(1)} MB, pdf=${isPdf}, haiku=${useHaiku})`);
 
-  const extractionPrompt = `Przeanalizuj ten dokument i wyciagnij z niego dane w formacie JSON. Dokument to prawdopodobnie polski dokument imigracyjny (oswiadczenie o powierzeniu pracy, zezwolenie na prace, decyzja pobytowa, wiza, karta pobytu lub Niebieska Karta UE).
+  const extractionPrompt = `Ten obraz to strona polskiego dokumentu imigracyjnego (decyzja pobytowa, zezwolenie na prace, oswiadczenie o powierzeniu pracy, wiza lub karta pobytu). Obraz moze byc OBROCONY — odczytaj tekst niezaleznie od orientacji.
 
-UWAGA: Obraz dokumentu moze byc OBROCONY o 90, 180 lub 270 stopni (zdjecie zrobione telefonem na lezaco). Odczytaj tekst niezaleznie od orientacji obrazu.
+ZADANIE: Wyciagnij dane i zwroc TYLKO JSON (bez komentarzy, bez markdown):
 
-Zwroc TYLKO obiekt JSON (bez komentarzy, bez markdown) z nastepujacymi polami (puste/nieznalezione pola = null):
+{"detectedType":"KARTA_POBYTU","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
 
-{
-  "detectedType": "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | null,
-  "imie": "imie cudzoziemca",
-  "nazwisko": "nazwisko cudzoziemca",
-  "dataUrodzenia": "YYYY-MM-DD",
-  "obywatelstwo": "kraj obywatelstwa (tylko nazwa kraju, bez dodatkowego tekstu)",
-  "nrPaszportu": "numer paszportu",
-  "dataOd": "YYYY-MM-DD (poczatek waznosci dokumentu/zezwolenia)",
-  "dataDo": "YYYY-MM-DD (koniec waznosci dokumentu/zezwolenia)",
-  "stanowisko": "stanowisko/rodzaj pracy",
-  "rodzajUmowy": "typ umowy",
-  "firma": "nazwa pracodawcy/podmiotu",
-  "nrDecyzji": "numer decyzji lub sygnatura sprawy",
-  "nrOswiadczenia": "numer wpisu oswiadczenia",
-  "wynagrodzenie": "kwota z waluta, np. 4806,00 PLN brutto"
-}
+KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody):
+1. Dokument ma 3 czesci: NAGLOWEK (sygnatura, data, organ) → SENTENCJA (od "postanawiam"/"udzielam"/"orzekam" do "UZASADNIENIE") → UZASADNIENIE + POUCZENIE.
+2. WSZYSTKIE pola merytoryczne bierz WYLACZNIE z SENTENCJI. W uzasadnieniu sa kwoty, daty i nazwy z INNYCH decyzji — IGNORUJ JE.
+3. dataOd = data z naglowka: "Warszawa, dnia DD.MM.RRRR r." lub "dnia DD.MM.RRRR"
+4. dataDo = z sentencji: "do dnia DD.MM.RRRR" lub "z terminem waznosci do dnia DD.MM.RRRR"
+5. wynagrodzenie = TYLKO z sentencji: "za wynagrodzeniem nie nizszym niz KWOTA zl brutto". Przyklad: "18 333,33 zl brutto miesiecznie" → "18 333,33 PLN brutto". NIGDY nie bierz kwot z uzasadnienia (4300, 4500, 776 zl itp. to progi/minima — nie wynagrodzenie pracownika).
+6. firma = z sentencji: "na rzecz podmiotu NAZWA FIRMY Sp. z o.o., ul. Adres". Podaj PELNA nazwe: "HYLAND POLAND Sp. z o.o.", NIE samo "Sp. z o.o.".
+7. nrDecyzji = sygnatura z naglowka (pod nazwa organu). Formaty: "DL.WIPO.4100.8583.2024", "WSC-II-P.6151.34116.2025". Zachowaj CALY numer z prefiksem.
+8. detectedType: jesli mowi o "wysokich kwalifikacjach" lub art. 127 → BLUE_CARD; jesli "udzielam zezwolenia na pobyt" → KARTA_POBYTU; "orzekam o udzieleniu" → KARTA_POBYTU lub BLUE_CARD.
+9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
 
-Zasady:
-- detectedType: OSWIADCZENIE = oswiadczenie o powierzeniu pracy; ZEZWOLENIE = zezwolenie na prace typ A-E; KARTA_POBYTU = decyzja o zezwoleniu na pobyt czasowy/staly; BLUE_CARD = Niebieska Karta UE lub zezwolenie na pobyt w celu wykonywania pracy wymagajacej wysokich kwalifikacji
-- Jesli dokument zawiera "udzielam" / "udziela sie" / "orzekam o udzieleniu" to jest decyzja pozytywna (KARTA_POBYTU lub BLUE_CARD), NIE odwolanie
-- Jesli dokument mowi o "wysokich kwalifikacjach" lub art. 127, typ = BLUE_CARD
-- obywatelstwo: TYLKO nazwa kraju (np. "Bialorus", "Ukraina"), bez zadnych dodatkowych slow
-- Daty w formacie YYYY-MM-DD
-- WAZNE DLA DECYZJI: wyciagaj dane WYLACZNIE z sentencji rozstrzygniecia (fragment od "postanawiam"/"udzielam"/"orzekam" do "UZASADNIENIE"). NIE bierz wartosci z uzasadnienia ani pouczenia - tam sa odwolania do INNYCH decyzji, STARYCH kwot i INNYCH dat.
-- dataOd = data wydania decyzji z naglowka dokumentu (np. "Warszawa, dnia 12.08.2024 r."), NIE data z tresci uzasadnienia
-- dataDo = data z sentencji: "z terminem waznosci do dnia ..." lub "do dnia ..."
-- firma = PELNA nazwa podmiotu z sentencji: "na rzecz podmiotu NAZWA Sp. z o.o., ul. ..." - podaj CALĄ nazwe wlasna (np. "HYLAND POLAND Sp. z o.o."), nie zaczynaj od "Sp. z o.o."
-- wynagrodzenie = kwota z sentencji przy "za wynagrodzeniem nie nizszym niz ... zl brutto" — IGNORUJ inne kwoty w uzasadnieniu (np. minimalne wynagrodzenie, progi dochodowe)
-- nrDecyzji = PELNY numer decyzji lub sygnatura sprawy z naglowka dokumentu (np. "WSC-II-P.6151.34116.2025", "DL.WIPO.4100.8583.2024") — zachowaj CALY prefiks literowy`;
+DLA OSWIADCZEN (formularze PSZ-OPWP, "Oswiadczenie podmiotu o powierzeniu pracy"):
+- detectedType = OSWIADCZENIE
+- nrOswiadczenia = numer wpisu (PZC.4390.XXXXX.XX.RRRR)
+- wynagrodzenie = kwota z pola stawki/wynagrodzenia brutto w sekcji warunkow pracy
+
+Pola, ktorych nie mozesz znalezc = null.`;
 
   try {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
