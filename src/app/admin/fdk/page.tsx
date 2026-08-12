@@ -204,10 +204,29 @@ export default async function FdkPage({
             </thead>
             <tbody className="divide-y divide-primary/5">
               {foreigners.map((f, idx) => {
-                const latestBase = f.employmentBases[0];
                 const types = [...new Set(f.employmentBases.map((b) => b.typ))];
-                const latestStatus = latestBase?.status ?? "BRAK_DANYCH";
-                const latestDate = latestBase?.dataDo;
+                // Best status: AKTYWNE with date > AKTYWNE > W_TRAKCIE > WYGASLE > BRAK_DANYCH
+                const STATUS_PRIORITY: Record<string, number> = {
+                  AKTYWNE: 4,
+                  W_TRAKCIE: 3,
+                  NIEAKTYWNE: 2,
+                  WYGASLE: 1,
+                  UCHYLONE: 1,
+                  UMORZONE: 1,
+                  BRAK_DANYCH: 0,
+                };
+                const bestBase = f.employmentBases.length > 0
+                  ? f.employmentBases.reduce((best, b) => {
+                      const bPrio = (STATUS_PRIORITY[b.status] ?? 0) + (b.status === "AKTYWNE" && b.dataDo ? 0.5 : 0);
+                      const bestPrio = (STATUS_PRIORITY[best.status] ?? 0) + (best.status === "AKTYWNE" && best.dataDo ? 0.5 : 0);
+                      return bPrio > bestPrio ? b : best;
+                    })
+                  : null;
+                const latestStatus = bestBase?.status ?? "BRAK_DANYCH";
+                // For WAŻNE DO: show dataDo from the best active/w_trakcie base, or the latest dataDo overall
+                const latestDate = bestBase?.dataDo
+                  ?? f.employmentBases.find((b) => b.status === "AKTYWNE" && b.dataDo)?.dataDo
+                  ?? f.employmentBases.find((b) => b.dataDo)?.dataDo;
 
                 return (
                   <tr key={f.id} className="group relative cursor-pointer transition-colors hover:bg-accent/5">

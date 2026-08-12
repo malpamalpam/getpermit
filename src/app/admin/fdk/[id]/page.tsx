@@ -346,7 +346,11 @@ export default async function FdkForeignerPage({
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
-                          {f.opis && <p className="mt-0.5 text-xs text-primary/50">{f.opis}</p>}
+                          {f.opis && (
+                            <p className={`mt-0.5 text-xs ${f.opis.startsWith("\u26a0") ? "font-semibold text-amber-600" : "text-primary/50"}`}>
+                              {f.opis}
+                            </p>
+                          )}
                           <div className="mt-2 flex flex-wrap items-center gap-2">
                             <a
                               href={`/api/fdk/attachments/${f.id}?action=preview`}

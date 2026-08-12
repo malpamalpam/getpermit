@@ -166,6 +166,40 @@ export async function deactivatePreviousResidencePermits(
   return otherActive.length;
 }
 
+/**
+ * Tolerant name comparison for scrape verification.
+ * Returns true if names are "close enough" (transliteration variants, subset match).
+ * Returns false only for clearly different people.
+ */
+export function namesMatch(
+  extractedName: string,
+  profileName: string
+): boolean {
+  const normalize = (s: string) =>
+    s.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[-_]/g, " ")
+      .split(/\s+/).filter(Boolean).sort();
+
+  const extracted = normalize(extractedName);
+  const profile = normalize(profileName);
+
+  if (extracted.length === 0 || profile.length === 0) return true;
+
+  let matchingTokens = 0;
+  for (const et of extracted) {
+    for (const pt of profile) {
+      if (et === pt) { matchingTokens++; break; }
+      // Prefix match (min 3 chars) — handles transliteration variants
+      if (et.length >= 3 && pt.length >= 3 && (et.startsWith(pt.substring(0, 3)) || pt.startsWith(et.substring(0, 3)))) {
+        matchingTokens++; break;
+      }
+    }
+  }
+
+  return matchingTokens > 0;
+}
+
 export async function getNotificationSettings() {
   let settings = await db.notificationSettings.findFirst({ where: { id: 1 } });
   if (!settings) {

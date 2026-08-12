@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError } from "@/lib/pdf-parser";
-import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
+import { deactivatePreviousResidencePermits, namesMatch } from "@/lib/fdk-queries";
 
 // Allow up to 120s for scrape action (OCR via Claude can take 30-60s for large multi-page scans)
 export const maxDuration = 120;
@@ -130,6 +130,40 @@ export async function GET(
     const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
     if (!foreigner) {
       return NextResponse.json({ error: "Foreigner not found" }, { status: 404 });
+    }
+
+    // Check if document belongs to a different person
+    const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
+    const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
+    const isDifferentPerson = extractedFullName.length > 2
+      && profileFullName.length > 2
+      && foreigner.nazwisko !== "Nowy"
+      && !namesMatch(extractedFullName, profileFullName);
+
+    if (isDifferentPerson) {
+      // Flag the attachment and log — do NOT create employment base
+      const warningNote = `\u26a0 Dokument innej osoby: ${extractedFullName}`;
+      await db.fdkAttachment.update({
+        where: { id: attachment.id },
+        data: { opis: warningNote },
+      });
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Scrape pliku ${attachment.nazwaPliku}: rozpoznano INNA OSOBE (${extractedFullName}) — podstawa NIE utworzona. Profil: ${profileFullName}.`,
+        },
+      });
+
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        foreignerUpdated: [],
+        employmentBaseCreated: null,
+        warning: `Dokument dotyczy innej osoby: ${extractedFullName} (profil: ${profileFullName}). Podstawa zatrudnienia NIE została utworzona.`,
+      });
     }
 
     // Auto-fill foreigner data if fields are empty

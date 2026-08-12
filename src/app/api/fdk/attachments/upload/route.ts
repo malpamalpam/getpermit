@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { randomUUID } from "crypto";
 import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
-import { deactivatePreviousResidencePermits } from "@/lib/fdk-queries";
+import { deactivatePreviousResidencePermits, namesMatch } from "@/lib/fdk-queries";
 
 // Allow up to 60s for upload (large scanned documents from phones can be 5-10 MB)
 export const maxDuration = 60;
@@ -126,8 +126,32 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // ODWOLANIE: do NOT create employment base on upload either
-        if (parsed.detectedType === "ODWOLANIE") {
+        // Check if document belongs to a different person
+        const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
+        const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
+        const isDifferentPerson = extractedFullName.length > 2
+          && profileFullName.length > 2
+          && foreigner.nazwisko !== "Nowy"
+          && !namesMatch(extractedFullName, profileFullName);
+
+        if (isDifferentPerson) {
+          // Flag the attachment — do NOT create employment base
+          await db.fdkAttachment.update({
+            where: { id: attachment.id },
+            data: { opis: `\u26a0 Dokument innej osoby: ${extractedFullName}` },
+          });
+          await db.fdkChangeLog.create({
+            data: {
+              foreignerId,
+              changedBy,
+              field: "scrape",
+              oldValue: null,
+              newValue: `Upload ${file.name}: rozpoznano INNA OSOBE (${extractedFullName}) — podstawa NIE utworzona. Profil: ${profileFullName}.`,
+            },
+          });
+          // Skip employment base creation but still return extracted data
+        } else if (parsed.detectedType === "ODWOLANIE") {
+          // ODWOLANIE: do NOT create employment base on upload either
           // Skip — just keep the attachment and foreigner data updates above
         } else {
         // Create employment base for non-ODWOLANIE types

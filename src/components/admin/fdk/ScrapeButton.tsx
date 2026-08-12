@@ -68,6 +68,13 @@ export function ScrapeButton({ attachmentId, typPliku }: Props) {
         if (data.extracted?.dataDo) parts.push(`Do: ${data.extracted.dataDo}`);
         if (data.extracted?.firma) parts.push(data.extracted.firma);
         if (data.extracted?.rodzajUmowy) parts.push(data.extracted.rodzajUmowy);
+        // Different person warning
+        if (data.warning) {
+          setResult({ text: `⚠ ${data.warning}`, isError: true });
+          router.refresh();
+          return;
+        }
+
         if (data.employmentBaseCreated) parts.push("✓ dodano do podstaw zatrudnienia");
 
         // Show partial extraction warning
