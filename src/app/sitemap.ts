@@ -34,59 +34,57 @@ const STATIC_PRIORITIES: Record<string, number> = {
 const SITE_LAST_MODIFIED = "2026-08-13";
 
 /**
- * Generate sitemap index — one sitemap per locale.
+ * Single sitemap with all locales — no generateSitemaps() index needed.
+ * Generates /sitemap.xml directly.
  */
-export async function generateSitemaps() {
-  return routing.locales.map((locale) => ({ id: locale }));
-}
-
-export default async function sitemap({ id }: { id: string }): Promise<MetadataRoute.Sitemap> {
-  const locale = id;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url;
   const services = await getAllServices();
   const siteDate = new Date(SITE_LAST_MODIFIED);
   const entries: MetadataRoute.Sitemap = [];
 
-  // Static pages
-  for (const [key, paths] of Object.entries(STATIC_PAGE_PATHS)) {
-    const path = paths[locale] ?? paths.pl;
-    entries.push({
-      url: `${base}/${locale}${path}`,
-      lastModified: siteDate,
-      changeFrequency: key === "" || key === "blog" ? "weekly" : "monthly",
-      priority: STATIC_PRIORITIES[key] ?? 0.5,
-    });
-  }
+  for (const locale of routing.locales) {
+    // Static pages
+    for (const [key, paths] of Object.entries(STATIC_PAGE_PATHS)) {
+      const path = paths[locale] ?? paths.pl;
+      entries.push({
+        url: `${base}/${locale}${path}`,
+        lastModified: siteDate,
+        changeFrequency: key === "" || key === "blog" ? "weekly" : "monthly",
+        priority: STATIC_PRIORITIES[key] ?? 0.5,
+      });
+    }
 
-  // Services
-  const basePath = SERVICE_BASE_PATH[locale] ?? "uslugi";
-  for (const service of services) {
-    const localizedSlug = getLocalizedSlug(service.slug, locale);
+    // Services
+    const basePath = SERVICE_BASE_PATH[locale] ?? "uslugi";
+    for (const service of services) {
+      const localizedSlug = getLocalizedSlug(service.slug, locale);
+      entries.push({
+        url: `${base}/${locale}/${basePath}/${localizedSlug}`,
+        lastModified: siteDate,
+        changeFrequency: "monthly",
+        priority: 0.7,
+      });
+    }
+
+    // Employers page
     entries.push({
-      url: `${base}/${locale}/${basePath}/${localizedSlug}`,
+      url: `${base}/${locale}/${basePath}/${getLocalizedSlug("dla-pracodawcow", locale)}`,
       lastModified: siteDate,
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.8,
     });
-  }
 
-  // Employers page
-  entries.push({
-    url: `${base}/${locale}/${basePath}/${getLocalizedSlug("dla-pracodawcow", locale)}`,
-    lastModified: siteDate,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  });
-
-  // Blog posts
-  const localePosts = getAllBlogPosts(locale);
-  for (const post of localePosts) {
-    entries.push({
-      url: `${base}/${locale}/blog/${getLocalizedBlogSlug(post.slug, locale)}`,
-      lastModified: new Date(post.date),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    });
+    // Blog posts
+    const localePosts = getAllBlogPosts(locale);
+    for (const post of localePosts) {
+      entries.push({
+        url: `${base}/${locale}/blog/${getLocalizedBlogSlug(post.slug, locale)}`,
+        lastModified: new Date(post.date),
+        changeFrequency: "monthly",
+        priority: 0.7,
+      });
+    }
   }
 
   return entries;
