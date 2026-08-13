@@ -15,13 +15,16 @@ export function getAlternates(pathnameKey: PathnameKey, locale: string) {
     return (pathnames as Record<string, string>)[l] ?? pathnames.pl;
   };
 
+  const localeUrl = (l: string) =>
+    l === "pl"
+      ? `${siteConfig.url}${getPath(l)}`
+      : `${siteConfig.url}/${l}${getPath(l)}`;
+
   return {
-    canonical: `${siteConfig.url}/${locale}${getPath(locale)}`,
+    canonical: localeUrl(locale),
     languages: {
-      ...Object.fromEntries(
-        routing.locales.map((l) => [l, `${siteConfig.url}/${l}${getPath(l)}`])
-      ),
-      "x-default": `${siteConfig.url}/en${getPath("en")}`,
+      ...Object.fromEntries(routing.locales.map((l) => [l, localeUrl(l)])),
+      "x-default": localeUrl("pl"),
     },
   };
 }

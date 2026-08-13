@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { siteConfig } from "@/config/site";
 
 export const runtime = "edge";
 export const alt = "getpermit.pl — Legalizacja pobytu i pracy w Polsce";
@@ -75,7 +76,7 @@ export default function OgImage() {
             <div style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>lat doświadczenia</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div style={{ fontSize: 36, fontWeight: 700, color: "#38bdf8" }}>5000+</div>
+            <div style={{ fontSize: 36, fontWeight: 700, color: "#38bdf8" }}>{siteConfig.stats.clientsServed}+</div>
             <div style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>obsłużonych klientów</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>

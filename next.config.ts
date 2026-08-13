@@ -152,25 +152,17 @@ const nextConfig: NextConfig = {
     // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
     // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
 
-    // localePrefix: "always" — ścieżki bez /pl muszą redirectować
-    const noLocalePaths = [
-      "/",
-      "/regulamin",
-      "/polityka-prywatnosci",
-      "/cookies",
-      "/uslugi",
-      "/o-nas",
-      "/kontakt",
-      "/blog",
-      "/blog/:slug*",
-    ];
-    for (const path of noLocalePaths) {
-      redirects.push({
-        source: path,
-        destination: `/pl${path === "/" ? "" : path}`,
-        permanent: true,
-      });
-    }
+    // localePrefix: "as-needed" — stare /pl/* URL-e 301 na root (PL jest domyślny)
+    redirects.push({
+      source: "/pl/:path*",
+      destination: "/:path*",
+      permanent: true,
+    });
+    redirects.push({
+      source: "/pl",
+      destination: "/",
+      permanent: true,
+    });
 
     return redirects;
   },

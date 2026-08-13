@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/routing";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { getLocalizedSlug, SERVICE_BASE_PATH } from "@/lib/service-slugs";
+import { siteConfig } from "@/config/site";
+import { routing } from "@/i18n/routing";
 import {
   Briefcase,
   FileCheck,
@@ -22,18 +24,32 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "employers" });
+  const localeUrl = (l: string) => {
+    const basePath = SERVICE_BASE_PATH[l] ?? "uslugi";
+    const slug = getLocalizedSlug("dla-pracodawcow", l);
+    return l === "pl"
+      ? `${siteConfig.url}/${basePath}/${slug}`
+      : `${siteConfig.url}/${l}/${basePath}/${slug}`;
+  };
+
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
     openGraph: {
       images: [
         {
-          // TODO: zamień na własne zdjęcie biura/zespołu
           url: "/images/services/uslugi-dla-pracodawcow-getpermit.jpg?w=1200&q=80",
           width: 1200,
           height: 630,
         },
       ],
+    },
+    alternates: {
+      canonical: localeUrl(locale),
+      languages: {
+        ...Object.fromEntries(routing.locales.map((l) => [l, localeUrl(l)])),
+        "x-default": localeUrl("pl"),
+      },
     },
   };
 }

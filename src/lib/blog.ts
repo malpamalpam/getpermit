@@ -145,7 +145,7 @@ export const BLOG_POSTS: BlogPost[] = [
 <li>Zezwoleniami związanymi z pracą, edukacją lub prowadzeniem działalności</li>
 </ul>
 <p>Warto rozważyć <strong>kartę CUKR</strong> — zezwolenie na pobyt czasowy na 3 lata dla osób długotrwale posiadających status UKR — jako ścieżkę po zakończeniu ochrony czasowej.</p>
-<p>Instytucje UE wskazują, że państwa członkowskie powinny przygotować mechanizmy umożliwiające przejście z ochrony czasowej do standardowych form pobytu. Nasz zespół pomoże Ci w przejściu na odpowiedni tytuł pobytowy — <a href="/pl/uslugi">sprawdź nasze usługi</a>.</p>
+<p>Instytucje UE wskazują, że państwa członkowskie powinny przygotować mechanizmy umożliwiające przejście z ochrony czasowej do standardowych form pobytu. Nasz zespół pomoże Ci w przejściu na odpowiedni tytuł pobytowy — <a href="/uslugi">sprawdź nasze usługi</a>.</p>
 <p><em>(stan prawny: sierpień 2026)</em></p>
 <p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>`,
       },

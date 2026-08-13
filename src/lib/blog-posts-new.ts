@@ -54,7 +54,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>\u0141\u0105czenie z rodzin\u0105</strong> \u2014 do\u0142\u0105czenie do ma\u0142\u017conka lub rodzica posiadaj\u0105cego zezwolenie na pobyt</li>
 <li><strong>Ofiary handlu lud\u017ami</strong> oraz <strong>okoliczno\u015bci wymagaj\u0105ce kr\u00f3tkotrwa\u0142ego pobytu</strong></li>
 </ul>
-<p>Wniosek nale\u017cy z\u0142o\u017cy\u0107 <strong>najp\u00f3\u017aniej w ostatnim dniu legalnego pobytu</strong>. Od 2026 roku sk\u0142adanie wniosk\u00f3w odbywa si\u0119 wy\u0142\u0105cznie przez <a href="/pl/blog/wnioski-pobytowe-mos-2026">system MOS (Modu\u0142 Obs\u0142ugi Spraw)</a>.</p>`,
+<p>Wniosek nale\u017cy z\u0142o\u017cy\u0107 <strong>najp\u00f3\u017aniej w ostatnim dniu legalnego pobytu</strong>. Od 2026 roku sk\u0142adanie wniosk\u00f3w odbywa si\u0119 wy\u0142\u0105cznie przez <a href="/blog/wnioski-pobytowe-mos-2026">system MOS (Modu\u0142 Obs\u0142ugi Spraw)</a>.</p>`,
       },
       {
         id: "dokumenty",
@@ -72,7 +72,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>\u0179r\u00f3d\u0142o dochodu</td><td>Umowa o prac\u0119, za\u015bwiadczenie z banku, zeznanie PIT</td></tr>
 </tbody>
 </table>
-<p>Dodatkowe dokumenty dla os\u00f3b pracuj\u0105cych: za\u015bwiadczenie od pracodawcy, za\u0142\u0105cznik nr 1. <a href="/pl/uslugi/zezwolenie-na-pobyt-czasowy">Sprawd\u017a pe\u0142n\u0105 list\u0119 dla Twojego przypadku</a>.</p>`,
+<p>Dodatkowe dokumenty dla os\u00f3b pracuj\u0105cych: za\u015bwiadczenie od pracodawcy, za\u0142\u0105cznik nr 1. <a href="/uslugi/karta-pobytu-czasowego">Sprawd\u017a pe\u0142n\u0105 list\u0119 dla Twojego przypadku</a>.</p>`,
       },
       {
         id: "procedura",
@@ -102,13 +102,13 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w (orientacyjnie)</td><td>50\u2013150 z\u0142 za stron\u0119 <em>(szacunek rynkowy)</em></td></tr>
 </tbody>
 </table>
-<p>\u0141\u0105czny koszt procesu, w\u0142\u0105cznie z t\u0142umaczeniami i pomoc\u0105 prawn\u0105, wynosi zwykle <strong>od 800 do 2500 z\u0142</strong> <em>(szacunek rynkowy, obejmuje t\u0142umaczenia i pomoc prawn\u0105 \u2014 nie jest to op\u0142ata urz\u0119dowa)</em> w zale\u017cno\u015bci od z\u0142o\u017cono\u015bci sprawy. <a href="/pl/kontakt">Skontaktuj si\u0119 z nami po bezp\u0142atn\u0105 wycen\u0119</a>.</p>`,
+<p>\u0141\u0105czny koszt procesu, w\u0142\u0105cznie z t\u0142umaczeniami i pomoc\u0105 prawn\u0105, wynosi zwykle <strong>od 800 do 2500 z\u0142</strong> <em>(szacunek rynkowy, obejmuje t\u0142umaczenia i pomoc prawn\u0105 \u2014 nie jest to op\u0142ata urz\u0119dowa)</em> w zale\u017cno\u015bci od z\u0142o\u017cono\u015bci sprawy. <a href="/kontakt">Skontaktuj si\u0119 z nami po bezp\u0142atn\u0105 wycen\u0119</a>.</p>`,
       },
       {
         id: "czas-oczekiwania",
         heading: "Ile trwa rozpatrzenie wniosku o kart\u0119 pobytu czasowego",
         content: `<p>Czas oczekiwania na decyzj\u0119 w sprawie karty pobytu czasowego <strong>zale\u017cy od indywidualnej sprawy i obci\u0105\u017cenia urz\u0119du wojew\u00f3dzkiego</strong>. Ka\u017cdy urz\u0105d rozpatruje wnioski w r\u00f3\u017cnym tempie, a na czas oczekiwania wp\u0142ywa m.in. kompletno\u015b\u0107 dokumentacji i z\u0142o\u017cono\u015b\u0107 sprawy.</p>
-<p>W przypadku przekroczenia ustawowego terminu rozpatrzenia wniosku przys\u0142uguje prawo do z\u0142o\u017cenia <strong>ponaglenia</strong> do wojewody. W przypadku dalszej bezczynno\u015bci mo\u017cna wnie\u015b\u0107 skarg\u0119 do Wojew\u00f3dzkiego S\u0105du Administracyjnego. <a href="/pl/uslugi/ponaglenia-i-odwolania">Pomagamy w procedurze odwo\u0142awczej</a>.</p>`,
+<p>W przypadku przekroczenia ustawowego terminu rozpatrzenia wniosku przys\u0142uguje prawo do z\u0142o\u017cenia <strong>ponaglenia</strong> do wojewody. W przypadku dalszej bezczynno\u015bci mo\u017cna wnie\u015b\u0107 skarg\u0119 do Wojew\u00f3dzkiego S\u0105du Administracyjnego. <a href="/uslugi/ponaglenia-i-odwolania">Pomagamy w procedurze odwo\u0142awczej</a>.</p>`,
       },
       {
         id: "najczestsze-bledy",
@@ -121,7 +121,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>B\u0142\u0119dy w formularzu</strong> \u2014 literowe b\u0142\u0119dy w danych osobowych powoduj\u0105 wezwania do uzupe\u0142nienia</li>
 <li><strong>Brak ubezpieczenia zdrowotnego</strong> \u2014 cz\u0119sto pomijane w przypadku zleceniobiorc\u00f3w</li>
 </ol>
-<p>Ka\u017cdy z tych b\u0142\u0119d\u00f3w wyd\u0142u\u017ca post\u0119powanie o tygodnie lub miesi\u0105ce. <a href="/pl/uslugi/zezwolenie-na-pobyt-czasowy">Profesjonalna pomoc eliminuje ryzyko odmowy</a>.</p>`,
+<p>Ka\u017cdy z tych b\u0142\u0119d\u00f3w wyd\u0142u\u017ca post\u0119powanie o tygodnie lub miesi\u0105ce. <a href="/uslugi/karta-pobytu-czasowego">Profesjonalna pomoc eliminuje ryzyko odmowy</a>.</p>`,
       },
       {
         id: "faq",
@@ -192,7 +192,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Pobyt tolerowany</strong> \u2014 10 lat nieprzerwanego pobytu tolerowanego</li>
 </ul>
 <p>Wa\u017cne: pobyt sta\u0142y <strong>nie wymaga</strong> wcze\u015bniejszego 5-letniego pobytu w Polsce (to warunek dla rezydenta d\u0142ugoterminowego UE, nie dla pobytu sta\u0142ego).</p>
-<p><a href="/pl/uslugi/pobyt-staly">Sprawd\u017a, czy kwalifikujesz si\u0119 \u2014 bezp\u0142atna konsultacja</a>.</p>`,
+<p><a href="/uslugi/karta-stalego-pobytu">Sprawd\u017a, czy kwalifikujesz si\u0119 \u2014 bezp\u0142atna konsultacja</a>.</p>`,
       },
       {
         id: "dokumenty-staly",
@@ -213,7 +213,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>Ma\u0142\u017ce\u0144stwo</td><td>Akt ma\u0142\u017ce\u0144stwa, kopia karty czasowej, dokumenty ma\u0142\u017conka</td></tr>
 </tbody>
 </table>
-<p>Wszystkie dokumenty zagraniczne wymagaj\u0105 <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">t\u0142umaczenia przysi\u0119g\u0142ego</a> na j\u0119zyk polski.</p>`,
+<p>Wszystkie dokumenty zagraniczne wymagaj\u0105 <a href="/uslugi/tlumaczenia-przysiegle">t\u0142umaczenia przysi\u0119g\u0142ego</a> na j\u0119zyk polski.</p>`,
       },
       {
         id: "koszty-staly",
@@ -225,7 +225,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li>T\u0142umaczenia przysi\u0119g\u0142e: od 50 z\u0142 za stron\u0119</li>
 </ul>
 <p>Czas oczekiwania <strong>zale\u017cy od indywidualnej sprawy i obci\u0105\u017cenia urz\u0119du</strong>. Sprawy z Kart\u0105 Polaka rozpatrywane s\u0105 zwykle szybciej.</p>
-<p><a href="/pl/kontakt">Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119 \u2014 przygotujemy Tw\u00f3j wniosek profesjonalnie</a>.</p>`,
+<p><a href="/kontakt">Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119 \u2014 przygotujemy Tw\u00f3j wniosek profesjonalnie</a>.</p>`,
       },
       {
         id: "roznice",
@@ -240,7 +240,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>Podstawa prawna</td><td>Art. 195 ustawy o cudzoziemcach</td><td>Art. 211 ustawy o cudzoziemcach</td></tr>
 </tbody>
 </table>
-<p><a href="/pl/uslugi/rezydent-dlugoterminowy-ue">Dowiedz si\u0119 wi\u0119cej o statusie rezydenta UE</a>.</p>`,
+<p><a href="/uslugi/rezydent-dlugoterminowy-ue">Dowiedz si\u0119 wi\u0119cej o statusie rezydenta UE</a>.</p>`,
       },
       {
         id: "faq-staly",
@@ -319,7 +319,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Ubezpieczenie zdrowotne</strong></li>
 <li><strong>Miejsce zamieszkania</strong> w Polsce</li>
 </ol>
-<p>Specjali\u015bci IT z 3-letnim do\u015bwiadczeniem (programi\u015bci, DevOps, Data Science, cybersecurity) mog\u0105 ubiega\u0107 si\u0119 o Blue Card <strong>bez dyplomu uczelni wy\u017cszej</strong>. <a href="/pl/uslugi/eu-blue-card">Sprawd\u017a szczeg\u00f3\u0142y</a>.</p>`,
+<p>Specjali\u015bci IT z 3-letnim do\u015bwiadczeniem (programi\u015bci, DevOps, Data Science, cybersecurity) mog\u0105 ubiega\u0107 si\u0119 o Blue Card <strong>bez dyplomu uczelni wy\u017cszej</strong>. <a href="/uslugi/eu-blue-card">Sprawd\u017a szczeg\u00f3\u0142y</a>.</p>`,
       },
       {
         id: "dokumenty-blue",
@@ -363,7 +363,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>Czas oczekiwania</td><td>Zwykle kr\u00f3cej</td><td>Zale\u017cy od urz\u0119du</td></tr>
 </tbody>
 </table>
-<p><a href="/pl/kontakt">Nie wiesz, kt\u00f3re zezwolenie jest dla Ciebie? Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119</a>.</p>`,
+<p><a href="/kontakt">Nie wiesz, kt\u00f3re zezwolenie jest dla Ciebie? Um\u00f3w bezp\u0142atn\u0105 konsultacj\u0119</a>.</p>`,
       },
       {
         id: "faq-blue",
@@ -447,7 +447,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Informacje dodatkowe</strong> \u2014 karalnosc, wcze\u015bniejsze pobyty, cz\u0142onkowie rodziny</li>
 </ol>
 <p>System <strong>waliduje dane w czasie rzeczywistym</strong> i podpowiada b\u0142\u0119dy przed wys\u0142aniem. Jednak nie zwalnia to z obowi\u0105zku do\u0142\u0105czenia prawid\u0142owych za\u0142\u0105cznik\u00f3w.</p>
-<p><a href="/pl/kontakt">Potrzebujesz pomocy z wype\u0142nieniem wniosku? Skontaktuj si\u0119 z nami</a>.</p>`,
+<p><a href="/kontakt">Potrzebujesz pomocy z wype\u0142nieniem wniosku? Skontaktuj si\u0119 z nami</a>.</p>`,
       },
       {
         id: "zalaczniki",
@@ -486,7 +486,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Brak potwierdzenia e-mail</strong> \u2014 sprawd\u017a folder spam</li>
 <li><strong>Sesja wygas\u0142a</strong> \u2014 system wylogowuje po 30 minutach nieaktywno\u015bci <em>(szczeg\u00f3\u0142y do weryfikacji na mos.cudzoziemcy.gov.pl)</em>; zapisuj robocze wersje cz\u0119sto</li>
 </ul>
-<p>Je\u015bli masz problemy techniczne z MOS, <a href="/pl/kontakt">nasz zesp\u00f3\u0142 pomo\u017ce Ci z\u0142o\u017cy\u0107 wniosek prawid\u0142owo</a>.</p>`,
+<p>Je\u015bli masz problemy techniczne z MOS, <a href="/kontakt">nasz zesp\u00f3\u0142 pomo\u017ce Ci z\u0142o\u017cy\u0107 wniosek prawid\u0142owo</a>.</p>`,
       },
       {
         id: "faq-mos",
@@ -529,8 +529,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     sections: [
       { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
       { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji karty zależy od urzędu.</p>` },
-      { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle-dokumentow">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
-      { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — 250 zł (ok. 15 min, w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na konsultację</a>.</p>` },
+      { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/uslugi/tlumaczenia-przysiegle">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
+      { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — 250 zł (ok. 15 min, w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/kontakt">Umów się na konsultację</a>.</p>` },
       { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
       { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div><p>Dodatkowe informacje: przy decyzji odmownej przysługuje zwrot 50% opłaty skarbowej (na wniosek). Zwolnienie z opłaty skarbowej przysługuje m.in. posiadaczom Karty Polaka (przy pobycie stałym). Opłata za wydanie karty pobytu dla dzieci poniżej 16 lat wynosi 50 zł (zamiast 100 zł).</p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>` },
     ],
@@ -567,7 +567,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "jak-dziala",
         heading: "Jak działa nowa procedura?",
-        content: `<p>Cudzoziemiec zakłada bezpłatne konto w MOS, wypełnia e-wniosek, dołącza skany dokumentów i fotografię cyfrową. Jedyne koszty to opłata skarbowa (zależna od typu zezwolenia) oraz 100 zł za wydanie karty pobytu. W procedurach związanych z pracą system angażuje także pracodawcę — na jego adres e-mail trafia indywidualny link do elektronicznego podpisania dokumentów.</p><p>Więcej o systemie: <a href="/pl/blog/wnioski-pobytowe-mos-2026">Wnioski pobytowe online przez MOS w 2026</a>.</p>`,
+        content: `<p>Cudzoziemiec zakłada bezpłatne konto w MOS, wypełnia e-wniosek, dołącza skany dokumentów i fotografię cyfrową. Jedyne koszty to opłata skarbowa (zależna od typu zezwolenia) oraz 100 zł za wydanie karty pobytu. W procedurach związanych z pracą system angażuje także pracodawcę — na jego adres e-mail trafia indywidualny link do elektronicznego podpisania dokumentów.</p><p>Więcej o systemie: <a href="/blog/wnioski-pobytowe-mos-2026">Wnioski pobytowe online przez MOS w 2026</a>.</p>`,
       },
       {
         id: "praktyka",
@@ -683,7 +683,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "co-powinien-pracodawca",
         heading: "Co powinien zrobić pracodawca?",
-        content: `<p>Zaplanować procedurę z wyprzedzeniem: postępowanie o zezwolenie na pracę trwa dłużej niż rejestracja oświadczenia, a wniosek składa się elektronicznie przez praca.gov.pl (opłata: 200 zł do 3 mies. / 400 zł powyżej 3 mies. / 800 zł delegowanie — Dz.U. 2025 poz. 1622). Pracownikom z kończącymi się oświadczeniami warto od razu wszcząć procedurę pobytowo-pracowniczą przez <a href="/pl/blog/wnioski-pobytowe-mos-2026">MOS</a>. Wniosek o zezwolenie jednolite na pobyt i pracę składa <strong>cudzoziemiec</strong> (nie pracodawca) do wojewody, elektronicznie przez MOS (Moduł Obsługi Spraw, mos.cudzoziemcy.gov.pl); opłata 440 zł + 100 zł karta pobytu.</p><p><strong>Zatrudniasz obywateli Gruzji? Sprawdzimy ich sytuację i poprowadzimy właściwą procedurę — umów konsultację z getpermit.pl.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
+        content: `<p>Zaplanować procedurę z wyprzedzeniem: postępowanie o zezwolenie na pracę trwa dłużej niż rejestracja oświadczenia, a wniosek składa się elektronicznie przez praca.gov.pl (opłata: 200 zł do 3 mies. / 400 zł powyżej 3 mies. / 800 zł delegowanie — Dz.U. 2025 poz. 1622). Pracownikom z kończącymi się oświadczeniami warto od razu wszcząć procedurę pobytowo-pracowniczą przez <a href="/blog/wnioski-pobytowe-mos-2026">MOS</a>. Wniosek o zezwolenie jednolite na pobyt i pracę składa <strong>cudzoziemiec</strong> (nie pracodawca) do wojewody, elektronicznie przez MOS (Moduł Obsługi Spraw, mos.cudzoziemcy.gov.pl); opłata 440 zł + 100 zł karta pobytu.</p><p><strong>Zatrudniasz obywateli Gruzji? Sprawdzimy ich sytuację i poprowadzimy właściwą procedurę — umów konsultację z getpermit.pl.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
       },
     ],
   },
@@ -784,7 +784,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "lagodniejsze-warunki",
         heading: "Łagodniejsze pozostałe warunki",
-        content: `<p>Po wdrożeniu nowej dyrektywy Blue Card procedura została częściowo ujednolicona w całej UE: wystarczy umowa zawarta na <strong>co najmniej 6 miesięcy</strong> (wcześniej 12), a w niektórych zawodach — zwłaszcza IT — wyższe kwalifikacje można wykazać <strong>doświadczeniem zawodowym</strong> zamiast dyplomem uczelni. Więcej o Blue Card: <a href="/pl/blog/niebieska-karta-ue-blue-card-2026">Niebieska Karta UE w Polsce 2026</a>.</p>`,
+        content: `<p>Po wdrożeniu nowej dyrektywy Blue Card procedura została częściowo ujednolicona w całej UE: wystarczy umowa zawarta na <strong>co najmniej 6 miesięcy</strong> (wcześniej 12), a w niektórych zawodach — zwłaszcza IT — wyższe kwalifikacje można wykazać <strong>doświadczeniem zawodowym</strong> zamiast dyplomem uczelni. Więcej o Blue Card: <a href="/blog/niebieska-karta-ue-blue-card-2026">Niebieska Karta UE w Polsce 2026</a>.</p>`,
       },
       {
         id: "dlaczego-warto",

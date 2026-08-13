@@ -42,7 +42,9 @@ export async function generateMetadata({
   // Use canonical (PL) slug for hreflang mapping
   const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
   const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
-  const canonicalUrl = `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+  const canonicalUrl = locale === "pl"
+    ? `${siteConfig.url}/blog/${localizedSlug}`
+    : `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
 
   return {
     title: post.title,
@@ -57,9 +59,14 @@ export async function generateMetadata({
       canonical: canonicalUrl,
       languages: {
         ...Object.fromEntries(
-          routing.locales.map((l) => [l, `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`])
+          routing.locales.map((l) => [
+            l,
+            l === "pl"
+              ? `${siteConfig.url}/blog/${getLocalizedBlogSlug(plSlug, l)}`
+              : `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`,
+          ])
         ),
-        "x-default": `${siteConfig.url}/en/blog/${getLocalizedBlogSlug(plSlug, "en")}`,
+        "x-default": `${siteConfig.url}/blog/${getLocalizedBlogSlug(plSlug, "pl")}`,
       },
     },
   };
@@ -83,6 +90,38 @@ export default async function BlogPostPage({
 
   const readingTime = estimateReadingTime(post.sections);
 
+  // Build canonical URL for JSON-LD
+  const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
+  const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
+  const canonicalUrl = locale === "pl"
+    ? `${siteConfig.url}/blog/${localizedSlug}`
+    : `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    image: post.imageUrl.startsWith("http")
+      ? post.imageUrl
+      : `${siteConfig.url}${post.imageUrl}`,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      "@type": "Person",
+      name: post.author,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "getpermit.pl",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteConfig.url}/logo.jpg`,
+      },
+    },
+    mainEntityOfPage: canonicalUrl,
+  };
+
   const DATE_LOCALES: Record<string, string> = { pl: "pl-PL", en: "en-US", ru: "ru-RU", uk: "uk-UA" };
   const LABELS: Record<string, { toc: string; backToBlog: string; minRead: string }> = {
     pl: { toc: "Spis tre\u015bci", backToBlog: "Wr\u00f3\u0107 do bloga", minRead: "min czytania" },
@@ -95,6 +134,10 @@ export default async function BlogPostPage({
 
   return (
     <article className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero image */}
       <div className="relative h-[300px] w-full overflow-hidden bg-primary-800 md:h-[420px]">
         <Image

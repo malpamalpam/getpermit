@@ -4,9 +4,8 @@ import { createNavigation } from "next-intl/navigation";
 export const routing = defineRouting({
   locales: ["pl", "en", "ru", "uk"],
   defaultLocale: "pl",
-  // Każdy locale ma prefix w URL (/pl, /en, /ru, /uk).
-  // Root "/" robi redirect na /pl. Wymagane dla kompatybilności z Vercel Edge.
-  localePrefix: "always",
+  // PL (default) bez prefiksu w URL, pozostałe z prefiksem (/en, /ru, /uk).
+  localePrefix: "as-needed",
   pathnames: {
     "/": "/",
     "/uslugi": {
