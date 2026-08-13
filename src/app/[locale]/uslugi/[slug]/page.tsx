@@ -52,22 +52,15 @@ export async function generateMetadata({
       images: [{ url: heroImg.src, width: 1440, height: 480 }],
     },
     alternates: {
-      canonical: locale === "pl"
-        ? `${siteConfig.url}/${SERVICE_BASE_PATH[locale]}/${slug}`
-        : `${siteConfig.url}/${locale}/${SERVICE_BASE_PATH[locale]}/${slug}`,
+      canonical: `${siteConfig.url}/${locale}/${SERVICE_BASE_PATH[locale]}/${slug}`,
       languages: {
         ...Object.fromEntries(
           routing.locales.map((l) => {
             const lSlug = getLocalizedSlug(internalSlug, l);
-            return [
-              l,
-              l === "pl"
-                ? `${siteConfig.url}/${SERVICE_BASE_PATH[l]}/${lSlug}`
-                : `${siteConfig.url}/${l}/${SERVICE_BASE_PATH[l]}/${lSlug}`,
-            ];
+            return [l, `${siteConfig.url}/${l}/${SERVICE_BASE_PATH[l]}/${lSlug}`];
           })
         ),
-        "x-default": `${siteConfig.url}/${SERVICE_BASE_PATH.pl}/${getLocalizedSlug(internalSlug, "pl")}`,
+        "x-default": `${siteConfig.url}/en/${SERVICE_BASE_PATH.en}/${getLocalizedSlug(internalSlug, "en")}`,
       },
     },
   };

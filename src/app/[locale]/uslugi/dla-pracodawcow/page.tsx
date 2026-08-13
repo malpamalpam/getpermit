@@ -27,9 +27,7 @@ export async function generateMetadata({
   const localeUrl = (l: string) => {
     const basePath = SERVICE_BASE_PATH[l] ?? "uslugi";
     const slug = getLocalizedSlug("dla-pracodawcow", l);
-    return l === "pl"
-      ? `${siteConfig.url}/${basePath}/${slug}`
-      : `${siteConfig.url}/${l}/${basePath}/${slug}`;
+    return `${siteConfig.url}/${l}/${basePath}/${slug}`;
   };
 
   return {

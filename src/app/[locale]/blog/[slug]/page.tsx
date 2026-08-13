@@ -42,9 +42,7 @@ export async function generateMetadata({
   // Use canonical (PL) slug for hreflang mapping
   const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
   const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
-  const canonicalUrl = locale === "pl"
-    ? `${siteConfig.url}/blog/${localizedSlug}`
-    : `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+  const canonicalUrl = `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
 
   return {
     title: post.title,
@@ -59,14 +57,9 @@ export async function generateMetadata({
       canonical: canonicalUrl,
       languages: {
         ...Object.fromEntries(
-          routing.locales.map((l) => [
-            l,
-            l === "pl"
-              ? `${siteConfig.url}/blog/${getLocalizedBlogSlug(plSlug, l)}`
-              : `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`,
-          ])
+          routing.locales.map((l) => [l, `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`])
         ),
-        "x-default": `${siteConfig.url}/blog/${getLocalizedBlogSlug(plSlug, "pl")}`,
+        "x-default": `${siteConfig.url}/en/blog/${getLocalizedBlogSlug(plSlug, "en")}`,
       },
     },
   };
@@ -93,9 +86,7 @@ export default async function BlogPostPage({
   // Build canonical URL for JSON-LD
   const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
   const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
-  const canonicalUrl = locale === "pl"
-    ? `${siteConfig.url}/blog/${localizedSlug}`
-    : `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+  const canonicalUrl = `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
