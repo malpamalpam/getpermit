@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Shield, List } from "lucide-react";
+import { getAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -13,6 +14,7 @@ export async function generateMetadata({
     title: t("privacyTitle"),
     description: t("privacyDescription"),
     robots: { index: true, follow: true },
+    alternates: getAlternates("/polityka-prywatnosci", locale),
   };
 }
 

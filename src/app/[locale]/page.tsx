@@ -5,6 +5,18 @@ import { ProcessSection } from "@/components/home/ProcessSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { FaqSection } from "@/components/home/FaqSection";
 import { CtaBanner } from "@/components/home/CtaBanner";
+import { getAlternates } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return {
+    alternates: getAlternates("/", locale),
+  };
+}
 
 const SECTION_IDS: Record<string, Record<string, string>> = {
   uslugi: { pl: "uslugi", en: "services", ru: "uslugi", uk: "poslugy" },
