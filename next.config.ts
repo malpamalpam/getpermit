@@ -21,7 +21,9 @@ const LEGACY_SERVICE_REDIRECTS: Array<{ from: string; to: string }> = [
   { from: "tlumaczenia-przysiegle-dokumentow", to: "tlumaczenia-przysiegle" },
   { from: "karta-pobytu-stalego", to: "karta-stalego-pobytu" },
   { from: "legalizacja-fdk", to: "legalizacja-b2b-inkubator" },
-  { from: "legalizacja-pracy-fdk", to: "legalizacja-pracy-b2b-inkubator" },
+  { from: "legalizacja-pracy-fdk", to: "legalizacja-b2b-inkubator" },
+  // Konsolidacja B2B inkubator — kanoniczny to krótszy slug
+  { from: "legalizacja-pracy-b2b-inkubator", to: "legalizacja-b2b-inkubator" },
 ];
 
 const LOCALES = ["pl", "en", "ru", "uk"] as const;
@@ -101,22 +103,29 @@ const nextConfig: NextConfig = {
     }> = [];
 
     for (const { from, to } of LEGACY_SERVICE_REDIRECTS) {
-      // Default locale (pl) — bez prefiksu
-      redirects.push({
-        source: `/uslugi/${from}`,
-        destination: `/uslugi/${to}`,
-        permanent: true,
-      });
-      // Pozostałe lokale z prefiksem
+      // Wszystkie lokale z prefiksem (localePrefix: "always")
       for (const locale of LOCALES) {
-        if (locale === "pl") continue;
         redirects.push({
           source: `/${locale}/uslugi/${from}`,
           destination: `/${locale}/uslugi/${to}`,
           permanent: true,
         });
       }
+      // Stare URL-e bez prefiksu locale → /pl/uslugi/...
+      redirects.push({
+        source: `/uslugi/${from}`,
+        destination: `/pl/uslugi/${to}`,
+        permanent: true,
+      });
     }
+
+    // Root "/" → /pl (localePrefix: "always" — middleware powinno to robić,
+    // ale na produkcji Vercel Edge potrafi to pominąć; jawny redirect gwarantuje 301)
+    redirects.push({
+      source: "/",
+      destination: "/pl",
+      permanent: true,
+    });
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [
@@ -152,10 +161,8 @@ const nextConfig: NextConfig = {
     // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
     // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
 
-    // localePrefix: "as-needed" — next-intl middleware automatycznie redirectuje
-    // /pl/* na /* dla defaultLocale. NIE dodawaj tu ręcznych redirectów /pl → /,
-    // bo next.config redirecty mają wyższy priorytet niż middleware i powodują
-    // conflict (internal rewrite / → /pl koliduje z redirect /pl → /).
+    // localePrefix: "always" — każdy locale ma prefix (/pl, /en, /ru, /uk).
+    // Root "/" redirectuje na /pl (jawny redirect powyżej).
 
     return redirects;
   },

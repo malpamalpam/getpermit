@@ -21,7 +21,7 @@ export function getAlternates(pathnameKey: PathnameKey, locale: string) {
       ...Object.fromEntries(
         routing.locales.map((l) => [l, `${siteConfig.url}/${l}${getPath(l)}`])
       ),
-      "x-default": `${siteConfig.url}/en${getPath("en")}`,
+      "x-default": `${siteConfig.url}/pl${getPath("pl")}`,
     },
   };
 }

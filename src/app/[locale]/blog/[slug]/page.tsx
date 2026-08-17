@@ -59,7 +59,7 @@ export async function generateMetadata({
         ...Object.fromEntries(
           routing.locales.map((l) => [l, `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`])
         ),
-        "x-default": `${siteConfig.url}/en/blog/${getLocalizedBlogSlug(plSlug, "en")}`,
+        "x-default": `${siteConfig.url}/pl/blog/${plSlug}`,
       },
     },
   };

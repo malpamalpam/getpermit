@@ -60,7 +60,7 @@ export async function generateMetadata({
             return [l, `${siteConfig.url}/${l}/${SERVICE_BASE_PATH[l]}/${lSlug}`];
           })
         ),
-        "x-default": `${siteConfig.url}/en/${SERVICE_BASE_PATH.en}/${getLocalizedSlug(internalSlug, "en")}`,
+        "x-default": `${siteConfig.url}/pl/${SERVICE_BASE_PATH.pl}/${getLocalizedSlug(internalSlug, "pl")}`,
       },
     },
   };
