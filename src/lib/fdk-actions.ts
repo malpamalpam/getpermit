@@ -37,7 +37,7 @@ const optDate = z.string().optional().or(z.literal(""));
 
 const employmentBaseSchema = z.object({
   foreignerId: z.number().int(),
-  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA", "ODWOLANIE"]),
+  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA", "ODWOLANIE", "DOSTEP_UE"]),
   status: z.enum(["AKTYWNE", "NIEAKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
   // Wspólne
   rodzajUmowy: optStr,
