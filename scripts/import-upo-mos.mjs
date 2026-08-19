@@ -85,10 +85,11 @@ function parseCsv(filePath) {
 
 function parseDate(dateStr) {
   // Try DD.MM.YYYY or DD/MM/YYYY or YYYY-MM-DD
+  // Use Date.UTC to avoid local timezone shifting the date by -1 day
   let m = dateStr.match(/(\d{1,2})[./](\d{1,2})[./](\d{4})/);
-  if (m) return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]));
+  if (m) return new Date(Date.UTC(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]), 12));
   m = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if (m) return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
+  if (m) return new Date(Date.UTC(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]), 12));
   return null;
 }
 
