@@ -12,6 +12,7 @@ import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
 import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
+import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
 import { withComputedStatuses } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -77,6 +78,7 @@ export default async function FdkForeignerPage({
   const now = new Date();
   const hasActiveResidence =
     (foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo > now) ||
+    foreigner.upoDoreczone ||
     foreigner.employmentBases.some(
       (b) => (b.typ === "KARTA_POBYTU" || b.typ === "BLUE_CARD") && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
     );
@@ -90,9 +92,17 @@ export default async function FdkForeignerPage({
           <Link href="/admin/fdk" className="mb-2 inline-flex items-center gap-1 text-sm text-accent hover:underline">
             <ArrowLeft className="h-4 w-4" /> Lista cudzoziemców
           </Link>
-          <h1 className="font-display text-3xl font-extrabold text-primary">
-            {foreigner.imie} {foreigner.nazwisko}
-          </h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="font-display text-3xl font-extrabold text-primary">
+              {foreigner.imie} {foreigner.nazwisko}
+            </h1>
+            <DeleteForeignerButton
+              foreignerId={foreigner.id}
+              name={`${foreigner.imie ?? ""} ${foreigner.nazwisko}`.trim()}
+              redirectTo="/admin/fdk"
+              variant="button"
+            />
+          </div>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             {foreigner.obywatelstwo && (
               <span className="text-sm text-ink/60">{foreigner.obywatelstwo}</span>
@@ -163,8 +173,21 @@ export default async function FdkForeignerPage({
                       </div>
                     )}
                   </div>
-                ) : foreigner.wizaDo ? null : (
+                ) : foreigner.wizaDo || foreigner.upoDoreczone ? null : (
                   <span className="text-sm text-primary/40">Brak karty pobytu i wizy</span>
+                )}
+                {foreigner.upoDoreczone && (
+                  <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
+                    <div className="font-semibold text-amber-800">
+                      W procedurze — przedłużenie TRC
+                    </div>
+                    <div className="text-amber-700">
+                      Wniosek doręczony: {fmt(foreigner.upoDoreczone)}
+                    </div>
+                    {foreigner.upoUwagi && (
+                      <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>
+                    )}
+                  </div>
                 )}
                 {foreigner.wizaDo && (
                   <div className="rounded-lg bg-purple-50 p-3 text-sm">

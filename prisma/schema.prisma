@@ -412,6 +412,11 @@ model FdkForeigner {
   /// Data ważności wizy (jeśli cudzoziemiec przebywa na wizie, nie na karcie pobytu)
   wizaDo DateTime? @map("wiza_do")
 
+  /// UPO MOS — data doręczenia wniosku o przedłużenie TRC (= aktualna podstawa pobytowa w procedurze)
+  upoDoreczone DateTime? @map("upo_doreczone")
+  /// Opis procedury UPO (np. "Przedłużenie TRC — wniosek doręczony DD.MM.YYYY, Wojewoda Mazowiecki")
+  upoUwagi String? @map("upo_uwagi") @db.Text
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

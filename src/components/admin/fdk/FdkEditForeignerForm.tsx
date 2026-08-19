@@ -25,6 +25,8 @@ interface ForeignerData {
   decyzjaPobytowaDo: Date | null;
   typDokumentuPobytowego: string | null;
   wizaDo: Date | null;
+  upoDoreczone: Date | null;
+  upoUwagi: string | null;
 }
 
 function fmtDate(d: Date | null): string {
@@ -53,6 +55,8 @@ const FIELDS: { key: EditableKey; label: string; type?: string }[] = [
   { key: "decyzjaPobytowaDo", label: "Karta pobytu ważna do", type: "date" },
   { key: "typDokumentuPobytowego", label: "Typ karty pobytu" },
   { key: "wizaDo", label: "Wiza ważna do", type: "date" },
+  { key: "upoDoreczone", label: "UPO — data doręczenia wniosku TRC", type: "date" },
+  { key: "upoUwagi", label: "UPO — uwagi (wojewoda, procedura)" },
   { key: "uwagi", label: "Uwagi" },
 ];
 

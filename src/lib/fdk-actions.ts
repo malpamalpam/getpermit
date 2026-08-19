@@ -7,6 +7,52 @@ import { requireAdmin } from "@/lib/auth";
 import { type FdkResult, deactivatePreviousResidencePermits, computeStatus } from "@/lib/fdk-queries";
 
 // =============================================================================
+// EU/EEA CITIZENSHIP CHECK
+// =============================================================================
+
+const EU_COUNTRIES = new Set([
+  "austria", "belgia", "bułgaria", "bulgaria", "chorwacja", "cypr", "czechy",
+  "dania", "estonia", "finlandia", "francja", "grecja", "hiszpania",
+  "holandia", "niderlandy", "irlandia", "litwa", "łotwa", "lotwa", "luksemburg",
+  "malta", "niemcy", "polska", "portugalia", "rumunia", "słowacja", "slowacja",
+  "słowenia", "slowenia", "szwecja", "węgry", "wegry", "włochy", "wlochy",
+  "islandia", "liechtenstein", "norwegia", "szwajcaria",
+  "belgium", "croatia", "cyprus", "czech republic", "czechia",
+  "denmark", "finland", "france", "germany", "greece", "hungary",
+  "ireland", "italy", "latvia", "lithuania", "luxembourg",
+  "netherlands", "holland", "poland", "portugal", "romania", "slovakia",
+  "slovenia", "spain", "sweden", "iceland", "norway", "switzerland",
+]);
+
+function isEuCitizen(obywatelstwo: string | null): boolean {
+  if (!obywatelstwo) return false;
+  return EU_COUNTRIES.has(obywatelstwo.toLowerCase().trim());
+}
+
+/**
+ * Auto-create DOSTEP_UE base if foreigner is EU/EEA citizen and doesn't have one yet.
+ */
+async function ensureDostepUe(foreignerId: number, obywatelstwo: string | null, changedBy: string) {
+  if (!isEuCitizen(obywatelstwo)) return;
+  const existing = await db.fdkEmploymentBase.findFirst({
+    where: { foreignerId, typ: "DOSTEP_UE" },
+  });
+  if (existing) return;
+  await db.fdkEmploymentBase.create({
+    data: { foreignerId, typ: "DOSTEP_UE", status: "AKTYWNE" },
+  });
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId,
+      changedBy,
+      field: "employment_base_create",
+      oldValue: null,
+      newValue: `Auto DOSTEP_UE — obywatel ${obywatelstwo} (UE/EOG). Otwarty dostęp do rynku pracy.`,
+    },
+  });
+}
+
+// =============================================================================
 // SCHEMAS
 // =============================================================================
 
@@ -30,6 +76,8 @@ const foreignerSchema = z.object({
   decyzjaPobytowaDo: z.string().optional().or(z.literal("")),
   typDokumentuPobytowego: z.string().trim().max(255).optional().or(z.literal("")),
   wizaDo: z.string().optional().or(z.literal("")),
+  upoDoreczone: z.string().optional().or(z.literal("")),
+  upoUwagi: z.string().trim().optional().or(z.literal("")),
 });
 
 const optStr = z.string().optional().or(z.literal(""));
@@ -279,6 +327,8 @@ export async function updateForeignerAction(
     decyzjaPobytowaDo: toDate(d.decyzjaPobytowaDo),
     typDokumentuPobytowego: d.typDokumentuPobytowego || null,
     wizaDo: toDate(d.wizaDo),
+    upoDoreczone: toDate(d.upoDoreczone),
+    upoUwagi: d.upoUwagi || null,
   };
 
   await db.fdkForeigner.update({ where: { id }, data: newData });
@@ -290,6 +340,11 @@ export async function updateForeignerAction(
     oldForeigner as unknown as Record<string, unknown>,
     newData as unknown as Record<string, unknown>
   );
+
+  // Auto-add DOSTEP_UE if EU citizenship set/changed
+  if (newData.obywatelstwo && newData.obywatelstwo !== oldForeigner.obywatelstwo) {
+    await ensureDostepUe(id, newData.obywatelstwo, user.email);
+  }
 
   revalidateFdk(id);
   return { ok: true };

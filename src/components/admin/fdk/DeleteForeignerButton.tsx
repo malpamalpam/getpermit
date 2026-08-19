@@ -8,9 +8,13 @@ import { deleteForeignerAction } from "@/lib/fdk-actions";
 export function DeleteForeignerButton({
   foreignerId,
   name,
+  redirectTo,
+  variant = "icon",
 }: {
   foreignerId: number;
   name: string;
+  redirectTo?: string;
+  variant?: "icon" | "button";
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -24,7 +28,11 @@ export function DeleteForeignerButton({
         const result = await deleteForeignerAction(foreignerId);
         if (result.ok) {
           setShowConfirm(false);
-          router.refresh();
+          if (redirectTo) {
+            router.push(redirectTo);
+          } else {
+            router.refresh();
+          }
         } else {
           setError("Nie udalo sie usunac cudzoziemca.");
         }
@@ -43,10 +51,15 @@ export function DeleteForeignerButton({
           e.stopPropagation();
           setShowConfirm(true);
         }}
-        className="relative z-10 inline-flex items-center rounded-md p-1 text-primary/30 hover:bg-red-50 hover:text-red-600"
+        className={
+          variant === "button"
+            ? "inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+            : "relative z-10 inline-flex items-center rounded-md p-1 text-primary/30 hover:bg-red-50 hover:text-red-600"
+        }
         title="Usun cudzoziemca"
       >
         <Trash2 className="h-3.5 w-3.5" />
+        {variant === "button" && "Usuń cudzoziemca"}
       </button>
 
       {showConfirm && (
