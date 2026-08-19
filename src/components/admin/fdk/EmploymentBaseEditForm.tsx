@@ -13,7 +13,7 @@ import { Pencil, Plus, Trash2, X, Loader2, Save } from "lucide-react";
 // Types
 // ---------------------------------------------------------------------------
 
-type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA" | "ODWOLANIE" | "DOSTEP_UE";
+type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA" | "ODWOLANIE" | "DOSTEP_UE" | "DOSTEP_STUDENT" | "DOSTEP_POBYT_STALY" | "DOSTEP_REZYDENT_UE" | "DOSTEP_KARTA_POLAKA" | "DOSTEP_OCHRONA_MIEDZ" | "DOSTEP_DYPLOM_PL";
 type StatusType = "AKTYWNE" | "NIEAKTYWNE" | "WYGASLE" | "UCHYLONE" | "UMORZONE" | "W_TRAKCIE" | "BRAK_DANYCH";
 
 interface EmploymentBase {
@@ -84,7 +84,13 @@ const TYPE_OPTIONS: { value: BaseType; label: string }[] = [
   { value: "BLUE_CARD", label: "EU Blue Card" },
   { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
   { value: "ODWOLANIE", label: "Odwołanie / procedura odwoławcza" },
-  { value: "DOSTEP_UE", label: "Dostęp do rynku pracy UE/EOG" },
+  { value: "DOSTEP_UE", label: "Otwarty dostęp — obywatel UE/EOG" },
+  { value: "DOSTEP_STUDENT", label: "Otwarty dostęp — status studenta" },
+  { value: "DOSTEP_POBYT_STALY", label: "Otwarty dostęp — pobyt stały" },
+  { value: "DOSTEP_REZYDENT_UE", label: "Otwarty dostęp — rezydent długoterminowy UE" },
+  { value: "DOSTEP_KARTA_POLAKA", label: "Otwarty dostęp — Karta Polaka" },
+  { value: "DOSTEP_OCHRONA_MIEDZ", label: "Otwarty dostęp — ochrona międzynarodowa" },
+  { value: "DOSTEP_DYPLOM_PL", label: "Otwarty dostęp — dyplom polskiej uczelni" },
 ];
 
 const STATUS_OPTIONS: { value: StatusType; label: string }[] = [
@@ -561,13 +567,18 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
             </fieldset>
           )}
 
-          {/* === Dostęp UE === */}
-          {typ === "DOSTEP_UE" && (
+          {/* === Otwarty dostęp (wszystkie typy DOSTEP_*) === */}
+          {typ.startsWith("DOSTEP_") && (
             <fieldset className="space-y-3 rounded-lg border border-emerald-200 bg-emerald-50/30 p-4">
-              <legend className="px-2 text-xs font-bold text-emerald-700">Dostęp do rynku pracy UE/EOG</legend>
+              <legend className="px-2 text-xs font-bold text-emerald-700">Otwarty dostęp do rynku pracy</legend>
               <div className="rounded-md bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-700">
-                Obywatel UE/EOG/Szwajcarii — otwarty dostęp do rynku pracy w Polsce bez konieczności posiadania zezwolenia na pracę.
-                Nie wymaga dat ważności.
+                {typ === "DOSTEP_UE" && "Obywatel UE/EOG/Szwajcarii — otwarty dostęp bez zezwolenia. Nie wymaga dat ważności."}
+                {typ === "DOSTEP_STUDENT" && "Status studenta — otwarty dostęp do rynku pracy (okresowy, wymaga weryfikacji statusu studenta)."}
+                {typ === "DOSTEP_POBYT_STALY" && "Zezwolenie na pobyt stały — otwarty dostęp do rynku pracy bez ograniczeń."}
+                {typ === "DOSTEP_REZYDENT_UE" && "Rezydent długoterminowy UE — otwarty dostęp do rynku pracy."}
+                {typ === "DOSTEP_KARTA_POLAKA" && "Posiadacz Karty Polaka — otwarty dostęp (okresowy, ważność KP)."}
+                {typ === "DOSTEP_OCHRONA_MIEDZ" && "Status ochrony międzynarodowej — otwarty dostęp do rynku pracy."}
+                {typ === "DOSTEP_DYPLOM_PL" && "Absolwent polskiej uczelni — otwarty dostęp do rynku pracy."}
               </div>
               <div>
                 <label className={labelCls}>Firma</label>

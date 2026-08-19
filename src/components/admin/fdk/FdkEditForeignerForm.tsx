@@ -27,6 +27,7 @@ interface ForeignerData {
   wizaDo: Date | null;
   upoDoreczone: Date | null;
   upoUwagi: string | null;
+  ochronaCzasowaUkr: boolean;
 }
 
 function fmtDate(d: Date | null): string {
@@ -57,6 +58,7 @@ const FIELDS: { key: EditableKey; label: string; type?: string }[] = [
   { key: "wizaDo", label: "Wiza ważna do", type: "date" },
   { key: "upoDoreczone", label: "UPO — data doręczenia wniosku TRC", type: "date" },
   { key: "upoUwagi", label: "UPO — uwagi (wojewoda, procedura)" },
+  { key: "ochronaCzasowaUkr", label: "Ochrona czasowa UKR (PESEL UKR)", type: "checkbox" },
   { key: "uwagi", label: "Uwagi" },
 ];
 
@@ -106,6 +108,15 @@ export function FdkEditForeignerForm({ foreigner }: { foreigner: ForeignerData }
         <dl className="space-y-2 text-sm">
           {FIELDS.map(({ key, label, type }) => {
             const raw = foreigner[key];
+            if (type === "checkbox") {
+              if (!raw) return null;
+              return (
+                <div key={key} className="flex justify-between gap-4">
+                  <dt className="text-primary/60">{label}</dt>
+                  <dd className="text-right font-medium text-primary">Tak</dd>
+                </div>
+              );
+            }
             const value =
               raw instanceof Date
                 ? raw.toLocaleDateString("pl-PL")
@@ -154,7 +165,18 @@ export function FdkEditForeignerForm({ foreigner }: { foreigner: ForeignerData }
         {FIELDS.map(({ key, label, type }) => (
           <div key={key} className={key === "uwagi" || key === "adresPl" ? "sm:col-span-2" : ""}>
             <label className="mb-1 block text-xs font-medium text-primary/60">{label}</label>
-            {key === "uwagi" ? (
+            {type === "checkbox" ? (
+              <label className="flex items-center gap-2 cursor-pointer mt-1">
+                <input
+                  type="checkbox"
+                  checked={form[key] === "true"}
+                  onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.checked ? "true" : "false" }))}
+                  className="h-4 w-4 rounded border-primary/30 text-accent focus:ring-accent/30"
+                  disabled={isPending}
+                />
+                <span className="text-sm text-primary">Tak</span>
+              </label>
+            ) : key === "uwagi" ? (
               <textarea
                 value={form[key]}
                 onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}

@@ -36,6 +36,12 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
   ODWOLANIE: { label: "Odwołanie", cls: "bg-orange-100 text-orange-800" },
   DOSTEP_UE: { label: "Dostęp UE", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_STUDENT: { label: "Student", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_POBYT_STALY: { label: "Pobyt stały", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_REZYDENT_UE: { label: "Rezydent UE", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_KARTA_POLAKA: { label: "Karta Polaka", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_OCHRONA_MIEDZ: { label: "Ochrona międz.", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_DYPLOM_PL: { label: "Dyplom PL", cls: "bg-emerald-100 text-emerald-800" },
 };
 
 
@@ -79,9 +85,11 @@ export default async function FdkForeignerPage({
   const hasActiveResidence =
     (foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo > now) ||
     foreigner.upoDoreczone ||
+    foreigner.ochronaCzasowaUkr ||
     foreigner.employmentBases.some(
       (b) => (b.typ === "KARTA_POBYTU" || b.typ === "BLUE_CARD") && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
-    );
+    ) ||
+    foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
 
   return (
     <>
@@ -159,44 +167,95 @@ export default async function FdkForeignerPage({
               <div className="space-y-3">
                 {/* Podstawy pobytowe */}
                 <div className="text-sm text-primary/60">Podstawy pobytowe</div>
-                {foreigner.decyzjaPobytowaDo ? (
-                  <div className="rounded-lg bg-blue-50 p-3 text-sm">
-                    <div className="font-semibold text-blue-800">
-                      Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
-                    </div>
-                    <div className="text-blue-700">
-                      Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}
-                    </div>
-                    {hasActiveResidence && foreigner.employmentBases.some((b) => b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE") && (
-                      <div className="mt-1 text-xs text-blue-600">
-                        Zezwolenia na pracę wchłonięte przez decyzję pobytową
-                      </div>
-                    )}
-                  </div>
-                ) : foreigner.wizaDo || foreigner.upoDoreczone ? null : (
-                  <span className="text-sm text-primary/40">Brak karty pobytu i wizy</span>
-                )}
-                {foreigner.upoDoreczone && (
-                  <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
-                    <div className="font-semibold text-amber-800">
-                      W procedurze — przedłużenie TRC
-                    </div>
-                    <div className="text-amber-700">
-                      Wniosek doręczony: {fmt(foreigner.upoDoreczone)}
-                    </div>
-                    {foreigner.upoUwagi && (
-                      <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>
-                    )}
-                  </div>
-                )}
-                {foreigner.wizaDo && (
-                  <div className="rounded-lg bg-purple-50 p-3 text-sm">
-                    <div className="font-semibold text-purple-800">Wiza</div>
-                    <div className="text-purple-700">
-                      Ważna do: {fmt(foreigner.wizaDo)}
-                    </div>
-                  </div>
-                )}
+                {(() => {
+                  const kpExpired = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo < now;
+                  const kpActive = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now;
+                  const wizaExpired = foreigner.wizaDo && foreigner.wizaDo < now;
+                  const wizaActive = foreigner.wizaDo && foreigner.wizaDo >= now;
+                  const hasUpo = !!foreigner.upoDoreczone;
+                  const hasOchronaUkr = foreigner.ochronaCzasowaUkr;
+                  const isEuCitizen = foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
+                  const hasAny = kpActive || kpExpired || wizaActive || wizaExpired || hasUpo || hasOchronaUkr || isEuCitizen;
+
+                  return (
+                    <>
+                      {/* Karta pobytu — aktywna */}
+                      {kpActive && (
+                        <div className="rounded-lg bg-blue-50 p-3 text-sm">
+                          <div className="font-semibold text-blue-800">
+                            Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                          </div>
+                          <div className="text-blue-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
+                          {foreigner.employmentBases.some((b) => b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE") && (
+                            <div className="mt-1 text-xs text-blue-600">Zezwolenia na pracę wchłonięte przez decyzję pobytową</div>
+                          )}
+                        </div>
+                      )}
+                      {/* Karta pobytu — wygasła */}
+                      {kpExpired && (
+                        <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-red-800">
+                              Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                            </span>
+                            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">WYGASŁA</span>
+                          </div>
+                          <div className="text-red-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
+                        </div>
+                      )}
+                      {/* UPO — w procedurze */}
+                      {hasUpo && (
+                        <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-amber-800">W procedurze — przedłużenie TRC</span>
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">AKTUALNA</span>
+                          </div>
+                          <div className="text-amber-700">Wniosek doręczony: {fmt(foreigner.upoDoreczone)}</div>
+                          {foreigner.upoUwagi && <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>}
+                        </div>
+                      )}
+                      {/* Wiza — aktywna */}
+                      {wizaActive && (
+                        <div className="rounded-lg bg-purple-50 p-3 text-sm">
+                          <div className="font-semibold text-purple-800">Wiza</div>
+                          <div className="text-purple-700">Ważna do: {fmt(foreigner.wizaDo)}</div>
+                        </div>
+                      )}
+                      {/* Wiza — wygasła */}
+                      {wizaExpired && (
+                        <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-red-800">Wiza</span>
+                            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">WYGASŁA</span>
+                          </div>
+                          <div className="text-red-700">Ważna do: {fmt(foreigner.wizaDo)}</div>
+                        </div>
+                      )}
+                      {/* Ochrona czasowa UKR */}
+                      {hasOchronaUkr && (
+                        <div className="rounded-lg bg-sky-50 border border-sky-200 p-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sky-800">Ochrona czasowa (UKR)</span>
+                            <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-700">AKTUALNA</span>
+                          </div>
+                          <div className="text-xs text-sky-600 mt-1">PESEL UKR / status ochrony czasowej</div>
+                        </div>
+                      )}
+                      {/* Obywatel UE */}
+                      {isEuCitizen && (
+                        <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-emerald-800">Pobyt obywatela UE</span>
+                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">AKTUALNA</span>
+                          </div>
+                          <div className="text-xs text-emerald-600 mt-1">Swoboda pobytu i pracy na terytorium RP</div>
+                        </div>
+                      )}
+                      {/* Brak podstawy */}
+                      {!hasAny && <span className="text-sm text-primary/40">Brak podstawy pobytowej</span>}
+                    </>
+                  );
+                })()}
                 <div className="text-sm text-primary/60">Aktywne podstawy zatrudnienia</div>
                 <div className="flex flex-wrap gap-1.5">
                   {(() => {

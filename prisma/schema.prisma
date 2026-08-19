@@ -372,6 +372,12 @@ enum FdkBaseType {
   ZGLOSZENIE_UA
   ODWOLANIE
   DOSTEP_UE
+  DOSTEP_STUDENT
+  DOSTEP_POBYT_STALY
+  DOSTEP_REZYDENT_UE
+  DOSTEP_KARTA_POLAKA
+  DOSTEP_OCHRONA_MIEDZ
+  DOSTEP_DYPLOM_PL
 }
 
 enum FdkStatus {
@@ -416,6 +422,9 @@ model FdkForeigner {
   upoDoreczone DateTime? @map("upo_doreczone")
   /// Opis procedury UPO (np. "Przedłużenie TRC — wniosek doręczony DD.MM.YYYY, Wojewoda Mazowiecki")
   upoUwagi String? @map("upo_uwagi") @db.Text
+
+  /// Ochrona czasowa UKR (PESEL UKR / status ochrony) — aktualna podstawa pobytowa
+  ochronaCzasowaUkr Boolean @default(false) @map("ochrona_czasowa_ukr")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

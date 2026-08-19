@@ -65,6 +65,12 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
   ODWOLANIE: { label: "Odwołanie", cls: "bg-orange-100 text-orange-800" },
   DOSTEP_UE: { label: "Dostęp UE", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_STUDENT: { label: "Student", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_POBYT_STALY: { label: "Pobyt stały", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_REZYDENT_UE: { label: "Rezydent UE", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_KARTA_POLAKA: { label: "Karta Polaka", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_OCHRONA_MIEDZ: { label: "Ochrona międz.", cls: "bg-emerald-100 text-emerald-800" },
+  DOSTEP_DYPLOM_PL: { label: "Dyplom PL", cls: "bg-emerald-100 text-emerald-800" },
 };
 
 const STATUS_COLORS: Record<string, string> = {

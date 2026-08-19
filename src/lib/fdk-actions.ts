@@ -78,6 +78,7 @@ const foreignerSchema = z.object({
   wizaDo: z.string().optional().or(z.literal("")),
   upoDoreczone: z.string().optional().or(z.literal("")),
   upoUwagi: z.string().trim().optional().or(z.literal("")),
+  ochronaCzasowaUkr: z.string().optional().or(z.literal("")),
 });
 
 const optStr = z.string().optional().or(z.literal(""));
@@ -85,7 +86,7 @@ const optDate = z.string().optional().or(z.literal(""));
 
 const employmentBaseSchema = z.object({
   foreignerId: z.number().int(),
-  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA", "ODWOLANIE", "DOSTEP_UE"]),
+  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA", "ODWOLANIE", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"]),
   status: z.enum(["AKTYWNE", "NIEAKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
   // Wspólne
   rodzajUmowy: optStr,
@@ -329,6 +330,7 @@ export async function updateForeignerAction(
     wizaDo: toDate(d.wizaDo),
     upoDoreczone: toDate(d.upoDoreczone),
     upoUwagi: d.upoUwagi || null,
+    ochronaCzasowaUkr: d.ochronaCzasowaUkr === "true",
   };
 
   await db.fdkForeigner.update({ where: { id }, data: newData });
