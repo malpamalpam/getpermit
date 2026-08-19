@@ -284,7 +284,7 @@ export default async function FdkPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-primary/70">
-                      {latestDate ? latestDate.toLocaleDateString("pl-PL") : "—"}
+                      {latestDate ? `${String(latestDate.getUTCDate()).padStart(2, "0")}.${String(latestDate.getUTCMonth() + 1).padStart(2, "0")}.${latestDate.getUTCFullYear()}` : "—"}
                     </td>
                     <td className="px-4 py-3 text-center text-primary/40">
                       {f._count.attachments > 0 && (

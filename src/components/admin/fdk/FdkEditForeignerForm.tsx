@@ -119,7 +119,7 @@ export function FdkEditForeignerForm({ foreigner }: { foreigner: ForeignerData }
             }
             const value =
               raw instanceof Date
-                ? raw.toLocaleDateString("pl-PL")
+                ? `${String(raw.getUTCDate()).padStart(2, "0")}.${String(raw.getUTCMonth() + 1).padStart(2, "0")}.${raw.getUTCFullYear()}`
                 : raw ?? null;
             if (!value) return null;
             return (

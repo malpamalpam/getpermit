@@ -84,7 +84,11 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 function fmt(d: Date | null | undefined): string {
-  return d ? d.toLocaleDateString("pl-PL") : "—";
+  if (!d) return "—";
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const year = d.getUTCFullYear();
+  return `${day}.${month}.${year}`;
 }
 
 export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: Props) {

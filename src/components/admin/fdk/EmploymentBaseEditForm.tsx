@@ -74,7 +74,7 @@ interface Props {
 
 function fmtDate(d: Date | null | undefined): string {
   if (!d) return "";
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return d.toISOString().slice(0, 10);
 }
 
 const TYPE_OPTIONS: { value: BaseType; label: string }[] = [

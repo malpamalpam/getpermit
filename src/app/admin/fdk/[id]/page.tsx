@@ -46,7 +46,12 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
 
 
 function fmt(d: Date | null | undefined): string {
-  return d ? d.toLocaleDateString("pl-PL") : "—";
+  if (!d) return "—";
+  // Use UTC to avoid timezone shift (dates stored as midnight UTC)
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const year = d.getUTCFullYear();
+  return `${day}.${month}.${year}`;
 }
 
 export default async function FdkForeignerPage({

@@ -53,7 +53,7 @@ async function main() {
   if (!attId) {
     console.log("ZAŁĄCZNIKI:");
     for (const a of foreigner.attachments) {
-      console.log(`  id=${a.id} [${a.kategoria}] ${a.nazwaPliku} (${a.typPliku}, ${(a.rozmiarBytes / 1024).toFixed(0)} KB)`);
+      console.log(`  id=${a.id} [${a.kategoria}] ${a.nazwaPliku} (${a.typPliku}, ${(Number(a.rozmiarBytes) / 1024).toFixed(0)} KB)`);
     }
     console.log("\nPODSTAWY:");
     for (const b of foreigner.employmentBases) {

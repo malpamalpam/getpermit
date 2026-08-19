@@ -33,7 +33,10 @@ export async function GET() {
   ].join(";");
 
   const rows = contracts.map((c) => {
-    const fmt = (d: Date | null) => d ? d.toLocaleDateString("pl-PL") : "";
+    const fmt = (d: Date | null) => {
+      if (!d) return "";
+      return `${String(d.getUTCDate()).padStart(2, "0")}.${String(d.getUTCMonth() + 1).padStart(2, "0")}.${d.getUTCFullYear()}`;
+    };
     return [
       c.foreigner.nazwisko,
       c.foreigner.imie ?? "",
