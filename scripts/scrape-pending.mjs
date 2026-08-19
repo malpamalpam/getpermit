@@ -45,7 +45,6 @@ const SKIP_PATTERNS = [
   /polityka[\s_]*bezpiecze/i,
   /porozumienie[\s_]*o[\s_]*wsp[oó][lł]administr/i,
   /umowa/i, /umow[aey]/i,
-  /wnios[ek]/i,
   /za[lł][aą]cznik[\s_]*nr/i,
   /foundation[\s_]*registration/i,
   /kwestionariusz/i,
@@ -54,7 +53,7 @@ const SKIP_PATTERNS = [
   /legitymac/i,
   /rachun/i,
   /rozw[ią]za/i,
-  /op[lł]at/i,
+  /op[lł]at/i, /zap[lł]at/i,
   /polisa/i,
   /statut/i,
   /ksi[aą][zż]eczk/i,
@@ -62,19 +61,35 @@ const SKIP_PATTERNS = [
   /pesel/i,
   /karta[\s_]*polak/i,
   /wiza/i, /visa/i,
-  /uzupe[lł]nieni/i,
-  /ponagleni/i,
-  /t[lł]umaczeni/i,
+  /t[lł]umaczeni/i, /translat/i,
   /WoPC[\s-]*zal/i,
   /urzedowe[\s_]*poswiadczeni/i, /urz[eę]dowe[\s_]*po[sś]wiadczeni/i,
-  /potwierdzeni/i,
   /za[sś]wiadczeni/i,
-  /pismo/i,
-  /odpowied/i,
   /korekta/i,
   /zestaw[\s_]*trc/i,
   /draft/i,
   /do[sś]wiadczeni/i,
+];
+
+/**
+ * HARD SKIP — zawsze pomiń, nawet jeśli nazwa zawiera słowa kluczowe OCR.
+ * Dokumenty procesowe, pisma, korespondencja — nie zawierają danych do scrapowania.
+ */
+const HARD_SKIP_PATTERNS = [
+  /wnios[ek]/i,                         // wnioski
+  /uzupe[lł]nienie|uzupelnienie/i,       // uzupełnienia do TRC itp.
+  /wezwanie/i,                           // wezwania urzędowe
+  /odpowied[źz]/i,                       // odpowiedzi
+  /potwierdzeni/i,                       // potwierdzenia
+  /confirmation/i,
+  /\bUPO\b/i,                            // Urzędowe Poświadczenie Odbioru
+  /po[sś]wiadczenie/i,
+  /\bSKM_/i,                             // skany z SKM
+  /pismo/i,                              // pisma
+  /ponagleni/i,
+  /rezerwacj/i,
+  /zestaw[\s_]*dokument/i,               // zestawy dokumentów — nie sam dok.
+  /korespondencj/i,
 ];
 
 /** Files worth OCR — immigration/employment docs */
@@ -107,17 +122,20 @@ function classifyFile(fileName, typPliku) {
   // Mac resource forks, temp files
   if (name.startsWith("._") || name.startsWith("~$")) return "skip";
 
-  // Skip patterns
+  // HARD SKIP — always skip, even if OCR-worthy keyword also present
+  for (const pat of HARD_SKIP_PATTERNS) {
+    if (pat.test(fileName)) return "skip";
+  }
+
+  // Regular skip patterns — can be overridden if file is also OCR-worthy
   for (const pat of SKIP_PATTERNS) {
     if (pat.test(fileName)) {
-      // But if it also matches OCR-worth patterns AND is not in skip-for-OCR, allow it
       const isOcrWorthy = OCR_WORTH_PATTERNS.some((p) => p.test(fileName));
       const isSkipForOcr = SKIP_FOR_OCR.some((p) => p.test(fileName));
 
-      // oświadczenie that's NOT RODO → scrape it
+      // Key document name → OCR it despite matching a soft-skip pattern
       if (isOcrWorthy && !isSkipForOcr && !/rodo|informacja.*fizycznej|polityka.*bezpiecze|porozumienie.*administr/i.test(fileName)) {
-        // Fall through to OCR-worth check below
-        break;
+        break; // fall through to OCR-worth check
       }
       return "skip";
     }
@@ -127,11 +145,13 @@ function classifyFile(fileName, typPliku) {
   const isOcrWorthy = OCR_WORTH_PATTERNS.some((p) => p.test(fileName));
 
   if (typPliku === "pdf") {
-    // PDFs: always try text extraction first (free)
+    // PDFs: always try text extraction first (free).
+    // OCR-worthy PDFs fall back to OCR if text yields no document type.
     return isOcrWorthy ? "text_then_ocr" : "text_only";
   }
 
   if (["jpeg", "jpg", "png"].includes(typPliku)) {
+    // Images: OCR if name matches key document, otherwise undecided.
     return isOcrWorthy ? "ocr" : "undecided";
   }
 
@@ -456,6 +476,28 @@ async function main() {
   console.log();
 }
 
+// ==================== JUNK VALUE DETECTION ====================
+
+/**
+ * Returns true if the value looks like a form label or multi-language concat,
+ * not an actual data value worth storing.
+ */
+function isJunkFieldValue(value) {
+  if (!value || typeof value !== "string") return false;
+  const v = value.trim();
+  if (v.length === 0) return true;
+  // Ends with colon → label
+  if (v.endsWith(":")) return true;
+  // Contains classic form-label phrases
+  if (/Imi[eę]\s*:|Nazwisko\s*:|rodzaj\s+pracy\s*:|podpis\s+osoby|Wnioskowana\s+liczba|i\s+podpis\s+osoby/i.test(v)) return true;
+  // Multi-language junk: 2+ forward slashes AND over 40 chars → likely "field / champ / поле"
+  const slashCount = (v.match(/\//g) ?? []).length;
+  if (slashCount >= 2 && v.length > 40) return true;
+  // Looks like a form field remnant: "/ rodzaj pracy:" pattern
+  if (/^\s*\/\s*rodzaj\s+pracy/i.test(v)) return true;
+  return false;
+}
+
 // ==================== PROCESS SINGLE ATTACHMENT ====================
 
 async function processAttachment(att, mode) {
@@ -612,6 +654,48 @@ async function processAttachment(att, mode) {
       }
     }
 
+    // ---- Walidacja numerów: muszą zawierać co najmniej jedną cyfrę ----
+    if (parsed.nrOswiadczenia && !/\d/.test(parsed.nrOswiadczenia)) {
+      console.log(`  [JUNK-NR] nrOswiadczenia="${parsed.nrOswiadczenia}" — brak cyfry, odrzucono`);
+      parsed.nrOswiadczenia = null;
+    }
+    if (parsed.nrDecyzji && !/\d/.test(parsed.nrDecyzji)) {
+      console.log(`  [JUNK-NR] nrDecyzji="${parsed.nrDecyzji}" — brak cyfry, odrzucono`);
+      parsed.nrDecyzji = null;
+    }
+
+    // ---- Walidacja: odrzucaj wartości wyglądające jak etykiety formularza ----
+    if (parsed.stanowisko && isJunkFieldValue(parsed.stanowisko)) {
+      console.log(`  [JUNK-STANOWISKO] "${parsed.stanowisko.substring(0, 60)}..." → odrzucono`);
+      parsed.stanowisko = null;
+    }
+    if (parsed.firma && isJunkFieldValue(parsed.firma)) {
+      console.log(`  [JUNK-FIRMA] "${parsed.firma.substring(0, 60)}..." → odrzucono`);
+      parsed.firma = null;
+    }
+    if (parsed.rodzajUmowy && isJunkFieldValue(parsed.rodzajUmowy)) {
+      parsed.rodzajUmowy = null;
+    }
+
+    // Guard: nie twórz podstawy jeśli brak dat, numeru i żadnych sensownych danych
+    const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia;
+    if (!hasUsefulData) {
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: att.foreignerId,
+          changedBy: CHANGED_BY,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Scrape ${att.nazwaPliku}: nieczytelny/formularz — brak dat i numeru dokumentu. Podstawa NIE utworzona.`,
+        },
+      });
+      result.scrapeResult = "nieczytelny_formularz";
+      result.uwagi = "Brak dat i numeru — formularz lub nieczytelny skan";
+      console.log(`  [FORMULARZ] ${att.nazwaPliku} — brak dat i numeru, pomijam tworzenie podstawy`);
+      return result;
+    }
+    // -------------------------------------------------------------------------
+
     // Skip ODWOLANIE
     if (parsed.detectedType === "ODWOLANIE") {
       await db.fdkChangeLog.create({
@@ -628,7 +712,47 @@ async function processAttachment(att, mode) {
     }
 
     // Step 5: Create/update employment base
-    const docType = parsed.detectedType || "OSWIADCZENIE";
+    if (!parsed.detectedType) {
+      // Nie twórz podstawy jeśli typ dokumentu nierozpoznany — fallback na OSWIADCZENIE
+      // powodował fałszywe wpisy.
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: att.foreignerId,
+          changedBy: CHANGED_BY,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Scrape ${att.nazwaPliku}: nierozpoznany typ dokumentu — podstawa NIE utworzona.`,
+        },
+      });
+      result.scrapeResult = "nierozpoznany_typ";
+      result.uwagi = "Nierozpoznany typ dokumentu — podstawa nie utworzona";
+      console.log(`  [UNKNOWN-TYPE] ${att.nazwaPliku} — pomijam tworzenie podstawy`);
+      return result;
+    }
+    const docType = parsed.detectedType;
+
+    // WIZA — save to wizaDo on foreigner profile, don't create employment base
+    if (docType === "WIZA" && parsed.dataDo) {
+      if (!foreigner.wizaDo || new Date(parsed.dataDo) > foreigner.wizaDo) {
+        await db.fdkForeigner.update({
+          where: { id: att.foreignerId },
+          data: { wizaDo: new Date(parsed.dataDo) },
+        });
+      }
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: att.foreignerId,
+          changedBy: CHANGED_BY,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Rozpoznano wizę w pliku: ${att.nazwaPliku}. wizaDo=${parsed.dataDo}.`,
+        },
+      });
+      result.scrapeResult = "ok";
+      result.typDokumentu = "WIZA";
+      console.log(`  [WIZA] ${att.nazwaPliku} → wizaDo=${parsed.dataDo}`);
+      return result;
+    }
 
     let existingBase = null;
     if (docType === "OSWIADCZENIE" && parsed.nrOswiadczenia) {
@@ -731,16 +855,23 @@ async function processAttachment(att, mode) {
 function parseTextBasic(text, filename) {
   const result = {};
 
-  // Detect type
-  if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(text)) {
+  // Detect type — use only sentencja (before UZASADNIENIE) to avoid false matches
+  // from citations in the reasoning section of decisions.
+  const sentencja = text.split(/UZASADNIENIE/i)[0];
+
+  if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(sentencja)) {
     result.detectedType = "ODWOLANIE";
-  } else if (/PSZ[\s-]*OPWP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(text)) {
+  } else if (/PSZ[\s-]*OPWP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
     result.detectedType = "OSWIADCZENIE";
-  } else if (/niebieska\s+karta|blue\s+card|wysoki(?:ch|e)\s+kwalifikacj|art\.?\s*127/i.test(text)) {
+  } else if (/powiadomi\w*\s+o\s+powierzeni|zg[lł]oszeni\w*\s+(?:o\s+)?powierzeni|powiadomienie\s+PUP/i.test(sentencja)) {
+    result.detectedType = "ZGLOSZENIE_UA";
+  } else if (/niebieska\s+karta|blue\s+card|wysoki(?:ch|e)\s+kwalifikacj|art\.?\s*127/i.test(sentencja)) {
     result.detectedType = "BLUE_CARD";
-  } else if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow/i.test(text)) {
+  } else if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow/i.test(sentencja)) {
     result.detectedType = "KARTA_POBYTU";
-  } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(text)) {
+  } else if (/wiz[aęy]\s+(?:krajow|schengeno|typu|nr)|decyzj\w+\s+wizow/i.test(sentencja)) {
+    result.detectedType = "WIZA";
+  } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(sentencja)) {
     result.detectedType = "ZEZWOLENIE";
   }
 
@@ -832,10 +963,11 @@ ZASADY:
 3. wynagrodzenie = TYLKO z sentencji.
 4. firma = PELNA nazwa z sentencji.
 5. nrDecyzji = sygnatura z naglowka.
-6. detectedType: "wysokie kwalifikacje"/art.127 → BLUE_CARD; "pobyt" → KARTA_POBYTU.
+6. detectedType: "wysokie kwalifikacje"/art.127 → BLUE_CARD; "pobyt" → KARTA_POBYTU; wiza (krajowa/Schengen/typ D/C) → WIZA.
 7. obywatelstwo: TYLKO kraj.
 8. OSWIADCZENIE: nrOswiadczenia = PZC/OP.G numer.
-9. Pola nieznalezione = null.`;
+9. "Powiadomienie o powierzeniu pracy" lub "zgloszenie o powierzeniu pracy" (obywatele UA) → detectedType = ZGLOSZENIE_UA. Nie maja dataDo (= null).
+10. Pola nieznalezione = null.`;
 
   try {
     const contentBlock = isPdf
@@ -869,7 +1001,7 @@ ZASADY:
     const data = JSON.parse(jsonMatch[0]);
     const result = {};
 
-    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE"].includes(data.detectedType)) {
+    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE", "ZGLOSZENIE_UA", "WIZA"].includes(data.detectedType)) {
       result.detectedType = data.detectedType;
     }
     if (data.imie && typeof data.imie === "string") result.imie = data.imie.trim();

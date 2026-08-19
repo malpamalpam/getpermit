@@ -24,6 +24,7 @@ interface ForeignerData {
   jezykPreferowany: string | null;
   decyzjaPobytowaDo: Date | null;
   typDokumentuPobytowego: string | null;
+  wizaDo: Date | null;
 }
 
 function fmtDate(d: Date | null): string {
@@ -49,8 +50,9 @@ const FIELDS: { key: EditableKey; label: string; type?: string }[] = [
   { key: "email", label: "Email" },
   { key: "nrKonta", label: "Nr konta" },
   { key: "jezykPreferowany", label: "Język preferowany" },
-  { key: "decyzjaPobytowaDo", label: "Data ważności decyzji pobytowej", type: "date" },
-  { key: "typDokumentuPobytowego", label: "Typ dokumentu pobytowego" },
+  { key: "decyzjaPobytowaDo", label: "Karta pobytu ważna do", type: "date" },
+  { key: "typDokumentuPobytowego", label: "Typ karty pobytu" },
+  { key: "wizaDo", label: "Wiza ważna do", type: "date" },
   { key: "uwagi", label: "Uwagi" },
 ];
 

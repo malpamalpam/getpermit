@@ -371,6 +371,7 @@ enum FdkBaseType {
   BLUE_CARD
   ZGLOSZENIE_UA
   ODWOLANIE
+  DOSTEP_UE
 }
 
 enum FdkStatus {
@@ -407,6 +408,9 @@ model FdkForeigner {
   decyzjaPobytowaDo DateTime? @map("decyzja_pobytowa_do")
   /// Typ dokumentu pobytowego (np. "zezwolenie na pobyt czasowy i pracę", "wiza")
   typDokumentuPobytowego String? @map("typ_dokumentu_pobytowego")
+
+  /// Data ważności wizy (jeśli cudzoziemiec przebywa na wizie, nie na karcie pobytu)
+  wizaDo DateTime? @map("wiza_do")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

@@ -34,6 +34,7 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   BLUE_CARD: { label: "EU Blue Card", cls: "bg-purple-100 text-purple-800" },
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
   ODWOLANIE: { label: "Odwołanie", cls: "bg-orange-100 text-orange-800" },
+  DOSTEP_UE: { label: "Dostęp UE", cls: "bg-emerald-100 text-emerald-800" },
 };
 
 
@@ -146,10 +147,12 @@ export default async function FdkForeignerPage({
             <div className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
               <h2 className="mb-4 font-display text-lg font-bold text-primary">Podsumowanie</h2>
               <div className="space-y-3">
-                {foreigner.decyzjaPobytowaDo && (
+                {/* Podstawy pobytowe */}
+                <div className="text-sm text-primary/60">Podstawy pobytowe</div>
+                {foreigner.decyzjaPobytowaDo ? (
                   <div className="rounded-lg bg-blue-50 p-3 text-sm">
                     <div className="font-semibold text-blue-800">
-                      Decyzja pobytowa{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                      Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
                     </div>
                     <div className="text-blue-700">
                       Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}
@@ -159,6 +162,16 @@ export default async function FdkForeignerPage({
                         Zezwolenia na pracę wchłonięte przez decyzję pobytową
                       </div>
                     )}
+                  </div>
+                ) : foreigner.wizaDo ? null : (
+                  <span className="text-sm text-primary/40">Brak karty pobytu i wizy</span>
+                )}
+                {foreigner.wizaDo && (
+                  <div className="rounded-lg bg-purple-50 p-3 text-sm">
+                    <div className="font-semibold text-purple-800">Wiza</div>
+                    <div className="text-purple-700">
+                      Ważna do: {fmt(foreigner.wizaDo)}
+                    </div>
                   </div>
                 )}
                 <div className="text-sm text-primary/60">Aktywne podstawy zatrudnienia</div>

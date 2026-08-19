@@ -13,7 +13,7 @@ import { Pencil, Plus, Trash2, X, Loader2, Save } from "lucide-react";
 // Types
 // ---------------------------------------------------------------------------
 
-type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA" | "ODWOLANIE";
+type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA" | "ODWOLANIE" | "DOSTEP_UE";
 type StatusType = "AKTYWNE" | "NIEAKTYWNE" | "WYGASLE" | "UCHYLONE" | "UMORZONE" | "W_TRAKCIE" | "BRAK_DANYCH";
 
 interface EmploymentBase {
@@ -84,6 +84,7 @@ const TYPE_OPTIONS: { value: BaseType; label: string }[] = [
   { value: "BLUE_CARD", label: "EU Blue Card" },
   { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
   { value: "ODWOLANIE", label: "Odwołanie / procedura odwoławcza" },
+  { value: "DOSTEP_UE", label: "Dostęp do rynku pracy UE/EOG" },
 ];
 
 const STATUS_OPTIONS: { value: StatusType; label: string }[] = [
@@ -556,6 +557,21 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
               <div>
                 <label className={labelCls}>Uwagi (UA)</label>
                 <textarea value={uwagiUa} onChange={(e) => setUwagiUa(e.target.value)} className={inputCls} rows={2} />
+              </div>
+            </fieldset>
+          )}
+
+          {/* === Dostęp UE === */}
+          {typ === "DOSTEP_UE" && (
+            <fieldset className="space-y-3 rounded-lg border border-emerald-200 bg-emerald-50/30 p-4">
+              <legend className="px-2 text-xs font-bold text-emerald-700">Dostęp do rynku pracy UE/EOG</legend>
+              <div className="rounded-md bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-700">
+                Obywatel UE/EOG/Szwajcarii — otwarty dostęp do rynku pracy w Polsce bez konieczności posiadania zezwolenia na pracę.
+                Nie wymaga dat ważności.
+              </div>
+              <div>
+                <label className={labelCls}>Firma</label>
+                <input value={firma} onChange={(e) => setFirma(e.target.value)} className={inputCls} />
               </div>
             </fieldset>
           )}

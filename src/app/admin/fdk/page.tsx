@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "lucide-react";
+import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
 import { withComputedStatuses } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -26,6 +27,7 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   KARTA_POBYTU: { label: "Karta pobytu", cls: "bg-yellow-100 text-yellow-800" },
   BLUE_CARD: { label: "Blue Card", cls: "bg-purple-100 text-purple-800" },
   ZGLOSZENIE_UA: { label: "Zgłoszenie UA", cls: "bg-pink-100 text-pink-800" },
+  DOSTEP_UE: { label: "Dostęp UE", cls: "bg-emerald-100 text-emerald-800" },
 };
 
 export default async function FdkPage({
@@ -67,7 +69,7 @@ export default async function FdkPage({
     db.fdkForeigner.findMany({
       where: where as never,
       include: {
-        employmentBases: { orderBy: { dataDo: "desc" }, take: 5 },
+        employmentBases: { orderBy: [{ status: "asc" }, { dataDo: "desc" }] },
         _count: { select: { attachments: true } },
       },
       orderBy: { nazwisko: "asc" },
@@ -140,6 +142,7 @@ export default async function FdkPage({
               { value: "KARTA_POBYTU", label: "Karta pobytu" },
               { value: "BLUE_CARD", label: "Blue Card" },
               { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
+              { value: "DOSTEP_UE", label: "Dostęp UE" },
             ].map((opt) => (
               <a
                 key={opt.value}
@@ -200,12 +203,14 @@ export default async function FdkPage({
                 <th className="px-4 py-3 text-center">
                   <Paperclip className="mx-auto h-4 w-4" />
                 </th>
+                <th className="px-4 py-3 w-8"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-primary/5">
               {foreigners.map((f, idx) => {
                 const types = [...new Set(f.employmentBases.map((b) => b.typ))];
                 // Best status: AKTYWNE with date > AKTYWNE > W_TRAKCIE > WYGASLE > BRAK_DANYCH
+                // Bases with BRAK_DANYCH AND no dates AND no document number are "junk" — deprioritised
                 const STATUS_PRIORITY: Record<string, number> = {
                   AKTYWNE: 4,
                   W_TRAKCIE: 3,
@@ -215,17 +220,33 @@ export default async function FdkPage({
                   UMORZONE: 1,
                   BRAK_DANYCH: 0,
                 };
-                const bestBase = f.employmentBases.length > 0
-                  ? f.employmentBases.reduce((best, b) => {
-                      const bPrio = (STATUS_PRIORITY[b.status] ?? 0) + (b.status === "AKTYWNE" && b.dataDo ? 0.5 : 0);
-                      const bestPrio = (STATUS_PRIORITY[best.status] ?? 0) + (best.status === "AKTYWNE" && best.dataDo ? 0.5 : 0);
-                      return bPrio > bestPrio ? b : best;
+                const isJunkBase = (b: typeof f.employmentBases[0]) =>
+                  b.status === "BRAK_DANYCH" && !b.dataOd && !b.dataDo;
+
+                // Prefer non-junk bases when picking the best
+                const nonJunkBases = f.employmentBases.filter((b) => !isJunkBase(b));
+                const basesForBest = nonJunkBases.length > 0 ? nonJunkBases : f.employmentBases;
+
+                const now = new Date();
+                const bestBase = basesForBest.length > 0
+                  ? basesForBest.reduce((best, b) => {
+                      // Priority: status weight + bonus for future dataDo + tiebreak by most-future dataDo
+                      const score = (b: typeof f.employmentBases[0]) =>
+                        (STATUS_PRIORITY[b.status] ?? 0)
+                        + (b.status === "AKTYWNE" && b.dataDo ? 0.5 : 0)
+                        + (b.dataDo && b.dataDo > now ? 0.1 : 0);
+                      if (score(b) !== score(best)) return score(b) > score(best) ? b : best;
+                      // Tiebreak: furthest future dataDo wins
+                      const bDo = b.dataDo?.getTime() ?? 0;
+                      const bestDo = best.dataDo?.getTime() ?? 0;
+                      return bDo > bestDo ? b : best;
                     })
                   : null;
                 const latestStatus = bestBase?.status ?? "BRAK_DANYCH";
-                // For WAŻNE DO: show dataDo from the best active/w_trakcie base, or the latest dataDo overall
+                // WAŻNE DO: dataDo from best base, or any base with a future dataDo, or any dataDo
                 const latestDate = bestBase?.dataDo
                   ?? f.employmentBases.find((b) => b.status === "AKTYWNE" && b.dataDo)?.dataDo
+                  ?? f.employmentBases.filter((b) => b.dataDo && b.dataDo > now).sort((a, b) => (b.dataDo!.getTime() - a.dataDo!.getTime()))[0]?.dataDo
                   ?? f.employmentBases.find((b) => b.dataDo)?.dataDo;
 
                 return (
@@ -264,12 +285,18 @@ export default async function FdkPage({
                         <span className="text-xs font-medium text-accent">{f._count.attachments}</span>
                       )}
                     </td>
+                    <td className="px-4 py-3">
+                      <DeleteForeignerButton
+                        foreignerId={f.id}
+                        name={`${f.imie ?? ""} ${f.nazwisko}`.trim()}
+                      />
+                    </td>
                   </tr>
                 );
               })}
               {foreigners.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-primary/40">
+                  <td colSpan={8} className="px-4 py-12 text-center text-primary/40">
                     Brak wyników
                   </td>
                 </tr>

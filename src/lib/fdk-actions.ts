@@ -29,6 +29,7 @@ const foreignerSchema = z.object({
   jezykPreferowany: z.string().trim().max(5).optional().or(z.literal("")),
   decyzjaPobytowaDo: z.string().optional().or(z.literal("")),
   typDokumentuPobytowego: z.string().trim().max(255).optional().or(z.literal("")),
+  wizaDo: z.string().optional().or(z.literal("")),
 });
 
 const optStr = z.string().optional().or(z.literal(""));
@@ -277,6 +278,7 @@ export async function updateForeignerAction(
     jezykPreferowany: d.jezykPreferowany || null,
     decyzjaPobytowaDo: toDate(d.decyzjaPobytowaDo),
     typDokumentuPobytowego: d.typDokumentuPobytowego || null,
+    wizaDo: toDate(d.wizaDo),
   };
 
   await db.fdkForeigner.update({ where: { id }, data: newData });

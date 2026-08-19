@@ -44,6 +44,8 @@ const reportIdx = args.indexOf("--report");
 const REPORT_FILE = reportIdx >= 0 ? args[reportIdx + 1] : null;
 const concIdx = args.indexOf("--concurrency");
 const SCRAPE_CONCURRENCY = concIdx >= 0 ? parseInt(args[concIdx + 1], 10) : 2;
+const batchIdx = args.indexOf("--batch");
+const BATCH_NAME = batchIdx >= 0 ? args[batchIdx + 1] : "A";
 
 // ==================== FILE CLASSIFICATION ====================
 
@@ -359,7 +361,7 @@ async function main() {
             changedBy: CHANGED_BY,
             field: "foreigner_create",
             oldValue: null,
-            newValue: `Import kartoteki z dysku (partia A) — utworzono profil: ${parsed.imie ?? ""} ${parsed.nazwisko}`,
+            newValue: `Import kartoteki z dysku (partia ${BATCH_NAME}) — utworzono profil: ${parsed.imie ?? ""} ${parsed.nazwisko}`,
           },
         });
 
@@ -446,7 +448,7 @@ async function main() {
         changedBy: CHANGED_BY,
         field: "import_batch",
         oldValue: null,
-        newValue: `Import kartoteki z dysku (partia A) — ${filesToProcess.length} plików`,
+        newValue: `Import kartoteki z dysku (partia ${BATCH_NAME}) — ${filesToProcess.length} plików`,
       },
     });
 
@@ -700,6 +702,20 @@ async function main() {
   console.log();
 }
 
+// ==================== JUNK VALUE DETECTION ====================
+
+function isJunkFieldValue(value) {
+  if (!value || typeof value !== "string") return false;
+  const v = value.trim();
+  if (v.length === 0) return true;
+  if (v.endsWith(":")) return true;
+  if (/Imi[eę]\s*:|Nazwisko\s*:|rodzaj\s+pracy\s*:|podpis\s+osoby|Wnioskowana\s+liczba|i\s+podpis\s+osoby/i.test(v)) return true;
+  const slashCount = (v.match(/\//g) ?? []).length;
+  if (slashCount >= 2 && v.length > 40) return true;
+  if (/^\s*\/\s*rodzaj\s+pracy/i.test(v)) return true;
+  return false;
+}
+
 // ==================== SCRAPING VIA DIRECT DB + SUPABASE ====================
 
 /**
@@ -824,6 +840,30 @@ async function scrapeViaDb(attachmentId) {
     }
   }
 
+  // Walidacja numerów: muszą zawierać co najmniej jedną cyfrę
+  if (parsed.nrOswiadczenia && !/\d/.test(parsed.nrOswiadczenia)) parsed.nrOswiadczenia = null;
+  if (parsed.nrDecyzji && !/\d/.test(parsed.nrDecyzji)) parsed.nrDecyzji = null;
+
+  // Walidacja: odrzucaj wartości-etykiety formularza
+  if (parsed.stanowisko && isJunkFieldValue(parsed.stanowisko)) parsed.stanowisko = null;
+  if (parsed.firma && isJunkFieldValue(parsed.firma)) parsed.firma = null;
+  if (parsed.rodzajUmowy && isJunkFieldValue(parsed.rodzajUmowy)) parsed.rodzajUmowy = null;
+
+  // Guard: nie twórz podstawy bez dat i numeru dokumentu
+  const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia;
+  if (!hasUsefulData) {
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId: attachment.foreignerId,
+        changedBy: CHANGED_BY,
+        field: "scrape",
+        oldValue: null,
+        newValue: `Scrape ${attachment.nazwaPliku}: nieczytelny/formularz — brak dat i numeru. Podstawa NIE utworzona.`,
+      },
+    });
+    return { ok: true, detectedType: parsed.detectedType || "?", partial: true, junkSkipped: true };
+  }
+
   // Create/update employment base (skip ODWOLANIE)
   if (parsed.detectedType === "ODWOLANIE") {
     await db.fdkChangeLog.create({
@@ -838,7 +878,42 @@ async function scrapeViaDb(attachmentId) {
     return { ok: true, detectedType: "ODWOLANIE", partial: false };
   }
 
-  const docType = parsed.detectedType || "OSWIADCZENIE";
+  if (!parsed.detectedType) {
+    // Nie twórz podstawy jeśli typ dokumentu nierozpoznany — fallback na OSWIADCZENIE
+    // powodował fałszywe wpisy.
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId: attachment.foreignerId,
+        changedBy: CHANGED_BY,
+        field: "scrape",
+        oldValue: null,
+        newValue: `Scrape ${attachment.nazwaPliku}: nierozpoznany typ dokumentu — podstawa NIE utworzona.`,
+      },
+    });
+    return { ok: true, detectedType: "?", partial: true };
+  }
+  const docType = parsed.detectedType;
+
+  // WIZA — save to wizaDo on foreigner profile, don't create employment base
+  if (docType === "WIZA" && parsed.dataDo) {
+    const dataDo = new Date(parsed.dataDo);
+    if (!foreigner.wizaDo || dataDo > foreigner.wizaDo) {
+      await db.fdkForeigner.update({
+        where: { id: attachment.foreignerId },
+        data: { wizaDo: dataDo },
+      });
+    }
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId: attachment.foreignerId,
+        changedBy: CHANGED_BY,
+        field: "scrape",
+        oldValue: null,
+        newValue: `Rozpoznano wizę w pliku: ${attachment.nazwaPliku}. wizaDo=${parsed.dataDo}.`,
+      },
+    });
+    return { ok: true, detectedType: "WIZA", partial: false };
+  }
 
   // Match existing base
   let existingBase = null;
@@ -934,16 +1009,23 @@ async function scrapeViaDb(attachmentId) {
 function parseOswiadczenieTextBasic(text, filename) {
   const result = {};
 
-  // Detect type
-  if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(text)) {
+  // Detect type — use only sentencja (before UZASADNIENIE) to avoid false matches
+  // from citations in the reasoning section of decisions.
+  const sentencja = text.split(/UZASADNIENIE/i)[0];
+
+  if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(sentencja)) {
     result.detectedType = "ODWOLANIE";
-  } else if (/PSZ[\s-]*OPWP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(text)) {
+  } else if (/PSZ[\s-]*OPWP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
     result.detectedType = "OSWIADCZENIE";
-  } else if (/niebieska\s+karta|blue\s+card|wysoki(?:ch|e)\s+kwalifikacj|art\.?\s*127/i.test(text)) {
+  } else if (/powiadomi\w*\s+o\s+powierzeni|zg[lł]oszeni\w*\s+(?:o\s+)?powierzeni|powiadomienie\s+PUP/i.test(sentencja)) {
+    result.detectedType = "ZGLOSZENIE_UA";
+  } else if (/niebieska\s+karta|blue\s+card|wysoki(?:ch|e)\s+kwalifikacj|art\.?\s*127/i.test(sentencja)) {
     result.detectedType = "BLUE_CARD";
-  } else if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow/i.test(text)) {
+  } else if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow/i.test(sentencja)) {
     result.detectedType = "KARTA_POBYTU";
-  } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(text)) {
+  } else if (/wiz[aęy]\s+(?:krajow|schengeno|typu|nr)|decyzj\w+\s+wizow/i.test(sentencja)) {
+    result.detectedType = "WIZA";
+  } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(sentencja)) {
     result.detectedType = "ZEZWOLENIE";
   }
 
@@ -1003,13 +1085,18 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
 5. wynagrodzenie = TYLKO z sentencji: "za wynagrodzeniem nie nizszym niz KWOTA zl brutto". NIGDY nie bierz kwot z uzasadnienia.
 6. firma = z sentencji: "na rzecz podmiotu NAZWA FIRMY Sp. z o.o., ul. Adres". Podaj PELNA nazwe.
 7. nrDecyzji = sygnatura z naglowka (pod nazwa organu). Zachowaj CALY numer z prefiksem.
-8. detectedType: jesli mowi o "wysokich kwalifikacjach" lub art. 127 → BLUE_CARD; jesli "udzielam zezwolenia na pobyt" → KARTA_POBYTU.
+8. detectedType: jesli mowi o "wysokich kwalifikacjach" lub art. 127 → BLUE_CARD; jesli "udzielam zezwolenia na pobyt" → KARTA_POBYTU; jesli to wiza (krajowa, Schengen, typu D/C) → WIZA.
 9. obywatelstwo: TYLKO nazwa kraju.
 
 DLA OSWIADCZEN (formularze PSZ-OPWP):
 - detectedType = OSWIADCZENIE
 - nrOswiadczenia = numer wpisu (PZC.4390.XXXXX.XX.RRRR)
 - wynagrodzenie = kwota z pola stawki/wynagrodzenia brutto
+
+DLA POWIADOMIEN/ZGLOSZEN (obywatele Ukrainy):
+- Jesli dokument to "powiadomienie o powierzeniu pracy" lub "zgloszenie o powierzeniu pracy" (formularz dla obywateli UA) → detectedType = ZGLOSZENIE_UA
+- Te dokumenty NIE maja daty koncowej (dataDo = null)
+- dataOd = data powiadomienia/zgloszenia
 
 Pola, ktorych nie mozesz znalezc = null.`;
 
@@ -1053,7 +1140,7 @@ Pola, ktorych nie mozesz znalezc = null.`;
     const data = JSON.parse(jsonMatch[0]);
     const result = {};
 
-    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE"].includes(data.detectedType)) {
+    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE", "ZGLOSZENIE_UA", "WIZA"].includes(data.detectedType)) {
       result.detectedType = data.detectedType;
     }
     if (data.imie && typeof data.imie === "string") result.imie = data.imie.trim();
