@@ -119,8 +119,12 @@ const nextConfig: NextConfig = {
       });
     }
 
-    // Root "/" → /pl obsługiwany przez middleware rewrite (Etap 1 migracji SEO).
-    // Redirect tutaj USUNIĘTY — middleware przechwytuje request wcześniej.
+    // Root "/" → /pl (permanentny redirect — gwarantuje 301 na edge)
+    redirects.push({
+      source: "/",
+      destination: "/pl",
+      permanent: true,
+    });
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [
