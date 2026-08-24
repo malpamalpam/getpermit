@@ -65,35 +65,50 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    const rewrites = [];
+    const afterFiles = [];
+
+    // ==================== Etap 1: PL bez prefiksu (beforeFiles) ====================
+    // beforeFiles rewrites uruchamiają się PRZED filesystem lookup i middleware,
+    // więc /uslugi → /pl/uslugi zadziała nawet z localePrefix: "always".
+    const beforeFiles = [
+      { source: "/uslugi", destination: "/pl/uslugi" },
+      { source: "/uslugi/:path*", destination: "/pl/uslugi/:path*" },
+      { source: "/blog", destination: "/pl/blog" },
+      { source: "/blog/:path*", destination: "/pl/blog/:path*" },
+      { source: "/o-nas", destination: "/pl/o-nas" },
+      { source: "/kontakt", destination: "/pl/kontakt" },
+      { source: "/polityka-prywatnosci", destination: "/pl/polityka-prywatnosci" },
+      { source: "/regulamin", destination: "/pl/regulamin" },
+      { source: "/cookies", destination: "/pl/cookies" },
+    ];
 
     // EN: zlokalizowane ścieżki → fizyczne foldery
-    rewrites.push({ source: "/en/services", destination: "/en/uslugi" });
-    rewrites.push({ source: "/en/services/for-employers", destination: "/en/uslugi/dla-pracodawcow" });
-    rewrites.push({ source: "/en/services/:slug", destination: "/en/uslugi/:slug" });
+    afterFiles.push({ source: "/en/services", destination: "/en/uslugi" });
+    afterFiles.push({ source: "/en/services/for-employers", destination: "/en/uslugi/dla-pracodawcow" });
+    afterFiles.push({ source: "/en/services/:slug", destination: "/en/uslugi/:slug" });
 
     // Dla pracodawców — zlokalizowane slugi dla dedykowanej podstrony
-    rewrites.push({ source: "/ru/uslugi/dlya-rabotodatelej", destination: "/ru/uslugi/dla-pracodawcow" });
-    rewrites.push({ source: "/uk/poslugy/dlya-robotodavciv", destination: "/uk/uslugi/dla-pracodawcow" });
-    rewrites.push({ source: "/en/about", destination: "/en/o-nas" });
-    rewrites.push({ source: "/en/contact", destination: "/en/kontakt" });
-    rewrites.push({ source: "/en/privacy-policy", destination: "/en/polityka-prywatnosci" });
-    rewrites.push({ source: "/en/terms", destination: "/en/regulamin" });
+    afterFiles.push({ source: "/ru/uslugi/dlya-rabotodatelej", destination: "/ru/uslugi/dla-pracodawcow" });
+    afterFiles.push({ source: "/uk/poslugy/dlya-robotodavciv", destination: "/uk/uslugi/dla-pracodawcow" });
+    afterFiles.push({ source: "/en/about", destination: "/en/o-nas" });
+    afterFiles.push({ source: "/en/contact", destination: "/en/kontakt" });
+    afterFiles.push({ source: "/en/privacy-policy", destination: "/en/polityka-prywatnosci" });
+    afterFiles.push({ source: "/en/terms", destination: "/en/regulamin" });
 
     // RU: zlokalizowane ścieżki
-    rewrites.push({ source: "/ru/kontakty", destination: "/ru/kontakt" });
-    rewrites.push({ source: "/ru/politika-konfidentsialnosti", destination: "/ru/polityka-prywatnosci" });
-    rewrites.push({ source: "/ru/pravila", destination: "/ru/regulamin" });
+    afterFiles.push({ source: "/ru/kontakty", destination: "/ru/kontakt" });
+    afterFiles.push({ source: "/ru/politika-konfidentsialnosti", destination: "/ru/polityka-prywatnosci" });
+    afterFiles.push({ source: "/ru/pravila", destination: "/ru/regulamin" });
 
     // UK: zlokalizowane ścieżki
-    rewrites.push({ source: "/uk/poslugy", destination: "/uk/uslugi" });
-    rewrites.push({ source: "/uk/poslugy/:slug", destination: "/uk/uslugi/:slug" });
-    rewrites.push({ source: "/uk/pro-nas", destination: "/uk/o-nas" });
-    rewrites.push({ source: "/uk/kontakty", destination: "/uk/kontakt" });
-    rewrites.push({ source: "/uk/polityka-konfidentsijnosti", destination: "/uk/polityka-prywatnosci" });
-    rewrites.push({ source: "/uk/pravyla", destination: "/uk/regulamin" });
+    afterFiles.push({ source: "/uk/poslugy", destination: "/uk/uslugi" });
+    afterFiles.push({ source: "/uk/poslugy/:slug", destination: "/uk/uslugi/:slug" });
+    afterFiles.push({ source: "/uk/pro-nas", destination: "/uk/o-nas" });
+    afterFiles.push({ source: "/uk/kontakty", destination: "/uk/kontakt" });
+    afterFiles.push({ source: "/uk/polityka-konfidentsijnosti", destination: "/uk/polityka-prywatnosci" });
+    afterFiles.push({ source: "/uk/pravyla", destination: "/uk/regulamin" });
 
-    return rewrites;
+    return { beforeFiles, afterFiles };
   },
   async redirects() {
     const redirects: Array<{
