@@ -72,12 +72,7 @@ export function LanguageSwitcher() {
   const onChange = (nextLocale: string) => {
     const pathWithoutLocale = fullPathname.replace(/^\/(pl|en|ru|uk)/, "") || "/";
     const translatedPath = translatePath(pathWithoutLocale, nextLocale);
-    // PL (default locale) serwowany bez prefiksu
-    if (nextLocale === "pl") {
-      window.location.href = translatedPath || "/";
-    } else {
-      window.location.href = `/${nextLocale}${translatedPath}`;
-    }
+    window.location.href = `/${nextLocale}${translatedPath}`;
   };
 
   // Close on outside click

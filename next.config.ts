@@ -111,16 +111,20 @@ const nextConfig: NextConfig = {
           permanent: true,
         });
       }
-      // Stare URL-e bez prefiksu locale → /uslugi/... (PL bez prefiksu)
+      // Stare URL-e bez prefiksu locale → /pl/uslugi/...
       redirects.push({
         source: `/uslugi/${from}`,
-        destination: `/uslugi/${to}`,
+        destination: `/pl/uslugi/${to}`,
         permanent: true,
       });
     }
 
-    // localePrefix: "as-needed" — "/" serwuje PL bez prefiksu.
-    // Redirect "/" → /pl USUNIĘTY (Etap 1 migracji SEO).
+    // Root "/" → /pl (przywrócony — strony PL bez prefiksu jeszcze nie działają)
+    redirects.push({
+      source: "/",
+      destination: "/pl",
+      permanent: true,
+    });
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [
@@ -156,7 +160,7 @@ const nextConfig: NextConfig = {
     // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
     // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
 
-    // localePrefix: "as-needed" — PL bez prefiksu, inne z prefiksem (/en, /ru, /uk).
+    // localePrefix: "as-needed" — middleware nie redirectuje, ale redirect / → /pl jest jawny.
 
     return redirects;
   },
