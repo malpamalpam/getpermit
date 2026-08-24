@@ -8,6 +8,40 @@ const intlMiddleware = createIntlMiddleware(routing);
 const LOCALES = routing.locales as readonly string[];
 const PANEL_REGEX = new RegExp(`^/panel(?:/|$)`);
 const ADMIN_REGEX = new RegExp(`^/admin(?:/|$)`);
+
+// ==================== ETAP 1: PL bez prefiksu ====================
+
+/** Segmenty pierwszego poziomu polskich stron marketingowych. */
+const PL_MARKETING_SEGMENTS = new Set([
+  "uslugi", "blog", "o-nas", "kontakt",
+  "polityka-prywatnosci", "regulamin", "cookies",
+]);
+
+/** Legacy slugi usług — middleware musi je obsłużyć bo next.config redirecty
+ *  nie odpalają się po middleware rewrite. */
+const LEGACY_SLUG_MAP: Record<string, string> = {
+  "zezwolenia-na-prace": "zezwolenie-na-prace",
+  "oswiadczenia-o-powierzeniu-pracy": "oswiadczenie-o-powierzeniu-pracy",
+  "zezwolenie-na-pobyt-czasowy": "karta-pobytu-czasowego",
+  "pobyt-staly": "karta-stalego-pobytu",
+  "tlumaczenia-przysiegle-dokumentow": "tlumaczenia-przysiegle",
+  "karta-pobytu-stalego": "karta-stalego-pobytu",
+  "legalizacja-fdk": "legalizacja-b2b-inkubator",
+  "legalizacja-pracy-fdk": "legalizacja-b2b-inkubator",
+  "legalizacja-pracy-b2b-inkubator": "legalizacja-b2b-inkubator",
+};
+
+/**
+ * Sprawdza czy ścieżka to unprefixed polska strona marketingowa.
+ * "/" → true, "/uslugi/karta" → true, "/en/services" → false, "/panel" → false
+ */
+function isUnprefixedPolishPath(pathname: string): boolean {
+  if (pathname === "/") return true;
+  const firstSegment = pathname.split("/")[1];
+  // Nie locale prefix, nie panel, nie admin
+  if (LOCALES.includes(firstSegment)) return false;
+  return PL_MARKETING_SEGMENTS.has(firstSegment);
+}
 const PUBLIC_PANEL_PATHS = ["login", "verify", "callback", "rejestracja", "reset-haslo", "nowe-haslo"];
 
 function isPublicPanelPath(pathname: string): boolean {
@@ -90,6 +124,24 @@ export default async function middleware(request: NextRequest) {
 
   // Strony marketingowe (w tym `/`) → next-intl middleware
   if (!isPanelRoute && !isAdminRoute) {
+    // Etap 1: unprefixed polskie ścieżki → rewrite na /pl/* (URL w przeglądarce bez zmian)
+    if (isUnprefixedPolishPath(pathname)) {
+      // Legacy slug redirect: /uslugi/old-slug → 301 → /uslugi/new-slug
+      if (pathname.startsWith("/uslugi/")) {
+        const slug = pathname.split("/")[2];
+        const newSlug = slug && LEGACY_SLUG_MAP[slug];
+        if (newSlug) {
+          return NextResponse.redirect(new URL(`/uslugi/${newSlug}`, request.url), 301);
+        }
+      }
+
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = pathname === "/" ? "/pl" : `/pl${pathname}`;
+      const response = NextResponse.rewrite(rewriteUrl);
+      response.cookies.set("NEXT_LOCALE", "pl", { path: "/", maxAge: 31536000, sameSite: "lax" });
+      return response;
+    }
+
     return intlMiddleware(request);
   }
 

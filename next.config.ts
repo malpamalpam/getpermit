@@ -119,12 +119,8 @@ const nextConfig: NextConfig = {
       });
     }
 
-    // Root "/" → /pl (przywrócony — strony PL bez prefiksu jeszcze nie działają)
-    redirects.push({
-      source: "/",
-      destination: "/pl",
-      permanent: true,
-    });
+    // Root "/" → /pl obsługiwany przez middleware rewrite (Etap 1 migracji SEO).
+    // Redirect tutaj USUNIĘTY — middleware przechwytuje request wcześniej.
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [
