@@ -111,21 +111,16 @@ const nextConfig: NextConfig = {
           permanent: true,
         });
       }
-      // Stare URL-e bez prefiksu locale → /pl/uslugi/...
+      // Stare URL-e bez prefiksu locale → /uslugi/... (PL bez prefiksu)
       redirects.push({
         source: `/uslugi/${from}`,
-        destination: `/pl/uslugi/${to}`,
+        destination: `/uslugi/${to}`,
         permanent: true,
       });
     }
 
-    // Root "/" → /pl (localePrefix: "always" — middleware powinno to robić,
-    // ale na produkcji Vercel Edge potrafi to pominąć; jawny redirect gwarantuje 301)
-    redirects.push({
-      source: "/",
-      destination: "/pl",
-      permanent: true,
-    });
+    // localePrefix: "as-needed" — "/" serwuje PL bez prefiksu.
+    // Redirect "/" → /pl USUNIĘTY (Etap 1 migracji SEO).
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [
@@ -161,8 +156,7 @@ const nextConfig: NextConfig = {
     // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
     // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
 
-    // localePrefix: "always" — każdy locale ma prefix (/pl, /en, /ru, /uk).
-    // Root "/" redirectuje na /pl (jawny redirect powyżej).
+    // localePrefix: "as-needed" — PL bez prefiksu, inne z prefiksem (/en, /ru, /uk).
 
     return redirects;
   },
