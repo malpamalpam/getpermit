@@ -13,7 +13,7 @@ import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerFor
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
 import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
-import { withComputedStatuses } from "@/lib/fdk-queries";
+import { withComputedStatuses, computeResidenceStatus } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -120,14 +120,53 @@ export default async function FdkForeignerPage({
             {foreigner.obywatelstwo && (
               <span className="text-sm text-ink/60">{foreigner.obywatelstwo}</span>
             )}
-            {hasActiveResidence && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
-                <Shield className="h-3 w-3" /> Aktywna decyzja pobytowa
-                {foreigner.decyzjaPobytowaDo && (
-                  <> do {fmt(foreigner.decyzjaPobytowaDo)}</>
-                )}
-              </span>
-            )}
+            {(() => {
+              const rs = computeResidenceStatus(foreigner);
+              if (rs === "w_procedurze") {
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                    <Shield className="h-3 w-3" /> W procedurze — przedłużenie TRC
+                    {foreigner.upoDoreczone && <> (od {fmt(foreigner.upoDoreczone)})</>}
+                  </span>
+                );
+              }
+              if (rs === "aktualna") {
+                const isEu = foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
+                if (foreigner.ochronaCzasowaUkr) {
+                  return (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">
+                      <Shield className="h-3 w-3" /> Ochrona czasowa (UKR)
+                    </span>
+                  );
+                }
+                if (isEu) {
+                  return (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+                      <Shield className="h-3 w-3" /> Pobyt obywatela UE
+                    </span>
+                  );
+                }
+                const activeDate = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now
+                  ? foreigner.decyzjaPobytowaDo
+                  : foreigner.wizaDo && foreigner.wizaDo >= now ? foreigner.wizaDo : null;
+                const docLabel = foreigner.wizaDo && foreigner.wizaDo >= now && !(foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now)
+                  ? "Wiza ważna" : "Karta pobytu ważna";
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
+                    <Shield className="h-3 w-3" /> {docLabel}{activeDate && <> do {fmt(activeDate)}</>}
+                  </span>
+                );
+              }
+              if (rs === "wygasla") {
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
+                    <Shield className="h-3 w-3" /> Brak aktualnej podstawy pobytowej
+                  </span>
+                );
+              }
+              // rs === "brak"
+              return null;
+            })()}
           </div>
         </div>
 
