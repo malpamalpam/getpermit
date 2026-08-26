@@ -136,8 +136,18 @@ const nextConfig: NextConfig = {
       });
     }
 
-    // Root "/" obsługiwany przez beforeFiles rewrite (nie redirect),
-    // żeby URL w przeglądarce pozostał jako getpermit.pl bez /pl.
+    // Kanoniczne polskie URL-e BEZ /pl — redirect /pl/* → /*
+    // (beforeFiles rewrite obsługuje kierunek odwrotny: / → /pl wewnętrznie)
+    redirects.push({ source: "/pl", destination: "/", permanent: true });
+    redirects.push({ source: "/pl/uslugi", destination: "/uslugi", permanent: true });
+    redirects.push({ source: "/pl/uslugi/:path*", destination: "/uslugi/:path*", permanent: true });
+    redirects.push({ source: "/pl/blog", destination: "/blog", permanent: true });
+    redirects.push({ source: "/pl/blog/:path*", destination: "/blog/:path*", permanent: true });
+    redirects.push({ source: "/pl/o-nas", destination: "/o-nas", permanent: true });
+    redirects.push({ source: "/pl/kontakt", destination: "/kontakt", permanent: true });
+    redirects.push({ source: "/pl/polityka-prywatnosci", destination: "/polityka-prywatnosci", permanent: true });
+    redirects.push({ source: "/pl/regulamin", destination: "/regulamin", permanent: true });
+    redirects.push({ source: "/pl/cookies", destination: "/cookies", permanent: true });
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [

@@ -42,7 +42,10 @@ export async function generateMetadata({
   // Use canonical (PL) slug for hreflang mapping
   const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
   const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
-  const canonicalUrl = `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+  const blogUrl = (l: string) => {
+    const slug = getLocalizedBlogSlug(plSlug, l);
+    return l === "pl" ? `${siteConfig.url}/blog/${slug}` : `${siteConfig.url}/${l}/blog/${slug}`;
+  };
 
   return {
     title: post.title,
@@ -54,12 +57,12 @@ export async function generateMetadata({
       images: [{ url: post.imageUrl, width: 1200, height: 630, alt: post.imageAlt }],
     },
     alternates: {
-      canonical: canonicalUrl,
+      canonical: blogUrl(locale),
       languages: {
         ...Object.fromEntries(
-          routing.locales.map((l) => [l, `${siteConfig.url}/${l}/blog/${getLocalizedBlogSlug(plSlug, l)}`])
+          routing.locales.map((l) => [l, blogUrl(l)])
         ),
-        "x-default": `${siteConfig.url}/pl/blog/${plSlug}`,
+        "x-default": blogUrl("pl"),
       },
     },
   };
