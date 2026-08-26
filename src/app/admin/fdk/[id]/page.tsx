@@ -21,7 +21,6 @@ const TABS = [
   { key: "overview", label: "Przegląd" },
   { key: "bases", label: "Podstawy zatrudnienia" },
   { key: "hr", label: "Dane HR" },
-  { key: "documents", label: "Dokumenty" },
   { key: "attachments", label: "Załączniki" },
   { key: "history", label: "Historia zmian" },
 ] as const;
@@ -72,7 +71,6 @@ export default async function FdkForeignerPage({
     include: {
       employmentBases: { orderBy: { dataOd: "desc" } },
       hrContracts: { include: { monthlyEntries: { orderBy: { miesiac: "asc" } } }, orderBy: { rok: "desc" } },
-      detailedDocuments: { orderBy: { createdAt: "desc" } },
       attachments: { orderBy: [{ kategoria: "asc" }, { uploadedAt: "asc" }] },
       changeLogs: { orderBy: { changedAt: "desc" }, take: 200 },
     },
@@ -306,8 +304,13 @@ export default async function FdkForeignerPage({
                     const activeBases = foreigner.employmentBases.filter(
                       (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE" || b.status === "BRAK_DANYCH"
                     );
-                    if (activeBases.length === 0) return <span className="text-sm text-primary/40">Brak</span>;
-                    return [...new Set(activeBases.map((b) => b.typ))].map((t) => (
+                    // Exclude WP/OŚW absorbed by active residence permit
+                    const ABSORBED_TYPES = ["ZEZWOLENIE", "OSWIADCZENIE"];
+                    const visibleBases = hasActiveResidence
+                      ? activeBases.filter((b) => !ABSORBED_TYPES.includes(b.typ))
+                      : activeBases;
+                    if (visibleBases.length === 0) return <span className="text-sm text-primary/40">Brak</span>;
+                    return [...new Set(visibleBases.map((b) => b.typ))].map((t) => (
                       <span key={t} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[t]?.cls ?? "bg-gray-100"}`}>
                         {TYPE_BADGES[t]?.label ?? t}
                       </span>
@@ -316,7 +319,6 @@ export default async function FdkForeignerPage({
                 </div>
                 <div className="text-sm text-primary/60">Załączniki: {foreigner.attachments.length}</div>
                 <div className="text-sm text-primary/60">Kontrakty HR: {foreigner.hrContracts.length}</div>
-                <div className="text-sm text-primary/60">Dokumenty szczegółowe: {foreigner.detailedDocuments.length}</div>
                 {foreigner.jezykPreferowany && (
                   <div className="text-sm text-primary/60">
                     Język: {{ pl: "Polski", en: "English", ru: "Русский", uk: "Українська" }[foreigner.jezykPreferowany] ?? foreigner.jezykPreferowany}
@@ -383,71 +385,6 @@ export default async function FdkForeignerPage({
           </div>
         )}
 
-        {activeTab === "documents" && (
-          <div className="space-y-4">
-            {/* Podsumowanie dat z podstaw zatrudnienia */}
-            {foreigner.employmentBases.length > 0 && (
-              <div className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
-                <h3 className="mb-3 font-display text-sm font-bold text-primary/70 uppercase tracking-wider">Daty z podstaw zatrudnienia</h3>
-                <div className="space-y-3">
-                  {foreigner.employmentBases.map((b) => (
-                    <div key={b.id} className="flex flex-wrap items-center gap-x-6 gap-y-1 border-b border-primary/5 pb-2 last:border-0 text-sm">
-                      <span className="font-medium text-primary min-w-[120px]">
-                        {b.typ === "ZEZWOLENIE" ? "Zezwolenie" : b.typ === "OSWIADCZENIE" ? "Oświadczenie" : b.typ}
-                        {b.nrDecyzji ? ` ${b.nrDecyzji}` : b.nrOswiadczenia ? ` ${b.nrOswiadczenia}` : ""}
-                      </span>
-                      <span className="text-primary/60">Okres: {fmt(b.dataOd)} – {fmt(b.dataDo)}</span>
-                      {b.wynagrodzenie && <span className="text-primary/60">Wynagrodzenie: {b.wynagrodzenie}</span>}
-                      {b.dataZgloszeniaUmowy && <span className="text-primary/60">Zgłoszenie umowy: {fmt(b.dataZgloszeniaUmowy)}</span>}
-                      {b.dataPodjPracy && <span className="text-primary/60">Podjęcie pracy: {fmt(b.dataPodjPracy)}</span>}
-                      {b.dataNiepodjPracy && <span className="text-primary/60">Zgłosić niepodjęcie do: {fmt(b.dataNiepodjPracy)}</span>}
-                      {b.dataZakPracy && <span className="text-primary/60">Zakończenie pracy: {fmt(b.dataZakPracy)}</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            {foreigner.detailedDocuments.length === 0 && foreigner.employmentBases.length === 0 && (
-              <p className="py-12 text-center text-primary/40">Brak dokumentów szczegółowych</p>
-            )}
-            {foreigner.detailedDocuments.map((doc) => {
-              const dane = doc.dane as Record<string, unknown>;
-              return (
-                <div key={doc.id} className="rounded-xl border border-primary/10 bg-white p-6 shadow-sm">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className="rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
-                      {doc.typDokumentu.replace(/_/g, " ")}
-                    </span>
-                  </div>
-                  <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
-                    {Object.entries(dane)
-                      .filter(([, v]) => v !== null && v !== undefined && !Array.isArray(v) && typeof v !== "object")
-                      .map(([key, value]) => (
-                        <div key={key}>
-                          <dt className="text-primary/50">{key}</dt>
-                          <dd className="font-medium text-primary">{String(value)}</dd>
-                        </div>
-                      ))}
-                  </dl>
-                  {Array.isArray(dane.chronologia) && (
-                    <div className="mt-4">
-                      <h4 className="mb-2 text-sm font-semibold text-primary/70">Chronologia</h4>
-                      <ol className="space-y-1.5 border-l-2 border-accent/20 pl-4 text-sm">
-                        {(dane.chronologia as Array<{ data: string; opis: string }>).map((e, i) => (
-                          <li key={i} className="relative">
-                            <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-accent" />
-                            <span className="font-medium text-primary/60">{e.data}</span>
-                            <span className="ml-2 text-primary">{e.opis}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
 
         {activeTab === "attachments" && (
           <div className="space-y-6">
