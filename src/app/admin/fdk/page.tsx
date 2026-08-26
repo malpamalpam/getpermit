@@ -86,24 +86,23 @@ export default async function FdkPage({
   // Residence filter requires app-level filtering (computed from multiple fields)
   const needsResidenceFilter = pobytFilter !== "";
 
+  const ebOrder = [{ status: "asc" }, { dataDo: "desc" }] as { status?: "asc"; dataDo?: "desc" }[];
   const includeClause = {
-    employmentBases: { orderBy: [{ status: "asc" as const }, { dataDo: "desc" as const }] },
+    employmentBases: { orderBy: ebOrder },
     _count: { select: { attachments: true } },
-  } as const;
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let foreigners: any[];
   let total: number;
 
   if (needsResidenceFilter) {
-    // Fetch all matching records (without pagination) for app-level residence filtering
     const allForeigners = await db.fdkForeigner.findMany({
       where: where as never,
       include: includeClause,
       orderBy: { nazwisko: "asc" },
     });
 
-    // Compute statuses and filter by residence status
     const filtered = allForeigners.filter((f) => {
       f.employmentBases = withComputedStatuses(f.employmentBases);
       const rs = computeResidenceStatus(f);
@@ -124,7 +123,6 @@ export default async function FdkPage({
       db.fdkForeigner.count({ where: where as never }),
     ]);
 
-    // Recompute statuses from dates
     for (const f of foreigners) {
       f.employmentBases = withComputedStatuses(f.employmentBases);
     }
