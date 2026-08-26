@@ -312,7 +312,8 @@ export default async function FdkPage({
                   ?? f.employmentBases.filter((b) => b.dataDo && b.dataDo > now).sort((a, b) => (b.dataDo!.getTime() - a.dataDo!.getTime()))[0]?.dataDo
                   ?? f.employmentBases.find((b) => b.dataDo)?.dataDo;
 
-                const residenceStatus = computeResidenceStatus(f);
+                let residenceStatus: ResidenceStatus = "brak";
+                try { residenceStatus = computeResidenceStatus(f); } catch { /* safe fallback */ }
                 const resBadge = RESIDENCE_BADGES[residenceStatus];
 
                 return (
@@ -384,7 +385,7 @@ export default async function FdkPage({
             <span className="text-primary/60">
               Strona {page} z {totalPages || 1}
             </span>
-            <PerPageSelector current={perPage} />
+            <PerPageSelector current={perPage} urls={{ 50: buildUrl({ perPage: "", page: "1" }), 100: buildUrl({ perPage: "100", page: "1" }), 200: buildUrl({ perPage: "200", page: "1" }) }} />
           </div>
           <div className="flex gap-2">
             {page > 1 && (
