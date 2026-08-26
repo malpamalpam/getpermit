@@ -71,6 +71,8 @@ const nextConfig: NextConfig = {
     // beforeFiles rewrites uruchamiają się PRZED filesystem lookup i middleware,
     // więc /uslugi → /pl/uslugi zadziała nawet z localePrefix: "always".
     const beforeFiles = [
+      // Root → polska strona główna (bez zmiany URL w przeglądarce)
+      { source: "/", destination: "/pl" },
       { source: "/uslugi", destination: "/pl/uslugi" },
       { source: "/uslugi/:path*", destination: "/pl/uslugi/:path*" },
       { source: "/blog", destination: "/pl/blog" },
@@ -134,12 +136,8 @@ const nextConfig: NextConfig = {
       });
     }
 
-    // Root "/" → /pl (permanentny redirect — gwarantuje 301 na edge)
-    redirects.push({
-      source: "/",
-      destination: "/pl",
-      permanent: true,
-    });
+    // Root "/" obsługiwany przez beforeFiles rewrite (nie redirect),
+    // żeby URL w przeglądarce pozostał jako getpermit.pl bez /pl.
 
     // EN: redirect polskich slugów usług na angielskie
     const enServiceRedirects: Array<{ from: string; to: string }> = [

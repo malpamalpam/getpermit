@@ -200,6 +200,47 @@ export function namesMatch(
   return matchingTokens > 0;
 }
 
+/**
+ * Residence basis status for a foreigner.
+ * Used by the list page filter and profile overview.
+ */
+export type ResidenceStatus = "aktualna" | "wygasla" | "w_procedurze" | "brak";
+
+/**
+ * Compute residence basis status for a foreigner.
+ * Logic mirrors the profile "Podstawy pobytowe" section.
+ */
+export function computeResidenceStatus(foreigner: {
+  decyzjaPobytowaDo: Date | null;
+  wizaDo: Date | null;
+  upoDoreczone: Date | null;
+  ochronaCzasowaUkr: boolean | null;
+  employmentBases: { typ: string; status: string }[];
+}): ResidenceStatus {
+  const now = new Date();
+
+  const kpActive = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now;
+  const wizaActive = foreigner.wizaDo && foreigner.wizaDo >= now;
+  const hasUpo = !!foreigner.upoDoreczone;
+  const hasOchronaUkr = !!foreigner.ochronaCzasowaUkr;
+  const isEuCitizen = foreigner.employmentBases.some(
+    (b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE"
+  );
+
+  // "W procedurze" takes priority if UPO is filed
+  if (hasUpo) return "w_procedurze";
+
+  // Active residence
+  if (kpActive || wizaActive || hasOchronaUkr || isEuCitizen) return "aktualna";
+
+  // Expired — had something but it's past
+  const kpExpired = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo < now;
+  const wizaExpired = foreigner.wizaDo && foreigner.wizaDo < now;
+  if (kpExpired || wizaExpired) return "wygasla";
+
+  return "brak";
+}
+
 export async function getNotificationSettings() {
   let settings = await db.notificationSettings.findFirst({ where: { id: 1 } });
   if (!settings) {

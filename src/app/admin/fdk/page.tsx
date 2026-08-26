@@ -5,12 +5,13 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "lucide-react";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
-import { withComputedStatuses } from "@/lib/fdk-queries";
+import { withComputedStatuses, computeResidenceStatus, type ResidenceStatus } from "@/lib/fdk-queries";
+import { PerPageSelector } from "@/components/admin/fdk/PerPageSelector";
 
 export const metadata = { robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-const PAGE_SIZE = 50;
+const ALLOWED_PAGE_SIZES = [50, 100, 200] as const;
 
 const STATUS_COLORS: Record<string, string> = {
   AKTYWNE: "bg-green-100 text-green-800",
@@ -19,6 +20,13 @@ const STATUS_COLORS: Record<string, string> = {
   UMORZONE: "bg-red-100 text-red-800",
   W_TRAKCIE: "bg-yellow-100 text-yellow-800",
   BRAK_DANYCH: "bg-gray-100 text-gray-600",
+};
+
+const RESIDENCE_BADGES: Record<ResidenceStatus, { label: string; cls: string }> = {
+  aktualna: { label: "Aktualna", cls: "bg-green-100 text-green-800" },
+  wygasla: { label: "Wygasła", cls: "bg-red-100 text-red-800" },
+  w_procedurze: { label: "W procedurze", cls: "bg-amber-100 text-amber-800" },
+  brak: { label: "Brak", cls: "bg-gray-100 text-gray-500" },
 };
 
 const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
@@ -39,7 +47,7 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
 export default async function FdkPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string; type?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; type?: string; status?: string; pobyt?: string; perPage?: string }>;
 }) {
   const user = await requireAdmin();
   const sp = await searchParams;
@@ -48,6 +56,10 @@ export default async function FdkPage({
   const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
   const typeFilter = sp.type ?? "";
   const statusFilter = sp.status ?? "";
+  const pobytFilter = (sp.pobyt ?? "") as ResidenceStatus | "";
+  const perPage = ALLOWED_PAGE_SIZES.includes(parseInt(sp.perPage ?? "50", 10) as 50 | 100 | 200)
+    ? (parseInt(sp.perPage!, 10) as 50 | 100 | 200)
+    : 50;
 
   // Build where clause
   const where: Record<string, unknown> = {};
@@ -71,32 +83,57 @@ export default async function FdkPage({
     };
   }
 
-  const [foreigners, total] = await Promise.all([
-    db.fdkForeigner.findMany({
-      where: where as never,
-      include: {
-        employmentBases: { orderBy: [{ status: "asc" }, { dataDo: "desc" }] },
-        _count: { select: { attachments: true } },
-      },
-      orderBy: { nazwisko: "asc" },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-    }),
-    db.fdkForeigner.count({ where: where as never }),
-  ]);
+  // Residence filter requires app-level filtering (computed from multiple fields)
+  const needsResidenceFilter = pobytFilter !== "";
 
-  // Recompute statuses from dates
-  for (const f of foreigners) {
-    f.employmentBases = withComputedStatuses(f.employmentBases);
+  const findArgs = {
+    where: where as never,
+    include: {
+      employmentBases: { orderBy: [{ status: "asc" as const }, { dataDo: "desc" as const }] },
+      _count: { select: { attachments: true } },
+    },
+    orderBy: { nazwisko: "asc" as const },
+  };
+
+  type FdkRow = Awaited<ReturnType<typeof db.fdkForeigner.findMany<typeof findArgs>>>[number];
+
+  let foreigners: FdkRow[];
+  let total: number;
+
+  if (needsResidenceFilter) {
+    // Fetch all matching records (without pagination) for app-level residence filtering
+    const allForeigners = await db.fdkForeigner.findMany(findArgs);
+
+    // Compute statuses and filter by residence status
+    const filtered = allForeigners.filter((f) => {
+      f.employmentBases = withComputedStatuses(f.employmentBases);
+      const rs = computeResidenceStatus(f);
+      return rs === pobytFilter;
+    });
+
+    total = filtered.length;
+    foreigners = filtered.slice((page - 1) * perPage, page * perPage);
+  } else {
+    [foreigners, total] = await Promise.all([
+      db.fdkForeigner.findMany({ ...findArgs, skip: (page - 1) * perPage, take: perPage }),
+      db.fdkForeigner.count({ where: where as never }),
+    ]);
+
+    // Recompute statuses from dates
+    for (const f of foreigners) {
+      f.employmentBases = withComputedStatuses(f.employmentBases);
+    }
   }
 
-  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const totalPages = Math.ceil(total / perPage);
 
   function buildUrl(params: Record<string, string>) {
     const u = new URLSearchParams();
     if (q) u.set("q", q);
     if (typeFilter) u.set("type", typeFilter);
     if (statusFilter) u.set("status", statusFilter);
+    if (pobytFilter) u.set("pobyt", pobytFilter);
+    if (perPage !== 50) u.set("perPage", String(perPage));
     Object.entries(params).forEach(([k, v]) => v ? u.set(k, v) : u.delete(k));
     return `/admin/fdk?${u.toString()}`;
   }
@@ -113,7 +150,7 @@ export default async function FdkPage({
             </div>
             <div>
               <h1 className="font-display text-2xl font-extrabold text-primary">Sprawy FDK</h1>
-              <p className="text-sm text-ink/60">{total} cudzoziemców w bazie</p>
+              <p className="text-sm text-ink/60">{total} cudzoziemców{pobytFilter || typeFilter || statusFilter || q ? " (filtr)" : " w bazie"}</p>
             </div>
           </div>
           <a
@@ -187,8 +224,32 @@ export default async function FdkPage({
             ))}
           </div>
 
+          {/* Residence basis filter */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs text-primary/50">Pobyt:</label>
+            {[
+              { value: "", label: "Wszystkie" },
+              { value: "aktualna", label: "Aktualna" },
+              { value: "wygasla", label: "Wygasła" },
+              { value: "w_procedurze", label: "W procedurze" },
+              { value: "brak", label: "Brak" },
+            ].map((opt) => (
+              <a
+                key={opt.value}
+                href={buildUrl({ pobyt: opt.value, page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  pobytFilter === opt.value
+                    ? "bg-accent text-white"
+                    : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                }`}
+              >
+                {opt.label}
+              </a>
+            ))}
+          </div>
+
           <a
-            href={buildUrl({ type: "", status: "", q: "", page: "1" })}
+            href="/admin/fdk"
             className="text-xs text-accent hover:underline"
           >
             Wyczyść filtry
@@ -205,6 +266,7 @@ export default async function FdkPage({
                 <th className="px-4 py-3">Imię</th>
                 <th className="px-4 py-3">Podstawy zatrudnienia</th>
                 <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Pobyt</th>
                 <th className="px-4 py-3">Ważne do</th>
                 <th className="px-4 py-3 text-center">
                   <Paperclip className="mx-auto h-4 w-4" />
@@ -215,8 +277,6 @@ export default async function FdkPage({
             <tbody className="divide-y divide-primary/5">
               {foreigners.map((f, idx) => {
                 const types = [...new Set(f.employmentBases.map((b) => b.typ))];
-                // Best status: AKTYWNE with date > AKTYWNE > W_TRAKCIE > WYGASLE > BRAK_DANYCH
-                // Bases with BRAK_DANYCH AND no dates AND no document number are "junk" — deprioritised
                 const STATUS_PRIORITY: Record<string, number> = {
                   AKTYWNE: 4,
                   W_TRAKCIE: 3,
@@ -229,35 +289,34 @@ export default async function FdkPage({
                 const isJunkBase = (b: typeof f.employmentBases[0]) =>
                   b.status === "BRAK_DANYCH" && !b.dataOd && !b.dataDo;
 
-                // Prefer non-junk bases when picking the best
                 const nonJunkBases = f.employmentBases.filter((b) => !isJunkBase(b));
                 const basesForBest = nonJunkBases.length > 0 ? nonJunkBases : f.employmentBases;
 
                 const now = new Date();
                 const bestBase = basesForBest.length > 0
                   ? basesForBest.reduce((best, b) => {
-                      // Priority: status weight + bonus for future dataDo + tiebreak by most-future dataDo
                       const score = (b: typeof f.employmentBases[0]) =>
                         (STATUS_PRIORITY[b.status] ?? 0)
                         + (b.status === "AKTYWNE" && b.dataDo ? 0.5 : 0)
                         + (b.dataDo && b.dataDo > now ? 0.1 : 0);
                       if (score(b) !== score(best)) return score(b) > score(best) ? b : best;
-                      // Tiebreak: furthest future dataDo wins
                       const bDo = b.dataDo?.getTime() ?? 0;
                       const bestDo = best.dataDo?.getTime() ?? 0;
                       return bDo > bestDo ? b : best;
                     })
                   : null;
                 const latestStatus = bestBase?.status ?? "BRAK_DANYCH";
-                // WAŻNE DO: dataDo from best base, or any base with a future dataDo, or any dataDo
                 const latestDate = bestBase?.dataDo
                   ?? f.employmentBases.find((b) => b.status === "AKTYWNE" && b.dataDo)?.dataDo
                   ?? f.employmentBases.filter((b) => b.dataDo && b.dataDo > now).sort((a, b) => (b.dataDo!.getTime() - a.dataDo!.getTime()))[0]?.dataDo
                   ?? f.employmentBases.find((b) => b.dataDo)?.dataDo;
 
+                const residenceStatus = computeResidenceStatus(f);
+                const resBadge = RESIDENCE_BADGES[residenceStatus];
+
                 return (
                   <tr key={f.id} className="group relative cursor-pointer transition-colors hover:bg-accent/5">
-                    <td className="px-4 py-3 text-primary/40">{(page - 1) * PAGE_SIZE + idx + 1}</td>
+                    <td className="px-4 py-3 text-primary/40">{(page - 1) * perPage + idx + 1}</td>
                     <td className="px-4 py-3 font-medium text-primary">
                       <Link href={`/admin/fdk/${f.id}`} className="hover:text-accent hover:underline after:absolute after:inset-0 after:content-['']">
                         {f.nazwisko}
@@ -283,6 +342,13 @@ export default async function FdkPage({
                         {latestStatus.replace("_", " ")}
                       </span>
                     </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${resBadge.cls}`}
+                      >
+                        {resBadge.label}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-primary/70">
                       {latestDate ? `${String(latestDate.getUTCDate()).padStart(2, "0")}.${String(latestDate.getUTCMonth() + 1).padStart(2, "0")}.${latestDate.getUTCFullYear()}` : "—"}
                     </td>
@@ -302,7 +368,7 @@ export default async function FdkPage({
               })}
               {foreigners.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-primary/40">
+                  <td colSpan={9} className="px-4 py-12 text-center text-primary/40">
                     Brak wyników
                   </td>
                 </tr>
@@ -312,31 +378,32 @@ export default async function FdkPage({
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between text-sm">
+        <div className="mt-4 flex items-center justify-between text-sm">
+          <div className="flex items-center gap-4">
             <span className="text-primary/60">
-              Strona {page} z {totalPages}
+              Strona {page} z {totalPages || 1}
             </span>
-            <div className="flex gap-2">
-              {page > 1 && (
-                <Link
-                  href={buildUrl({ page: String(page - 1) })}
-                  className="inline-flex items-center gap-1 rounded-md border border-primary/15 px-3 py-1.5 text-sm hover:bg-surface"
-                >
-                  <ChevronLeft className="h-4 w-4" /> Poprzednia
-                </Link>
-              )}
-              {page < totalPages && (
-                <Link
-                  href={buildUrl({ page: String(page + 1) })}
-                  className="inline-flex items-center gap-1 rounded-md border border-primary/15 px-3 py-1.5 text-sm hover:bg-surface"
-                >
-                  Następna <ChevronRight className="h-4 w-4" />
-                </Link>
-              )}
-            </div>
+            <PerPageSelector current={perPage} buildUrl={(pp) => buildUrl({ perPage: String(pp), page: "1" })} />
           </div>
-        )}
+          <div className="flex gap-2">
+            {page > 1 && (
+              <Link
+                href={buildUrl({ page: String(page - 1) })}
+                className="inline-flex items-center gap-1 rounded-md border border-primary/15 px-3 py-1.5 text-sm hover:bg-surface"
+              >
+                <ChevronLeft className="h-4 w-4" /> Poprzednia
+              </Link>
+            )}
+            {page < totalPages && (
+              <Link
+                href={buildUrl({ page: String(page + 1) })}
+                className="inline-flex items-center gap-1 rounded-md border border-primary/15 px-3 py-1.5 text-sm hover:bg-surface"
+              >
+                Następna <ChevronRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
+        </div>
       </Container>
     </>
   );

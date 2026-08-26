@@ -579,7 +579,7 @@ async function processAttachment(att, mode) {
       const isPdf = att.typPliku === "pdf";
       const isImage = ["jpeg", "jpg", "png"].includes(att.typPliku);
 
-      parsed = await ocrExtract(buffer, isImage, isPdf, att.nazwaPliku, apiKey);
+      parsed = await ocrExtract(buffer, isImage, isPdf, att.nazwaPliku, apiKey, att.typPliku);
       if (!parsed) {
         result.scrapeResult = "error";
         result.uwagi = "OCR nie zwrócił danych";
@@ -587,7 +587,7 @@ async function processAttachment(att, mode) {
 
         // Retry once
         console.log(`  [RETRY] ${att.nazwaPliku}`);
-        parsed = await ocrExtract(buffer, isImage, isPdf, att.nazwaPliku, apiKey);
+        parsed = await ocrExtract(buffer, isImage, isPdf, att.nazwaPliku, apiKey, att.typPliku);
         if (!parsed) {
           console.log(`  [RETRY-FAIL] ${att.nazwaPliku}`);
           return result;
@@ -875,19 +875,25 @@ function parseTextBasic(text, filename) {
     result.detectedType = "ZEZWOLENIE";
   }
 
-  // Nr oswiadczenia
-  const nrOswMatch = text.match(/(?:PZC|OP\.G)[.\s]*\d{4}[.\s]*\d+[.\s]*\w*[.\s]*\d{4}/);
+  // Nr oswiadczenia — from sentencja only
+  const nrOswMatch = sentencja.match(/(?:PZC|OP\.G)[.\s]*\d{4}[.\s]*\d+[.\s]*\w*[.\s]*\d{4}/);
   if (nrOswMatch) result.nrOswiadczenia = nrOswMatch[0].trim();
 
-  // Nr decyzji
-  const nrDecMatch = text.match(/(?:DL\.WIPO|WSC[\w-]*)[.\s]*\d{4}[.\s]*\d+[.\s]*\d{4}/);
-  if (nrDecMatch) result.nrDecyzji = nrDecMatch[0].trim();
+  // Nr decyzji — from sentencja only, match DL.WIPO / DL.WIIPO / DL.WIIPO variants
+  const nrDecMatch = sentencja.match(/(?:DL\.WII?PO|DL\.WIIPO)[.\s]*\d{4}[.\s]*\d+[.\s/]*[\w]*/);
+  if (nrDecMatch) {
+    result.nrDecyzji = nrDecMatch[0].trim();
+  } else {
+    // Fallback: WSC numer, but only from sentencja (not uzasadnienie)
+    const wscMatch = sentencja.match(/WSC[\w-]*[.\s]*\d{4}[.\s]*\d+[.\s]*\d{4}/);
+    if (wscMatch) result.nrDecyzji = wscMatch[0].trim();
+  }
 
-  // Extract dates
+  // Extract dates — from sentencja only (avoid dates from uzasadnienie)
   const datePattern = /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/g;
   const dates = [];
   let m;
-  while ((m = datePattern.exec(text)) !== null) {
+  while ((m = datePattern.exec(sentencja)) !== null) {
     const d = parseInt(m[1], 10);
     const mo = parseInt(m[2], 10);
     const y = parseInt(m[3], 10);
@@ -896,7 +902,6 @@ function parseTextBasic(text, filename) {
     }
   }
   if (dates.length >= 2) {
-    // Sort dates — earliest as dataOd, latest as dataDo
     dates.sort();
     result.dataOd = dates[0];
     result.dataDo = dates[dates.length - 1];
@@ -904,29 +909,34 @@ function parseTextBasic(text, filename) {
     result.dataOd = dates[0];
   }
 
-  // Extract name patterns
-  const nameMatch = text.match(/(?:cudzoziemcowi|cudzoziemca|obywatel(?:owi|a)?)\s*(?:[-–:]\s*)?([A-ZŻŹĆĄŚĘŁÓŃ][a-ząćęłńóśźż]+)\s+([A-ZŻŹĆĄŚĘŁÓŃ][a-ząćęłńóśźż]+)/);
+  // Extract name — from sentencja only; skip country-like words (Federacji, Rosyjskiej, etc.)
+  const COUNTRY_WORDS = /^(?:Federacji|Rosyjskiej|Ukrainy|Indii|Turcji|Gruzji|Armenii|Mołdawii|Białorusi|Uzbekistanu|Kazachstanu|Republiki|Ludowej|Socjalistycznej)$/;
+  const nameMatch = sentencja.match(/(?:cudzoziemcowi|cudzoziemca|obywatel(?:owi|a)?)\s*(?:[-–:]\s*)?([A-ZŻŹĆĄŚĘŁÓŃ][a-ząćęłńóśźż]+)\s+([A-ZŻŹĆĄŚĘŁÓŃ][a-ząćęłńóśźż]+)/);
   if (nameMatch) {
-    result.imie = nameMatch[1].trim();
-    result.nazwisko = nameMatch[2].trim();
+    const w1 = nameMatch[1].trim();
+    const w2 = nameMatch[2].trim();
+    if (!COUNTRY_WORDS.test(w1) && !COUNTRY_WORDS.test(w2)) {
+      result.imie = w1;
+      result.nazwisko = w2;
+    }
   }
 
-  // Wynagrodzenie
-  const wynMatch = text.match(/(?:wynagrodzeni\w+|stawk\w+)\s+(?:nie\s+ni[zż]sz\w+\s+ni[zż]\s+)?(\d[\d\s,.]+)\s*(?:z[lł]|PLN)/i);
+  // Wynagrodzenie — from sentencja only
+  const wynMatch = sentencja.match(/(?:wynagrodzeni\w+|stawk\w+)\s+(?:nie\s+ni[zż]sz\w+\s+ni[zż]\s+)?(\d[\d\s,.]+)\s*(?:z[lł]|PLN)/i);
   if (wynMatch) {
     result.wynagrodzenie = wynMatch[1].replace(/\s/g, "").trim() + " PLN brutto";
   }
 
-  // Stanowisko
-  const stanMatch = text.match(/stanowisk\w+[:\s]+([^\n,]+)/i);
+  // Stanowisko — from sentencja only
+  const stanMatch = sentencja.match(/stanowisk\w+[:\s]+([^\n,]+)/i);
   if (stanMatch) result.stanowisko = stanMatch[1].trim();
 
-  // Firma
-  const firmaMatch = text.match(/(?:na rzecz|podmiot\w*)[:\s]+([^\n]+?)(?:\s*,\s*(?:ul|NIP|KRS|REGON))/i);
+  // Firma — from sentencja only
+  const firmaMatch = sentencja.match(/(?:na rzecz|podmiot\w*)[:\s]+([^\n]+?)(?:\s*,\s*(?:ul|NIP|KRS|REGON))/i);
   if (firmaMatch) result.firma = firmaMatch[1].trim();
 
-  // Obywatelstwo
-  const obywMatch = text.match(/obywatelstw\w+[:\s]+([A-ZŻŹĆĄŚĘŁÓŃa-ząćęłńóśźż]+)/i);
+  // Obywatelstwo — from sentencja only
+  const obywMatch = sentencja.match(/obywatelstw\w+[:\s]+([A-ZŻŹĆĄŚĘŁÓŃa-ząćęłńóśźż]+)/i);
   if (obywMatch) {
     let cit = obywMatch[1].trim();
     if (cit.length > 2) result.obywatelstwo = cit;
@@ -937,7 +947,7 @@ function parseTextBasic(text, filename) {
 
 // ==================== OCR VIA ANTHROPIC SDK ====================
 
-async function ocrExtract(buffer, isImage, isPdf, filename, apiKey) {
+async function ocrExtract(buffer, isImage, isPdf, filename, apiKey, typPliku) {
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const client = new Anthropic({ apiKey });
 
@@ -951,28 +961,44 @@ async function ocrExtract(buffer, isImage, isPdf, filename, apiKey) {
   const useHaiku = !isPdf && buffer.byteLength > 2 * 1024 * 1024;
   const model = useHaiku ? "claude-haiku-4-5-20251001" : "claude-sonnet-4-6";
 
-  const extractionPrompt = `Ten obraz to strona polskiego dokumentu imigracyjnego. Obraz moze byc OBROCONY.
+  const extractionPrompt = `Ten obraz/plik to strona polskiego dokumentu imigracyjnego. Obraz moze byc OBROCONY.
 
 ZADANIE: Wyciagnij dane i zwroc TYLKO JSON:
 
-{"detectedType":"KARTA_POBYTU","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
+{"detectedType":"...","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"...","wymiarCzasu":"..."}
 
 ZASADY:
-1. Dokument: NAGLOWEK → SENTENCJA → UZASADNIENIE. Dane bierz z SENTENCJI.
-2. dataOd = data z naglowka. dataDo = "do dnia" z sentencji.
-3. wynagrodzenie = TYLKO z sentencji.
-4. firma = PELNA nazwa z sentencji.
-5. nrDecyzji = sygnatura z naglowka.
-6. detectedType: "wysokie kwalifikacje"/art.127 → BLUE_CARD; "pobyt" → KARTA_POBYTU; wiza (krajowa/Schengen/typ D/C) → WIZA.
-7. obywatelstwo: TYLKO kraj.
-8. OSWIADCZENIE: nrOswiadczenia = PZC/OP.G numer.
-9. "Powiadomienie o powierzeniu pracy" lub "zgloszenie o powierzeniu pracy" (obywatele UA) → detectedType = ZGLOSZENIE_UA. Nie maja dataDo (= null).
-10. Pola nieznalezione = null.`;
+1. Dokument: NAGLOWEK → SENTENCJA → UZASADNIENIE. Dane bierz WYŁĄCZNIE z SENTENCJI (po "postanawiam"/"orzekam"/"udzielam"). NIGDY z UZASADNIENIA.
+2. DECYZJA II INSTANCJI (Szef Urzędu do Spraw Cudzoziemców, "uchylam i udzielam"):
+   - nrDecyzji = sygnatura z NAGLOWKA tej decyzji (np. DL.WIIPO.xxxx), NIE numer uchylonej decyzji (np. WSC-...).
+   - Wszystkie dane (daty, wynagrodzenie, stanowisko, firma) TYLKO z części po "udzielam zezwolenia" w SENTENCJI.
+   - dataDo = data "do dnia" z sentencji udzielenia.
+   - dataOd = data wydania decyzji z nagłówka.
+   - IGNORUJ wszystkie numery, daty i kwoty wymienione w uzasadnieniu lub w części "uchylam".
+3. dataOd = data wydania z naglowka. dataDo = "do dnia" z sentencji.
+4. wynagrodzenie = TYLKO z sentencji ("za wynagrodzeniem nie nizszym niz X zl brutto").
+5. firma = PELNA nazwa z sentencji ("na rzecz podmiotu NAZWA").
+6. nrDecyzji = sygnatura z naglowka (pod nazwa organu).
+7. detectedType:
+   - "wysokie kwalifikacje"/art.127 W SENTENCJI → BLUE_CARD
+   - "udzielam zezwolenia na pobyt" → KARTA_POBYTU
+   - "zezwolenie na prace" → ZEZWOLENIE
+   - formularz PSZ-OPWP → OSWIADCZENIE
+   - "powiadomienie o powierzeniu pracy" / "zgloszenie o powierzeniu pracy" (UA) → ZGLOSZENIE_UA (nie maja dataDo = null)
+8. obywatelstwo: TYLKO kraj (NIE "Federacji Rosyjskiej" — pisz "Rosja").
+9. stanowisko: z sentencji ("na stanowisku" lub "rodzaj pracy").
+10. wymiarCzasu: np. "100 godzin miesięcznie", "pełny etat" — z sentencji.
+11. rodzajUmowy: np. "umowa o dzieło", "umowa zlecenie" — z sentencji.
+12. OSWIADCZENIE: nrOswiadczenia = PZC/OP.G numer.
+13. Pola nieznalezione = null.`;
+
+  // Determine correct media type from actual file extension
+  const mediaType = typPliku === "png" ? "image/png" : "image/jpeg";
 
   try {
     const contentBlock = isPdf
       ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64 } }
-      : { type: "image", source: { type: "base64", media_type: isImage ? "image/jpeg" : "image/png", data: base64 } };
+      : { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } };
 
     let response;
     if (isPdf) {
