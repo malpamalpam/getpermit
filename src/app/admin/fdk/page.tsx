@@ -86,22 +86,26 @@ export default async function FdkPage({
   // Residence filter requires app-level filtering (computed from multiple fields)
   const needsResidenceFilter = pobytFilter !== "";
 
-  const ebOrder = [{ status: "asc" }, { dataDo: "desc" }] as { status?: "asc"; dataDo?: "desc" }[];
-  const includeClause = {
-    employmentBases: { orderBy: ebOrder },
-    _count: { select: { attachments: true } },
-  };
+  async function fetchForeigners(skip?: number, take?: number) {
+    return db.fdkForeigner.findMany({
+      where: where as never,
+      include: {
+        employmentBases: { orderBy: [{ status: "asc" }, { dataDo: "desc" }] },
+        _count: { select: { attachments: true } },
+      },
+      orderBy: { nazwisko: "asc" },
+      ...(skip != null ? { skip } : {}),
+      ...(take != null ? { take } : {}),
+    });
+  }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let foreigners: any[];
+  type FdkRow = Awaited<ReturnType<typeof fetchForeigners>>[number];
+
+  let foreigners: FdkRow[];
   let total: number;
 
   if (needsResidenceFilter) {
-    const allForeigners = await db.fdkForeigner.findMany({
-      where: where as never,
-      include: includeClause,
-      orderBy: { nazwisko: "asc" },
-    });
+    const allForeigners = await fetchForeigners();
 
     const filtered = allForeigners.filter((f) => {
       f.employmentBases = withComputedStatuses(f.employmentBases);
@@ -113,13 +117,7 @@ export default async function FdkPage({
     foreigners = filtered.slice((page - 1) * perPage, page * perPage);
   } else {
     [foreigners, total] = await Promise.all([
-      db.fdkForeigner.findMany({
-        where: where as never,
-        include: includeClause,
-        orderBy: { nazwisko: "asc" },
-        skip: (page - 1) * perPage,
-        take: perPage,
-      }),
+      fetchForeigners((page - 1) * perPage, perPage),
       db.fdkForeigner.count({ where: where as never }),
     ]);
 
