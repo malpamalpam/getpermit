@@ -1,34 +1,40 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const SIZES = [50, 100, 200] as const;
 const STORAGE_KEY = "fdk-perPage";
 
-export function PerPageSelector({
-  current,
-  buildUrl,
-}: {
-  current: number;
-  buildUrl: (pp: number) => string;
-}) {
+export function PerPageSelector({ current }: { current: number }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  function makeUrl(pp: number) {
+    const u = new URLSearchParams(searchParams.toString());
+    if (pp === 50) {
+      u.delete("perPage");
+    } else {
+      u.set("perPage", String(pp));
+    }
+    u.set("page", "1");
+    return `/admin/fdk?${u.toString()}`;
+  }
 
   // On mount: if no perPage in URL but localStorage has a preference, redirect
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && SIZES.includes(parseInt(saved, 10) as 50 | 100 | 200)) {
       const savedNum = parseInt(saved, 10);
-      if (savedNum !== current && !window.location.search.includes("perPage=")) {
-        router.replace(buildUrl(savedNum));
+      if (savedNum !== current && !searchParams.has("perPage")) {
+        router.replace(makeUrl(savedNum));
       }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleChange(pp: number) {
     localStorage.setItem(STORAGE_KEY, String(pp));
-    router.push(buildUrl(pp));
+    router.push(makeUrl(pp));
   }
 
   return (

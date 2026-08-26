@@ -384,7 +384,7 @@ export default async function FdkPage({
             <span className="text-primary/60">
               Strona {page} z {totalPages || 1}
             </span>
-            <PerPageSelector current={perPage} buildUrl={(pp) => buildUrl({ perPage: String(pp), page: "1" })} />
+            <PerPageSelector current={perPage} />
           </div>
           <div className="flex gap-2">
             {page > 1 && (
