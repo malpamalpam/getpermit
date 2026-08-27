@@ -246,16 +246,26 @@ export default async function FdkForeignerPage({
                         </div>
                       )}
                       {/* UPO — w procedurze */}
-                      {hasUpo && (
-                        <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-amber-800">W procedurze — przedłużenie TRC</span>
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">AKTUALNA</span>
+                      {hasUpo && (() => {
+                        const uwagi = foreigner.upoUwagi?.toLowerCase() ?? "";
+                        const isCukr = uwagi.includes("cukr") || (foreigner.ochronaCzasowaUkr && !uwagi.includes("stempel"));
+                        const isStempel = uwagi.includes("stempel");
+                        const label = isStempel
+                          ? "W procedurze — stempel w paszporcie"
+                          : isCukr
+                            ? "Przedłużenie pobytu CUKR"
+                            : "W procedurze — przedłużenie TRC";
+                        return (
+                          <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-amber-800">{label}</span>
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">AKTUALNA</span>
+                            </div>
+                            <div className="text-amber-700">Wniosek doręczony: {fmt(foreigner.upoDoreczone)}</div>
+                            {foreigner.upoUwagi && <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>}
                           </div>
-                          <div className="text-amber-700">Wniosek doręczony: {fmt(foreigner.upoDoreczone)}</div>
-                          {foreigner.upoUwagi && <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>}
-                        </div>
-                      )}
+                        );
+                      })()}
                       {/* Wiza — aktywna */}
                       {wizaActive && (
                         <div className="rounded-lg bg-purple-50 p-3 text-sm">
@@ -273,16 +283,30 @@ export default async function FdkForeignerPage({
                           <div className="text-red-700">Ważna do: {fmt(foreigner.wizaDo)}</div>
                         </div>
                       )}
-                      {/* Ochrona czasowa UKR */}
-                      {hasOchronaUkr && (
-                        <div className="rounded-lg bg-sky-50 border border-sky-200 p-3 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sky-800">Ochrona czasowa (UKR)</span>
-                            <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-700">AKTUALNA</span>
+                      {/* Ochrona czasowa UKR / Karta CUKR */}
+                      {hasOchronaUkr && (() => {
+                        const hasCukrCard = foreigner.typDokumentuPobytowego?.toLowerCase().includes("cukr");
+                        if (hasCukrCard && kpActive) {
+                          return (
+                            <div className="rounded-lg bg-sky-50 border border-sky-200 p-3 text-sm">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-sky-800">Karta pobytu CUKR</span>
+                                <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-700">AKTUALNA</span>
+                              </div>
+                              <div className="text-sky-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
+                            </div>
+                          );
+                        }
+                        return (
+                          <div className="rounded-lg bg-sky-50 border border-sky-200 p-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-sky-800">Ochrona czasowa (UKR)</span>
+                              <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-700">AKTUALNA</span>
+                            </div>
+                            <div className="text-xs text-sky-600 mt-1">PESEL UKR / status ochrony czasowej</div>
                           </div>
-                          <div className="text-xs text-sky-600 mt-1">PESEL UKR / status ochrony czasowej</div>
-                        </div>
-                      )}
+                        );
+                      })()}
                       {/* Obywatel UE */}
                       {isEuCitizen && (
                         <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm">

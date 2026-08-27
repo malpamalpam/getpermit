@@ -56,8 +56,8 @@ const FIELDS: { key: EditableKey; label: string; type?: string }[] = [
   { key: "decyzjaPobytowaDo", label: "Karta pobytu ważna do", type: "date" },
   { key: "typDokumentuPobytowego", label: "Typ karty pobytu" },
   { key: "wizaDo", label: "Wiza ważna do", type: "date" },
-  { key: "upoDoreczone", label: "UPO — data doręczenia wniosku TRC", type: "date" },
-  { key: "upoUwagi", label: "UPO — uwagi (wojewoda, procedura)" },
+  { key: "upoDoreczone", label: "W procedurze — data złożenia wniosku", type: "date" },
+  { key: "upoUwagi", label: "Procedura — uwagi (np. 'Stempel w paszporcie', 'Przedłużenie TRC', wojewoda)" },
   { key: "ochronaCzasowaUkr", label: "Ochrona czasowa UKR (PESEL UKR)", type: "checkbox" },
   { key: "uwagi", label: "Uwagi" },
 ];
