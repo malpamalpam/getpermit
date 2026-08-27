@@ -298,23 +298,40 @@ export default async function FdkForeignerPage({
                     </>
                   );
                 })()}
-                <div className="text-sm text-primary/60">Aktywne podstawy zatrudnienia</div>
+                <div className="text-sm text-primary/60">Aktualna podstawa zatrudnienia</div>
                 <div className="flex flex-wrap gap-1.5">
                   {(() => {
                     const activeBases = foreigner.employmentBases.filter(
-                      (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE" || b.status === "BRAK_DANYCH"
+                      (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE"
                     );
-                    // Exclude WP/OŚW absorbed by active residence permit
-                    const ABSORBED_TYPES = ["ZEZWOLENIE", "OSWIADCZENIE"];
-                    const visibleBases = hasActiveResidence
-                      ? activeBases.filter((b) => !ABSORBED_TYPES.includes(b.typ))
-                      : activeBases;
-                    if (visibleBases.length === 0) return <span className="text-sm text-primary/40">Brak</span>;
-                    return [...new Set(visibleBases.map((b) => b.typ))].map((t) => (
-                      <span key={t} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[t]?.cls ?? "bg-gray-100"}`}>
-                        {TYPE_BADGES[t]?.label ?? t}
-                      </span>
-                    ));
+                    // Hierarchy: KARTA_POBYTU/BLUE_CARD > ZEZWOLENIE > OSWIADCZENIE > ZGLOSZENIE_UA > DOSTEP_*
+                    const TYPE_HIERARCHY: Record<string, number> = {
+                      KARTA_POBYTU: 6, BLUE_CARD: 6,
+                      ZEZWOLENIE: 5,
+                      OSWIADCZENIE: 4,
+                      ZGLOSZENIE_UA: 3,
+                      DOSTEP_UE: 2, DOSTEP_STUDENT: 2, DOSTEP_POBYT_STALY: 2,
+                      DOSTEP_REZYDENT_UE: 2, DOSTEP_KARTA_POLAKA: 2,
+                      DOSTEP_OCHRONA_MIEDZ: 2, DOSTEP_DYPLOM_PL: 2,
+                    };
+                    if (activeBases.length === 0) return <span className="text-sm text-primary/40">Brak</span>;
+                    // Pick best by hierarchy, then by dataDo (newest)
+                    const best = activeBases.reduce((a, b) => {
+                      const ha = TYPE_HIERARCHY[a.typ] ?? 0;
+                      const hb = TYPE_HIERARCHY[b.typ] ?? 0;
+                      if (hb !== ha) return hb > ha ? b : a;
+                      return (b.dataDo?.getTime() ?? 0) > (a.dataDo?.getTime() ?? 0) ? b : a;
+                    });
+                    const badge = TYPE_BADGES[best.typ];
+                    return (
+                      <div className="flex items-center gap-2">
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badge?.cls ?? "bg-gray-100"}`}>
+                          {badge?.label ?? best.typ}
+                        </span>
+                        {best.stanowisko && <span className="text-xs text-primary/60">{best.stanowisko}</span>}
+                        {best.dataDo && <span className="text-xs text-primary/40">do {fmt(best.dataDo)}</span>}
+                      </div>
+                    );
                   })()}
                 </div>
                 <div className="text-sm text-primary/60">Załączniki: {foreigner.attachments.length}</div>
