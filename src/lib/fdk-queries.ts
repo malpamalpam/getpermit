@@ -19,15 +19,8 @@ export function computeStatus(base: {
   dataDo: Date | null;
   dataZakPracy?: Date | null;
 }): string {
-  // Preserve truly manual statuses (UCHYLONE, UMORZONE) unconditionally
-  if (base.status === "UCHYLONE" || base.status === "UMORZONE") {
-    return base.status;
-  }
-  // NIEAKTYWNE: only preserve if dataZakPracy justifies it (otherwise recompute)
-  // This ensures clearing dataZakPracy restores AKTYWNE status
-  if (base.status === "NIEAKTYWNE" && !base.dataZakPracy) {
-    // dataZakPracy was cleared — fall through to recompute from dates
-  } else if (base.status === "NIEAKTYWNE") {
+  // Preserve manually/explicitly set statuses unconditionally
+  if (base.status === "UCHYLONE" || base.status === "UMORZONE" || base.status === "NIEAKTYWNE") {
     return base.status;
   }
 
