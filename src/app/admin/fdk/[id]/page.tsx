@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { ArrowLeft, Eye, Download, FileText, Shield } from "lucide-react";
 import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 import { ScrapeButton } from "@/components/admin/fdk/ScrapeButton";
+import { AddResidenceBasisButton } from "@/components/admin/fdk/AddResidenceBasisButton";
 import { DeleteAttachmentButton } from "@/components/admin/fdk/DeleteAttachmentButton";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
@@ -319,6 +320,7 @@ export default async function FdkForeignerPage({
                       )}
                       {/* Brak podstawy */}
                       {!hasAny && <span className="text-sm text-primary/40">Brak podstawy pobytowej</span>}
+                      <AddResidenceBasisButton foreignerId={foreigner.id} />
                     </>
                   );
                 })()}

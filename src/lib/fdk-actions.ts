@@ -958,6 +958,84 @@ export async function toggleCalendarEventDoneAction(id: number): Promise<FdkResu
   return { ok: true };
 }
 
+// =============================================================================
+// RESIDENCE BASIS (ręczne dodawanie podstaw pobytowych)
+// =============================================================================
+
+export async function addResidenceBasisAction(
+  foreignerId: number,
+  input: { typ: string; data: string; dataDo?: string; notatka?: string }
+): Promise<FdkResult> {
+  const user = await requireAdmin();
+
+  const foreigner = await db.fdkForeigner.findUnique({ where: { id: foreignerId } });
+  if (!foreigner) return { ok: false, error: "not_found" };
+
+  const dataDate = input.data ? new Date(input.data) : null;
+  const dataDoDate = input.dataDo ? new Date(input.dataDo) : null;
+  const uwagi = input.notatka?.trim() || null;
+
+  // Map typ to foreigner fields
+  switch (input.typ) {
+    case "stempel":
+    case "trc":
+    case "cukr_wniosek": {
+      // W procedurze — set upoDoreczone + upoUwagi
+      const label = input.typ === "stempel"
+        ? `Stempel w paszporcie${uwagi ? ` — ${uwagi}` : ""}`
+        : input.typ === "cukr_wniosek"
+          ? `Przedłużenie pobytu CUKR${uwagi ? ` — ${uwagi}` : ""}`
+          : uwagi ?? "Przedłużenie TRC";
+      await db.fdkForeigner.update({
+        where: { id: foreignerId },
+        data: { upoDoreczone: dataDate, upoUwagi: label },
+      });
+      break;
+    }
+    case "karta":
+    case "karta_cukr": {
+      // Karta pobytu — set decyzjaPobytowaDo + typDokumentuPobytowego
+      const typDoc = input.typ === "karta_cukr" ? "CUKR" : (uwagi || null);
+      await db.fdkForeigner.update({
+        where: { id: foreignerId },
+        data: {
+          decyzjaPobytowaDo: dataDoDate ?? dataDate,
+          typDokumentuPobytowego: typDoc,
+        },
+      });
+      break;
+    }
+    case "wiza": {
+      await db.fdkForeigner.update({
+        where: { id: foreignerId },
+        data: { wizaDo: dataDoDate ?? dataDate },
+      });
+      break;
+    }
+    case "inne": {
+      // Inne — zapisz jako UPO z notatką
+      await db.fdkForeigner.update({
+        where: { id: foreignerId },
+        data: { upoDoreczone: dataDate, upoUwagi: uwagi ?? "Inna podstawa pobytowa" },
+      });
+      break;
+    }
+  }
+
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId,
+      changedBy: user.email ?? "admin",
+      field: "residence_basis",
+      oldValue: null,
+      newValue: `Dodano podstawę pobytową: ${input.typ}${dataDate ? ` od ${input.data}` : ""}${input.dataDo ? ` do ${input.dataDo}` : ""}${uwagi ? ` (${uwagi})` : ""}`,
+    },
+  });
+
+  revalidateFdk(foreignerId);
+  return { ok: true };
+}
+
 async function sendOfficeVisitNotification(
   email: string,
   name: string,
