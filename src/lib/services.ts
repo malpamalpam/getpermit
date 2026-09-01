@@ -56,7 +56,7 @@ export interface Service {
   forWhom: LocalizedString;
   requiredDocuments: LocalizedList;
   estimatedTime: LocalizedString;
-  /** Format „od X zł" lub null, jeśli wycena indywidualna. */
+  /** Format "od X zł" lub null, jeśli wycena indywidualna. */
   price: string | null;
   order: number;
   /** Nowe sekcje treściowe — opcjonalne, renderowane w kolejności */
@@ -230,7 +230,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           "Карта проживання, що видається воєводою — для навчання, сім'ї, бізнесу та інших цілей."
         ),
         fullDescription: loc(
-          "Zezwolenie na pobyt czasowy to decyzja wojewody legalizująca pobyt w Polsce powyżej 3 miesięcy (maksymalny okres ważności decyzji to 3 lata) w konkretnym celu innym niż samo zatrudnienie: studia i nauka, łączenie rodzin, prowadzenie działalności gospodarczej, badania naukowe, a także „inne okoliczności" (art. 186–187 ustawy o cudzoziemcach). Po pozytywnej decyzji cudzoziemiec otrzymuje kartę pobytu.",
+          "Zezwolenie na pobyt czasowy to decyzja wojewody legalizująca pobyt w Polsce powyżej 3 miesięcy (maksymalny okres ważności decyzji to 3 lata) w konkretnym celu innym niż samo zatrudnienie: studia i nauka, łączenie rodzin, prowadzenie działalności gospodarczej, badania naukowe, a także \u201einne okoliczności\u201d (art. 186–187 ustawy o cudzoziemcach). Po pozytywnej decyzji cudzoziemiec otrzymuje kartę pobytu.",
           "A temporary residence permit is a residence card issued by the voivode, intended for foreigners who have a specific purpose of stay in Poland: studies, family reunification, running a business, conducting scientific research, or other justified circumstances. We help with compiling the complete documentation required by the voivode, preparing the justification for the application, and representing the client at every stage of the administrative proceedings.",
           "Разрешение на временное пребывание — это карта побыту, выдаваемая воеводой, предназначенная для иностранцев, имеющих конкретную цель пребывания в Польше: учёба, воссоединение семьи, ведение бизнеса, научные исследования или другие обоснованные обстоятельства. Помогаем в сборе полного комплекта документов, подготовке обоснования заявления и представительстве клиента на каждом этапе административного процесса.",
           "Дозвіл на тимчасове перебування — це карта побуту, що видається воєводою, призначена для іноземців, які мають конкретну мету перебування в Польщі: навчання, возз'єднання сім'ї, ведення бізнесу, наукові дослідження або інші обґрунтовані обставини. Допомагаємо у зборі повного комплекту документів, підготовці обґрунтування заяви та представництві клієнта на кожному етапі адміністративного процесу."
@@ -252,7 +252,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         sections: [
           {
             heading: pl("Co obejmuje usługa GetPermit"),
-            body: pl("<ul><li>dobór właściwej podstawy prawnej pobytu;</li><li>przygotowanie kompletu dokumentów;</li><li>złożenie wniosku przez MOS oraz uzyskanie potwierdzenia złożenia wniosku;</li><li>obsługa wezwań z urzędu;</li><li>monitoring sprawy aż do wydania decyzji.</li></ul><p>Dla podstaw pobytu „rodzinnych" i studenckich pilnujemy uprawnień dodatkowych — np. wiele zezwoleń z tytułów rodzinnych i studiów daje swobodny dostęp do rynku pracy.</p>"),
+            body: pl("<ul><li>dobór właściwej podstawy prawnej pobytu;</li><li>przygotowanie kompletu dokumentów;</li><li>złożenie wniosku przez MOS oraz uzyskanie potwierdzenia złożenia wniosku;</li><li>obsługa wezwań z urzędu;</li><li>monitoring sprawy aż do wydania decyzji.</li></ul><p>Dla podstaw pobytu \u201erodzinnych\u201d i studenckich pilnujemy uprawnień dodatkowych — np. wiele zezwoleń z tytułów rodzinnych i studiów daje swobodny dostęp do rynku pracy.</p>"),
           },
           {
             heading: pl("Wymagane dokumenty (standardowe)"),
@@ -303,7 +303,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           "Легалізація роботи на основі договору B2B у бізнес-інкубаторі — процедура, що включає договір співпраці та дозвіл на роботу."
         ),
         fullDescription: loc(
-          "Rozwiązanie dla freelancerów, kontraktorów IT i specjalistów rozliczających się „na B2B", którzy nie chcą albo nie mogą zakładać działalności gospodarczej w Polsce. Cudzoziemiec zawiera umowę z inkubatorem przedsiębiorczości (Fundacja Firma Dla Każdego) i pracuje w ramach jego osobowości prawnej — a umowa z inkubatorem staje się podstawą do legalizacji pobytu i pracy (zezwolenie na pobyt czasowy i pracę, Blue Card przy wysokich kwalifikacjach).",
+          "Rozwiązanie dla freelancerów, kontraktorów IT i specjalistów rozliczających się \u201ena B2B\u201d, którzy nie chcą albo nie mogą zakładać działalności gospodarczej w Polsce. Cudzoziemiec zawiera umowę z inkubatorem przedsiębiorczości (Fundacja Firma Dla Każdego) i pracuje w ramach jego osobowości prawnej — a umowa z inkubatorem staje się podstawą do legalizacji pobytu i pracy (zezwolenie na pobyt czasowy i pracę, Blue Card przy wysokich kwalifikacjach).",
           "Work legalization for a foreigner based on a B2B contract with a business incubator. The procedure involves concluding a cooperation agreement with the incubator and obtaining a work permit. We help with coordination with the incubator, documentation preparation, and obtaining the work permit.",
           "Легализация работы иностранца на основе договора B2B с бизнес-инкубатором. Процедура включает заключение договора сотрудничества с инкубатором и получение разрешения на работу. Помогаем с координацией с инкубатором, подготовкой документации и получением разрешения на работу.",
           "Легалізація роботи іноземця на основі договору B2B з бізнес-інкубатором. Процедура включає укладення договору співпраці з інкубатором та отримання дозволу на роботу. Допомагаємо з координацією з інкубатором, підготовкою документації та отриманням дозволу на роботу."
@@ -541,7 +541,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           },
           {
             heading: pl("Co obejmuje usługa GetPermit"),
-            body: pl("<ul><li>analiza historii pobytu i zatrudnienia w Polsce (liczymy „nieprzerwaność" pobytu);</li><li>kompletowanie zaświadczeń o dochodach (PIT-y, zaświadczenia);</li><li>weryfikacja certyfikatu językowego;</li><li>złożenie wniosku przez MOS;</li><li>odpowiedzi na wezwania, monitorowanie statusu sprawy do momentu wydania decyzji i karty pobytu.</li></ul>"),
+            body: pl("<ul><li>analiza historii pobytu i zatrudnienia w Polsce (liczymy \u201enieprzerwaność\u201d pobytu);</li><li>kompletowanie zaświadczeń o dochodach (PIT-y, zaświadczenia);</li><li>weryfikacja certyfikatu językowego;</li><li>złożenie wniosku przez MOS;</li><li>odpowiedzi na wezwania, monitorowanie statusu sprawy do momentu wydania decyzji i karty pobytu.</li></ul>"),
           },
           {
             heading: pl("Terminy i opłaty urzędowe"),
