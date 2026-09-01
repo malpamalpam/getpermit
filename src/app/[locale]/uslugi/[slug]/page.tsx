@@ -16,6 +16,8 @@ import { siteConfig } from "@/config/site";
 import Image from "next/image";
 import { getServiceHeroImage } from "@/lib/service-images";
 import { getLocalizedSlug, resolveInternalSlug, SERVICE_BASE_PATH } from "@/lib/service-slugs";
+import { ServiceFaq } from "@/components/services/ServiceFaq";
+import { LegalDisclaimer } from "@/components/services/LegalDisclaimer";
 import {
   Wallet,
   CheckCircle2,
@@ -93,9 +95,18 @@ export default async function ServiceDetailPage({
   const fullDesc = localized(service.fullDescription, locale);
   const forWhom = localized(service.forWhom, locale);
   const documents = localizedList(service.requiredDocuments, locale);
-  // TODO: replace Unsplash URLs with authentic photos in /public/images/services/
   const heroImage = getServiceHeroImage(service.slug);
   const heroAlt = heroImage.alt[locale] ?? heroImage.alt.pl;
+
+  // Sections and FAQ
+  const sections = service.sections?.map((s) => ({
+    heading: localized(s.heading, locale),
+    body: localized(s.body, locale),
+  })) ?? [];
+  const faqItems = service.faq?.map((f) => ({
+    question: localized(f.question, locale),
+    answer: localized(f.answer, locale),
+  })) ?? [];
 
   return (
     <article>
@@ -127,12 +138,7 @@ export default async function ServiceDetailPage({
               {category && (
                 <>
                   <ChevronRight className="h-4 w-4" />
-                  <Link
-                    href={{
-                      pathname: "/uslugi",
-                    }}
-                    className="hover:text-white"
-                  >
+                  <Link href={{ pathname: "/uslugi" }} className="hover:text-white">
                     {localized(category.title, locale)}
                   </Link>
                 </>
@@ -169,30 +175,32 @@ export default async function ServiceDetailPage({
       <Container className="py-16">
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            {/* Full description */}
+            {/* Full description — "Co to jest i dla kogo" */}
             <section className="prose-content">
               <p className="text-base leading-relaxed text-primary/80">
                 {fullDesc}
               </p>
             </section>
 
-            {/* For whom */}
-            <section className="mt-10 rounded-xl border border-primary/10 bg-surface p-6 md:p-8">
-              <div className="flex items-start gap-3">
-                <Users className="mt-0.5 h-6 w-6 flex-shrink-0 text-accent" />
-                <div>
-                  <h2 className="font-display text-xl font-bold text-primary">
-                    {t("forWhom")}
-                  </h2>
-                  <p className="mt-2 text-sm leading-relaxed text-primary/70">
-                    {forWhom}
-                  </p>
+            {/* For whom (legacy field — shown only if no sections) */}
+            {sections.length === 0 && (
+              <section className="mt-10 rounded-xl border border-primary/10 bg-surface p-6 md:p-8">
+                <div className="flex items-start gap-3">
+                  <Users className="mt-0.5 h-6 w-6 flex-shrink-0 text-accent" />
+                  <div>
+                    <h2 className="font-display text-xl font-bold text-primary">
+                      {t("forWhom")}
+                    </h2>
+                    <p className="mt-2 text-sm leading-relaxed text-primary/70">
+                      {forWhom}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            )}
 
-            {/* Documents */}
-            {documents.length > 0 && (
+            {/* Legacy documents (shown only if no sections) */}
+            {sections.length === 0 && documents.length > 0 && (
               <section className="mt-10 rounded-xl border border-primary/10 bg-surface p-6 md:p-8">
                 <h2 className="mb-4 font-display text-xl font-bold text-primary">
                   {t("documents")}
@@ -207,6 +215,32 @@ export default async function ServiceDetailPage({
                 </ul>
               </section>
             )}
+
+            {/* New content sections */}
+            {sections.map((section, i) => (
+              <section key={i} className="mt-10">
+                <h2 className="mb-4 font-display text-xl font-bold text-primary">
+                  {section.heading}
+                </h2>
+                <div
+                  className="prose prose-sm max-w-none text-primary/80 prose-headings:text-primary prose-strong:text-primary prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-li:my-0.5"
+                  dangerouslySetInnerHTML={{ __html: section.body }}
+                />
+              </section>
+            ))}
+
+            {/* FAQ */}
+            {faqItems.length > 0 && (
+              <section className="mt-10">
+                <h2 className="mb-4 font-display text-xl font-bold text-primary">
+                  FAQ
+                </h2>
+                <ServiceFaq items={faqItems} />
+              </section>
+            )}
+
+            {/* Legal disclaimer */}
+            <LegalDisclaimer />
 
             <div className="mt-12">
               <Link href="/uslugi">
@@ -235,7 +269,7 @@ export default async function ServiceDetailPage({
         </div>
       </Container>
 
-      {/* Schema.org JSON-LD */}
+      {/* Schema.org Service JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -259,6 +293,27 @@ export default async function ServiceDetailPage({
           }),
         }}
       />
+
+      {/* Schema.org FAQPage JSON-LD */}
+      {faqItems.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqItems.map((item) => ({
+                "@type": "Question",
+                name: item.question,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: item.answer.replace(/<[^>]*>/g, ""),
+                },
+              })),
+            }),
+          }}
+        />
+      )}
     </article>
   );
 }
