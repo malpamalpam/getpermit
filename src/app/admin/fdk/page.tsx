@@ -256,7 +256,7 @@ export default async function FdkPage({
                 <th className="px-4 py-3">#</th>
                 <th className="px-4 py-3">Nazwisko</th>
                 <th className="px-4 py-3">Imię</th>
-                <th className="px-4 py-3">Podstawy zatrudnienia</th>
+                <th className="px-4 py-3">Podstawa pracy</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Pobyt</th>
                 <th className="px-4 py-3">Ważne do</th>
@@ -311,13 +311,35 @@ export default async function FdkPage({
                     </td>
                     <td className="px-4 py-3 text-primary/70">{f.imie}</td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1">
-                        {types.map((t) => (
-                          <span key={t} className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${TYPE_BADGES[t]?.cls ?? "bg-gray-100 text-gray-600"}`}>
-                            {TYPE_BADGES[t]?.label ?? t}
+                      {(() => {
+                        // B2: one current employment basis per hierarchy
+                        const WORK_HIERARCHY: Record<string, number> = {
+                          ZGLOSZENIE_UA: 6, OSWIADCZENIE: 5, ZEZWOLENIE: 4,
+                          KARTA_POBYTU: 3, BLUE_CARD: 3,
+                          DOSTEP_POBYT_STALY: 2, DOSTEP_REZYDENT_UE: 2, DOSTEP_KARTA_POLAKA: 2,
+                          DOSTEP_UE: 2, DOSTEP_OCHRONA_MIEDZ: 2, DOSTEP_DYPLOM_PL: 2,
+                          DOSTEP_STUDENT: 1,
+                        };
+                        const activeBases = f.employmentBases.filter(
+                          (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE"
+                        );
+                        if (activeBases.length === 0) {
+                          return <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700">Brak</span>;
+                        }
+                        const best = activeBases.reduce((a, b) =>
+                          (WORK_HIERARCHY[b.typ] ?? 0) > (WORK_HIERARCHY[a.typ] ?? 0) ? b
+                          : (WORK_HIERARCHY[b.typ] ?? 0) === (WORK_HIERARCHY[a.typ] ?? 0) && (b.dataDo?.getTime() ?? 0) > (a.dataDo?.getTime() ?? 0) ? b : a
+                        );
+                        const badge = TYPE_BADGES[best.typ];
+                        return (
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge?.cls ?? "bg-gray-100 text-gray-600"}`}
+                            title={activeBases.map((b) => TYPE_BADGES[b.typ]?.label ?? b.typ).join(", ")}
+                          >
+                            {badge?.label ?? best.typ}
                           </span>
-                        ))}
-                      </div>
+                        );
+                      })()}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[latestStatus] ?? STATUS_COLORS.BRAK_DANYCH}`}>
