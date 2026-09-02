@@ -9,7 +9,7 @@
 export interface ParsedDocumentData {
   // Detected document type
   // ODWOLANIE = appeal/complaint, no employment base should be created
-  detectedType?: "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE";
+  detectedType?: "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | "ZGLOSZENIE_UA";
   // Foreigner data
   imie?: string;
   nazwisko?: string;
