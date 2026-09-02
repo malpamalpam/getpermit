@@ -153,9 +153,12 @@ export async function POST(request: NextRequest) {
         } else if (parsed.detectedType === "ODWOLANIE") {
           // ODWOLANIE: do NOT create employment base on upload either
           // Skip — just keep the attachment and foreigner data updates above
+        } else if (!parsed.detectedType) {
+          // Unknown document type — do NOT create employment base with a guessed type
+          // Skip — just keep the attachment and foreigner data updates above
         } else {
-        // Create employment base for non-ODWOLANIE types
-        const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
+        // Create employment base for recognized types
+        const docType = parsed.detectedType as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA";
 
         // Match existing base by DOCUMENT NUMBER first, then by dates
         let existingBase = null;

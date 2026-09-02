@@ -76,9 +76,12 @@ function titleCase(s: string): string {
  * Order matters: odwołanie/zażalenie must be checked FIRST because appeal documents
  * often contain phrases like "zezwolenie na pracę" or "zezwolenie na pobyt" in context.
  */
-function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | undefined {
+function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | "ZGLOSZENIE_UA" | undefined {
   const lower = text.toLowerCase();
   const filenameLower = (filenameHint ?? "").toLowerCase();
+
+  // === PASSPORT / ID — never create employment bases from these ===
+  if (/paszport|passport|dow[oó]d[\s_]*osobist|pesel[\s_]*ukr/i.test(filenameLower)) return undefined;
 
   // === ODWOŁANIE / ZAŻALENIE — check first! ===
   // Filename hint — strongest signal (user named the file with "odwolanie")
@@ -108,6 +111,23 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
     // Standalone "odwołanie" near the start of the document (first 500 chars)
     if (/^.{0,500}odwo[łl]anie/si.test(text)) return "ODWOLANIE";
   }
+
+  // === POWIADOMIENIE UA (ZGLOSZENIE_UA) — check BEFORE oświadczenie! ===
+  // PSZ-PPWPU is the form code for "powiadomienie o powierzeniu pracy obywatelowi Ukrainy"
+  // Filename hint — "zgloszenie_UA" or "zgłoszenie_UA" is strong signal
+  if (filenameLower.includes("zg\u0142oszenie_ua") || filenameLower.includes("zgloszenie_ua")
+    || filenameLower.includes("zg\u0142oszenie ua") || filenameLower.includes("zgloszenie ua")
+    || filenameLower.includes("powiadomienie_ua") || filenameLower.includes("powiadomienie ua")) return "ZGLOSZENIE_UA";
+  // PSZ-PPWPU form code from praca.gov.pl
+  if (lower.includes("psz-ppwpu") || lower.includes("psz ppwpu")) return "ZGLOSZENIE_UA";
+  // "powiadomienie o powierzeniu" / "powiadomienie PUP"
+  if (/powiadomi\w*\s+o\s+powierzeni/i.test(text)) return "ZGLOSZENIE_UA";
+  if (lower.includes("powiadomienie pup")) return "ZGLOSZENIE_UA";
+  // "zgłoszenie o powierzeniu pracy" / "zgłoszenie powierzenia pracy"
+  if (/zg[l\u0142]oszeni\w*\s+(?:o\s+)?powierzeni/i.test(text)) return "ZGLOSZENIE_UA";
+  // "obywatel ukrainy" + "powierzenie" — strong co-occurrence
+  if ((lower.includes("obywatel") && lower.includes("ukrainy") || lower.includes("pesel ukr"))
+    && lower.includes("powierzeni")) return "ZGLOSZENIE_UA";
 
   // === OŚWIADCZENIE PSZ-OPWP — form header is strongest signal, check EARLY ===
   // PSZ-OPWP is the electronic form code from praca.gov.pl for oświadczenia.
