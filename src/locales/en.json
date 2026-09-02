@@ -727,7 +727,7 @@
     "services": {
       "workPermits": {
         "title": "Work permits",
-        "desc": "Handling of type A, B, C, D, E work permits for your non-EU employees."
+        "desc": "Handling of work permits for your non-EU employees."
       },
       "declarations": {
         "title": "Employment declarations",

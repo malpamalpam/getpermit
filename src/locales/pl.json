@@ -50,7 +50,7 @@
     "title": "Legalizacja pobytu i pracy",
     "forForeigners": "Dla Cudzoziemców",
     "forEmployers": "Dla Pracodawców",
-    "subtitle": "Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę typu A, EU Blue Card. Kompleksowa pomoc w legalizacji cudzoziemców w Polsce.",
+    "subtitle": "Karta pobytu czasowego, karta stałego pobytu, zezwolenie na pracę, EU Blue Card. Kompleksowa pomoc w legalizacji cudzoziemców w Polsce.",
     "sectionLabel": "Oferta",
     "viewAll": "Zobacz wszystkie usługi",
     "viewDetails": "Sprawdź szczegóły",
@@ -757,7 +757,7 @@
     "services": {
       "workPermits": {
         "title": "Zezwolenia na prac\u0119",
-        "desc": "Obs\u0142uga zezwole\u0144 typu A, B, C, D, E dla Twoich pracownik\u00f3w spoza UE."
+        "desc": "Obs\u0142uga zezwole\u0144 na prac\u0119 dla Twoich pracownik\u00f3w spoza UE."
       },
       "declarations": {
         "title": "O\u015bwiadczenia o powierzeniu pracy",

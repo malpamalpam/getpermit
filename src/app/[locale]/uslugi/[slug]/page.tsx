@@ -240,7 +240,7 @@ export default async function ServiceDetailPage({
             )}
 
             {/* Legal disclaimer */}
-            <LegalDisclaimer />
+            <LegalDisclaimer locale={locale} />
 
             <div className="mt-12">
               <Link href="/uslugi">
@@ -302,6 +302,7 @@ export default async function ServiceDetailPage({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "FAQPage",
+              inLanguage: locale,
               mainEntity: faqItems.map((item) => ({
                 "@type": "Question",
                 name: item.question,
