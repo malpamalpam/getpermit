@@ -8,6 +8,7 @@ import { ArrowLeft, Eye, Download, FileText, Shield } from "lucide-react";
 import { FdkUploadForm } from "@/components/admin/fdk/FdkUploadForm";
 import { ScrapeButton } from "@/components/admin/fdk/ScrapeButton";
 import { AddResidenceBasisButton } from "@/components/admin/fdk/AddResidenceBasisButton";
+import { ResidenceBasisActions } from "@/components/admin/fdk/ResidenceBasisActions";
 import { DeleteAttachmentButton } from "@/components/admin/fdk/DeleteAttachmentButton";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
@@ -225,10 +226,15 @@ export default async function FdkForeignerPage({
                       {/* Karta pobytu — aktywna */}
                       {kpActive && (
                         <div className="rounded-lg bg-blue-50 p-3 text-sm">
-                          <div className="font-semibold text-blue-800">
-                            Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="font-semibold text-blue-800">
+                                Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                              </div>
+                              <div className="text-blue-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
+                            </div>
+                            <ResidenceBasisActions foreignerId={foreigner.id} basisType="karta" currentDate={foreigner.decyzjaPobytowaDo?.toISOString().slice(0, 10)} />
                           </div>
-                          <div className="text-blue-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
                           {foreigner.employmentBases.some((b) => b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE") && (
                             <div className="mt-1 text-xs text-blue-600">Zezwolenia na pracę wchłonięte przez decyzję pobytową</div>
                           )}
@@ -237,13 +243,18 @@ export default async function FdkForeignerPage({
                       {/* Karta pobytu — wygasła */}
                       {kpExpired && (
                         <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-red-800">
-                              Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
-                            </span>
-                            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">WYGASŁA</span>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-red-800">
+                                  Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                                </span>
+                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">WYGASŁA</span>
+                              </div>
+                              <div className="text-red-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
+                            </div>
+                            <ResidenceBasisActions foreignerId={foreigner.id} basisType="karta" currentDate={foreigner.decyzjaPobytowaDo?.toISOString().slice(0, 10)} />
                           </div>
-                          <div className="text-red-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
                         </div>
                       )}
                       {/* UPO — w procedurze */}
@@ -258,12 +269,17 @@ export default async function FdkForeignerPage({
                             : "W procedurze — przedłużenie TRC";
                         return (
                           <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-amber-800">{label}</span>
-                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">AKTUALNA</span>
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-amber-800">{label}</span>
+                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">AKTUALNA</span>
+                                </div>
+                                <div className="text-amber-700">Wniosek doręczony: {fmt(foreigner.upoDoreczone)}</div>
+                                {foreigner.upoUwagi && <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>}
+                              </div>
+                              <ResidenceBasisActions foreignerId={foreigner.id} basisType="upo" currentDate={foreigner.upoDoreczone?.toISOString().slice(0, 10)} currentNote={foreigner.upoUwagi ?? undefined} />
                             </div>
-                            <div className="text-amber-700">Wniosek doręczony: {fmt(foreigner.upoDoreczone)}</div>
-                            {foreigner.upoUwagi && <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>}
                           </div>
                         );
                       })()}

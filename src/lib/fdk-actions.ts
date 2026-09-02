@@ -804,6 +804,98 @@ export async function sendHrContractEmailAction(
 }
 
 // =============================================================================
+// RESIDENCE BASIS EDIT / DELETE
+// =============================================================================
+
+export async function editResidenceBasisAction(
+  foreignerId: number,
+  input: { basisType: string; date: string; note?: string }
+): Promise<FdkResult> {
+  const user = await requireAdmin();
+  const foreigner = await db.fdkForeigner.findUnique({ where: { id: foreignerId } });
+  if (!foreigner) return { ok: false, error: "not_found" };
+
+  const dateValue = input.date ? new Date(input.date) : null;
+  const updateData: Record<string, unknown> = {};
+
+  switch (input.basisType) {
+    case "karta":
+      updateData.decyzjaPobytowaDo = dateValue;
+      break;
+    case "wiza":
+      updateData.wizaDo = dateValue;
+      break;
+    case "upo":
+      updateData.upoDoreczone = dateValue;
+      if (input.note !== undefined) updateData.upoUwagi = input.note || null;
+      break;
+  }
+
+  if (Object.keys(updateData).length > 0) {
+    await db.fdkForeigner.update({ where: { id: foreignerId }, data: updateData });
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId,
+        changedBy: user.email ?? "admin",
+        field: "residence_basis",
+        oldValue: null,
+        newValue: `Edytowano podstawę pobytową: ${input.basisType} → ${input.date}${input.note ? ` (${input.note})` : ""}`,
+      },
+    });
+  }
+
+  revalidateFdk(foreignerId);
+  return { ok: true };
+}
+
+export async function deleteResidenceBasisAction(
+  foreignerId: number,
+  basisType: string
+): Promise<FdkResult> {
+  const user = await requireAdmin();
+  const foreigner = await db.fdkForeigner.findUnique({ where: { id: foreignerId } });
+  if (!foreigner) return { ok: false, error: "not_found" };
+
+  const updateData: Record<string, unknown> = {};
+  let oldValue = "";
+
+  switch (basisType) {
+    case "karta":
+      oldValue = `decyzjaPobytowaDo=${foreigner.decyzjaPobytowaDo?.toISOString().slice(0, 10) ?? ""}`;
+      updateData.decyzjaPobytowaDo = null;
+      updateData.typDokumentuPobytowego = null;
+      break;
+    case "wiza":
+      oldValue = `wizaDo=${foreigner.wizaDo?.toISOString().slice(0, 10) ?? ""}`;
+      updateData.wizaDo = null;
+      break;
+    case "upo":
+      oldValue = `upoDoreczone=${foreigner.upoDoreczone?.toISOString().slice(0, 10) ?? ""}, upoUwagi=${foreigner.upoUwagi ?? ""}`;
+      updateData.upoDoreczone = null;
+      updateData.upoUwagi = null;
+      break;
+    case "ochrona_ukr":
+      oldValue = `ochronaCzasowaUkr=${foreigner.ochronaCzasowaUkr}`;
+      updateData.ochronaCzasowaUkr = false;
+      break;
+  }
+
+  await db.fdkForeigner.update({ where: { id: foreignerId }, data: updateData });
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId,
+      changedBy: user.email ?? "admin",
+      field: "residence_basis",
+      oldValue,
+      newValue: `Usunięto podstawę pobytową: ${basisType}`,
+    },
+  });
+
+  revalidateFdk(foreignerId);
+  return { ok: true };
+}
+
+// =============================================================================
 // CALENDAR EVENTS
 // =============================================================================
 
