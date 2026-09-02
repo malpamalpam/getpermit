@@ -83,6 +83,9 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
   // === PASSPORT / ID — never create employment bases from these ===
   if (/paszport|passport|dow[oó]d[\s_]*osobist|pesel[\s_]*ukr/i.test(filenameLower)) return undefined;
 
+  // === KARTA POLAKA — not a residence card! ===
+  if (/karta[\s_]*polak/i.test(filenameLower)) return undefined;
+
   // === ODWOŁANIE / ZAŻALENIE — check first! ===
   // Filename hint — strongest signal (user named the file with "odwolanie")
   if (filenameLower.includes("odwolanie") || filenameLower.includes("odwo\u0142anie")) return "ODWOLANIE";
