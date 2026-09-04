@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError } from "@/lib/pdf-parser";
-import { deactivatePreviousResidencePermits, namesMatch } from "@/lib/fdk-queries";
+import { deactivatePreviousResidencePermits, namesMatch, isOswiadczenieAllowedForCitizenship } from "@/lib/fdk-queries";
 
 // Allow up to 120s for scrape action (OCR via Claude can take 30-60s for large multi-page scans)
 export const maxDuration = 120;
@@ -213,13 +213,43 @@ export async function GET(
     // All other detected types create/update employment base
     const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
 
-    // Match existing base by DOCUMENT NUMBER first, then by dates
-    let existingBase = null;
-    if (docType === "OSWIADCZENIE" && parsed.nrOswiadczenia) {
+    // --- Walidacja obywatelstwa dla oświadczeń (pkt 1 — reguła krajów) ---
+    if (docType === "OSWIADCZENIE") {
+      const citizenship = foreigner.obywatelstwo ?? parsed.obywatelstwo;
+      if (citizenship) {
+        const allowed = await isOswiadczenieAllowedForCitizenship(citizenship, parsed.dataOd ? new Date(parsed.dataOd) : null);
+        if (!allowed) {
+          // Oświadczenie niedopuszczalne dla tego obywatelstwa — nie twórz podstawy
+          await db.fdkChangeLog.create({
+            data: {
+              foreignerId: attachment.foreignerId,
+              changedBy,
+              field: "scrape",
+              oldValue: null,
+              newValue: `Plik ${attachment.nazwaPliku}: rozpoznano jako Oświadczenie, ale obywatelstwo "${citizenship}" nie uprawnia do oświadczeń. Podstawa NIE utworzona — do weryfikacji ręcznej.`,
+            },
+          });
+
+          return NextResponse.json({
+            ok: true,
+            extracted: parsed,
+            foreignerUpdated: Object.keys(foreignerUpdateData),
+            employmentBaseCreated: null,
+            warning: `Obywatelstwo "${citizenship}" nie uprawnia do oświadczeń o powierzeniu pracy. Dokument wymaga ręcznej weryfikacji (może to być powiadomienie, zezwolenie lub załącznik do wniosku).`,
+          });
+        }
+      }
+    }
+
+    // Match existing base: first by sourceAttachmentId (idempotency), then by document number, then by dates
+    let existingBase = await db.fdkEmploymentBase.findFirst({
+      where: { foreignerId: attachment.foreignerId, sourceAttachmentId: attachment.id, typ: docType },
+    });
+    if (!existingBase && docType === "OSWIADCZENIE" && parsed.nrOswiadczenia) {
       existingBase = await db.fdkEmploymentBase.findFirst({
         where: { foreignerId: attachment.foreignerId, typ: docType, nrOswiadczenia: parsed.nrOswiadczenia },
       });
-    } else if (docType !== "OSWIADCZENIE" && parsed.nrDecyzji) {
+    } else if (!existingBase && docType !== "OSWIADCZENIE" && parsed.nrDecyzji) {
       existingBase = await db.fdkEmploymentBase.findFirst({
         where: { foreignerId: attachment.foreignerId, typ: docType, nrDecyzji: parsed.nrDecyzji },
       });
@@ -241,6 +271,7 @@ export async function GET(
       foreignerId: attachment.foreignerId,
       typ: docType,
       status: "BRAK_DANYCH",
+      sourceAttachmentId: attachment.id,
       dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
       dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
       rodzajUmowy: parsed.rodzajUmowy || null,
@@ -258,9 +289,15 @@ export async function GET(
       baseData.nrOswiadczenia = null;
     }
 
-    // Store wynagrodzenie as text
+    // Store wynagrodzenie — prefer structured format if available
     if (parsed.wynagrodzenie) {
-      baseData.wynagrodzenie = parsed.wynagrodzenie;
+      if (parsed.parsedSalary && !parsed.parsedSalary.podejrzana) {
+        // Use formatSalary for clean display
+        const { formatSalary } = await import("@/lib/pdf-parser");
+        baseData.wynagrodzenie = formatSalary(parsed.parsedSalary);
+      } else {
+        baseData.wynagrodzenie = parsed.wynagrodzenie;
+      }
     }
 
     let baseId: number;
@@ -314,15 +351,25 @@ export async function GET(
     const expectedFields = ["detectedType", "dataOd", "dataDo", "imie", "nazwisko"];
     const missingFields = expectedFields.filter((f) => !parsed[f as keyof typeof parsed]);
 
+    // Build warnings
+    const warnings: string[] = [];
+    if (missingFields.length > 0) {
+      warnings.push(`Nie udało się odczytać: ${missingFields.join(", ")}. Uzupełnij brakujące dane ręcznie.`);
+    }
+    if (parsed.parsedSalary?.podejrzana) {
+      warnings.push(`Stawka ${parsed.wynagrodzenie} wydaje się podejrzana (zbyt niska). Sprawdź poprawność.`);
+    }
+    if (parsed.dataOdSource === "data_podpisu") {
+      warnings.push(`Data "od" pochodzi z daty podpisu elektronicznego — może nie być datą rozpoczęcia okresu ważności.`);
+    }
+
     return NextResponse.json({
       ok: true,
       extracted: parsed,
       foreignerUpdated: Object.keys(foreignerUpdateData),
       employmentBaseCreated: baseId,
       missingFields: missingFields.length > 0 ? missingFields : undefined,
-      message: missingFields.length > 0
-        ? `Ekstrakcja częściowa — nie udało się odczytać: ${missingFields.join(", ")}. Uzupełnij brakujące dane ręcznie.`
-        : undefined,
+      message: warnings.length > 0 ? warnings.join(" ") : undefined,
     });
   }
 

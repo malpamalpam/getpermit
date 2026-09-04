@@ -501,15 +501,21 @@ model FdkEmploymentBase {
   uwagiUa            String?   @map("uwagi_ua") @db.Text
 
   uwagi              String?   @db.Text
+
+  // Powiązanie z załącznikiem źródłowym (idempotentność scrapera)
+  sourceAttachmentId Int?      @map("source_attachment_id")
+
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
 
   foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
 
+  @@unique([foreignerId, sourceAttachmentId, typ], name: "uq_foreigner_attachment_type")
   @@index([foreignerId])
   @@index([typ])
   @@index([status])
   @@index([dataDo])
+  @@index([sourceAttachmentId])
   @@map("fdk_employment_bases")
 }
 
@@ -585,6 +591,21 @@ model FdkAttachment {
   @@index([foreignerId])
   @@index([kategoria])
   @@map("fdk_attachments")
+}
+
+// =============================================================================
+// TABELA KRAJÓW UPRAWNIONYCH DO OŚWIADCZEŃ
+// =============================================================================
+
+model OswiadczenieCountry {
+  id          Int       @id @default(autoincrement())
+  countryCode String    @map("country_code") @db.VarChar(3) /// ISO 3166-1 alpha-2/3
+  countryName String    @map("country_name") /// Nazwa wyświetlana
+  validFrom   DateTime? @map("valid_from")   /// null = od zawsze
+  validTo     DateTime? @map("valid_to")     /// null = nadal obowiązuje
+
+  @@unique([countryCode])
+  @@map("oswiadczenie_countries")
 }
 
 // =============================================================================

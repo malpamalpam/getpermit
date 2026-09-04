@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "lucide-react";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
-import { withComputedStatuses, computeResidenceStatus, type ResidenceStatus } from "@/lib/fdk-queries";
+import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis, type ResidenceStatus } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -268,34 +268,10 @@ export default async function FdkPage({
             </thead>
             <tbody className="divide-y divide-primary/5">
               {foreigners.map((f, idx) => {
-                const types = [...new Set(f.employmentBases.map((b) => b.typ))];
-                const STATUS_PRIORITY: Record<string, number> = {
-                  AKTYWNE: 4, W_TRAKCIE: 3, NIEAKTYWNE: 2,
-                  WYGASLE: 1, UCHYLONE: 1, UMORZONE: 1, BRAK_DANYCH: 0,
-                };
-                const isJunkBase = (b: typeof f.employmentBases[0]) =>
-                  b.status === "BRAK_DANYCH" && !b.dataOd && !b.dataDo;
-                const nonJunkBases = f.employmentBases.filter((b) => !isJunkBase(b));
-                const basesForBest = nonJunkBases.length > 0 ? nonJunkBases : f.employmentBases;
-
-                const now = new Date();
-                const bestBase = basesForBest.length > 0
-                  ? basesForBest.reduce((best, b) => {
-                      const score = (x: typeof b) =>
-                        (STATUS_PRIORITY[x.status] ?? 0)
-                        + (x.status === "AKTYWNE" && x.dataDo ? 0.5 : 0)
-                        + (x.dataDo && x.dataDo > now ? 0.1 : 0);
-                      if (score(b) !== score(best)) return score(b) > score(best) ? b : best;
-                      const bDo = b.dataDo?.getTime() ?? 0;
-                      const bestDo = best.dataDo?.getTime() ?? 0;
-                      return bDo > bestDo ? b : best;
-                    })
-                  : null;
+                // Use the same "best" basis for all columns (type, status, date)
+                const bestBase = getCurrentEmploymentBasis(f.employmentBases);
                 const latestStatus = bestBase?.status ?? "BRAK_DANYCH";
-                const latestDate = bestBase?.dataDo
-                  ?? f.employmentBases.find((b) => b.status === "AKTYWNE" && b.dataDo)?.dataDo
-                  ?? f.employmentBases.filter((b) => b.dataDo && b.dataDo > now).sort((a, b) => (b.dataDo!.getTime() - a.dataDo!.getTime()))[0]?.dataDo
-                  ?? f.employmentBases.find((b) => b.dataDo)?.dataDo;
+                const latestDate = bestBase?.dataDo ?? null;
 
                 let rs: ResidenceStatus = "brak";
                 try { rs = computeResidenceStatus(f); } catch { /* fallback */ }
@@ -312,25 +288,14 @@ export default async function FdkPage({
                     <td className="px-4 py-3 text-primary/70">{f.imie}</td>
                     <td className="px-4 py-3">
                       {(() => {
-                        // B2: one current employment basis per hierarchy
-                        const WORK_HIERARCHY: Record<string, number> = {
-                          ZGLOSZENIE_UA: 6, OSWIADCZENIE: 5, ZEZWOLENIE: 4,
-                          KARTA_POBYTU: 3, BLUE_CARD: 3,
-                          DOSTEP_POBYT_STALY: 2, DOSTEP_REZYDENT_UE: 2, DOSTEP_KARTA_POLAKA: 2,
-                          DOSTEP_UE: 2, DOSTEP_OCHRONA_MIEDZ: 2, DOSTEP_DYPLOM_PL: 2,
-                          DOSTEP_STUDENT: 1,
-                        };
+                        const best = getCurrentEmploymentBasis(f.employmentBases);
+                        if (!best) {
+                          return <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700">Brak</span>;
+                        }
+                        const badge = TYPE_BADGES[best.typ];
                         const activeBases = f.employmentBases.filter(
                           (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE"
                         );
-                        if (activeBases.length === 0) {
-                          return <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700">Brak</span>;
-                        }
-                        const best = activeBases.reduce((a, b) =>
-                          (WORK_HIERARCHY[b.typ] ?? 0) > (WORK_HIERARCHY[a.typ] ?? 0) ? b
-                          : (WORK_HIERARCHY[b.typ] ?? 0) === (WORK_HIERARCHY[a.typ] ?? 0) && (b.dataDo?.getTime() ?? 0) > (a.dataDo?.getTime() ?? 0) ? b : a
-                        );
-                        const badge = TYPE_BADGES[best.typ];
                         return (
                           <span
                             className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge?.cls ?? "bg-gray-100 text-gray-600"}`}

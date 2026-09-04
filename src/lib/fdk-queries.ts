@@ -194,6 +194,63 @@ export function namesMatch(
 }
 
 /**
+ * Unified hierarchy for picking the "current" employment basis.
+ *
+ * Higher number = higher priority.
+ * The hierarchy reflects B2 from the legalization dept:
+ *   powiadomienie UA → oświadczenie → zezwolenie → pobyt i praca / Blue Card
+ *   → pobyt stały / rezydent / Karta Polaka / ochrona międz.
+ *
+ * IMPORTANT: this is the SINGLE SOURCE OF TRUTH — used by:
+ *   - foreigners list page (kolumna "Podstawa pracy")
+ *   - foreigner profile page (sekcja "Aktualna podstawa zatrudnienia")
+ *   - summary / export views
+ */
+const EMPLOYMENT_HIERARCHY: Record<string, number> = {
+  ZGLOSZENIE_UA: 7,
+  OSWIADCZENIE: 6,
+  ZEZWOLENIE: 5,
+  KARTA_POBYTU: 4,
+  BLUE_CARD: 4,
+  DOSTEP_POBYT_STALY: 3,
+  DOSTEP_REZYDENT_UE: 3,
+  DOSTEP_KARTA_POLAKA: 3,
+  DOSTEP_OCHRONA_MIEDZ: 3,
+  DOSTEP_UE: 2,
+  DOSTEP_DYPLOM_PL: 2,
+  DOSTEP_STUDENT: 1,
+};
+
+export { EMPLOYMENT_HIERARCHY };
+
+/**
+ * Pick the single "current" employment basis from a list.
+ *
+ * Rules:
+ * 1. Only AKTYWNE or W_TRAKCIE bases are candidates.
+ * 2. Among candidates, pick the one with highest hierarchy score.
+ * 3. Tie-break: latest dataDo wins.
+ *
+ * Returns null if no active basis exists.
+ */
+export function getCurrentEmploymentBasis<
+  T extends { typ: string; status: string; dataDo: Date | null }
+>(bases: T[]): T | null {
+  const active = bases.filter(
+    (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE"
+  );
+  if (active.length === 0) return null;
+
+  return active.reduce((best, b) => {
+    const hb = EMPLOYMENT_HIERARCHY[b.typ] ?? 0;
+    const ha = EMPLOYMENT_HIERARCHY[best.typ] ?? 0;
+    if (hb !== ha) return hb > ha ? b : best;
+    // Tie-break: latest dataDo
+    return (b.dataDo?.getTime() ?? 0) > (best.dataDo?.getTime() ?? 0) ? b : best;
+  });
+}
+
+/**
  * Residence basis status for a foreigner.
  * Used by the list page filter and profile overview.
  */
@@ -232,6 +289,56 @@ export function computeResidenceStatus(foreigner: {
   if (kpExpired || wizaExpired) return "wygasla";
 
   return "brak";
+}
+
+/**
+ * Check if a given citizenship (obywatelstwo) is allowed for oświadczenie o powierzeniu pracy.
+ * Uses the `oswiadczenie_countries` table.
+ *
+ * @param citizenship - obywatelstwo string (e.g. "Ukraina", "UA", "Kanada")
+ * @param documentDate - data wpisu/wydania oświadczenia (for historical eligibility check)
+ * @returns true if citizenship qualifies for oświadczenie
+ */
+export async function isOswiadczenieAllowedForCitizenship(
+  citizenship: string,
+  documentDate: Date | null
+): Promise<boolean> {
+  const countries = await db.oswiadczenieCountry.findMany();
+
+  // Normalize: lowercase, trim, strip diacritics
+  const stripDiacritics = (s: string) =>
+    s.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  const norm = stripDiacritics(citizenship);
+
+  // Known aliases (obywatelstwo w bazie może być po angielsku, polsku lub w transliteracji)
+  const ALIASES: Record<string, string> = {
+    "georgia": "GE", "gruzja": "GE",
+    "belarus": "BY", "bialorus": "BY", "białoruś": "BY",
+    "moldova": "MD", "moldawia": "MD", "mołdawia": "MD",
+    "ukraine": "UA", "ukraina": "UA",
+    "russia": "RU", "rosja": "RU",
+    "armenia": "AM",
+  };
+
+  // Try alias first
+  const aliasCode = ALIASES[norm];
+
+  const match = countries.find((c) => {
+    const code = c.countryCode.toLowerCase();
+    const name = stripDiacritics(c.countryName);
+    if (aliasCode && code === aliasCode.toLowerCase()) return true;
+    return norm === code || norm === name || name.includes(norm) || norm.includes(name);
+  });
+
+  if (!match) return false;
+
+  // Check date window
+  const checkDate = documentDate ?? new Date();
+  if (match.validFrom && checkDate < match.validFrom) return false;
+  if (match.validTo && checkDate > match.validTo) return false;
+
+  return true;
 }
 
 export async function getNotificationSettings() {

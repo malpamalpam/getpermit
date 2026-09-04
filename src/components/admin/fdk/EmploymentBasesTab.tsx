@@ -55,6 +55,7 @@ interface Props {
   foreignerId: number;
   bases: EmploymentBase[];
   hasActiveResidence: boolean;
+  obywatelstwo?: string | null;
 }
 
 const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
@@ -91,7 +92,7 @@ function fmt(d: Date | null | undefined): string {
   return `${day}.${month}.${year}`;
 }
 
-export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: Props) {
+export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, obywatelstwo }: Props) {
   const router = useRouter();
   const [editingBase, setEditingBase] = useState<EmploymentBase | null>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -223,7 +224,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
               {[
                 ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
                 ["Rodzaj umowy", b.rodzajUmowy],
-                ["Wynagrodzenie", b.wynagrodzenie],
+                ["Wynagrodzenie", b.wynagrodzenie ?? (b.stawka ? `${Number(b.stawka).toLocaleString("pl-PL")} PLN` : null)],
                 ["Firma", b.firma],
                 ["Stanowisko / rodzaj pracy", b.stanowisko ?? b.podjeciePracy],
                 ["Urząd", b.urzad],
@@ -274,6 +275,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
         <EmploymentBaseEditForm
           foreignerId={foreignerId}
           base={editingBase}
+          obywatelstwo={obywatelstwo}
           onClose={() => setEditingBase(null)}
         />
       )}
@@ -282,6 +284,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence }: P
       {showCreate && (
         <EmploymentBaseEditForm
           foreignerId={foreignerId}
+          obywatelstwo={obywatelstwo}
           onClose={() => setShowCreate(false)}
         />
       )}

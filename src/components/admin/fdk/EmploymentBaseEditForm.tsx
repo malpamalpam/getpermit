@@ -62,9 +62,45 @@ interface EmploymentBase {
   uwagi: string | null;
 }
 
+// Kraje uprawnione do oświadczeń (klient-side — lustrzana kopia tabeli oswiadczenie_countries)
+const OSWIADCZENIE_COUNTRIES: { name: string; code: string; validTo?: string }[] = [
+  { name: "Armenia", code: "AM" },
+  { name: "Białoruś", code: "BY" },
+  { name: "Mołdawia", code: "MD" },
+  { name: "Ukraina", code: "UA" },
+  { name: "Rosja", code: "RU", validTo: "2022-10-28" },
+  { name: "Gruzja", code: "GE" }, // data końcowa do potwierdzenia
+];
+
+const CITIZENSHIP_ALIASES: Record<string, string> = {
+  "georgia": "GE", "gruzja": "GE",
+  "belarus": "BY", "bialorus": "BY",
+  "moldova": "MD", "moldawia": "MD",
+  "ukraine": "UA", "ukraina": "UA",
+  "russia": "RU", "rosja": "RU",
+  "armenia": "AM",
+};
+
+function stripDiacritics(s: string): string {
+  return s.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function isOswiadczenieCitizenshipWarning(obywatelstwo: string | null | undefined): boolean {
+  if (!obywatelstwo) return false;
+  const norm = stripDiacritics(obywatelstwo);
+  const aliasCode = CITIZENSHIP_ALIASES[norm];
+  return !OSWIADCZENIE_COUNTRIES.some((c) => {
+    const code = c.code.toLowerCase();
+    const name = stripDiacritics(c.name);
+    if (aliasCode && code === aliasCode.toLowerCase()) return true;
+    return norm === code || norm === name || name.includes(norm) || norm.includes(name);
+  });
+}
+
 interface Props {
   foreignerId: number;
   base?: EmploymentBase; // null = create mode
+  obywatelstwo?: string | null;
   onClose: () => void;
 }
 
@@ -107,7 +143,7 @@ const STATUS_OPTIONS: { value: StatusType; label: string }[] = [
 // Component
 // ---------------------------------------------------------------------------
 
-export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
+export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClose }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -420,6 +456,13 @@ export function EmploymentBaseEditForm({ foreignerId, base, onClose }: Props) {
           {typ === "OSWIADCZENIE" && (
             <fieldset className="space-y-3 rounded-lg border border-green-200 bg-green-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-green-700">Oświadczenie</legend>
+              {isOswiadczenieCitizenshipWarning(obywatelstwo) && (
+                <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <strong>Uwaga:</strong> Obywatelstwo „{obywatelstwo}" nie uprawnia do oświadczenia o powierzeniu pracy.
+                  Oświadczenia dotyczą wyłącznie obywateli: Armenii, Białorusi, Mołdawii, Ukrainy (historycznie: Gruzji, Rosji).
+                  Sprawdź, czy dokument to nie powiadomienie lub zezwolenie.
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>Nr oświadczenia</label>

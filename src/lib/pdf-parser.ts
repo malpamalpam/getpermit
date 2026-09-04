@@ -6,6 +6,14 @@
  * - Decyzja pobytowa (karta pobytu)
  */
 
+export interface ParsedSalary {
+  kwota: number;
+  jednostka: "miesiecznie" | "godzinowo" | "nieznana";
+  bruttoNetto: "brutto" | "netto" | "nieznane";
+  raw: string; // oryginalny tekst
+  podejrzana?: boolean; // true jeśli kwota poniżej progów sanity
+}
+
 export interface ParsedDocumentData {
   // Detected document type
   // ODWOLANIE = appeal/complaint, no employment base should be created
@@ -19,6 +27,7 @@ export interface ParsedDocumentData {
   // Dates
   dataOd?: string; // YYYY-MM-DD
   dataDo?: string; // YYYY-MM-DD
+  dataOdSource?: "okres_waznosci" | "data_wydania" | "data_podpisu" | "extracted"; // skąd pochodzi dataOd
   // Work details
   rodzajPracy?: string;
   rodzajUmowy?: string;
@@ -29,6 +38,7 @@ export interface ParsedDocumentData {
   nrDecyzji?: string;
   // Salary
   wynagrodzenie?: string;
+  parsedSalary?: ParsedSalary;
   // Confidence flag — if true, dates may be unreliable and need manual verification
   lowConfidence?: boolean;
 }
@@ -532,8 +542,33 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     result.wynagrodzenie = result.wynagrodzenie.replace(/\.\s*$/, "").trim();
   }
 
+  // Parse salary into structured form
+  if (result.wynagrodzenie) {
+    result.parsedSalary = parseSalary(result.wynagrodzenie);
+  }
+
+  // Deduplicate stanowisko
+  if (result.stanowisko) {
+    result.stanowisko = deduplicateStanowisko(result.stanowisko);
+  }
+
   sanitizeDates(result);
   return result;
+}
+
+/**
+ * Check if a date is plausibly a DOB or within 18 years of DOB (i.e. before working age).
+ * Used to reject dates that are clearly NOT document validity dates.
+ */
+function isDateNearDob(dateStr: string, dobStr: string): boolean {
+  const dob = new Date(dobStr);
+  const date = new Date(dateStr);
+  // Exact match
+  if (dateStr === dobStr) return true;
+  // Within 18 years of DOB (before person could legally work)
+  const minWorkDate = new Date(dob);
+  minWorkDate.setFullYear(minWorkDate.getFullYear() + 18);
+  return date < minWorkDate;
 }
 
 /**
@@ -550,13 +585,13 @@ function sanitizeDates(result: ParsedDocumentData): void {
     result.dataDo = undefined;
     result.lowConfidence = true;
   }
-  // dataOd must not equal the person's DOB
-  if (result.dataOd && result.dataUrodzenia && result.dataOd === result.dataUrodzenia) {
+  // dataOd must not equal DOB or be within 18 years of DOB
+  if (result.dataOd && result.dataUrodzenia && isDateNearDob(result.dataOd, result.dataUrodzenia)) {
     result.dataOd = undefined;
     result.lowConfidence = true;
   }
-  // dataDo must not equal DOB
-  if (result.dataDo && result.dataUrodzenia && result.dataDo === result.dataUrodzenia) {
+  // dataDo must not equal DOB or be within 18 years of DOB
+  if (result.dataDo && result.dataUrodzenia && isDateNearDob(result.dataDo, result.dataUrodzenia)) {
     result.dataDo = undefined;
     result.lowConfidence = true;
   }
@@ -689,6 +724,165 @@ async function extractJpegsFromPdf(buffer: ArrayBuffer): Promise<Buffer[]> {
 }
 
 /**
+ * Parse salary string into structured data.
+ * Recognizes patterns: "X zł brutto miesięcznie", "X PLN/h", "X zł za godzinę",
+ * "wynagrodzenie nie niższe niż X zł", etc.
+ */
+function parseSalary(raw: string): ParsedSalary | undefined {
+  if (!raw || raw.length < 2) return undefined;
+
+  const norm = raw.replace(/\s+/g, " ").trim();
+
+  // Extract numeric value — handle "4 806,00" or "31.40" or "4806"
+  const numMatch = norm.match(/(\d[\d\s]*(?:[.,]\d{1,2})?)/);
+  if (!numMatch) return undefined;
+
+  const kwotaStr = numMatch[1].replace(/\s/g, "").replace(",", ".");
+  const kwota = parseFloat(kwotaStr);
+  if (isNaN(kwota) || kwota <= 0) return undefined;
+
+  // Detect unit
+  let jednostka: ParsedSalary["jednostka"] = "nieznana";
+  if (/miesi[ęe]czn|\/\s*mies|miesiac|\/m\b/i.test(norm)) {
+    jednostka = "miesiecznie";
+  } else if (/godzin|\/\s*h\b|\/\s*godz|za\s+godzin/i.test(norm)) {
+    jednostka = "godzinowo";
+  }
+
+  // Detect brutto/netto
+  let bruttoNetto: ParsedSalary["bruttoNetto"] = "nieznane";
+  if (/brutto/i.test(norm)) bruttoNetto = "brutto";
+  else if (/netto/i.test(norm)) bruttoNetto = "netto";
+
+  // Sanity check
+  const podejrzana =
+    (jednostka === "miesiecznie" && kwota < 1000) ||
+    (jednostka === "godzinowo" && kwota < 20) ||
+    (jednostka === "nieznana" && kwota < 20); // small unidentified number is likely an error
+
+  return { kwota, jednostka, bruttoNetto, raw: norm, podejrzana };
+}
+
+/**
+ * Format parsed salary for display.
+ * E.g. "4 806 PLN brutto / mies." or "31,40 PLN/h brutto — ≈ 5 275 PLN/mies. przy pełnym etacie"
+ */
+export function formatSalary(s: ParsedSalary): string {
+  const fmt = s.kwota.toLocaleString("pl-PL", { minimumFractionDigits: s.kwota % 1 !== 0 ? 2 : 0 });
+  const bn = s.bruttoNetto === "nieznane" ? "" : ` ${s.bruttoNetto}`;
+
+  if (s.jednostka === "godzinowo") {
+    const monthly = Math.round(s.kwota * 168); // 168h = pełny etat
+    const monthlyFmt = monthly.toLocaleString("pl-PL");
+    return `${fmt} PLN/h${bn} — ≈ ${monthlyFmt} PLN/mies. przy pełnym etacie`;
+  }
+  if (s.jednostka === "miesiecznie") {
+    return `${fmt} PLN${bn} / mies.`;
+  }
+  return `${fmt} PLN${bn}`;
+}
+
+/**
+ * Deduplicate stanowisko — remove repeated phrases from concatenated text.
+ * E.g. "z języka angielskiegoTwórca podcastów" stays as-is (different phrases),
+ * but "Lektor z języka angielskiegoLektor z języka angielskiego" → "Lektor z języka angielskiego"
+ */
+function deduplicateStanowisko(s: string): string {
+  const trimmed = s.trim();
+
+  // First try exact dedup (already handled by `dedup`)
+  const deduped = dedup(trimmed);
+  if (deduped !== trimmed) return deduped;
+
+  // Check for camelCase-style concatenation: "word1word2Word3" where a lowercase letter
+  // is followed by an uppercase letter — this is a rendering artifact.
+  // Split at camelCase boundaries and check for duplicate parts.
+  const parts = trimmed.split(/(?<=[a-ząćęłńóśźż])(?=[A-ZĄĆĘŁŃÓŚŹŻ])/);
+  if (parts.length === 2 && parts[0].toLowerCase() === parts[1].toLowerCase()) {
+    return parts[0];
+  }
+
+  // Check for near-duplicate: if second half is a prefix of first half repeated
+  if (parts.length === 2) {
+    const [a, b] = parts;
+    // If part b starts with part a (or vice versa), keep the longer one
+    if (a.length > 3 && b.length > 3) {
+      if (b.toLowerCase().startsWith(a.toLowerCase().substring(0, Math.min(a.length, 10)))) {
+        // They share a prefix — likely duplicate
+        return a.length >= b.length ? a : b;
+      }
+    }
+  }
+
+  return trimmed;
+}
+
+/**
+ * Parse electronic decision from Urzędy Wojewódzkie with qualified signatures.
+ * These PDFs have a text layer with structured content:
+ * - Header: urząd, sygnatura, data
+ * - Sentencja: "udzielam zezwolenia na pobyt czasowy i pracę..."
+ * - Firma extracted from "w związku z wykonywaniem pracy dla: NAZWA"
+ */
+function parseElectronicDecision(normalized: string, result: ParsedDocumentData): void {
+  // Extract firma from sentencja: "pracy dla: FIRMA" or "na rzecz podmiotu: FIRMA"
+  // or "w związku z wykonywaniem pracy u: FIRMA" or "pracy dla podmiotu FIRMA"
+  const firmaPatterns = [
+    /(?:pracy\s+(?:dla|u|w)(?:\s+podmiotu)?|na\s+rzecz\s+podmiotu)\s*[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][^\n]{3,80}?)(?=\s*,?\s*(?:ul\.|al\.|pl\.|os\.|z\s+siedzib|NIP|KRS|REGON|$))/i,
+    /wykonywani\w+\s+pracy\s+(?:dla|u|w)\s*:?\s*([A-ZĄĆĘŁŃÓŚŹŻ][^\n]{3,80}?)(?=\s*,?\s*(?:ul\.|al\.|pl\.|NIP))/i,
+  ];
+  for (const pat of firmaPatterns) {
+    const m = normalized.match(pat);
+    if (m && m[1].trim().length > 3) {
+      result.firma = m[1].trim();
+      break;
+    }
+  }
+
+  // For electronic decisions, "data podpisu" can serve as dataOd
+  // Look for "Podpisano elektronicznie dnia DD.MM.YYYY" or "Data podpisu: DD.MM.YYYY"
+  if (!result.dataOd) {
+    const signDatePatterns = [
+      /podpisan\w+\s+elektroniczn\w+\s+(?:dnia\s+)?(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i,
+      /data\s+podpisu\s*:?\s*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i,
+      /data\s+z[łl]o[żz]enia\s+podpisu\s*:?\s*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i,
+    ];
+    for (const pat of signDatePatterns) {
+      const m = normalized.match(pat);
+      if (m) {
+        result.dataOd = parseDatePL(m[1]);
+        result.dataOdSource = "data_podpisu";
+        break;
+      }
+    }
+  }
+
+  // Decision type refinement: "pobyt czasowy i pracę" → KARTA_POBYTU with subtype
+  // Check for "w związku z wykonywaniem pracy" — this means it's pobyt + praca (not generic)
+  if (result.detectedType === "KARTA_POBYTU") {
+    const lower = normalized.toLowerCase();
+    if (lower.includes("pobyt czasowy i prac") || lower.includes("zezwolenia na pobyt czasowy i prac")) {
+      // This is "Karta pobytu (pobyt i praca)" — grants work right for specific employer
+      // We keep detectedType as KARTA_POBYTU but enriching rodzajSprawy
+      if (!result.rodzajUmowy && /umow[ęay]\s+o\s+prac[ęy]/i.test(normalized)) {
+        result.rodzajUmowy = "umowa o pracę";
+      }
+    }
+  }
+
+  // Extract obywatelstwo from sentencja: "ob. Kanada" or "obywatel(ka) Kanady"
+  if (!result.obywatelstwo) {
+    const obSentMatch = normalized.match(/ob\.\s+([A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)/);
+    if (obSentMatch) {
+      const val = obSentMatch[1].trim();
+      if (!/^(zezwoleni|pobyt|prac|decyzj|czasow|kart)/i.test(val) && val.length > 2) {
+        result.obywatelstwo = val;
+      }
+    }
+  }
+}
+
+/**
  * Parse zezwolenie na pracę (typ A/B/C) — different layout from oświadczenie.
  * Field values appear BEFORE the field label in parentheses.
  */
@@ -816,13 +1010,28 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   const paszMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
   if (paszMatch) result.nrPaszportu = paszMatch[1].trim();
 
+  // --- Electronic decision parsing (UW with qualified signature) ---
+  if (result.detectedType === "KARTA_POBYTU" || result.detectedType === "BLUE_CARD") {
+    parseElectronicDecision(normalized, result);
+  }
+
   // Ensure no oświadczenie fields leak
   result.nrOswiadczenia = undefined;
+
+  // Deduplicate stanowisko
+  if (result.stanowisko) {
+    result.stanowisko = deduplicateStanowisko(result.stanowisko);
+  }
 
   // Clean up wynagrodzenie — remove trailing section numbers and dots
   if (result.wynagrodzenie) {
     result.wynagrodzenie = result.wynagrodzenie.replace(/\s+\d+\.\s*$/, "").trim();
     result.wynagrodzenie = result.wynagrodzenie.replace(/\.\s*$/, "").trim();
+  }
+
+  // Parse salary into structured form
+  if (result.wynagrodzenie) {
+    result.parsedSalary = parseSalary(result.wynagrodzenie);
   }
 
   return result;
@@ -959,6 +1168,12 @@ Pola, ktorych nie mozesz znalezc = null.`;
         wyn = wyn.replace(/\s+\d+\.\s*$/, "").replace(/\.\s*$/, "").trim();
         if (wyn.length > 2) result.wynagrodzenie = wyn;
       }
+
+      // Deduplicate stanowisko
+      if (result.stanowisko) result.stanowisko = deduplicateStanowisko(result.stanowisko);
+
+      // Parse salary
+      if (result.wynagrodzenie) result.parsedSalary = parseSalary(result.wynagrodzenie);
 
       // Validate dates
       sanitizeDates(result);

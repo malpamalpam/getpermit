@@ -15,7 +15,7 @@ import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerFor
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
 import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
-import { withComputedStatuses, computeResidenceStatus } from "@/lib/fdk-queries";
+import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -343,27 +343,8 @@ export default async function FdkForeignerPage({
                 <div className="text-sm text-primary/60">Aktualna podstawa zatrudnienia</div>
                 <div className="flex flex-wrap gap-1.5">
                   {(() => {
-                    const activeBases = foreigner.employmentBases.filter(
-                      (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE"
-                    );
-                    // Hierarchy: KARTA_POBYTU/BLUE_CARD > ZEZWOLENIE > OSWIADCZENIE > ZGLOSZENIE_UA > DOSTEP_*
-                    const TYPE_HIERARCHY: Record<string, number> = {
-                      KARTA_POBYTU: 6, BLUE_CARD: 6,
-                      ZEZWOLENIE: 5,
-                      OSWIADCZENIE: 4,
-                      ZGLOSZENIE_UA: 3,
-                      DOSTEP_UE: 2, DOSTEP_STUDENT: 2, DOSTEP_POBYT_STALY: 2,
-                      DOSTEP_REZYDENT_UE: 2, DOSTEP_KARTA_POLAKA: 2,
-                      DOSTEP_OCHRONA_MIEDZ: 2, DOSTEP_DYPLOM_PL: 2,
-                    };
-                    if (activeBases.length === 0) return <span className="text-sm text-primary/40">Brak</span>;
-                    // Pick best by hierarchy, then by dataDo (newest)
-                    const best = activeBases.reduce((a, b) => {
-                      const ha = TYPE_HIERARCHY[a.typ] ?? 0;
-                      const hb = TYPE_HIERARCHY[b.typ] ?? 0;
-                      if (hb !== ha) return hb > ha ? b : a;
-                      return (b.dataDo?.getTime() ?? 0) > (a.dataDo?.getTime() ?? 0) ? b : a;
-                    });
+                    const best = getCurrentEmploymentBasis(foreigner.employmentBases);
+                    if (!best) return <span className="text-sm text-primary/40">Brak</span>;
                     const badge = TYPE_BADGES[best.typ];
                     return (
                       <div className="flex items-center gap-2">
@@ -398,6 +379,7 @@ export default async function FdkForeignerPage({
             foreignerId={foreigner.id}
             bases={foreigner.employmentBases}
             hasActiveResidence={!!hasActiveResidence}
+            obywatelstwo={foreigner.obywatelstwo}
           />
         )}
 
