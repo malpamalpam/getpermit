@@ -196,29 +196,30 @@ export function namesMatch(
 /**
  * Unified hierarchy for picking the "current" employment basis.
  *
- * Higher number = higher priority.
+ * Higher number = higher priority (strongest right to work wins).
  * The hierarchy reflects B2 from the legalization dept:
- *   powiadomienie UA → oświadczenie → zezwolenie → pobyt i praca / Blue Card
- *   → pobyt stały / rezydent / Karta Polaka / ochrona międz.
+ *   Strongest first: pobyt stały / rezydent > Blue Card / Karta pobytu (pobyt+praca)
+ *   > zezwolenie > oświadczenie > powiadomienie UA
  *
  * IMPORTANT: this is the SINGLE SOURCE OF TRUTH — used by:
  *   - foreigners list page (kolumna "Podstawa pracy")
  *   - foreigner profile page (sekcja "Aktualna podstawa zatrudnienia")
- *   - summary / export views
+ *   - EmploymentBasesTab (zakładka podstaw)
+ *   - export HR CSV
  */
 const EMPLOYMENT_HIERARCHY: Record<string, number> = {
-  ZGLOSZENIE_UA: 7,
-  OSWIADCZENIE: 6,
+  DOSTEP_POBYT_STALY: 8,
+  DOSTEP_REZYDENT_UE: 8,
+  DOSTEP_KARTA_POLAKA: 8,
+  DOSTEP_OCHRONA_MIEDZ: 8,
+  BLUE_CARD: 7,
+  KARTA_POBYTU: 7,
   ZEZWOLENIE: 5,
-  KARTA_POBYTU: 4,
-  BLUE_CARD: 4,
-  DOSTEP_POBYT_STALY: 3,
-  DOSTEP_REZYDENT_UE: 3,
-  DOSTEP_KARTA_POLAKA: 3,
-  DOSTEP_OCHRONA_MIEDZ: 3,
-  DOSTEP_UE: 2,
-  DOSTEP_DYPLOM_PL: 2,
-  DOSTEP_STUDENT: 1,
+  OSWIADCZENIE: 4,
+  ZGLOSZENIE_UA: 3,
+  DOSTEP_UE: 6,
+  DOSTEP_DYPLOM_PL: 6,
+  DOSTEP_STUDENT: 2,
 };
 
 export { EMPLOYMENT_HIERARCHY };
