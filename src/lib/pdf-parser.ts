@@ -32,6 +32,7 @@ export interface ParsedDocumentData {
   rodzajPracy?: string;
   rodzajUmowy?: string;
   stanowisko?: string;
+  przedmiotDziela?: string; // przedmiot umowy o dzieło / zakres dzieła
   firma?: string;
   // Document identifiers
   nrOswiadczenia?: string;
@@ -86,7 +87,7 @@ function titleCase(s: string): string {
  * Order matters: odwołanie/zażalenie must be checked FIRST because appeal documents
  * often contain phrases like "zezwolenie na pracę" or "zezwolenie na pobyt" in context.
  */
-function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | "ZGLOSZENIE_UA" | undefined {
+export function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | "ZGLOSZENIE_UA" | undefined {
   const lower = text.toLowerCase();
   const filenameLower = (filenameHint ?? "").toLowerCase();
 
@@ -148,6 +149,8 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
   if (lower.includes("psz-opwp") || lower.includes("psz opwp")) return "OSWIADCZENIE";
   // "OŚWIADCZENIE PODMIOTU ... O POWIERZENIU" — form header
   if (/o[śs]wiadczenie\s+podmiotu.*?(?:o\s+)?powierzeniu/i.test(text)) return "OSWIADCZENIE";
+  // "oświadczenie podmiotu powierzającego wykonywanie pracy cudzoziemcowi" — mocny sygnał
+  if (/o[śs]wiadczenie\s+podmiotu\s+powierzaj[aą]cego/i.test(text)) return "OSWIADCZENIE";
 
   // === EU BLUE CARD — check before generic karta pobytu ===
   if (lower.includes("niebieska karta") || lower.includes("blue card")) return "BLUE_CARD";
@@ -162,7 +165,9 @@ function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE"
   if (lower.includes("karta pobytu")) return "KARTA_POBYTU";
   if (lower.includes("zezwolenie na pobyt") || lower.includes("zezwolenia na pobyt")) return "KARTA_POBYTU";
   if (lower.includes("pobyt czasowy") && !lower.includes("niebiesk") && !lower.includes("blue")) return "KARTA_POBYTU";
-  if (lower.includes("decyzja") && lower.includes("pobyt")) return "KARTA_POBYTU";
+  // "decyzja" + "pobyt" — but NOT if document is clearly a work permit (zezwolenie na pracę bez "na pobyt")
+  const isWorkPermit = /zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt");
+  if (lower.includes("decyzja") && lower.includes("pobyt") && !isWorkPermit) return "KARTA_POBYTU";
 
   // === ZEZWOLENIE NA PRACĘ ===
   // Must NOT match "zezwolenie na pobyt czasowy i pracę" (already caught above)
@@ -1085,7 +1090,7 @@ export async function ocrExtractStructured(
 
 ZADANIE: Wyciagnij dane i zwroc TYLKO JSON (bez komentarzy, bez markdown):
 
-{"detectedType":"KARTA_POBYTU","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
+{"detectedType":"KARTA_POBYTU","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","przedmiotDziela":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
 
 KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody):
 1. Dokument ma 3 czesci: NAGLOWEK (sygnatura, data, organ) → SENTENCJA (od "postanawiam"/"udzielam"/"orzekam" do "UZASADNIENIE") → UZASADNIENIE + POUCZENIE.
@@ -1102,6 +1107,11 @@ DLA OSWIADCZEN (formularze PSZ-OPWP, "Oswiadczenie podmiotu o powierzeniu pracy"
 - detectedType = OSWIADCZENIE
 - nrOswiadczenia = numer wpisu (PZC.4390.XXXXX.XX.RRRR)
 - wynagrodzenie = kwota z pola stawki/wynagrodzenia brutto w sekcji warunkow pracy
+
+PRZEDMIOT DZIELA (pole przedmiotDziela):
+- W sentencji decyzji lub oswiadczenia moze byc osobno "stanowisko" i "przedmiot/zakres dziela".
+- stanowisko = nazwa stanowiska pracy (np. "spawacz", "programista").
+- przedmiotDziela = opis przedmiotu umowy o dzielo lub zakresu dziela (np. "wykonywanie prac spawalniczych", "opracowanie dokumentacji technicznej"). Jesli nie ma osobnego opisu dziela — null.
 
 Pola, ktorych nie mozesz znalezc = null.`;
 
@@ -1159,6 +1169,7 @@ Pola, ktorych nie mozesz znalezc = null.`;
       if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) result.dataOd = data.dataOd;
       if (data.dataDo && /^\d{4}-\d{2}-\d{2}$/.test(data.dataDo)) result.dataDo = data.dataDo;
       if (data.stanowisko && typeof data.stanowisko === "string") result.stanowisko = data.stanowisko.trim();
+      if (data.przedmiotDziela && typeof data.przedmiotDziela === "string") result.przedmiotDziela = data.przedmiotDziela.trim();
       if (data.rodzajUmowy && typeof data.rodzajUmowy === "string") result.rodzajUmowy = data.rodzajUmowy.trim();
       if (data.firma && typeof data.firma === "string") result.firma = data.firma.trim();
       if (data.nrDecyzji && typeof data.nrDecyzji === "string") result.nrDecyzji = data.nrDecyzji.trim();

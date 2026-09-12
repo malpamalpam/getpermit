@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError } from "@/lib/pdf-parser";
+import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError, detectDocumentType } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits, namesMatch, isOswiadczenieAllowedForCitizenship } from "@/lib/fdk-queries";
 
 // Allow up to 120s for scrape action (OCR via Claude can take 30-60s for large multi-page scans)
@@ -211,7 +211,7 @@ export async function GET(
     }
 
     // All other detected types create/update employment base
-    const docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD";
+    let docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA";
 
     // --- Walidacja obywatelstwa dla oświadczeń (pkt 1 — reguła krajów) ---
     if (docType === "OSWIADCZENIE") {
@@ -219,24 +219,45 @@ export async function GET(
       if (citizenship) {
         const allowed = await isOswiadczenieAllowedForCitizenship(citizenship, parsed.dataOd ? new Date(parsed.dataOd) : null);
         if (!allowed) {
-          // Oświadczenie niedopuszczalne dla tego obywatelstwa — nie twórz podstawy
-          await db.fdkChangeLog.create({
-            data: {
-              foreignerId: attachment.foreignerId,
-              changedBy,
-              field: "scrape",
-              oldValue: null,
-              newValue: `Plik ${attachment.nazwaPliku}: rozpoznano jako Oświadczenie, ale obywatelstwo "${citizenship}" nie uprawnia do oświadczeń. Podstawa NIE utworzona — do weryfikacji ręcznej.`,
-            },
-          });
+          // Próba reklasyfikacji — może to zezwolenie, powiadomienie UA, itp.
+          // Ponownie wykrywamy typ z surowego tekstu, pomijając OSWIADCZENIE
+          const rawText = [parsed.stanowisko, parsed.firma, parsed.rodzajPracy, parsed.nrDecyzji].filter(Boolean).join(" ");
+          const altType = detectDocumentType(rawText, attachment.nazwaPliku);
+          const reclassifiedType = altType && altType !== "OSWIADCZENIE" && altType !== "ODWOLANIE" ? altType : null;
 
-          return NextResponse.json({
-            ok: true,
-            extracted: parsed,
-            foreignerUpdated: Object.keys(foreignerUpdateData),
-            employmentBaseCreated: null,
-            warning: `Obywatelstwo "${citizenship}" nie uprawnia do oświadczeń o powierzeniu pracy. Dokument wymaga ręcznej weryfikacji (może to być powiadomienie, zezwolenie lub załącznik do wniosku).`,
-          });
+          if (reclassifiedType) {
+            // Reklasyfikacja udana — kontynuuj z nowym typem
+            docType = reclassifiedType;
+            parsed.detectedType = reclassifiedType;
+            await db.fdkChangeLog.create({
+              data: {
+                foreignerId: attachment.foreignerId,
+                changedBy,
+                field: "scrape",
+                oldValue: null,
+                newValue: `Plik ${attachment.nazwaPliku}: rozpoznano jako Oświadczenie, ale obywatelstwo "${citizenship}" nie uprawnia. Przeklasyfikowano na ${reclassifiedType}.`,
+              },
+            });
+          } else {
+            // Nie da się reklasyfikować — log i do weryfikacji ręcznej
+            await db.fdkChangeLog.create({
+              data: {
+                foreignerId: attachment.foreignerId,
+                changedBy,
+                field: "scrape",
+                oldValue: null,
+                newValue: `Plik ${attachment.nazwaPliku}: rozpoznano jako Oświadczenie, ale obywatelstwo "${citizenship}" nie uprawnia do oświadczeń. Podstawa NIE utworzona — do weryfikacji ręcznej.`,
+              },
+            });
+
+            return NextResponse.json({
+              ok: true,
+              extracted: parsed,
+              foreignerUpdated: Object.keys(foreignerUpdateData),
+              employmentBaseCreated: null,
+              warning: `Obywatelstwo "${citizenship}" nie uprawnia do oświadczeń o powierzeniu pracy. Dokument wymaga ręcznej weryfikacji (może to być powiadomienie, zezwolenie lub załącznik do wniosku).`,
+            });
+          }
         }
       }
     }
@@ -276,6 +297,7 @@ export async function GET(
       dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
       rodzajUmowy: parsed.rodzajUmowy || null,
       stanowisko: parsed.stanowisko || null,
+      przedmiotDziela: parsed.przedmiotDziela || null,
       firma: parsed.firma || null,
     };
 

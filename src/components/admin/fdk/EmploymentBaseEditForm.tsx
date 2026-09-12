@@ -56,6 +56,7 @@ interface EmploymentBase {
   dataZakPracy: Date | null;
   decyzjaOdebrana: Date | null;
   stanowisko: string | null;
+  przedmiotDziela: string | null;
   stawka: unknown;
   dataPodjecia: Date | null;
   uwagiUa: string | null;
@@ -180,6 +181,8 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
   const [sygnatura, setSygnatura] = useState(base?.sygnatura ?? "");
   const [brakujaceDokumenty, setBrakujaceDokumenty] = useState(base?.brakujaceDokumenty ?? "");
   const [uwagiKp, setUwagiKp] = useState(base?.uwagiKp ?? "");
+  // Przedmiot dzieła
+  const [przedmiotDziela, setPrzedmiotDziela] = useState(base?.przedmiotDziela ?? "");
   // Blue Card
   const [decyzjaOdebrana, setDecyzjaOdebrana] = useState(fmtDate(base?.decyzjaOdebrana));
   const [stanowisko, setStanowisko] = useState(base?.stanowisko ?? "");
@@ -229,6 +232,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
       sygnatura,
       brakujaceDokumenty,
       uwagiKp,
+      przedmiotDziela,
       decyzjaOdebrana,
       stanowisko,
       stawka,
@@ -385,6 +389,10 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                 </div>
               </div>
               <div>
+                <label className={labelCls}>Przedmiot dzieła</label>
+                <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. wykonywanie prac spawalniczych" />
+              </div>
+              <div>
                 <label className={labelCls}>Wezwanie / braki</label>
                 <textarea value={wezwanieBraki} onChange={(e) => setWezwanieBraki(e.target.value)} className={inputCls} rows={2} />
               </div>
@@ -473,6 +481,10 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                   <input value={podjeciePracy} onChange={(e) => setPodjeciePracy(e.target.value)} className={inputCls} placeholder="np. rodzaj pracy" />
                 </div>
               </div>
+              <div>
+                <label className={labelCls}>Przedmiot dzieła</label>
+                <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. zakres umowy o dzieło" />
+              </div>
 
               {/* Ticki podjęcie / niepodjęcie */}
               <div className="space-y-2 rounded-md border border-green-300/50 bg-green-50/50 p-3">
@@ -548,6 +560,10 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                   <label className={labelCls}>Rodzaj sprawy</label>
                   <input value={rodzajSprawy} onChange={(e) => setRodzajSprawy(e.target.value)} className={inputCls} />
                 </div>
+              </div>
+              <div>
+                <label className={labelCls}>Przedmiot dzieła</label>
+                <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. zakres umowy o dzieło" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

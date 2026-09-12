@@ -116,6 +116,8 @@ const employmentBaseSchema = z.object({
   sygnatura: optStr,
   brakujaceDokumenty: optStr,
   uwagiKp: optStr,
+  // Przedmiot dzieła
+  przedmiotDziela: optStr,
   // Blue Card
   decyzjaOdebrana: optDate,
   stanowisko: optStr,
@@ -194,6 +196,8 @@ function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
     sygnatura: d.sygnatura || null,
     brakujaceDokumenty: d.brakujaceDokumenty || null,
     uwagiKp: d.uwagiKp || null,
+    // Przedmiot dzieła
+    przedmiotDziela: d.przedmiotDziela || null,
     // Blue Card
     decyzjaOdebrana: toDate(d.decyzjaOdebrana),
     stanowisko: d.stanowisko || null,

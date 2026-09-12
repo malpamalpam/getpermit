@@ -45,6 +45,7 @@ interface EmploymentBase {
   dataZakPracy: Date | null;
   decyzjaOdebrana: Date | null;
   stanowisko: string | null;
+  przedmiotDziela: string | null;
   stawka: unknown;
   dataPodjecia: Date | null;
   uwagiUa: string | null;
@@ -227,6 +228,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
                 ["Wynagrodzenie", b.wynagrodzenie ?? (b.stawka ? `${Number(b.stawka).toLocaleString("pl-PL")} PLN` : null)],
                 ["Firma", b.firma],
                 ["Stanowisko / rodzaj pracy", b.stanowisko ?? b.podjeciePracy],
+                ["Przedmiot dzieła", b.przedmiotDziela],
                 ["Urząd", b.urzad],
                 ["Rodzaj sprawy", b.rodzajSprawy],
                 ["Sygnatura", b.sygnatura],

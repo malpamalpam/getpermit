@@ -491,6 +491,9 @@ model FdkEmploymentBase {
   dataNiepodjPracy       DateTime? @map("data_niepodjecia_pracy")
   dataZakPracy           DateTime? @map("data_zakonczenia_pracy")
 
+  // Przedmiot dzieła (wspólne — decyzje i oświadczenia FDK)
+  przedmiotDziela    String?   @map("przedmiot_dziela") @db.Text
+
   // Blue Card
   decyzjaOdebrana    DateTime? @map("decyzja_odebrana")
   stanowisko         String?   @db.Text
