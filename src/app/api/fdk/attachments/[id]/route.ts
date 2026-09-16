@@ -132,6 +132,14 @@ export async function GET(
       return NextResponse.json({ error: "Foreigner not found" }, { status: 404 });
     }
 
+    // Clear previous "different person" warning on re-scrape
+    if (attachment.opis?.startsWith("\u26a0 Dokument innej osoby")) {
+      await db.fdkAttachment.update({
+        where: { id: attachment.id },
+        data: { opis: null },
+      });
+    }
+
     // Check if document belongs to a different person
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
     const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
