@@ -13,14 +13,6 @@ export const dynamic = "force-dynamic";
 
 const VALID_PER_PAGE = [50, 100, 200];
 
-const STATUS_COLORS: Record<string, string> = {
-  AKTYWNE: "bg-green-100 text-green-800",
-  WYGASLE: "bg-red-100 text-red-800",
-  UCHYLONE: "bg-red-100 text-red-800",
-  UMORZONE: "bg-red-100 text-red-800",
-  W_TRAKCIE: "bg-yellow-100 text-yellow-800",
-  BRAK_DANYCH: "bg-gray-100 text-gray-600",
-};
 
 const RESIDENCE_BADGES: Record<ResidenceStatus, { label: string; cls: string }> = {
   aktualna: { label: "Aktualna", cls: "bg-green-100 text-green-800" },
@@ -77,7 +69,6 @@ export default async function FdkPage({
   const q = sp.q?.trim() ?? "";
   const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
   const typeFilter = sp.type ?? "";
-  const statusFilter = sp.status ?? "";
   const pobytFilter = sp.pobyt ?? "";
   const rawPerPage = parseInt(sp.perPage ?? "50", 10);
   const PAGE_SIZE = VALID_PER_PAGE.includes(rawPerPage) ? rawPerPage : 50;
@@ -92,16 +83,12 @@ export default async function FdkPage({
     ];
   }
   if (typeFilter) {
-    where.employmentBases = { some: { typ: typeFilter } };
-  }
-  if (statusFilter) {
-    where.employmentBases = {
-      ...((where.employmentBases as Record<string, unknown>) ?? {}),
-      some: {
-        ...((where.employmentBases as Record<string, Record<string, unknown>>)?.some ?? {}),
-        status: statusFilter,
-      },
-    };
+    if (typeFilter === "OD_") {
+      // All OD_* types
+      where.employmentBases = { some: { typ: { in: ["OD_UE", "OD_STUDENT", "OD_POBYT_STALY", "OD_REZYDENT_UE", "OD_KARTA_POLAKA", "OD_OCHRONA_UZUP", "OD_UCHODZCA", "OD_WIZA_HUMAN", "OD_ABSOLWENT", "OD_UK_WYSTAPIENIE", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"] as never } } };
+    } else {
+      where.employmentBases = { some: { typ: typeFilter as never } };
+    }
   }
 
   // --- Query ---
@@ -151,7 +138,6 @@ export default async function FdkPage({
     const u = new URLSearchParams();
     if (q) u.set("q", q);
     if (typeFilter) u.set("type", typeFilter);
-    if (statusFilter) u.set("status", statusFilter);
     if (pobytFilter) u.set("pobyt", pobytFilter);
     if (PAGE_SIZE !== 50) u.set("perPage", String(PAGE_SIZE));
     Object.entries(params).forEach(([k, v]) => v ? u.set(k, v) : u.delete(k));
@@ -170,7 +156,7 @@ export default async function FdkPage({
             </div>
             <div>
               <h1 className="font-display text-2xl font-extrabold text-primary">Sprawy FDK</h1>
-              <p className="text-sm text-ink/60">{total} cudzoziemców{pobytFilter || typeFilter || statusFilter || q ? " (filtr)" : " w bazie"}</p>
+              <p className="text-sm text-ink/60">{total} cudzoziemców{pobytFilter || typeFilter || q ? " (filtr)" : " w bazie"}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -199,45 +185,22 @@ export default async function FdkPage({
           </form>
 
           {/* Type filter */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <label className="text-xs text-primary/50">Typ:</label>
             {[
               { value: "", label: "Wszystkie" },
-              { value: "ZEZWOLENIE", label: "Zezwolenie" },
+              { value: "ZEZWOLENIE_A", label: "Zezwolenie A" },
               { value: "OSWIADCZENIE", label: "Oświadczenie" },
-              { value: "KARTA_POBYTU", label: "Karta pobytu" },
-              { value: "BLUE_CARD", label: "Blue Card" },
-              { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
-              { value: "DOSTEP_UE", label: "Dostęp UE" },
+              { value: "TRC_FDK", label: "TRC FDK" },
+              { value: "TRC_BLUE_CARD", label: "Blue Card" },
+              { value: "POWIADOMIENIE_UA", label: "Powiad. UA" },
+              { value: "OD_", label: "Otwarty dostęp" },
             ].map((opt) => (
               <a
                 key={opt.value}
                 href={buildUrl({ type: opt.value, page: "1" })}
                 className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                   typeFilter === opt.value
-                    ? "bg-accent text-white"
-                    : "bg-primary/5 text-primary/70 hover:bg-primary/10"
-                }`}
-              >
-                {opt.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Status filter */}
-          <div className="flex items-center gap-1.5">
-            <label className="text-xs text-primary/50">Status:</label>
-            {[
-              { value: "", label: "Wszystkie" },
-              { value: "AKTYWNE", label: "Aktywne" },
-              { value: "WYGASLE", label: "Wygasłe" },
-              { value: "W_TRAKCIE", label: "W trakcie" },
-            ].map((opt) => (
-              <a
-                key={opt.value}
-                href={buildUrl({ status: opt.value, page: "1" })}
-                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-                  statusFilter === opt.value
                     ? "bg-accent text-white"
                     : "bg-primary/5 text-primary/70 hover:bg-primary/10"
                 }`}
@@ -283,7 +246,6 @@ export default async function FdkPage({
                 <th className="px-4 py-3">Nazwisko</th>
                 <th className="px-4 py-3">Imię</th>
                 <th className="px-4 py-3">Podstawa pracy</th>
-                <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Pobyt</th>
                 <th className="px-4 py-3">Praca do</th>
                 <th className="px-4 py-3">Pobyt do</th>
@@ -297,7 +259,6 @@ export default async function FdkPage({
               {foreigners.map((f, idx) => {
                 // Use the same "best" basis for all columns (type, status, date)
                 const bestBase = getCurrentEmploymentBasis(f.employmentBases);
-                const latestStatus = bestBase?.status ?? "BRAK_DANYCH";
                 const latestDate = bestBase?.dataDo ?? null;
 
                 let rs: ResidenceStatus = "brak";
@@ -334,11 +295,6 @@ export default async function FdkPage({
                       })()}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[latestStatus] ?? STATUS_COLORS.BRAK_DANYCH}`}>
-                        {latestStatus.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${resBadge.cls}`}>
                         {resBadge.label}
                       </span>
@@ -365,7 +321,7 @@ export default async function FdkPage({
                 );
               })}
               {foreigners.length === 0 && (
-                <tr><td colSpan={10} className="px-4 py-12 text-center text-primary/40">Brak wyników</td></tr>
+                <tr><td colSpan={9} className="px-4 py-12 text-center text-primary/40">Brak wyników</td></tr>
               )}
             </tbody>
           </table>

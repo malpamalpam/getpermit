@@ -436,10 +436,21 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     const firmaUaMatch = normalized.match(/(?:1\.1[.\s]*)?[Nn]azwa[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][^\n,]{3,100}?)(?=\s*1\.2|\s*[Aa]dres)/);
     if (firmaUaMatch) result.firma = firmaUaMatch[1].trim();
 
-    // Wynagrodzenie
-    const wynUaMatch = normalized.match(/(?:[Ww]ynagrodzeni[ea]|[Ss]tawka)[^:]*[:\s]+([0-9][\d\s,.]*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie|godzinow)?[^\n]{0,50})/i);
+    // Wynagrodzenie — szukamy w sekcji 3.8 lub "stawka godzinowa/miesięczna"
+    const wynUaMatch = normalized.match(/(?:[Ww]ynagrodzeni[ea]|[Ss]tawka\s+(?:godzinowa|miesi[ęe]czna)|3\.8[.\s]*[Ww]ynagrodzeni)[^:]*[:\s]+([0-9][\d\s,.]*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie|godzinow)?[^\n]{0,50})/i);
     if (wynUaMatch) {
-      result.wynagrodzenie = wynUaMatch[1].replace(/\s+/g, " ").trim();
+      let wyn = wynUaMatch[1].replace(/\s+/g, " ").trim();
+      // Dodaj jednostkę jeśli brak
+      if (/^\d+(?:[.,]\d+)?$/.test(wyn)) {
+        const isHourly = /godzinowa/i.test(wynUaMatch[0]);
+        wyn = wyn + " PLN" + (isHourly ? "/h brutto" : " brutto");
+      }
+      result.wynagrodzenie = wyn;
+    }
+    // Fallback: dowolna kwota z "PLN" lub "zł"
+    if (!result.wynagrodzenie) {
+      const wynFallback = normalized.match(/(\d[\d\s,.]+)\s*(?:PLN|z[łl])\s*(?:brutto|netto)?/i);
+      if (wynFallback) result.wynagrodzenie = wynFallback[0].replace(/\s+/g, " ").trim();
     }
 
     // Stanowisko cleanup — usuń etykiety po dwukropku
