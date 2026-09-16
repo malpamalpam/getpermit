@@ -1093,6 +1093,7 @@ ZADANIE: Wyciagnij dane i zwroc TYLKO JSON (bez komentarzy, bez markdown):
 {"detectedType":"KARTA_POBYTU","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","przedmiotDziela":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
 
 KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody):
+0. DANE OSOBOWE: Decyzja ma STRONE (cudzoziemca) i moze miec PELNOMOCNIKA (reprezentanta). imie, nazwisko, dataUrodzenia, obywatelstwo, nrPaszportu = ZAWSZE dane STRONY (cudzoziemca), NIGDY pelnomocnika. Strona jest wymieniona w sentencji ("udzielam Panu/Pani IMIE NAZWISKO, ur. ..."). Pelnomocnik pojawia sie w naglowku lub w pouczeniu ("pelnomocnik: ...", "doreczono pelnomocnikowi"). IGNORUJ dane pelnomocnika.
 1. Dokument ma 3 czesci: NAGLOWEK (sygnatura, data, organ) → SENTENCJA (od "postanawiam"/"udzielam"/"orzekam" do "UZASADNIENIE") → UZASADNIENIE + POUCZENIE.
 2. WSZYSTKIE pola merytoryczne bierz WYLACZNIE z SENTENCJI. W uzasadnieniu sa kwoty, daty i nazwy z INNYCH decyzji — IGNORUJ JE.
 3. dataOd = data z naglowka: "Warszawa, dnia DD.MM.RRRR r." lub "dnia DD.MM.RRRR"
