@@ -928,9 +928,28 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     }
   }
 
-  // Fallback for decyzja format: "Panu/Pani IMIE NAZWISKO" (without trailing dash/paren)
+  // Sentencja: "wniosku Pana IMIE NAZWISKO, ob." or "udzielam Panu IMIE NAZWISKO"
+  // This catches the SUBJECT of the decision (strona), not the representative (pełnomocnik)
   if (!result.imie && !result.nazwisko) {
-    const panuMatch = normalized.match(/Pan[iu]\s+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ]+)/);
+    const sentencjaMatch = normalized.match(/(?:wniosku|udzielam|udziela\s+si[ęe])\s+Pan[au]\s+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ]+)/);
+    if (sentencjaMatch) {
+      result.imie = titleCase(sentencjaMatch[1].trim());
+      result.nazwisko = titleCase(sentencjaMatch[2].trim());
+    }
+  }
+  if (!result.imie && !result.nazwisko) {
+    const sentencjaMatchF = normalized.match(/(?:wniosku|udzielam|udziela\s+si[ęe])\s+Pani\s+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ]+)/);
+    if (sentencjaMatchF) {
+      result.imie = titleCase(sentencjaMatchF[1].trim());
+      result.nazwisko = titleCase(sentencjaMatchF[2].trim());
+    }
+  }
+
+  // Fallback for decyzja format: "Panu/Pani IMIE NAZWISKO" (without trailing dash/paren)
+  // UWAGA: pomijamy sekcję "Otrzymują/Pełnomocnik" — tam są dane pełnomocnika, nie strony
+  if (!result.imie && !result.nazwisko) {
+    // Szukamy "Pana/Panu/Pani" ale NIE w kontekście "Pełnomocnik - Pani" ani "w imieniu Pana"
+    const panuMatch = normalized.match(/(?<!Pe[łl]nomocnik\s*-?\s*)(?<!w\s+imieniu\s+)Pan[iau]\s+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ]+)/);
     if (panuMatch) {
       result.imie = titleCase(panuMatch[1].trim());
       result.nazwisko = titleCase(panuMatch[2].trim());
