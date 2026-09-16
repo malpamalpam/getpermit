@@ -593,6 +593,20 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                   <input value={rodzajSprawy} onChange={(e) => setRodzajSprawy(e.target.value)} className={inputCls} />
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelCls}>Stanowisko / rodzaj pracy</label>
+                  <input value={stanowisko} onChange={(e) => setStanowisko(e.target.value)} className={inputCls} />
+                </div>
+                <div>
+                  <label className={labelCls}>Firma</label>
+                  <input value={firma} onChange={(e) => setFirma(e.target.value)} className={inputCls} />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>Nr decyzji</label>
+                <input value={nrDecyzji} onChange={(e) => setNrDecyzji(e.target.value)} className={inputCls} />
+              </div>
               <div>
                 <label className={labelCls}>Przedmiot dzieła</label>
                 <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. zakres umowy o dzieło" />

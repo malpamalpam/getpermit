@@ -406,6 +406,13 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     extractPersonalData(normalized, result);
     extractDateRange(normalized, result);
 
+    // Powiadomienie UA: data rozpoczęcia pracy z sekcji "Data rozpoczęcia pracy" / "od dnia"
+    if (!result.dataOd) {
+      const dataRozpMatch = normalized.match(/(?:data\s+rozpocz[ęe]cia\s+pracy|od\s+dnia|rozpocz[ęe]cie\s+pracy)[:\s]*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i);
+      if (dataRozpMatch) result.dataOd = parseDatePL(dataRozpMatch[1]);
+    }
+    // Powiadomienie UA jest bezterminowe — dataDo pozostaje puste (nie wymuszaj BRAK_DANYCH)
+
     // Sekcja 3.2: Stanowisko/rodzaj pracy — szukamy wartości PO etykiecie, nie samej etykiety
     const stanUaMatch = normalized.match(/(?:stanowisko|rodzaj\s+(?:wykonywanej\s+)?pracy)[^:]*[:\s]+([^,\n]{3,120}?)(?=\s*(?:\d+\.\d+|Wymiar|Symbol|PKD|Rodzaj\s+umowy|$))/i);
     if (stanUaMatch) {
@@ -593,6 +600,17 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   if (result.wynagrodzenie) {
     result.wynagrodzenie = result.wynagrodzenie.replace(/\s+\d+\.\s*$/, "").trim();
     result.wynagrodzenie = result.wynagrodzenie.replace(/\.\s*$/, "").trim();
+  }
+
+  // Jeśli wynagrodzenie to sama liczba <1000 bez jednostki → stawka/h
+  if (result.wynagrodzenie) {
+    const bareNum = result.wynagrodzenie.match(/^(\d+(?:[.,]\d+)?)\s*$/);
+    if (bareNum) {
+      const num = parseFloat(bareNum[1].replace(",", "."));
+      if (num > 0 && num < 1000) {
+        result.wynagrodzenie = `${result.wynagrodzenie} PLN/h brutto`;
+      }
+    }
   }
 
   // Parse salary into structured form
