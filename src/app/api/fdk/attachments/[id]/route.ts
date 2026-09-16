@@ -219,7 +219,7 @@ export async function GET(
     }
 
     // All other detected types create/update employment base
-    let docType = parsed.detectedType ?? "OSWIADCZENIE";
+    let docType = (parsed.detectedType ?? "OSWIADCZENIE") as import("@prisma/client").FdkBaseType;
 
     // --- Walidacja obywatelstwa dla oświadczeń (pkt 1 — reguła krajów) ---
     if (docType === "OSWIADCZENIE") {
@@ -235,7 +235,7 @@ export async function GET(
 
           if (reclassifiedType) {
             // Reklasyfikacja udana — kontynuuj z nowym typem
-            docType = reclassifiedType;
+            docType = reclassifiedType as import("@prisma/client").FdkBaseType;
             parsed.detectedType = reclassifiedType;
             await db.fdkChangeLog.create({
               data: {
