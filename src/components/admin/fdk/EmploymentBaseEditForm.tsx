@@ -274,8 +274,8 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
     startTransition(async () => {
       try {
         const result = isEdit
-          ? await updateEmploymentBaseAction(base.id, input)
-          : await createEmploymentBaseAction(input);
+          ? await updateEmploymentBaseAction(base.id, input as never)
+          : await createEmploymentBaseAction(input as never);
         if (result.ok) {
           onClose();
           router.refresh();
