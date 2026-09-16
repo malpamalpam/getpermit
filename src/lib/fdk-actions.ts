@@ -121,7 +121,6 @@ const employmentBaseSchema = z.object({
   // Blue Card
   decyzjaOdebrana: optDate,
   stanowisko: optStr,
-  stawka: optStr,
   // Zgłoszenie UA
   dataPodjecia: optDate,
   uwagiUa: optStr,
@@ -201,7 +200,6 @@ function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
     // Blue Card
     decyzjaOdebrana: toDate(d.decyzjaOdebrana),
     stanowisko: d.stanowisko || null,
-    stawka: d.stawka ? parseFloat(d.stawka) : null,
     // Zgłoszenie UA
     dataPodjecia: toDate(d.dataPodjecia),
     uwagiUa: d.uwagiUa || null,

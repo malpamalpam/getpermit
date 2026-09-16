@@ -57,7 +57,6 @@ interface EmploymentBase {
   decyzjaOdebrana: Date | null;
   stanowisko: string | null;
   przedmiotDziela: string | null;
-  stawka: unknown;
   dataPodjecia: Date | null;
   uwagiUa: string | null;
   uwagi: string | null;
@@ -186,7 +185,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
   // Blue Card
   const [decyzjaOdebrana, setDecyzjaOdebrana] = useState(fmtDate(base?.decyzjaOdebrana));
   const [stanowisko, setStanowisko] = useState(base?.stanowisko ?? "");
-  const [stawka, setStawka] = useState(base?.stawka ? String(base.stawka) : "");
   // Zgłoszenie UA
   const [dataPodjecia, setDataPodjecia] = useState(fmtDate(base?.dataPodjecia));
   const [uwagiUa, setUwagiUa] = useState(base?.uwagiUa ?? "");
@@ -235,7 +233,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
       przedmiotDziela,
       decyzjaOdebrana,
       stanowisko,
-      stawka,
       dataPodjecia,
       uwagiUa,
       wynagrodzenie,
@@ -304,7 +301,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Typ dokumentu *</label>
-              <select value={typ} onChange={(e) => setTyp(e.target.value as BaseType)} className={inputCls} disabled={isEdit}>
+              <select value={typ} onChange={(e) => setTyp(e.target.value as BaseType)} className={inputCls}>
                 {TYPE_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
@@ -334,7 +331,14 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
             </div>
             <div>
               <label className={labelCls}>Rodzaj umowy</label>
-              <input value={rodzajUmowy} onChange={(e) => setRodzajUmowy(e.target.value)} className={inputCls} placeholder="np. umowa o pracę" />
+              <select value={rodzajUmowy} onChange={(e) => setRodzajUmowy(e.target.value)} className={inputCls}>
+                <option value="">— wybierz —</option>
+                <option value="umowa o pracę">umowa o pracę</option>
+                <option value="umowa o dzieło">umowa o dzieło</option>
+                <option value="umowa zlecenie">umowa zlecenie</option>
+                <option value="powołanie">powołanie</option>
+                <option value="inna">inna</option>
+              </select>
             </div>
           </div>
 
@@ -594,7 +598,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           {typ === "BLUE_CARD" && (
             <fieldset className="space-y-3 rounded-lg border border-purple-200 bg-purple-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-purple-700">Blue Card</legend>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>Decyzja odebrana</label>
                   <input type="date" value={decyzjaOdebrana} onChange={(e) => setDecyzjaOdebrana(e.target.value)} className={inputCls} />
@@ -602,10 +606,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                 <div>
                   <label className={labelCls}>Stanowisko</label>
                   <input value={stanowisko} onChange={(e) => setStanowisko(e.target.value)} className={inputCls} />
-                </div>
-                <div>
-                  <label className={labelCls}>Stawka (PLN)</label>
-                  <input type="number" step="0.01" value={stawka} onChange={(e) => setStawka(e.target.value)} className={inputCls} />
                 </div>
               </div>
             </fieldset>

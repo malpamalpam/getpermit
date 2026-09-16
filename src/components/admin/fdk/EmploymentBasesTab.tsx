@@ -46,7 +46,6 @@ interface EmploymentBase {
   decyzjaOdebrana: Date | null;
   stanowisko: string | null;
   przedmiotDziela: string | null;
-  stawka: unknown;
   dataPodjecia: Date | null;
   uwagiUa: string | null;
   uwagi: string | null;
@@ -225,7 +224,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
               {[
                 ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
                 ["Rodzaj umowy", b.rodzajUmowy],
-                ["Wynagrodzenie", b.wynagrodzenie ?? (b.stawka ? `${Number(b.stawka).toLocaleString("pl-PL")} PLN` : null)],
+                ["Wynagrodzenie", b.wynagrodzenie],
                 ["Firma", b.firma],
                 ["Stanowisko / rodzaj pracy", b.stanowisko ?? b.podjeciePracy],
                 ["Przedmiot dzieła", b.przedmiotDziela],
@@ -250,7 +249,6 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
                 ["Brakujące dokumenty", b.brakujaceDokumenty],
                 ["Powiadomienie do", b.powiadomienieDo ? fmt(b.powiadomienieDo) : null],
                 ["Decyzja odebrana", b.decyzjaOdebrana ? fmt(b.decyzjaOdebrana) : null],
-                ["Stawka", b.stawka ? `${Number(b.stawka).toLocaleString("pl-PL")} PLN` : null],
                 ["Data zgłoszenia umowy", b.dataZgloszeniaUmowy ? fmt(b.dataZgloszeniaUmowy) : null],
                 ["Data podjęcia pracy", b.dataPodjPracy ? fmt(b.dataPodjPracy) : null],
                 ["Zgłosić niepodjęcie do", b.dataNiepodjPracy ? fmt(b.dataNiepodjPracy) : null],

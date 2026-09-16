@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, Users, Paperclip, Download } from "lucide-react";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
+import { AddForeignerButton } from "@/components/admin/fdk/AddForeignerButton";
 import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis, type ResidenceStatus } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -150,6 +151,8 @@ export default async function FdkPage({
               <p className="text-sm text-ink/60">{total} cudzoziemców{pobytFilter || typeFilter || statusFilter || q ? " (filtr)" : " w bazie"}</p>
             </div>
           </div>
+          <div className="flex items-center gap-3">
+          <AddForeignerButton />
           <a
             href="/api/fdk/export-hr"
             className="inline-flex items-center gap-2 rounded-lg border border-primary/15 bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm transition-colors hover:bg-primary/5"
@@ -157,6 +160,7 @@ export default async function FdkPage({
             <Download className="h-4 w-4" />
             Eksport HR (CSV)
           </a>
+          </div>
         </div>
 
         {/* Filters */}
@@ -259,7 +263,8 @@ export default async function FdkPage({
                 <th className="px-4 py-3">Podstawa pracy</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Pobyt</th>
-                <th className="px-4 py-3">Ważne do</th>
+                <th className="px-4 py-3">Praca do</th>
+                <th className="px-4 py-3">Pobyt do</th>
                 <th className="px-4 py-3 text-center">
                   <Paperclip className="mx-auto h-4 w-4" />
                 </th>
@@ -319,6 +324,13 @@ export default async function FdkPage({
                     <td className="px-4 py-3 text-primary/70">
                       {latestDate ? `${String(latestDate.getUTCDate()).padStart(2, "0")}.${String(latestDate.getUTCMonth() + 1).padStart(2, "0")}.${latestDate.getUTCFullYear()}` : "—"}
                     </td>
+                    <td className="px-4 py-3 text-primary/70">
+                      {(() => {
+                        const pobytDate = f.decyzjaPobytowaDo ?? f.wizaDo ?? null;
+                        if (!pobytDate) return "—";
+                        return `${String(pobytDate.getUTCDate()).padStart(2, "0")}.${String(pobytDate.getUTCMonth() + 1).padStart(2, "0")}.${pobytDate.getUTCFullYear()}`;
+                      })()}
+                    </td>
                     <td className="px-4 py-3 text-center text-primary/40">
                       {f._count.attachments > 0 && (
                         <span className="text-xs font-medium text-accent">{f._count.attachments}</span>
@@ -331,7 +343,7 @@ export default async function FdkPage({
                 );
               })}
               {foreigners.length === 0 && (
-                <tr><td colSpan={9} className="px-4 py-12 text-center text-primary/40">Brak wyników</td></tr>
+                <tr><td colSpan={10} className="px-4 py-12 text-center text-primary/40">Brak wyników</td></tr>
               )}
             </tbody>
           </table>

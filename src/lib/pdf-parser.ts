@@ -401,6 +401,51 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     return result;
   }
 
+  // === ZGLOSZENIE_UA (PSZ-PPWPU) — dedicated parser for Ukrainian notifications ===
+  if (result.detectedType === "ZGLOSZENIE_UA") {
+    extractPersonalData(normalized, result);
+    extractDateRange(normalized, result);
+
+    // Sekcja 3.2: Stanowisko/rodzaj pracy — szukamy wartości PO etykiecie, nie samej etykiety
+    const stanUaMatch = normalized.match(/(?:stanowisko|rodzaj\s+(?:wykonywanej\s+)?pracy)[^:]*[:\s]+([^,\n]{3,120}?)(?=\s*(?:\d+\.\d+|Wymiar|Symbol|PKD|Rodzaj\s+umowy|$))/i);
+    if (stanUaMatch) {
+      let stan = stanUaMatch[1].replace(/\s+/g, " ").trim();
+      // Odrzuć jeśli złapano etykietę pola zamiast wartości
+      if (!/^(WYMIAR|Symbol|PKD|Rodzaj|Wysokość|Okres)/i.test(stan) && stan.length > 2) {
+        result.stanowisko = stan;
+      }
+    }
+
+    // Sekcja 3.6: Rodzaj umowy
+    const umowaUaMatch = normalized.match(/[Rr]odzaj\s+umowy[^:]*[:\s]+([^,\n]{3,80}?)(?=\s*(?:\d+\.\d+|Wymiar|Wysokość|Okres|Stanowisko|$))/i);
+    if (umowaUaMatch) {
+      let umowa = umowaUaMatch[1].replace(/\s+/g, " ").trim();
+      if (!/^(WYMIAR|Symbol|PKD|Stanowisko|Wysokość|Okres)/i.test(umowa) && umowa.length > 2) {
+        result.rodzajUmowy = umowa;
+      }
+    }
+
+    // Firma (sekcja 1.1 lub generyczna)
+    const firmaUaMatch = normalized.match(/(?:1\.1[.\s]*)?[Nn]azwa[:\s]+([A-ZĄĆĘŁŃÓŚŹŻ][^\n,]{3,100}?)(?=\s*1\.2|\s*[Aa]dres)/);
+    if (firmaUaMatch) result.firma = firmaUaMatch[1].trim();
+
+    // Wynagrodzenie
+    const wynUaMatch = normalized.match(/(?:[Ww]ynagrodzeni[ea]|[Ss]tawka)[^:]*[:\s]+([0-9][\d\s,.]*(?:PLN|z[łl]|brutto|netto|miesi[ęe]cznie|godzinow)?[^\n]{0,50})/i);
+    if (wynUaMatch) {
+      result.wynagrodzenie = wynUaMatch[1].replace(/\s+/g, " ").trim();
+    }
+
+    // Stanowisko cleanup — usuń etykiety po dwukropku
+    if (result.stanowisko?.includes(":")) {
+      result.stanowisko = result.stanowisko.split(":").pop()!.trim();
+    }
+
+    if (result.stanowisko) result.stanowisko = deduplicateStanowisko(result.stanowisko);
+    if (result.wynagrodzenie) result.parsedSalary = parseSalary(result.wynagrodzenie);
+    sanitizeDates(result);
+    return result;
+  }
+
   // === ZEZWOLENIE / BLUE_CARD — same structured layout (decision documents) ===
   if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "BLUE_CARD" || result.detectedType === "KARTA_POBYTU") {
     const zezResult = parseZezwolenie(normalized, result);
@@ -555,6 +600,11 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   // Deduplicate stanowisko
   if (result.stanowisko) {
     result.stanowisko = deduplicateStanowisko(result.stanowisko);
+  }
+  // Stanowisko cleanup — jeśli zawiera etykietę z dwukropkiem, weź tylko wartość po ostatnim dwukropku
+  if (result.stanowisko?.includes(":")) {
+    const afterColon = result.stanowisko.split(":").pop()!.trim();
+    if (afterColon.length > 2) result.stanowisko = afterColon;
   }
 
   sanitizeDates(result);
