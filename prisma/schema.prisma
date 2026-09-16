@@ -365,19 +365,47 @@ model FdkPermit {
 // =============================================================================
 
 enum FdkBaseType {
-  ZEZWOLENIE
+  // === Zezwolenia na pracę ===
+  ZEZWOLENIE            // legacy — mapowane na ZEZWOLENIE_A
+  ZEZWOLENIE_A
+  ZEZWOLENIE_A_KONT
+  // === Oświadczenie ===
   OSWIADCZENIE
-  KARTA_POBYTU
-  BLUE_CARD
-  ZGLOSZENIE_UA
+  // === Powiadomienie UA ===
+  ZGLOSZENIE_UA         // legacy — mapowane na POWIADOMIENIE_UA
+  POWIADOMIENIE_UA
+  // === TRC (karta pobytu / pobyt czasowy) ===
+  KARTA_POBYTU          // legacy — mapowane na TRC_FDK
+  TRC_FDK
+  TRC_HUMANITARNE
+  TRC_POBYT_Z_CUDZ
+  TRC_MALZONEK_PL
+  TRC_STUDIA
+  TRC_ABSOLWENT
+  TRC_DZIALALNOSC
+  // === Blue Card ===
+  BLUE_CARD             // legacy — mapowane na TRC_BLUE_CARD
+  TRC_BLUE_CARD
+  // === Otwarty dostęp (OD) ===
+  DOSTEP_UE             // legacy
+  OD_UE
+  DOSTEP_STUDENT        // legacy
+  OD_STUDENT
+  DOSTEP_POBYT_STALY    // legacy
+  OD_POBYT_STALY
+  DOSTEP_REZYDENT_UE    // legacy
+  OD_REZYDENT_UE
+  DOSTEP_KARTA_POLAKA   // legacy
+  OD_KARTA_POLAKA
+  DOSTEP_OCHRONA_MIEDZ  // legacy
+  OD_OCHRONA_UZUP
+  OD_UCHODZCA
+  OD_WIZA_HUMAN
+  DOSTEP_DYPLOM_PL      // legacy
+  OD_ABSOLWENT
+  OD_UK_WYSTAPIENIE
+  // === Odwołanie ===
   ODWOLANIE
-  DOSTEP_UE
-  DOSTEP_STUDENT
-  DOSTEP_POBYT_STALY
-  DOSTEP_REZYDENT_UE
-  DOSTEP_KARTA_POLAKA
-  DOSTEP_OCHRONA_MIEDZ
-  DOSTEP_DYPLOM_PL
 }
 
 enum FdkStatus {

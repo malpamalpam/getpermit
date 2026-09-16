@@ -5,13 +5,38 @@ import { Plus } from "lucide-react";
 import { addResidenceBasisAction } from "@/lib/fdk-actions";
 
 const TYPES = [
-  { value: "stempel", label: "W procedurze — stempel w paszporcie" },
-  { value: "trc", label: "W procedurze — przedłużenie TRC" },
-  { value: "cukr_wniosek", label: "Przedłużenie pobytu CUKR" },
-  { value: "karta", label: "Karta pobytu" },
-  { value: "karta_cukr", label: "Karta pobytu CUKR" },
+  // TRC
+  { value: "trc_fdk", label: "TRC — FDK" },
+  { value: "trc_inny", label: "TRC — inny pracodawca" },
+  { value: "trc_humanitarne", label: "TRC — ze względów humanitarnych" },
+  { value: "trc_pobyt_cudz", label: "TRC — pobyt z cudzoziemcem" },
+  { value: "trc_blue_card", label: "TRC — Blue Card" },
+  { value: "trc_malzonek_pl", label: "TRC — Małżonek obywatela PL" },
+  { value: "trc_studia", label: "TRC — studia" },
+  { value: "trc_absolwent", label: "TRC — absolwent" },
+  { value: "trc_dzialalnosc", label: "TRC — działalność gospodarcza" },
+  { value: "trc_inne", label: "TRC — inne okoliczności" },
+  // Wizy i ruch bezwizowy
   { value: "wiza", label: "Wiza" },
-  { value: "inne", label: "Inne" },
+  { value: "ruch_bezwizowy", label: "Ruch bezwizowy" },
+  // Pobyt stały / rezydent
+  { value: "pobyt_staly", label: "Pobyt stały" },
+  { value: "rezydent_ue", label: "Rezydent długoterminowy UE" },
+  // Ochrona
+  { value: "uchodzca", label: "Status uchodźcy" },
+  { value: "ochrona_uzup", label: "Ochrona uzupełniająca" },
+  { value: "zgoda_humanitarna", label: "Zgoda na pobyt ze względów humanitarnych" },
+  { value: "zgoda_tolerowany", label: "Zgoda na pobyt tolerowany" },
+  // Specjalne
+  { value: "uk_wystapienie", label: "Umowa wystąpienia (UK)" },
+  { value: "ue_eog", label: "Obywatel UE/EOG/Szwajcarii" },
+  { value: "pesel_ukr", label: "Pesel UKR" },
+  { value: "cukr", label: "CUKR" },
+  // W procedurze
+  { value: "stempel", label: "W procedurze — stempel w paszporcie" },
+  { value: "przedluzenie", label: "Pobyt na przedłużeniu" },
+  // Inne
+  { value: "inne", label: "Inna podstawa pobytu" },
 ] as const;
 
 export function AddResidenceBasisButton({ foreignerId }: { foreignerId: number }) {
@@ -45,7 +70,7 @@ export function AddResidenceBasisButton({ foreignerId }: { foreignerId: number }
     );
   }
 
-  const needsDataDo = ["karta", "karta_cukr", "wiza"].includes(typ);
+  const needsDataDo = typ.startsWith("trc_") || ["wiza", "pobyt_staly", "rezydent_ue", "uchodzca", "ochrona_uzup", "zgoda_humanitarna", "zgoda_tolerowany", "uk_wystapienie", "ue_eog", "pesel_ukr", "cukr", "ruch_bezwizowy"].includes(typ);
 
   return (
     <form onSubmit={handleSubmit} className="rounded-lg border border-accent/20 bg-accent/5 p-3 space-y-2">

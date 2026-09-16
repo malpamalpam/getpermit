@@ -219,7 +219,7 @@ export async function GET(
     }
 
     // All other detected types create/update employment base
-    let docType = (parsed.detectedType ?? "OSWIADCZENIE") as "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA";
+    let docType = parsed.detectedType ?? "OSWIADCZENIE";
 
     // --- Walidacja obywatelstwa dla oświadczeń (pkt 1 — reguła krajów) ---
     if (docType === "OSWIADCZENIE") {
@@ -364,8 +364,9 @@ export async function GET(
       },
     });
 
-    // For residence permits: update decyzjaPobytowaDo + deactivate previous active permits
-    if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
+    // For residence permits (TRC/Blue Card): update decyzjaPobytowaDo + deactivate previous active permits
+    const isResidencePermit = docType === "KARTA_POBYTU" || docType === "BLUE_CARD" || docType.startsWith("TRC_");
+    if (isResidencePermit && parsed.dataDo) {
       const dataDo = new Date(parsed.dataDo);
       if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
         await db.fdkForeigner.update({

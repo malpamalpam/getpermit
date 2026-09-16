@@ -135,7 +135,7 @@ export async function deactivatePreviousResidencePermits(
     where: {
       foreignerId,
       id: { not: newBaseId },
-      typ: { in: ["KARTA_POBYTU", "BLUE_CARD"] as const },
+      typ: { in: ["KARTA_POBYTU", "BLUE_CARD", "TRC_FDK", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL", "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC", "TRC_BLUE_CARD"] as never },
       status: { in: ["AKTYWNE", "BRAK_DANYCH"] as const },
     },
   });
@@ -208,18 +208,28 @@ export function namesMatch(
  *   - export HR CSV
  */
 const EMPLOYMENT_HIERARCHY: Record<string, number> = {
-  DOSTEP_POBYT_STALY: 8,
-  DOSTEP_REZYDENT_UE: 8,
-  DOSTEP_KARTA_POLAKA: 8,
-  DOSTEP_OCHRONA_MIEDZ: 8,
-  BLUE_CARD: 7,
-  KARTA_POBYTU: 7,
+  // Legacy
+  DOSTEP_POBYT_STALY: 8, DOSTEP_REZYDENT_UE: 8, DOSTEP_KARTA_POLAKA: 8, DOSTEP_OCHRONA_MIEDZ: 8,
+  BLUE_CARD: 7, KARTA_POBYTU: 7,
+  DOSTEP_UE: 6, DOSTEP_DYPLOM_PL: 6,
   ZEZWOLENIE: 5,
   OSWIADCZENIE: 4,
   ZGLOSZENIE_UA: 3,
-  DOSTEP_UE: 6,
-  DOSTEP_DYPLOM_PL: 6,
   DOSTEP_STUDENT: 2,
+  // New — OD (otwarty dostęp)
+  OD_POBYT_STALY: 8, OD_REZYDENT_UE: 8, OD_KARTA_POLAKA: 8,
+  OD_OCHRONA_UZUP: 8, OD_UCHODZCA: 8, OD_WIZA_HUMAN: 8,
+  // New — TRC
+  TRC_BLUE_CARD: 7, TRC_FDK: 7, TRC_HUMANITARNE: 7, TRC_POBYT_Z_CUDZ: 7,
+  TRC_MALZONEK_PL: 7, TRC_STUDIA: 7, TRC_ABSOLWENT: 7, TRC_DZIALALNOSC: 7,
+  // New — OD other
+  OD_UE: 6, OD_UK_WYSTAPIENIE: 6, OD_ABSOLWENT: 6,
+  // Zezwolenia
+  ZEZWOLENIE_A: 5, ZEZWOLENIE_A_KONT: 5,
+  // Powiadomienie UA
+  POWIADOMIENIE_UA: 3,
+  // OD student
+  OD_STUDENT: 2,
 };
 
 export { EMPLOYMENT_HIERARCHY };

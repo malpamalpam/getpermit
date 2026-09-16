@@ -13,7 +13,7 @@ import { Pencil, Plus, Trash2, X, Loader2, Save } from "lucide-react";
 // Types
 // ---------------------------------------------------------------------------
 
-type BaseType = "ZEZWOLENIE" | "OSWIADCZENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ZGLOSZENIE_UA" | "ODWOLANIE" | "DOSTEP_UE" | "DOSTEP_STUDENT" | "DOSTEP_POBYT_STALY" | "DOSTEP_REZYDENT_UE" | "DOSTEP_KARTA_POLAKA" | "DOSTEP_OCHRONA_MIEDZ" | "DOSTEP_DYPLOM_PL";
+type BaseType = string;
 type StatusType = "AKTYWNE" | "NIEAKTYWNE" | "WYGASLE" | "UCHYLONE" | "UMORZONE" | "W_TRAKCIE" | "BRAK_DANYCH";
 
 interface EmploymentBase {
@@ -113,20 +113,48 @@ function fmtDate(d: Date | null | undefined): string {
   return d.toISOString().slice(0, 10);
 }
 
-const TYPE_OPTIONS: { value: BaseType; label: string }[] = [
-  { value: "ZEZWOLENIE", label: "Zezwolenie na pracę" },
-  { value: "OSWIADCZENIE", label: "Oświadczenie" },
-  { value: "KARTA_POBYTU", label: "Karta pobytu" },
-  { value: "BLUE_CARD", label: "EU Blue Card" },
-  { value: "ZGLOSZENIE_UA", label: "Zgłoszenie UA" },
+const TYPE_OPTIONS: { value: string; label: string }[] = [
+  // Zezwolenia
+  { value: "ZEZWOLENIE_A", label: "Zezwolenie typ A" },
+  { value: "ZEZWOLENIE_A_KONT", label: "Zezwolenie typ A — kontynuacja" },
+  // Oświadczenie
+  { value: "OSWIADCZENIE", label: "Oświadczenie podmiotu" },
+  // Powiadomienie UA
+  { value: "POWIADOMIENIE_UA", label: "Powiadomienie UA" },
+  // TRC (karta pobytu)
+  { value: "TRC_FDK", label: "TRC — FDK" },
+  { value: "TRC_HUMANITARNE", label: "TRC — ze względów humanitarnych" },
+  { value: "TRC_POBYT_Z_CUDZ", label: "TRC — pobyt z cudzoziemcem" },
+  { value: "TRC_BLUE_CARD", label: "TRC — Blue Card" },
+  { value: "TRC_MALZONEK_PL", label: "TRC — Małżonek obywatela PL" },
+  { value: "TRC_STUDIA", label: "TRC — studia" },
+  { value: "TRC_ABSOLWENT", label: "TRC — absolwent" },
+  { value: "TRC_DZIALALNOSC", label: "TRC — działalność gospodarcza" },
+  // Otwarty dostęp (OD)
+  { value: "OD_KARTA_POLAKA", label: "OD — Karta Polaka" },
+  { value: "OD_UE", label: "OD — obywatel UE/EOG/Szwajcarii" },
+  { value: "OD_UK_WYSTAPIENIE", label: "OD — Umowa wystąpienia (UK)" },
+  { value: "OD_OCHRONA_UZUP", label: "OD — ochrona uzupełniająca" },
+  { value: "OD_UCHODZCA", label: "OD — status uchodźcy" },
+  { value: "OD_WIZA_HUMAN", label: "OD — wiza humanitarna" },
+  { value: "OD_STUDENT", label: "OD — status studenta" },
+  { value: "OD_ABSOLWENT", label: "OD — status absolwenta" },
+  { value: "OD_POBYT_STALY", label: "OD — pobyt stały" },
+  { value: "OD_REZYDENT_UE", label: "OD — rezydent długoterminowy UE" },
+  // Odwołanie
   { value: "ODWOLANIE", label: "Odwołanie / procedura odwoławcza" },
-  { value: "DOSTEP_UE", label: "Otwarty dostęp — obywatel UE/EOG" },
-  { value: "DOSTEP_STUDENT", label: "Otwarty dostęp — status studenta" },
-  { value: "DOSTEP_POBYT_STALY", label: "Otwarty dostęp — pobyt stały" },
-  { value: "DOSTEP_REZYDENT_UE", label: "Otwarty dostęp — rezydent długoterminowy UE" },
-  { value: "DOSTEP_KARTA_POLAKA", label: "Otwarty dostęp — Karta Polaka" },
-  { value: "DOSTEP_OCHRONA_MIEDZ", label: "Otwarty dostęp — ochrona międzynarodowa" },
-  { value: "DOSTEP_DYPLOM_PL", label: "Otwarty dostęp — dyplom polskiej uczelni" },
+  // Legacy (ukryte w nowych, widoczne w edycji starych)
+  { value: "ZEZWOLENIE", label: "[legacy] Zezwolenie" },
+  { value: "KARTA_POBYTU", label: "[legacy] Karta pobytu" },
+  { value: "BLUE_CARD", label: "[legacy] Blue Card" },
+  { value: "ZGLOSZENIE_UA", label: "[legacy] Zgłoszenie UA" },
+  { value: "DOSTEP_UE", label: "[legacy] Dostęp UE" },
+  { value: "DOSTEP_STUDENT", label: "[legacy] Dostęp student" },
+  { value: "DOSTEP_POBYT_STALY", label: "[legacy] Dostęp pobyt stały" },
+  { value: "DOSTEP_REZYDENT_UE", label: "[legacy] Dostęp rezydent UE" },
+  { value: "DOSTEP_KARTA_POLAKA", label: "[legacy] Dostęp Karta Polaka" },
+  { value: "DOSTEP_OCHRONA_MIEDZ", label: "[legacy] Dostęp ochrona międz." },
+  { value: "DOSTEP_DYPLOM_PL", label: "[legacy] Dostęp dyplom PL" },
 ];
 
 const STATUS_OPTIONS: { value: StatusType; label: string }[] = [
@@ -369,7 +397,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           </div>
 
           {/* === Zezwolenie === */}
-          {typ === "ZEZWOLENIE" && (
+          {(typ === "ZEZWOLENIE" || typ === "ZEZWOLENIE_A" || typ === "ZEZWOLENIE_A_KONT") && (
             <fieldset className="space-y-3 rounded-lg border border-blue-200 bg-blue-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-blue-700">Zezwolenie na pracę</legend>
               <div className="grid grid-cols-2 gap-4">
@@ -552,7 +580,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           )}
 
           {/* === Karta pobytu === */}
-          {typ === "KARTA_POBYTU" && (
+          {(typ === "KARTA_POBYTU" || typ.startsWith("TRC_")) && (
             <fieldset className="space-y-3 rounded-lg border border-yellow-200 bg-yellow-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-yellow-700">Karta pobytu</legend>
               <div className="grid grid-cols-2 gap-4">
@@ -595,7 +623,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           )}
 
           {/* === Blue Card === */}
-          {typ === "BLUE_CARD" && (
+          {(typ === "BLUE_CARD" || typ === "TRC_BLUE_CARD") && (
             <fieldset className="space-y-3 rounded-lg border border-purple-200 bg-purple-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-purple-700">Blue Card</legend>
               <div className="grid grid-cols-2 gap-4">
@@ -612,7 +640,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           )}
 
           {/* === Zgłoszenie UA === */}
-          {typ === "ZGLOSZENIE_UA" && (
+          {(typ === "ZGLOSZENIE_UA" || typ === "POWIADOMIENIE_UA") && (
             <fieldset className="space-y-3 rounded-lg border border-pink-200 bg-pink-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-pink-700">Zgłoszenie UA</legend>
               <div>
@@ -627,7 +655,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
           )}
 
           {/* === Otwarty dostęp (wszystkie typy DOSTEP_*) === */}
-          {typ.startsWith("DOSTEP_") && (
+          {(typ.startsWith("DOSTEP_") || typ.startsWith("OD_")) && (
             <fieldset className="space-y-3 rounded-lg border border-emerald-200 bg-emerald-50/30 p-4">
               <legend className="px-2 text-xs font-bold text-emerald-700">Otwarty dostęp do rynku pracy</legend>
               <div className="rounded-md bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-700">

@@ -17,7 +17,7 @@ export interface ParsedSalary {
 export interface ParsedDocumentData {
   // Detected document type
   // ODWOLANIE = appeal/complaint, no employment base should be created
-  detectedType?: "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | "ZGLOSZENIE_UA";
+  detectedType?: string; // FdkBaseType enum value
   // Foreigner data
   imie?: string;
   nazwisko?: string;
@@ -87,7 +87,7 @@ function titleCase(s: string): string {
  * Order matters: odwołanie/zażalenie must be checked FIRST because appeal documents
  * often contain phrases like "zezwolenie na pracę" or "zezwolenie na pobyt" in context.
  */
-export function detectDocumentType(text: string, filenameHint?: string): "OSWIADCZENIE" | "ZEZWOLENIE" | "KARTA_POBYTU" | "BLUE_CARD" | "ODWOLANIE" | "ZGLOSZENIE_UA" | undefined {
+export function detectDocumentType(text: string, filenameHint?: string): string | undefined {
   const lower = text.toLowerCase();
   const filenameLower = (filenameHint ?? "").toLowerCase();
 
@@ -131,17 +131,17 @@ export function detectDocumentType(text: string, filenameHint?: string): "OSWIAD
   // Filename hint — "zgloszenie_UA" or "zgłoszenie_UA" is strong signal
   if (filenameLower.includes("zg\u0142oszenie_ua") || filenameLower.includes("zgloszenie_ua")
     || filenameLower.includes("zg\u0142oszenie ua") || filenameLower.includes("zgloszenie ua")
-    || filenameLower.includes("powiadomienie_ua") || filenameLower.includes("powiadomienie ua")) return "ZGLOSZENIE_UA";
+    || filenameLower.includes("powiadomienie_ua") || filenameLower.includes("powiadomienie ua")) return "POWIADOMIENIE_UA";
   // PSZ-PPWPU form code from praca.gov.pl
-  if (lower.includes("psz-ppwpu") || lower.includes("psz ppwpu")) return "ZGLOSZENIE_UA";
+  if (lower.includes("psz-ppwpu") || lower.includes("psz ppwpu")) return "POWIADOMIENIE_UA";
   // "powiadomienie o powierzeniu" / "powiadomienie PUP"
-  if (/powiadomi\w*\s+o\s+powierzeni/i.test(text)) return "ZGLOSZENIE_UA";
-  if (lower.includes("powiadomienie pup")) return "ZGLOSZENIE_UA";
+  if (/powiadomi\w*\s+o\s+powierzeni/i.test(text)) return "POWIADOMIENIE_UA";
+  if (lower.includes("powiadomienie pup")) return "POWIADOMIENIE_UA";
   // "zgłoszenie o powierzeniu pracy" / "zgłoszenie powierzenia pracy"
-  if (/zg[l\u0142]oszeni\w*\s+(?:o\s+)?powierzeni/i.test(text)) return "ZGLOSZENIE_UA";
+  if (/zg[l\u0142]oszeni\w*\s+(?:o\s+)?powierzeni/i.test(text)) return "POWIADOMIENIE_UA";
   // "obywatel ukrainy" + "powierzenie" — strong co-occurrence
   if ((lower.includes("obywatel") && lower.includes("ukrainy") || lower.includes("pesel ukr"))
-    && lower.includes("powierzeni")) return "ZGLOSZENIE_UA";
+    && lower.includes("powierzeni")) return "POWIADOMIENIE_UA";
 
   // === OŚWIADCZENIE PSZ-OPWP — form header is strongest signal, check EARLY ===
   // PSZ-OPWP is the electronic form code from praca.gov.pl for oświadczenia.
@@ -153,28 +153,28 @@ export function detectDocumentType(text: string, filenameHint?: string): "OSWIAD
   if (/o[śs]wiadczenie\s+podmiotu\s+powierzaj[aą]cego/i.test(text)) return "OSWIADCZENIE";
 
   // === EU BLUE CARD — check before generic karta pobytu ===
-  if (lower.includes("niebieska karta") || lower.includes("blue card")) return "BLUE_CARD";
-  if (lower.includes("eu blue card") || lower.includes("karta ue")) return "BLUE_CARD";
+  if (lower.includes("niebieska karta") || lower.includes("blue card")) return "TRC_BLUE_CARD";
+  if (lower.includes("eu blue card") || lower.includes("karta ue")) return "TRC_BLUE_CARD";
   // Blue Card decree often says "zezwolenie na pobyt czasowy i pracę" for highly skilled
-  if (lower.includes("pobyt czasowy i prac") && (lower.includes("niebiesk") || lower.includes("blue"))) return "BLUE_CARD";
+  if (lower.includes("pobyt czasowy i prac") && (lower.includes("niebiesk") || lower.includes("blue"))) return "TRC_BLUE_CARD";
   // "wysokie kwalifikacje" / art. 127 — Blue Card regime
-  if (lower.includes("wysokich kwalifikacji") || lower.includes("wysokie kwalifikacje")) return "BLUE_CARD";
+  if (lower.includes("wysokich kwalifikacji") || lower.includes("wysokie kwalifikacje")) return "TRC_BLUE_CARD";
 
   // === KARTA POBYTU / DECYZJA POBYTOWA — check BEFORE zezwolenie na pracę ===
   // "zezwolenie na pobyt czasowy i pracę" is a RESIDENCE PERMIT, not a work permit
-  if (lower.includes("karta pobytu")) return "KARTA_POBYTU";
-  if (lower.includes("zezwolenie na pobyt") || lower.includes("zezwolenia na pobyt")) return "KARTA_POBYTU";
-  if (lower.includes("pobyt czasowy") && !lower.includes("niebiesk") && !lower.includes("blue")) return "KARTA_POBYTU";
+  if (lower.includes("karta pobytu")) return "TRC_FDK";
+  if (lower.includes("zezwolenie na pobyt") || lower.includes("zezwolenia na pobyt")) return "TRC_FDK";
+  if (lower.includes("pobyt czasowy") && !lower.includes("niebiesk") && !lower.includes("blue")) return "TRC_FDK";
   // "decyzja" + "pobyt" — but NOT if document is clearly a work permit (zezwolenie na pracę bez "na pobyt")
   const isWorkPermit = /zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt");
-  if (lower.includes("decyzja") && lower.includes("pobyt") && !isWorkPermit) return "KARTA_POBYTU";
+  if (lower.includes("decyzja") && lower.includes("pobyt") && !isWorkPermit) return "TRC_FDK";
 
   // === ZEZWOLENIE NA PRACĘ ===
   // Must NOT match "zezwolenie na pobyt czasowy i pracę" (already caught above)
-  if (lower.includes("zezwolenie na pracę") || lower.includes("zezwolenia na pracę")) return "ZEZWOLENIE";
-  if (lower.includes("zezwolenie na prace") || lower.includes("zezwolenia na prace")) return "ZEZWOLENIE";
-  if (/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt")) return "ZEZWOLENIE";
-  if (/typ\s+[a-e]/i.test(text) && lower.includes("zezwoleni") && !lower.includes("na pobyt")) return "ZEZWOLENIE";
+  if (lower.includes("zezwolenie na pracę") || lower.includes("zezwolenia na pracę")) return "ZEZWOLENIE_A";
+  if (lower.includes("zezwolenie na prace") || lower.includes("zezwolenia na prace")) return "ZEZWOLENIE_A";
+  if (/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt")) return "ZEZWOLENIE_A";
+  if (/typ\s+[a-e]/i.test(text) && lower.includes("zezwoleni") && !lower.includes("na pobyt")) return "ZEZWOLENIE_A";
 
   // === OŚWIADCZENIE — must have "powierzeniu" to avoid matching other mentions ===
   if ((lower.includes("oświadczenie") || lower.includes("oswiadczenie")) && lower.includes("powierzeniu")) return "OSWIADCZENIE";
@@ -402,7 +402,7 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   }
 
   // === ZGLOSZENIE_UA (PSZ-PPWPU) — dedicated parser for Ukrainian notifications ===
-  if (result.detectedType === "ZGLOSZENIE_UA") {
+  if (result.detectedType === "ZGLOSZENIE_UA" || result.detectedType === "POWIADOMIENIE_UA") {
     extractPersonalData(normalized, result);
     extractDateRange(normalized, result);
 
@@ -447,7 +447,10 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   }
 
   // === ZEZWOLENIE / BLUE_CARD — same structured layout (decision documents) ===
-  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "BLUE_CARD" || result.detectedType === "KARTA_POBYTU") {
+  if (result.detectedType === "ZEZWOLENIE" || result.detectedType === "ZEZWOLENIE_A" || result.detectedType === "ZEZWOLENIE_A_KONT"
+    || result.detectedType === "BLUE_CARD" || result.detectedType === "TRC_BLUE_CARD"
+    || result.detectedType === "KARTA_POBYTU" || result.detectedType === "TRC_FDK"
+    || result.detectedType?.startsWith("TRC_")) {
     const zezResult = parseZezwolenie(normalized, result);
     sanitizeDates(zezResult);
     return zezResult;
@@ -918,7 +921,7 @@ function parseElectronicDecision(normalized: string, result: ParsedDocumentData)
 
   // Decision type refinement: "pobyt czasowy i pracę" → KARTA_POBYTU with subtype
   // Check for "w związku z wykonywaniem pracy" — this means it's pobyt + praca (not generic)
-  if (result.detectedType === "KARTA_POBYTU") {
+  if (result.detectedType === "KARTA_POBYTU" || result.detectedType === "TRC_FDK" || result.detectedType?.startsWith("TRC_")) {
     const lower = normalized.toLowerCase();
     if (lower.includes("pobyt czasowy i prac") || lower.includes("zezwolenia na pobyt czasowy i prac")) {
       // This is "Karta pobytu (pobyt i praca)" — grants work right for specific employer
@@ -1163,7 +1166,7 @@ export async function ocrExtractStructured(
 
 ZADANIE: Wyciagnij dane i zwroc TYLKO JSON (bez komentarzy, bez markdown):
 
-{"detectedType":"KARTA_POBYTU","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","przedmiotDziela":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
+{"detectedType":"TRC_FDK","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","przedmiotDziela":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
 
 KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody):
 0. DANE OSOBOWE: Decyzja ma STRONE (cudzoziemca) i moze miec PELNOMOCNIKA (reprezentanta). imie, nazwisko, dataUrodzenia, obywatelstwo, nrPaszportu = ZAWSZE dane STRONY (cudzoziemca), NIGDY pelnomocnika. Strona jest wymieniona w sentencji ("udzielam Panu/Pani IMIE NAZWISKO, ur. ..."). Pelnomocnik pojawia sie w naglowku lub w pouczeniu ("pelnomocnik: ...", "doreczono pelnomocnikowi"). IGNORUJ dane pelnomocnika.
@@ -1174,7 +1177,7 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
 5. wynagrodzenie = TYLKO z sentencji: "za wynagrodzeniem nie nizszym niz KWOTA zl brutto". Przyklad: "18 333,33 zl brutto miesiecznie" → "18 333,33 PLN brutto". NIGDY nie bierz kwot z uzasadnienia (4300, 4500, 776 zl itp. to progi/minima — nie wynagrodzenie pracownika).
 6. firma = z sentencji: "na rzecz podmiotu NAZWA FIRMY Sp. z o.o., ul. Adres". Podaj PELNA nazwe: "HYLAND POLAND Sp. z o.o.", NIE samo "Sp. z o.o.".
 7. nrDecyzji = sygnatura z naglowka (pod nazwa organu). Formaty: "DL.WIPO.4100.8583.2024", "WSC-II-P.6151.34116.2025". Zachowaj CALY numer z prefiksem.
-8. detectedType: jesli mowi o "wysokich kwalifikacjach" lub art. 127 → BLUE_CARD; jesli "udzielam zezwolenia na pobyt" → KARTA_POBYTU; "orzekam o udzieleniu" → KARTA_POBYTU lub BLUE_CARD.
+8. detectedType: jesli mowi o "wysokich kwalifikacjach" lub art. 127 → TRC_BLUE_CARD; jesli "udzielam zezwolenia na pobyt" → TRC_FDK; "orzekam o udzieleniu" → TRC_FDK lub TRC_BLUE_CARD; "zezwolenie na prace" (bez "na pobyt") → ZEZWOLENIE_A.
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
 
 DLA OSWIADCZEN (formularze PSZ-OPWP, "Oswiadczenie podmiotu o powierzeniu pracy"):
@@ -1227,7 +1230,7 @@ Pola, ktorych nie mozesz znalezc = null.`;
       const data = JSON.parse(jsonStr);
       const result: ParsedDocumentData = {};
 
-      if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD"].includes(data.detectedType)) {
+      if (data.detectedType && typeof data.detectedType === "string") {
         result.detectedType = data.detectedType;
       }
       if (data.imie && typeof data.imie === "string") result.imie = data.imie.trim();

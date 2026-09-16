@@ -86,7 +86,22 @@ const optDate = z.string().optional().or(z.literal(""));
 
 const employmentBaseSchema = z.object({
   foreignerId: z.number().int(),
-  typ: z.enum(["ZEZWOLENIE", "OSWIADCZENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA", "ODWOLANIE", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"]),
+  typ: z.enum([
+    // Legacy (backward compat)
+    "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ZGLOSZENIE_UA",
+    "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE",
+    "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL",
+    // New types
+    "ZEZWOLENIE_A", "ZEZWOLENIE_A_KONT",
+    "OSWIADCZENIE",
+    "POWIADOMIENIE_UA",
+    "TRC_FDK", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL",
+    "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC", "TRC_BLUE_CARD",
+    "OD_UE", "OD_STUDENT", "OD_POBYT_STALY", "OD_REZYDENT_UE",
+    "OD_KARTA_POLAKA", "OD_OCHRONA_UZUP", "OD_UCHODZCA", "OD_WIZA_HUMAN",
+    "OD_ABSOLWENT", "OD_UK_WYSTAPIENIE",
+    "ODWOLANIE",
+  ]),
   status: z.enum(["AKTYWNE", "NIEAKTYWNE", "WYGASLE", "UCHYLONE", "UMORZONE", "W_TRAKCIE", "BRAK_DANYCH"]),
   // Wspólne
   rodzajUmowy: optStr,
@@ -1070,50 +1085,43 @@ export async function addResidenceBasisAction(
   const uwagi = input.notatka?.trim() || null;
 
   // Map typ to foreigner fields
-  switch (input.typ) {
-    case "stempel":
-    case "trc":
-    case "cukr_wniosek": {
-      // W procedurze — set upoDoreczone + upoUwagi
-      const label = input.typ === "stempel"
-        ? `Stempel w paszporcie${uwagi ? ` — ${uwagi}` : ""}`
-        : input.typ === "cukr_wniosek"
-          ? `Przedłużenie pobytu CUKR${uwagi ? ` — ${uwagi}` : ""}`
-          : uwagi ?? "Przedłużenie TRC";
-      await db.fdkForeigner.update({
-        where: { id: foreignerId },
-        data: { upoDoreczone: dataDate, upoUwagi: label },
-      });
-      break;
-    }
-    case "karta":
-    case "karta_cukr": {
-      // Karta pobytu — set decyzjaPobytowaDo + typDokumentuPobytowego
-      const typDoc = input.typ === "karta_cukr" ? "CUKR" : (uwagi || null);
-      await db.fdkForeigner.update({
-        where: { id: foreignerId },
-        data: {
-          decyzjaPobytowaDo: dataDoDate ?? dataDate,
-          typDokumentuPobytowego: typDoc,
-        },
-      });
-      break;
-    }
-    case "wiza": {
-      await db.fdkForeigner.update({
-        where: { id: foreignerId },
-        data: { wizaDo: dataDoDate ?? dataDate },
-      });
-      break;
-    }
-    case "inne": {
-      // Inne — zapisz jako UPO z notatką
-      await db.fdkForeigner.update({
-        where: { id: foreignerId },
-        data: { upoDoreczone: dataDate, upoUwagi: uwagi ?? "Inna podstawa pobytowa" },
-      });
-      break;
-    }
+  const typLabel = input.typ.replace(/_/g, " ").toUpperCase();
+
+  if (input.typ === "stempel" || input.typ === "przedluzenie") {
+    // W procedurze
+    const label = input.typ === "stempel"
+      ? `Stempel w paszporcie${uwagi ? ` — ${uwagi}` : ""}`
+      : `Pobyt na przedłużeniu${uwagi ? ` — ${uwagi}` : ""}`;
+    await db.fdkForeigner.update({
+      where: { id: foreignerId },
+      data: { upoDoreczone: dataDate, upoUwagi: label },
+    });
+  } else if (input.typ === "wiza" || input.typ === "ruch_bezwizowy") {
+    await db.fdkForeigner.update({
+      where: { id: foreignerId },
+      data: { wizaDo: dataDoDate ?? dataDate },
+    });
+  } else if (input.typ === "pesel_ukr") {
+    await db.fdkForeigner.update({
+      where: { id: foreignerId },
+      data: { ochronaCzasowaUkr: true },
+    });
+  } else if (input.typ.startsWith("trc_") || ["pobyt_staly", "rezydent_ue", "uchodzca", "ochrona_uzup", "zgoda_humanitarna", "zgoda_tolerowany", "uk_wystapienie", "ue_eog", "cukr"].includes(input.typ)) {
+    // Karta pobytu / decyzja pobytowa
+    const typDoc = uwagi || typLabel;
+    await db.fdkForeigner.update({
+      where: { id: foreignerId },
+      data: {
+        decyzjaPobytowaDo: dataDoDate ?? dataDate,
+        typDokumentuPobytowego: typDoc,
+      },
+    });
+  } else {
+    // Inne / fallback
+    await db.fdkForeigner.update({
+      where: { id: foreignerId },
+      data: { upoDoreczone: dataDate, upoUwagi: uwagi ?? "Inna podstawa pobytowa" },
+    });
   }
 
   await db.fdkChangeLog.create({
