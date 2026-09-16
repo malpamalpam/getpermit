@@ -601,10 +601,14 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   if (result.stanowisko) {
     result.stanowisko = deduplicateStanowisko(result.stanowisko);
   }
-  // Stanowisko cleanup — jeśli zawiera etykietę z dwukropkiem, weź tylko wartość po ostatnim dwukropku
+  // Stanowisko cleanup — jeśli zaczyna się od etykiety z dwukropkiem, weź wartość po dwukropku
   if (result.stanowisko?.includes(":")) {
-    const afterColon = result.stanowisko.split(":").pop()!.trim();
-    if (afterColon.length > 2) result.stanowisko = afterColon;
+    const colonIdx = result.stanowisko.indexOf(":");
+    const before = result.stanowisko.substring(0, colonIdx).trim();
+    const after = result.stanowisko.substring(colonIdx + 1).trim();
+    if (/^(Stanowisko|Rodzaj|SYMBOL|Symbol|PKD|Wymiar|rodzaj pracy|w rodzaju pracy)/i.test(before) && after.length > 2) {
+      result.stanowisko = after;
+    }
   }
 
   sanitizeDates(result);

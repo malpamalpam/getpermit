@@ -38,10 +38,15 @@ async function main() {
 
     let newStanowisko = base.stanowisko;
 
-    // Jeśli zawiera dwukropek — weź tylko wartość po ostatnim dwukropku
+    // Jeśli zawiera dwukropek — weź wartość po pierwszym dwukropku,
+    // ale tylko jeśli tekst PRZED dwukropkiem to etykieta (nie np. "kod zawodu: 123")
     if (newStanowisko.includes(":")) {
-      const afterColon = newStanowisko.split(":").pop().trim();
-      if (afterColon.length > 2) newStanowisko = afterColon;
+      const colonIdx = newStanowisko.indexOf(":");
+      const before = newStanowisko.substring(0, colonIdx).trim();
+      const after = newStanowisko.substring(colonIdx + 1).trim();
+      // Traktuj jako etykietę tylko jeśli tekst przed dwukropkiem to znana etykieta lub sekcja formularza
+      const isLabel = /^(Stanowisko|Rodzaj|SYMBOL|Symbol|PKD|Wymiar|rodzaj pracy|w rodzaju pracy)/i.test(before);
+      if (isLabel && after.length > 2) newStanowisko = after;
     }
 
     // Usuń znane etykiety z początku
