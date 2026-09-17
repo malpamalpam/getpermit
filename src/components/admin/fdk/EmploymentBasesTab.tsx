@@ -228,7 +228,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
                   Wchłonięte przez decyzję pobytową
                 </span>
               )}
-              {b.status === "BRAK_DANYCH" && (
+              {b.status === "BRAK_DANYCH" && !b.typ.startsWith("OD_") && !["POWIADOMIENIE_UA", "ZGLOSZENIE_UA", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"].includes(b.typ) && (
                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 animate-pulse">
                   Uzupelnij daty
                 </span>
@@ -250,7 +250,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
             </div>
             <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
               {[
-                ["Okres", b.dataOd || b.dataDo ? `${fmt(b.dataOd)} – ${fmt(b.dataDo)}` : null],
+                ["Okres", b.dataOd || b.dataDo ? (b.dataOd && !b.dataDo ? `od ${fmt(b.dataOd)}` : `${fmt(b.dataOd)} – ${fmt(b.dataDo)}`) : null],
                 ["Rodzaj umowy", b.rodzajUmowy],
                 ["Wynagrodzenie", b.wynagrodzenie],
                 ["Firma", b.firma],
