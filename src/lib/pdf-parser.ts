@@ -406,15 +406,23 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     extractPersonalData(normalized, result);
     extractDateRange(normalized, result);
 
-    // Powiadomienie UA: data rozpoczęcia pracy z sekcji "Data rozpoczęcia pracy" / "od dnia"
+    // Powiadomienie UA: data podjęcia pracy z sekcji PSZ-PPWPU
+    // Format: "Data podjęcia pracy (dd / mm / rrrr): 11 / 09 / 2026"
+    if (!result.dataOd) {
+      const dataPodjeciaMatch = normalized.match(/[Dd]ata\s+podj[ęe]cia\s+pracy[^:]*:\s*(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})/);
+      if (dataPodjeciaMatch) {
+        result.dataOd = `${dataPodjeciaMatch[3]}-${dataPodjeciaMatch[2].padStart(2, "0")}-${dataPodjeciaMatch[1].padStart(2, "0")}`;
+      }
+    }
     if (!result.dataOd) {
       const dataRozpMatch = normalized.match(/(?:data\s+rozpocz[ęe]cia\s+pracy|od\s+dnia|rozpocz[ęe]cie\s+pracy)[:\s]*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i);
       if (dataRozpMatch) result.dataOd = parseDatePL(dataRozpMatch[1]);
     }
     // Powiadomienie UA jest bezterminowe — dataDo pozostaje puste (nie wymuszaj BRAK_DANYCH)
 
-    // Sekcja 3.2: Stanowisko/rodzaj pracy — szukamy wartości PO etykiecie, nie samej etykiety
-    const stanUaMatch = normalized.match(/(?:stanowisko|rodzaj\s+(?:wykonywanej\s+)?pracy)[^:]*[:\s]+([^,\n]{3,120}?)(?=\s*(?:\d+\.\d+|Wymiar|Symbol|PKD|Rodzaj\s+umowy|$))/i);
+    // Sekcja 3.2: Stanowisko/rodzaj pracy
+    // Format PSZ-PPWPU: "Stanowisko / rodzaj pracy: \nWykonawca przyjmuje do wykonania dzieło: ..."
+    const stanUaMatch = normalized.match(/[Ss]tanowisko\s*\/?\s*rodzaj\s+pracy\s*:\s*(.+?)(?=\s*3\.3\b|\s*NAZWA I KOD)/is);
     if (stanUaMatch) {
       let stan = stanUaMatch[1].replace(/\s+/g, " ").trim();
       // Odrzuć jeśli złapano etykietę pola zamiast wartości
@@ -422,13 +430,34 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
         result.stanowisko = stan;
       }
     }
+    // Fallback: generyczny
+    if (!result.stanowisko) {
+      const stanFallback = normalized.match(/(?:stanowisko|rodzaj\s+(?:wykonywanej\s+)?pracy)[^:]*[:\s]+([^,\n]{3,120}?)(?=\s*(?:\d+\.\d+|Wymiar|Symbol|PKD|Rodzaj\s+umowy|$))/i);
+      if (stanFallback) {
+        let stan = stanFallback[1].replace(/\s+/g, " ").trim();
+        if (!/^(WYMIAR|Symbol|PKD|Rodzaj|Wysokość|Okres)/i.test(stan) && stan.length > 2) {
+          result.stanowisko = stan;
+        }
+      }
+    }
 
-    // Sekcja 3.6: Rodzaj umowy
-    const umowaUaMatch = normalized.match(/[Rr]odzaj\s+umowy[^:]*[:\s]+([^,\n]{3,80}?)(?=\s*(?:\d+\.\d+|Wymiar|Wysokość|Okres|Stanowisko|$))/i);
+    // Sekcja 3.5: Podstawa prawna / rodzaj umowy
+    // Format PSZ-PPWPU: "Podstawa prawna: Umowa o dzieło"
+    const umowaUaMatch = normalized.match(/[Pp]odstawa\s+prawna[:\s]+([^\n\[]{3,60}?)(?=\s*\[|\s*3\.6)/i);
     if (umowaUaMatch) {
       let umowa = umowaUaMatch[1].replace(/\s+/g, " ").trim();
-      if (!/^(WYMIAR|Symbol|PKD|Stanowisko|Wysokość|Okres)/i.test(umowa) && umowa.length > 2) {
+      if (!/^(WYMIAR|Symbol|PKD|Stanowisko|nie dotyczy)/i.test(umowa) && umowa.length > 2) {
         result.rodzajUmowy = umowa;
+      }
+    }
+    // Fallback: "Rodzaj umowy"
+    if (!result.rodzajUmowy) {
+      const umowaFallback = normalized.match(/[Rr]odzaj\s+umowy[^:]*[:\s]+([^,\n]{3,80}?)(?=\s*(?:\d+\.\d+|Wymiar|Wysokość|Okres|Stanowisko|$))/i);
+      if (umowaFallback) {
+        let umowa = umowaFallback[1].replace(/\s+/g, " ").trim();
+        if (!/^(WYMIAR|Symbol|PKD|Stanowisko|Wysokość|Okres|nie dotyczy)/i.test(umowa) && umowa.length > 2) {
+          result.rodzajUmowy = umowa;
+        }
       }
     }
 
