@@ -14,6 +14,7 @@ import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
 import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
+import { ResidenceBasesTab } from "@/components/admin/fdk/ResidenceBasesTab";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
 import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis } from "@/lib/fdk-queries";
 
@@ -22,6 +23,7 @@ export const metadata = { robots: { index: false, follow: false } };
 const TABS = [
   { key: "overview", label: "Przegląd" },
   { key: "bases", label: "Podstawy zatrudnienia" },
+  { key: "residence", label: "Podstawy pobytu" },
   { key: "hr", label: "Dane HR" },
   { key: "attachments", label: "Załączniki" },
   { key: "history", label: "Historia zmian" },
@@ -402,6 +404,10 @@ export default async function FdkForeignerPage({
             hasActiveResidence={!!hasActiveResidence}
             obywatelstwo={foreigner.obywatelstwo}
           />
+        )}
+
+        {activeTab === "residence" && (
+          <ResidenceBasesTab foreigner={foreigner} />
         )}
 
         {activeTab === "hr" && (

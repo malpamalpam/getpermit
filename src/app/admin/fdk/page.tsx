@@ -246,8 +246,8 @@ export default async function FdkPage({
                 <th className="px-4 py-3">Nazwisko</th>
                 <th className="px-4 py-3">Imię</th>
                 <th className="px-4 py-3">Podstawa pracy</th>
-                <th className="px-4 py-3">Pobyt</th>
                 <th className="px-4 py-3">Praca do</th>
+                <th className="px-4 py-3">Pobyt</th>
                 <th className="px-4 py-3">Pobyt do</th>
                 <th className="px-4 py-3 text-center">
                   <Paperclip className="mx-auto h-4 w-4" />
@@ -294,13 +294,13 @@ export default async function FdkPage({
                         );
                       })()}
                     </td>
+                    <td className="px-4 py-3 text-primary/70">
+                      {latestDate ? `${String(latestDate.getUTCDate()).padStart(2, "0")}.${String(latestDate.getUTCMonth() + 1).padStart(2, "0")}.${latestDate.getUTCFullYear()}` : "—"}
+                    </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${resBadge.cls}`}>
                         {resBadge.label}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-primary/70">
-                      {latestDate ? `${String(latestDate.getUTCDate()).padStart(2, "0")}.${String(latestDate.getUTCMonth() + 1).padStart(2, "0")}.${latestDate.getUTCFullYear()}` : "—"}
                     </td>
                     <td className="px-4 py-3 text-primary/70">
                       {(() => {
