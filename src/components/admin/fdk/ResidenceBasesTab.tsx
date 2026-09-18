@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AddResidenceBasisButton } from "./AddResidenceBasisButton";
-import { ResidenceBasisActions } from "./ResidenceBasisActions";
 
 interface ForeignerResidence {
   id: number;
@@ -137,9 +136,6 @@ export function ResidenceBasesTab({ foreigner }: Props) {
         </div>
       ))}
 
-      <div className="pt-2">
-        <ResidenceBasisActions foreignerId={foreigner.id} foreigner={foreigner as never} />
-      </div>
     </div>
   );
 }
