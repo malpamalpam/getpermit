@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { AddResidenceBasisButton } from "./AddResidenceBasisButton";
+import { ResidenceBasisActions } from "./ResidenceBasisActions";
 
 interface ForeignerResidence {
   id: number;
@@ -22,81 +21,67 @@ function fmt(d: Date | null | undefined): string {
   return `${day}.${month}.${year}`;
 }
 
-function computeStatus(foreigner: ForeignerResidence): { label: string; cls: string } {
+interface ResidenceCard {
+  basisType: "karta" | "wiza" | "upo" | "ochrona_ukr";
+  type: string;
+  period: string;
+  details: string;
+  status: { label: string; cls: string };
+  date?: string; // ISO for edit
+  note?: string;
+}
+
+function buildCards(f: ForeignerResidence): ResidenceCard[] {
+  const cards: ResidenceCard[] = [];
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  if (foreigner.upoDoreczone) {
-    return { label: "W procedurze", cls: "bg-amber-100 text-amber-800" };
-  }
-  if (foreigner.ochronaCzasowaUkr) {
-    return { label: "Aktualna (PESEL UKR)", cls: "bg-green-100 text-green-800" };
-  }
-  if (foreigner.decyzjaPobytowaDo) {
-    const d = new Date(foreigner.decyzjaPobytowaDo.getFullYear(), foreigner.decyzjaPobytowaDo.getMonth(), foreigner.decyzjaPobytowaDo.getDate());
-    return d >= today
-      ? { label: "Aktualna", cls: "bg-green-100 text-green-800" }
-      : { label: "Wygasła", cls: "bg-red-100 text-red-800" };
-  }
-  if (foreigner.wizaDo) {
-    const d = new Date(foreigner.wizaDo.getFullYear(), foreigner.wizaDo.getMonth(), foreigner.wizaDo.getDate());
-    return d >= today
-      ? { label: "Aktualna", cls: "bg-green-100 text-green-800" }
-      : { label: "Wygasła", cls: "bg-red-100 text-red-800" };
-  }
-  return { label: "Brak", cls: "bg-gray-100 text-gray-500" };
-}
-
-interface Props {
-  foreigner: ForeignerResidence;
-}
-
-export function ResidenceBasesTab({ foreigner }: Props) {
-  const router = useRouter();
-  const status = computeStatus(foreigner);
-
-  // Budujemy listę "kart" z wypełnionych pól
-  const cards: { type: string; period: string; details: string; status: { label: string; cls: string } }[] = [];
-
-  if (foreigner.decyzjaPobytowaDo) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const d = new Date(foreigner.decyzjaPobytowaDo.getFullYear(), foreigner.decyzjaPobytowaDo.getMonth(), foreigner.decyzjaPobytowaDo.getDate());
+  if (f.decyzjaPobytowaDo) {
+    const d = new Date(f.decyzjaPobytowaDo.getFullYear(), f.decyzjaPobytowaDo.getMonth(), f.decyzjaPobytowaDo.getDate());
+    const isActive = d >= today;
     cards.push({
-      type: foreigner.typDokumentuPobytowego || "Karta pobytu",
-      period: `do ${fmt(foreigner.decyzjaPobytowaDo)}`,
-      details: foreigner.typDokumentuPobytowego ? `Typ: ${foreigner.typDokumentuPobytowego}` : "",
-      status: d >= today
+      basisType: "karta",
+      type: f.typDokumentuPobytowego || "Karta pobytu",
+      period: `do ${fmt(f.decyzjaPobytowaDo)}`,
+      details: f.typDokumentuPobytowego && f.typDokumentuPobytowego !== "Karta pobytu" ? "" : "",
+      status: isActive
         ? { label: "Aktualna", cls: "bg-green-100 text-green-800" }
         : { label: "Wygasła", cls: "bg-red-100 text-red-800" },
+      date: f.decyzjaPobytowaDo.toISOString().slice(0, 10),
+      note: f.typDokumentuPobytowego ?? undefined,
     });
   }
 
-  if (foreigner.wizaDo) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const d = new Date(foreigner.wizaDo.getFullYear(), foreigner.wizaDo.getMonth(), foreigner.wizaDo.getDate());
+  if (f.wizaDo) {
+    const d = new Date(f.wizaDo.getFullYear(), f.wizaDo.getMonth(), f.wizaDo.getDate());
+    const isActive = d >= today;
     cards.push({
+      basisType: "wiza",
       type: "Wiza",
-      period: `do ${fmt(foreigner.wizaDo)}`,
+      period: `do ${fmt(f.wizaDo)}`,
       details: "",
-      status: d >= today
+      status: isActive
         ? { label: "Aktualna", cls: "bg-green-100 text-green-800" }
         : { label: "Wygasła", cls: "bg-red-100 text-red-800" },
+      date: f.wizaDo.toISOString().slice(0, 10),
     });
   }
 
-  if (foreigner.upoDoreczone) {
+  if (f.upoDoreczone) {
     cards.push({
+      basisType: "upo",
       type: "W procedurze",
-      period: `złożono ${fmt(foreigner.upoDoreczone)}`,
-      details: foreigner.upoUwagi || "",
+      period: `złożono ${fmt(f.upoDoreczone)}`,
+      details: f.upoUwagi || "",
       status: { label: "W procedurze", cls: "bg-amber-100 text-amber-800" },
+      date: f.upoDoreczone.toISOString().slice(0, 10),
+      note: f.upoUwagi ?? undefined,
     });
   }
 
-  if (foreigner.ochronaCzasowaUkr) {
+  if (f.ochronaCzasowaUkr) {
     cards.push({
+      basisType: "ochrona_ukr",
       type: "Ochrona czasowa UKR",
       period: "bezterminowo",
       details: "PESEL UKR",
@@ -104,11 +89,21 @@ export function ResidenceBasesTab({ foreigner }: Props) {
     });
   }
 
+  return cards;
+}
+
+interface Props {
+  foreigner: ForeignerResidence;
+}
+
+export function ResidenceBasesTab({ foreigner }: Props) {
+  const cards = buildCards(foreigner);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-lg font-bold text-primary">
-          Podstawy pobytu ({cards.length})
+          Podstawy pobytu
         </h3>
         <AddResidenceBasisButton foreignerId={foreigner.id} />
       </div>
@@ -121,21 +116,28 @@ export function ResidenceBasesTab({ foreigner }: Props) {
 
       {cards.map((card, idx) => (
         <div key={idx} className="rounded-xl border border-primary/10 bg-white p-4 shadow-sm">
-          <div className="mb-2 flex items-center gap-2 flex-wrap">
-            <span className="rounded-full bg-yellow-100 px-2.5 py-0.5 text-[10px] font-semibold text-yellow-800">
-              {card.type}
-            </span>
-            <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${card.status.cls}`}>
-              {card.status.label}
-            </span>
-            <span className="text-xs text-primary/50">{card.period}</span>
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="rounded-full bg-yellow-100 px-2.5 py-0.5 text-[10px] font-semibold text-yellow-800">
+                {card.type}
+              </span>
+              <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${card.status.cls}`}>
+                {card.status.label}
+              </span>
+              <span className="text-xs text-primary/50">{card.period}</span>
+            </div>
+            <ResidenceBasisActions
+              foreignerId={foreigner.id}
+              basisType={card.basisType}
+              currentDate={card.date}
+              currentNote={card.note}
+            />
           </div>
           {card.details && (
-            <p className="text-sm text-primary/70">{card.details}</p>
+            <p className="mt-2 text-sm text-primary/70">{card.details}</p>
           )}
         </div>
       ))}
-
     </div>
   );
 }

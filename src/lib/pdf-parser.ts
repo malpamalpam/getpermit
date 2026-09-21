@@ -162,12 +162,21 @@ export function detectDocumentType(text: string, filenameHint?: string): string 
 
   // === KARTA POBYTU / DECYZJA POBYTOWA — check BEFORE zezwolenie na pracę ===
   // "zezwolenie na pobyt czasowy i pracę" is a RESIDENCE PERMIT, not a work permit
-  if (lower.includes("karta pobytu")) return "TRC_FDK";
-  if (lower.includes("zezwolenie na pobyt") || lower.includes("zezwolenia na pobyt")) return "TRC_FDK";
-  if (lower.includes("pobyt czasowy") && !lower.includes("niebiesk") && !lower.includes("blue")) return "TRC_FDK";
-  // "decyzja" + "pobyt" — but NOT if document is clearly a work permit (zezwolenie na pracę bez "na pobyt")
-  const isWorkPermit = /zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt");
-  if (lower.includes("decyzja") && lower.includes("pobyt") && !isWorkPermit) return "TRC_FDK";
+  const isTrc = lower.includes("karta pobytu")
+    || lower.includes("zezwolenie na pobyt") || lower.includes("zezwolenia na pobyt")
+    || (lower.includes("pobyt czasowy") && !lower.includes("niebiesk") && !lower.includes("blue"))
+    || (lower.includes("decyzja") && lower.includes("pobyt") && !(/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt")));
+  if (isTrc) {
+    // Klasyfikacja podtypu TRC na podstawie celu pobytu z sentencji
+    if (/w\s+celu\s+kszta[łl]cenia|na\s+studiach|kszta[łl]cenie\s+si[eę]/i.test(text)) return "TRC_STUDIA";
+    if (/po[łl][aą]czeni[ea]\s+z\s+rodzin[aą]|pobyt\s+z\s+cudzoziemcem|cz[łl]onk\w*\s+rodziny/i.test(text)) return "TRC_POBYT_Z_CUDZ";
+    if (/wzgl[eę]d[oó]w\s+humanitarnych|ochrona\s+uzupe[łl]niaj/i.test(text)) return "TRC_HUMANITARNE";
+    if (/ma[łl][żz]on\w*\s+obywatel\w*\s+polsk|ma[łl][żz]on\w*\s+obywatel\w*\s+RP/i.test(text)) return "TRC_MALZONEK_PL";
+    if (/dzia[łl]alno[śs][ćc]\s+gospodarcz/i.test(text)) return "TRC_DZIALALNOSC";
+    if (/absolwent/i.test(text) && lower.includes("pobyt")) return "TRC_ABSOLWENT";
+    // Domyślnie: praca na rzecz pracodawcy = TRC_FDK
+    return "TRC_FDK";
+  }
 
   // === ZEZWOLENIE NA PRACĘ ===
   // Must NOT match "zezwolenie na pobyt czasowy i pracę" (already caught above)
@@ -441,6 +450,19 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
       }
     }
 
+    // Walidacja stanowiska — odrzuć fragmenty urwane, z małej litery, ze spójnikami
+    if (result.stanowisko) {
+      const s = result.stanowisko;
+      // Odrzuć jeśli zaczyna się od małej litery (fragment urwany z opisu dzieła)
+      if (/^[a-ząćęłńóśźż]/.test(s) && !/^(twórca|programista|spawacz|kierowca|kucharz|kelner|sprzedawca|pracownik)/.test(s)) {
+        result.stanowisko = undefined;
+      }
+      // Odrzuć jeśli wiszący cudzysłów na końcu
+      if (result.stanowisko && /["""]$/.test(result.stanowisko) && !/^["""]/.test(result.stanowisko)) {
+        result.stanowisko = result.stanowisko.replace(/["""]$/, "").trim();
+      }
+    }
+
     // Sekcja 3.5: Podstawa prawna / rodzaj umowy
     // Format PSZ-PPWPU: "Podstawa prawna: Umowa o dzieło"
     const umowaUaMatch = normalized.match(/[Pp]odstawa\s+prawna[:\s]+([^\n\[]{3,60}?)(?=\s*\[|\s*3\.6)/i);
@@ -676,6 +698,16 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (/^(Stanowisko|Rodzaj|SYMBOL|Symbol|PKD|Wymiar|rodzaj pracy|w rodzaju pracy)/i.test(before) && after.length > 2) {
       result.stanowisko = after;
     }
+  }
+
+  // Walidacja: odrzuć UUID/hash w nr dokumentu
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}/i;
+  const hashPattern = /^[0-9a-f]{20,}/i;
+  if (result.nrOswiadczenia && (uuidPattern.test(result.nrOswiadczenia) || hashPattern.test(result.nrOswiadczenia))) {
+    result.nrOswiadczenia = undefined;
+  }
+  if (result.nrDecyzji && (uuidPattern.test(result.nrDecyzji) || hashPattern.test(result.nrDecyzji))) {
+    result.nrDecyzji = undefined;
   }
 
   sanitizeDates(result);
@@ -1104,6 +1136,15 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     const stanFallback = normalized.match(/na\s+stanowisku\s*\/?\s*w\s+charakterze\s+(.+?)(?=\s*\()/i);
     if (stanFallback) result.stanowisko = dedup(stanFallback[1].trim());
   }
+  // Fallback: "przedmiot dzieła:" z sentencji TRC
+  if (!result.stanowisko) {
+    const dzieloMatch = normalized.match(/przedmiot\s+dzie[łl]a\s*:\s*[„""]?(.+?)(?=["""]|\s*warto[śs][ćc]\s+dzie[łl]a|\s*Uzasadnienie)/i);
+    if (dzieloMatch) {
+      let val = dzieloMatch[1].replace(/\s+/g, " ").trim();
+      if (val.length > 200) val = val.substring(0, 200) + "...";
+      result.stanowisko = val;
+    }
+  }
 
   // --- Rodzaj umowy: "na podstawie Umowa o dzieło[dup] (rodzaj umowy..." ---
   // Search backwards from "(rodzaj umowy" to find "na podstawie VALUE"
@@ -1241,7 +1282,16 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
 5. wynagrodzenie = TYLKO z sentencji: "za wynagrodzeniem nie nizszym niz KWOTA zl brutto". Przyklad: "18 333,33 zl brutto miesiecznie" → "18 333,33 PLN brutto". NIGDY nie bierz kwot z uzasadnienia (4300, 4500, 776 zl itp. to progi/minima — nie wynagrodzenie pracownika).
 6. firma = z sentencji: "na rzecz podmiotu NAZWA FIRMY Sp. z o.o., ul. Adres". Podaj PELNA nazwe: "HYLAND POLAND Sp. z o.o.", NIE samo "Sp. z o.o.".
 7. nrDecyzji = sygnatura z naglowka (pod nazwa organu). Formaty: "DL.WIPO.4100.8583.2024", "WSC-II-P.6151.34116.2025". Zachowaj CALY numer z prefiksem.
-8. detectedType: jesli mowi o "wysokich kwalifikacjach" lub art. 127 → TRC_BLUE_CARD; jesli "udzielam zezwolenia na pobyt" → TRC_FDK; "orzekam o udzieleniu" → TRC_FDK lub TRC_BLUE_CARD; "zezwolenie na prace" (bez "na pobyt") → ZEZWOLENIE_A.
+8. detectedType dla decyzji pobytowych — czytaj CEL pobytu z sentencji:
+   - "wysokie kwalifikacje" lub art. 127 → TRC_BLUE_CARD
+   - "w celu kształcenia się na studiach" → TRC_STUDIA
+   - "połączenie z rodziną" / "członek rodziny" → TRC_POBYT_Z_CUDZ
+   - "względy humanitarne" → TRC_HUMANITARNE
+   - "małżonek obywatela polskiego" → TRC_MALZONEK_PL
+   - "działalność gospodarcza" → TRC_DZIALALNOSC
+   - "w związku z wykonywaniem pracy na rzecz:" → TRC_FDK
+   - "zezwolenie na pracę" (bez "na pobyt") → ZEZWOLENIE_A
+   Jesli nie pasuje zaden cel → TRC_FDK.
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
 
 DLA OSWIADCZEN (formularze PSZ-OPWP, "Oswiadczenie podmiotu o powierzeniu pracy"):

@@ -146,10 +146,14 @@ export default async function FdkForeignerPage({
             {(() => {
               const rs = computeResidenceStatus(foreigner);
               if (rs === "w_procedurze") {
+                const uwLabel = foreigner.upoUwagi?.toLowerCase() ?? "";
+                const procLabel = uwLabel.includes("stempel") ? "W procedurze — stempel"
+                  : uwLabel.includes("cukr") ? "W procedurze — CUKR"
+                  : "W procedurze — przedłużenie TRC";
                 return (
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
-                    <Shield className="h-3 w-3" /> W procedurze — przedłużenie TRC
-                    {foreigner.upoDoreczone && <> (od {fmt(foreigner.upoDoreczone)})</>}
+                    <Shield className="h-3 w-3" /> {procLabel}
+                    {foreigner.upoDoreczone && <>, złożono {fmt(foreigner.upoDoreczone)}</>}
                   </span>
                 );
               }
@@ -190,6 +194,17 @@ export default async function FdkForeignerPage({
               // rs === "brak"
               return null;
             })()}
+            {(() => {
+              const best = getCurrentEmploymentBasis(foreigner.employmentBases);
+              if (best?.status === "NIEAKTYWNE" && best.dataZakPracy) {
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2.5 py-0.5 text-xs font-semibold text-gray-700">
+                    Zakończył pracę {fmt(best.dataZakPracy)}
+                  </span>
+                );
+              }
+              return null;
+            })()}
           </div>
         </div>
 
@@ -209,6 +224,11 @@ export default async function FdkForeignerPage({
               {tab.key === "bases" && foreigner.employmentBases.length > 0 && (
                 <span className="ml-1.5 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1.5 text-[10px] font-bold">
                   {foreigner.employmentBases.length}
+                </span>
+              )}
+              {tab.key === "residence" && (
+                <span className="ml-1.5 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1.5 text-[10px] font-bold">
+                  {[foreigner.decyzjaPobytowaDo, foreigner.wizaDo, foreigner.upoDoreczone, foreigner.ochronaCzasowaUkr].filter(Boolean).length}
                 </span>
               )}
               {tab.key === "attachments" && foreigner.attachments.length > 0 && (

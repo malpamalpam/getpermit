@@ -285,11 +285,18 @@ export default async function FdkPage({
                           (b) => b.status === "AKTYWNE" || b.status === "W_TRAKCIE"
                         );
                         return (
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge?.cls ?? "bg-gray-100 text-gray-600"}`}
-                            title={activeBases.map((b) => TYPE_BADGES[b.typ]?.label ?? b.typ).join(", ")}
-                          >
-                            {badge?.label ?? best.typ}
+                          <span className="inline-flex items-center gap-1">
+                            <span
+                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge?.cls ?? "bg-gray-100 text-gray-600"}`}
+                              title={activeBases.map((b) => TYPE_BADGES[b.typ]?.label ?? b.typ).join(", ")}
+                            >
+                              {badge?.label ?? best.typ}
+                            </span>
+                            {best.status === "NIEAKTYWNE" && best.dataZakPracy && (
+                              <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-600">
+                                Zakończył
+                              </span>
+                            )}
                           </span>
                         );
                       })()}
