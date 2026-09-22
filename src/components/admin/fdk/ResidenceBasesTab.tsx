@@ -2,6 +2,7 @@
 
 import { AddResidenceBasisButton } from "./AddResidenceBasisButton";
 import { ResidenceBasisActions } from "./ResidenceBasisActions";
+import { ResidenceReminderButton } from "./ResidenceReminderButton";
 
 interface ForeignerResidence {
   id: number;
@@ -150,12 +151,15 @@ export function ResidenceBasesTab({ foreigner }: Props) {
               </span>
               <span className="text-xs text-primary/50">{card.period}</span>
             </div>
-            <ResidenceBasisActions
-              foreignerId={foreigner.id}
-              basisType={card.basisType}
-              currentDate={card.date}
-              currentNote={card.note}
-            />
+            <div className="flex items-center gap-1">
+              {card.basisType === "upo" && <ResidenceReminderButton foreignerId={foreigner.id} />}
+              <ResidenceBasisActions
+                foreignerId={foreigner.id}
+                basisType={card.basisType}
+                currentDate={card.date}
+                currentNote={card.note}
+              />
+            </div>
           </div>
           {card.details && (
             <p className="mt-2 text-sm text-primary/70">{card.details}</p>

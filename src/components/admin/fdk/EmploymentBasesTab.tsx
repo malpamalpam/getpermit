@@ -141,6 +141,11 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
   const activeResidence = bases.filter((b) => residenceTypes.includes(b.typ) && b.status === "AKTYWNE");
   const latestActiveResidence = activeResidence.length > 0 ? activeResidence[0] : null; // already sorted desc
 
+  // Find the newest UA notification — only show that one by default
+  const uaTypes = ["ZGLOSZENIE_UA", "POWIADOMIENIE_UA"];
+  const uaBases = bases.filter((b) => uaTypes.includes(b.typ));
+  const newestUa = uaBases.length > 0 ? uaBases[0] : null; // bases already sorted desc by dataOd
+
   // Determine which bases to show as "active employment bases"
   const visibleBases = showAll
     ? bases
@@ -155,6 +160,10 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
         }
         // Show only the most recent active residence permit, hide other active ones
         if (residenceTypes.includes(b.typ) && b.status === "AKTYWNE" && latestActiveResidence && b.id !== latestActiveResidence.id) {
+          return false;
+        }
+        // Show only the newest UA notification, hide older ones
+        if (uaTypes.includes(b.typ) && newestUa && b.id !== newestUa.id) {
           return false;
         }
         return true;

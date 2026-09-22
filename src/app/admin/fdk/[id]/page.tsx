@@ -138,6 +138,12 @@ export default async function FdkForeignerPage({
 
   if (!foreigner) notFound();
 
+  // Fetch all scrape logs for this foreigner (not limited by changeLogs take:200)
+  const scrapeLogs = await db.fdkChangeLog.findMany({
+    where: { foreignerId: id, field: "scrape" },
+    select: { newValue: true },
+  });
+
   // Recompute statuses from dates
   foreigner.employmentBases = withComputedStatuses(foreigner.employmentBases);
 
@@ -555,11 +561,12 @@ export default async function FdkForeignerPage({
             )}
             {(() => {
               // Build map: attachment filename → scraped document info (type + nr)
+              // Use employment bases directly — match by sourceAttachmentId or by changelog
               const attachmentDocInfo = new Map<string, { typ: string; nr: string }>();
+              // First: direct match via changelogs (unlimited scrape logs)
               for (const log of foreigner.changeLogs) {
                 if (log.field !== "scrape") continue;
                 const val = log.newValue ?? "";
-                // "Utworzono/Zaktualizowano podstawę #ID (TYPE) z pliku: FILENAME"
                 const m = val.match(/podstaw[eę]\s+#(\d+)\s+\(([^)]+)\)\s+z\s+pliku:\s+(.+)$/);
                 if (!m) continue;
                 const [, baseIdStr, baseTyp, fileName] = m;
@@ -567,6 +574,18 @@ export default async function FdkForeignerPage({
                 const base = foreigner.employmentBases.find((b) => b.id === baseId);
                 const nr = base?.nrDecyzji || base?.nrOswiadczenia || base?.sygnatura || "";
                 if (nr) attachmentDocInfo.set(fileName.trim(), { typ: baseTyp, nr });
+              }
+              // Also check additional scrape logs fetched separately (beyond changeLogs take limit)
+              for (const log of scrapeLogs) {
+                const val = log.newValue ?? "";
+                const m = val.match(/podstaw[eę]\s+#(\d+)\s+\(([^)]+)\)\s+z\s+pliku:\s+(.+)$/);
+                if (!m) continue;
+                const fn = m[3].trim();
+                if (attachmentDocInfo.has(fn)) continue;
+                const baseId = parseInt(m[1], 10);
+                const base = foreigner.employmentBases.find((b) => b.id === baseId);
+                const nr = base?.nrDecyzji || base?.nrOswiadczenia || base?.sygnatura || "";
+                if (nr) attachmentDocInfo.set(fn, { typ: m[2], nr });
               }
 
               const groups = new Map<string, typeof foreigner.attachments>();

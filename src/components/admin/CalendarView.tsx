@@ -983,19 +983,38 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                 );
               })()}
 
-              {/* Events positioned on the grid */}
-              {dayTimedEvents.map((ev) => {
+              {/* Events positioned on the grid — offset overlapping events */}
+              {(() => {
+                const daySlotMap = new Map<number, typeof dayTimedEvents>();
+                for (const ev of dayTimedEvents) {
+                  const t = parseTime(ev.eventTime);
+                  if (t === null) continue;
+                  const hour = Math.floor(t);
+                  if (!daySlotMap.has(hour)) daySlotMap.set(hour, []);
+                  daySlotMap.get(hour)!.push(ev);
+                }
+                return dayTimedEvents.map((ev) => {
                 const time = parseTime(ev.eventTime);
                 if (time === null) return null;
                 const top = Math.max(0, (time - WEEK_HOURS_START) * HOUR_HEIGHT_PX);
                 const eventDuration = 1;
                 const height = eventDuration * HOUR_HEIGHT_PX - 2;
+                const hour = Math.floor(time);
+                const siblings = daySlotMap.get(hour) ?? [ev];
+                const colIdx = siblings.indexOf(ev);
+                const totalCols = siblings.length;
                 return (
                   <button
                     key={ev.id}
                     type="button"
                     className={`absolute z-20 rounded-lg border-l-4 px-3 py-2 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"} ${ev.done ? "opacity-50" : ""}`}
-                    style={{ top: `${top}px`, minHeight: `${height}px`, left: "68px", right: "8px" }}
+                    style={{
+                      top: `${top}px`,
+                      minHeight: `${height}px`,
+                      left: totalCols > 1 ? `calc(68px + (100% - 76px) * ${colIdx / totalCols})` : "68px",
+                      width: totalCols > 1 ? `calc((100% - 76px) / ${totalCols})` : undefined,
+                      right: totalCols <= 1 ? "8px" : undefined,
+                    }}
                     onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
                   >
                     <div className="flex items-center justify-between">
@@ -1026,7 +1045,8 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                     )}
                   </button>
                 );
-              })}
+              });
+              })()}
             </div>
           </div>
 
