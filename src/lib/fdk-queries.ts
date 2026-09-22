@@ -265,11 +265,16 @@ export function getCurrentEmploymentBasis<
  * Residence basis status for a foreigner.
  * Used by the list page filter and profile overview.
  */
-export type ResidenceStatus = "aktualna" | "wygasla" | "w_procedurze" | "brak";
+export type ResidenceStatus = "aktualna" | "aktualna_z_procedura" | "wygasla" | "w_procedurze" | "brak";
 
 /**
  * Compute residence basis status for a foreigner.
  * Logic mirrors the profile "Podstawy pobytowe" section.
+ *
+ * Priority: active residence document > "w procedurze" (UPO).
+ * When foreigner has BOTH a valid karta/wiza AND a pending UPO,
+ * return "aktualna_z_procedura" — valid doc is primary, procedure is secondary info.
+ * "w_procedurze" only when the existing document has expired.
  */
 export function computeResidenceStatus(foreigner: {
   decyzjaPobytowaDo: Date | null;
@@ -288,11 +293,16 @@ export function computeResidenceStatus(foreigner: {
     (b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE"
   );
 
-  // "W procedurze" takes priority if UPO is filed
-  if (hasUpo) return "w_procedurze";
+  const hasActiveDoc = kpActive || wizaActive || hasOchronaUkr || isEuCitizen;
 
-  // Active residence
-  if (kpActive || wizaActive || hasOchronaUkr || isEuCitizen) return "aktualna";
+  // Active document + pending procedure → active is primary
+  if (hasActiveDoc && hasUpo) return "aktualna_z_procedura";
+
+  // Active document, no procedure
+  if (hasActiveDoc) return "aktualna";
+
+  // No active document but procedure pending → procedure is primary
+  if (hasUpo) return "w_procedurze";
 
   // Expired — had something but it's past
   const kpExpired = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo < now;

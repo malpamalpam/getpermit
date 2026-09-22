@@ -1044,6 +1044,38 @@ export async function updateCalendarEventAction(
   return { ok: true };
 }
 
+/**
+ * Create a calendar reminder for a residence procedure status check.
+ */
+export async function createResidenceReminderAction(
+  foreignerId: number,
+  input: { reminderDate: string }
+): Promise<FdkResult> {
+  const user = await requireAdmin();
+  const foreigner = await db.fdkForeigner.findUnique({
+    where: { id: foreignerId },
+    select: { imie: true, nazwisko: true },
+  });
+  if (!foreigner) return { ok: false, error: "not_found" };
+
+  const name = `${foreigner.imie ?? ""} ${foreigner.nazwisko}`.trim();
+  await db.calendarEvent.create({
+    data: {
+      type: "OTHER",
+      title: `Sprawdź status procedury — ${name}`,
+      description: "Przypomnienie o aktualizację statusu pobytowego (stempel/procedura)",
+      eventDate: new Date(input.reminderDate),
+      foreignerId,
+      foreignerName: name,
+      createdById: user.id,
+    },
+  });
+
+  revalidatePath("/admin/kalendarz");
+  revalidateFdk(foreignerId);
+  return { ok: true };
+}
+
 export async function deleteCalendarEventAction(id: number): Promise<FdkResult> {
   await requireAdmin();
   await db.calendarEvent.delete({ where: { id } });

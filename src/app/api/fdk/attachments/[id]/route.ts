@@ -102,12 +102,22 @@ export async function GET(
     const buffer = await fileData.arrayBuffer();
     const isImage = ["jpeg", "jpg", "png"].includes(attachment.typPliku);
     let parsed;
-    if (isImage) {
-      // Images go directly to structured OCR extraction (Claude Vision)
-      const mediaType = attachment.typPliku === "png" ? "image/png" as const : "image/jpeg" as const;
-      parsed = await ocrExtractStructured(buffer, mediaType, attachment.nazwaPliku);
-    } else {
-      parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
+    try {
+      if (isImage) {
+        // Images go directly to structured OCR extraction (Claude Vision)
+        const mediaType = attachment.typPliku === "png" ? "image/png" as const : "image/jpeg" as const;
+        parsed = await ocrExtractStructured(buffer, mediaType, attachment.nazwaPliku);
+      } else {
+        parsed = await parseOswiadczeniePdf(buffer, { filename: attachment.nazwaPliku });
+      }
+    } catch (scrapeErr: unknown) {
+      const msg = scrapeErr instanceof Error ? scrapeErr.message : String(scrapeErr);
+      console.error(`[scrape] Error for attachment ${id}: ${msg}`);
+      return NextResponse.json({
+        error: `Blad przetwarzania pliku: ${msg}. Sprobuj ponownie lub wprowadz dane recznie.`,
+        manualEntryRequired: true,
+        ocrDiagnostic: "exception",
+      }, { status: 422 });
     }
 
     if (!parsed) {
@@ -143,9 +153,13 @@ export async function GET(
     // Check if document belongs to a different person
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
     const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
+    // Skip junk names: form labels ("Nazwisko Nadawcy"), country fragments ("Republiki Południowej")
+    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
+    const isJunkName = JUNK_NAME_RE.some((p) => p.test(extractedFullName));
     const isDifferentPerson = extractedFullName.length > 2
       && profileFullName.length > 2
       && foreigner.nazwisko !== "Nowy"
+      && !isJunkName
       && !namesMatch(extractedFullName, profileFullName);
 
     if (isDifferentPerson) {

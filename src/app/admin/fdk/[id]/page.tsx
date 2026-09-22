@@ -16,6 +16,7 @@ import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
 import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
 import { ResidenceBasesTab } from "@/components/admin/fdk/ResidenceBasesTab";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
+import { ResidenceReminderButton } from "@/components/admin/fdk/ResidenceReminderButton";
 import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -68,6 +69,40 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   OD_UK_WYSTAPIENIE: { label: "OD UK", cls: "bg-emerald-100 text-emerald-800" },
 };
 
+
+/** Map TRC base type to human-readable label for residence display */
+const TRC_LABELS: Record<string, string> = {
+  TRC_FDK: "TRC — FDK",
+  TRC_HUMANITARNE: "TRC — humanitarne",
+  TRC_POBYT_Z_CUDZ: "TRC — pobyt z cudzoziemcem",
+  TRC_MALZONEK_PL: "TRC — małżonek PL",
+  TRC_STUDIA: "TRC — studia",
+  TRC_ABSOLWENT: "TRC — absolwent",
+  TRC_DZIALALNOSC: "TRC — działalność",
+  TRC_BLUE_CARD: "Blue Card",
+  BLUE_CARD: "Blue Card",
+  KARTA_POBYTU: "TRC",
+};
+
+/**
+ * Derive the best TRC type label from employment bases.
+ * Falls back to typDokumentuPobytowego from foreigner profile, then "Karta pobytu".
+ */
+function getTrcLabel(
+  employmentBases: { typ: string; status: string; dataDo: Date | null }[],
+  typDokumentuPobytowego: string | null | undefined
+): string {
+  // Find the most recent active TRC base
+  const trcTypes = Object.keys(TRC_LABELS);
+  const trcBases = employmentBases
+    .filter((b) => trcTypes.includes(b.typ) && b.typ !== "KARTA_POBYTU")
+    .sort((a, b) => (b.dataDo?.getTime() ?? 0) - (a.dataDo?.getTime() ?? 0));
+  if (trcBases.length > 0) return TRC_LABELS[trcBases[0].typ] ?? "TRC";
+  // Fallback to legacy KARTA_POBYTU bases
+  const kpBases = employmentBases.filter((b) => b.typ === "KARTA_POBYTU");
+  if (kpBases.length > 0 && typDokumentuPobytowego) return typDokumentuPobytowego;
+  return typDokumentuPobytowego || "Karta pobytu";
+}
 
 function fmt(d: Date | null | undefined): string {
   if (!d) return "—";
@@ -145,19 +180,9 @@ export default async function FdkForeignerPage({
             )}
             {(() => {
               const rs = computeResidenceStatus(foreigner);
-              if (rs === "w_procedurze") {
-                const uwLabel = foreigner.upoUwagi?.toLowerCase() ?? "";
-                const procLabel = uwLabel.includes("stempel") ? "W procedurze — stempel"
-                  : uwLabel.includes("cukr") ? "W procedurze — CUKR"
-                  : "W procedurze — przedłużenie TRC";
-                return (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
-                    <Shield className="h-3 w-3" /> {procLabel}
-                    {foreigner.upoDoreczone && <>, złożono {fmt(foreigner.upoDoreczone)}</>}
-                  </span>
-                );
-              }
-              if (rs === "aktualna") {
+
+              // Helper: render the active document badge
+              const renderActiveDoc = () => {
                 const isEu = foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
                 if (foreigner.ochronaCzasowaUkr) {
                   return (
@@ -176,13 +201,41 @@ export default async function FdkForeignerPage({
                 const activeDate = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now
                   ? foreigner.decyzjaPobytowaDo
                   : foreigner.wizaDo && foreigner.wizaDo >= now ? foreigner.wizaDo : null;
-                const docLabel = foreigner.wizaDo && foreigner.wizaDo >= now && !(foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now)
-                  ? "Wiza ważna" : "Karta pobytu ważna";
+                const isWiza = foreigner.wizaDo && foreigner.wizaDo >= now && !(foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now);
+                const docLabel = isWiza
+                  ? "Wiza ważna"
+                  : `${getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)} ważna`;
                 return (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
                     <Shield className="h-3 w-3" /> {docLabel}{activeDate && <> do {fmt(activeDate)}</>}
                   </span>
                 );
+              };
+
+              if (rs === "aktualna_z_procedura") {
+                return (
+                  <>
+                    {renderActiveDoc()}
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                      wniosek w procedurze{foreigner.upoDoreczone && <> od {fmt(foreigner.upoDoreczone)}</>}
+                    </span>
+                  </>
+                );
+              }
+              if (rs === "w_procedurze") {
+                const uwLabel = foreigner.upoUwagi?.toLowerCase() ?? "";
+                const procLabel = uwLabel.includes("stempel") ? "W procedurze — stempel"
+                  : uwLabel.includes("cukr") ? "W procedurze — CUKR"
+                  : "W procedurze — przedłużenie TRC";
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                    <Shield className="h-3 w-3" /> {procLabel}
+                    {foreigner.upoDoreczone && <>, złożono {fmt(foreigner.upoDoreczone)}</>}
+                  </span>
+                );
+              }
+              if (rs === "aktualna") {
+                return renderActiveDoc();
               }
               if (rs === "wygasla") {
                 return (
@@ -277,7 +330,7 @@ export default async function FdkForeignerPage({
                           <div className="flex items-start justify-between">
                             <div>
                               <div className="font-semibold text-blue-800">
-                                Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                                {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)}
                               </div>
                               <div className="text-blue-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
                             </div>
@@ -295,7 +348,7 @@ export default async function FdkForeignerPage({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-red-800">
-                                  Karta pobytu{foreigner.typDokumentuPobytowego ? ` (${foreigner.typDokumentuPobytowego})` : ""}
+                                  {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)}
                                 </span>
                                 <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">WYGASŁA</span>
                               </div>
@@ -326,7 +379,10 @@ export default async function FdkForeignerPage({
                                 <div className="text-amber-700">Wniosek doręczony: {fmt(foreigner.upoDoreczone)}</div>
                                 {foreigner.upoUwagi && <div className="mt-1 text-xs text-amber-600">{foreigner.upoUwagi}</div>}
                               </div>
-                              <ResidenceBasisActions foreignerId={foreigner.id} basisType="upo" currentDate={foreigner.upoDoreczone?.toISOString().slice(0, 10)} currentNote={foreigner.upoUwagi ?? undefined} />
+                              <div className="flex items-center gap-1">
+                                <ResidenceReminderButton foreignerId={foreigner.id} />
+                                <ResidenceBasisActions foreignerId={foreigner.id} basisType="upo" currentDate={foreigner.upoDoreczone?.toISOString().slice(0, 10)} currentNote={foreigner.upoUwagi ?? undefined} />
+                              </div>
                             </div>
                           </div>
                         );
@@ -498,6 +554,21 @@ export default async function FdkForeignerPage({
               <p className="py-12 text-center text-primary/40">Brak załączników</p>
             )}
             {(() => {
+              // Build map: attachment filename → scraped document info (type + nr)
+              const attachmentDocInfo = new Map<string, { typ: string; nr: string }>();
+              for (const log of foreigner.changeLogs) {
+                if (log.field !== "scrape") continue;
+                const val = log.newValue ?? "";
+                // "Utworzono/Zaktualizowano podstawę #ID (TYPE) z pliku: FILENAME"
+                const m = val.match(/podstaw[eę]\s+#(\d+)\s+\(([^)]+)\)\s+z\s+pliku:\s+(.+)$/);
+                if (!m) continue;
+                const [, baseIdStr, baseTyp, fileName] = m;
+                const baseId = parseInt(baseIdStr, 10);
+                const base = foreigner.employmentBases.find((b) => b.id === baseId);
+                const nr = base?.nrDecyzji || base?.nrOswiadczenia || base?.sygnatura || "";
+                if (nr) attachmentDocInfo.set(fileName.trim(), { typ: baseTyp, nr });
+              }
+
               const groups = new Map<string, typeof foreigner.attachments>();
               for (const a of foreigner.attachments) {
                 const list = groups.get(a.kategoria) ?? [];
@@ -528,6 +599,19 @@ export default async function FdkForeignerPage({
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
+                          {(() => {
+                            const docInfo = attachmentDocInfo.get(f.nazwaPliku);
+                            if (docInfo) {
+                              const badge = TYPE_BADGES[docInfo.typ];
+                              return (
+                                <p className="mt-0.5 flex items-center gap-1.5 text-xs text-primary/60">
+                                  {badge && <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${badge.cls}`}>{badge.label}</span>}
+                                  <span className="font-mono">{docInfo.nr}</span>
+                                </p>
+                              );
+                            }
+                            return null;
+                          })()}
                           {f.opis && (
                             <p className={`mt-0.5 text-xs ${f.opis.startsWith("\u26a0") ? "font-semibold text-amber-600" : "text-primary/50"}`}>
                               {f.opis}

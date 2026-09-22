@@ -161,6 +161,50 @@ function namesMatchTokens(extractedName, profileName) {
   return matchCount > 0;
 }
 
+// ==================== JUNK NAME DETECTION ====================
+
+/**
+ * Detect OCR-hallucinated "names" that are actually form labels,
+ * country names, or other non-person strings.
+ * Returns true if the extracted name is junk and should be ignored.
+ */
+const JUNK_NAME_PATTERNS = [
+  // Form labels
+  /nazwisk\w*\s+nadawc/i,        // "Nazwisko Nadawcy"
+  /imi[eę]\s+i?\s*nazwisk/i,     // "Imię i Nazwisko"
+  /nadawc[aey]/i,                 // "Nadawca"
+  /podpis\s+osoby/i,             // "Podpis osoby"
+  /pe[lł]nomocnik/i,             // "Pełnomocnik" (but not a person name)
+  /adresat/i,                     // "Adresat"
+  /wnioskodawc/i,                 // "Wnioskodawca"
+  /cudzoziemiec/i,                // "Cudzoziemiec"
+  /strona\s+post[eę]powan/i,     // "Strona postępowania"
+  // Country names / adjectives
+  /^republik/i,
+  /po[łl]udniow/i,               // "Południowej"
+  /federacj/i,                   // "Federacji"
+  /rosyjsk/i,
+  /rzeczpospolit/i,
+  // Generic junk
+  /^nr\s+/i,                     // "Nr dokumentu"
+  /^data\s+/i,                   // "Data wydania"
+  /organ\s+wydaj/i,              // "Organ wydający"
+];
+
+function isJunkExtractedName(name) {
+  if (!name || name.length < 3) return true;
+  // Too short to be a real name
+  const words = name.trim().split(/\s+/);
+  if (words.length === 1 && words[0].length < 3) return true;
+  // Match against junk patterns
+  for (const pat of JUNK_NAME_PATTERNS) {
+    if (pat.test(name)) return true;
+  }
+  // All-uppercase single word that looks like a label (e.g. "NADAWCA", "ADRESAT")
+  if (words.length === 1 && name === name.toUpperCase() && name.length > 5) return true;
+  return false;
+}
+
 // ==================== TRC SUBTYPE CLASSIFIER ====================
 
 /** Work-permit base types */
@@ -579,7 +623,7 @@ async function processAttachment(att, mode, foreigner) {
     // Step 3: Name match — pelnomocnik != strona
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
     const KNOWN_AGENTS = ["stanko", "antoshka", "glapinska", "glapińska", "lytvynchuk"];
-    if (extractedFullName.length > 2 && personName.length > 2 && foreigner.nazwisko !== "Nowy") {
+    if (extractedFullName.length > 2 && personName.length > 2 && foreigner.nazwisko !== "Nowy" && !isJunkExtractedName(extractedFullName)) {
       if (!namesMatchTokens(extractedFullName, personName)) {
         // Check if it's a known agent (pelnomocnik) — if so, document belongs to the foreigner
         const isAgent = KNOWN_AGENTS.some(a => extractedFullName.toLowerCase().includes(a));

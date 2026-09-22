@@ -46,6 +46,65 @@ const concIdx = args.indexOf("--concurrency");
 const SCRAPE_CONCURRENCY = concIdx >= 0 ? parseInt(args[concIdx + 1], 10) : 2;
 const batchIdx = args.indexOf("--batch");
 const BATCH_NAME = batchIdx >= 0 ? args[batchIdx + 1] : "A";
+const lettersIdx = args.indexOf("--letters");
+const LETTERS_FILTER = lettersIdx >= 0 ? args[lettersIdx + 1].toUpperCase().split("").filter(Boolean) : null;
+
+// ==================== NON-PERSON DIRECTORIES (skip) ====================
+
+const SKIP_DIRS = new Set([
+  "hasła inpol", "tłumaczenia", "wp 2024", "nowy folder", "nowy folder (2)",
+  "nowy test", "pobrane pliki -viki", "podrane pliki -viki",
+].map((s) => s.toLowerCase()));
+
+function isNonPersonDir(dirName) {
+  return SKIP_DIRS.has(dirName.toLowerCase().trim());
+}
+
+/** Folders with incomplete names that can't be matched automatically → "do decyzji". */
+const DO_DECYZJI_DIRS = new Set(["julia_"].map((s) => s.toLowerCase()));
+
+function isDoDecyzjiDir(dirName) {
+  return DO_DECYZJI_DIRS.has(dirName.toLowerCase().trim());
+}
+
+// ==================== DUPLICATE PAIRS (merge to one profile) ====================
+
+/** Map of variant folder name → canonical folder name (lowercase). Both map to the same profile. */
+const MERGE_PAIRS = [
+  ["enma_ eunice", "enma_ eunice_diaz_suarez"],
+  ["loika_kseniya", "loiko_kseniya"],
+  ["pranevich_aleksandr", "pranevich_aliaksandr"],
+  ["shapialevich_mikhail", "szapialevich_mikhail"],
+  ["hrudski_siarhei", "siarhei hrudski"],
+  ["solovev_sergei", "sergei solovev"],
+  ["sumpter-reynolds lawrence", "lawrence joseph sumpter-reynolds"],
+  ["skavets_natallia", "sakavets_natallia"],
+];
+
+// Build lookup: lowercased folder name → canonical (first of pair)
+const MERGE_MAP = new Map();
+for (const [a, b] of MERGE_PAIRS) {
+  MERGE_MAP.set(a.toLowerCase(), a.toLowerCase());
+  MERGE_MAP.set(b.toLowerCase(), a.toLowerCase());
+}
+
+// ==================== FOLDER NAME CLEANUP ====================
+
+/**
+ * Strip annotations from folder names before parsing as person name.
+ * Handles: parenthetical notes, "Work Permit do końca roku", "pracownik X", etc.
+ */
+function cleanFolderName(raw) {
+  let name = raw;
+  // Remove parenthetical annotations: "(pracownik ...)", "(Rudaya)", "(Lenette)"
+  name = name.replace(/\s*\([^)]*\)\s*/g, " ");
+  // Remove trailing work permit / employment notes
+  name = name.replace(/\s*[-–—]\s*Work\s+Permit.*$/i, "");
+  name = name.replace(/\s*Work\s+Permit\s+do\s+.*$/i, "");
+  // Remove trailing "- " notes after the name
+  name = name.replace(/\s*-\s+\w+\s+permit\b.*$/i, "");
+  return name.trim();
+}
 
 // ==================== FILE CLASSIFICATION ====================
 
@@ -107,15 +166,16 @@ function nameKey(tokens) {
  *             format ze spacją → pierwszy token=imie, ostatni=nazwisko
  */
 function parseFolderName(folderName) {
-  if (folderName.includes("_")) {
-    const parts = folderName.split("_").filter(Boolean);
+  const cleaned = cleanFolderName(folderName);
+  if (cleaned.includes("_")) {
+    const parts = cleaned.split("_").filter(Boolean);
     return {
       nazwisko: parts[0],
       imie: parts.slice(1).join(" ") || null,
     };
   }
   // Space-separated: "Imie Nazwisko" or "Imie1 Imie2 Nazwisko"
-  const parts = folderName.split(/\s+/).filter(Boolean);
+  const parts = cleaned.split(/\s+/).filter(Boolean);
   if (parts.length === 1) {
     return { nazwisko: parts[0], imie: null };
   }
@@ -126,6 +186,9 @@ function parseFolderName(folderName) {
 }
 
 // ==================== FILE WALKING ====================
+
+/** Subdirectory names to skip inside person folders (backup copies of the main folder). */
+const WALK_SKIP_SUBDIRS = new Set(["cudzoziemcy"]);
 
 function walkDir(dir) {
   const results = [];
@@ -138,6 +201,10 @@ function walkDir(dir) {
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (WALK_SKIP_SUBDIRS.has(entry.name.toLowerCase())) {
+        console.log(`    [SKIP SUBDIR] ${full} (kopia folderu głównego)`);
+        continue;
+      }
       results.push(...walkDir(full));
     } else {
       results.push(full);
@@ -250,6 +317,10 @@ async function main() {
   if (ONLY_FOLDERS) {
     personDirs = personDirs.filter((d) => ONLY_FOLDERS.some((f) => d === f || d.toLowerCase() === f.toLowerCase()));
   }
+  if (LETTERS_FILTER) {
+    personDirs = personDirs.filter((d) => LETTERS_FILTER.includes(d.charAt(0).toUpperCase()));
+    console.log(`Filtr liter: ${LETTERS_FILTER.join(", ")} → ${personDirs.length} folderow`);
+  }
 
   console.log(`Katalogow osob: ${personDirs.length}\n`);
 
@@ -282,14 +353,52 @@ async function main() {
     attachmentDedup.add(`${a.foreignerId}|${a.nazwaPliku}|${a.rozmiarBytes}`);
   }
 
+  // Track merge pair folders → process files into same foreigner
+  const mergeProcessed = new Map(); // canonical key → foreignerId
+
   for (const personDir of personDirs) {
+    // Skip non-person directories
+    if (isNonPersonDir(personDir)) {
+      console.log(`\n--- ${personDir} --- POMINIĘTY (katalog nieosobowy)`);
+      report.push({
+        osoba: personDir,
+        profil: "pominiety-nieosobowy",
+        plik: "",
+        kategoria: "",
+        scrape: "",
+        typDokumentu: "",
+        uwagi: "Katalog nieosobowy — pominięty",
+      });
+      summary.skipped++;
+      continue;
+    }
+
+    // Skip "do decyzji" directories (incomplete names, can't match)
+    if (isDoDecyzjiDir(personDir)) {
+      console.log(`\n--- ${personDir} --- DO DECYZJI (niekompletna nazwa — brak nazwiska)`);
+      report.push({
+        osoba: personDir,
+        profil: "do-decyzji",
+        plik: "",
+        kategoria: "",
+        scrape: "",
+        typDokumentu: "",
+        uwagi: "Brak nazwiska w nazwie katalogu — dopasowanie ręczne",
+      });
+      summary.skipped++;
+      continue;
+    }
+
     const personPath = path.join(sourceDir, personDir);
     const parsed = parseFolderName(personDir);
     const folderTokens = normalizeNameTokens(`${parsed.imie ?? ""} ${parsed.nazwisko}`.trim());
     const key = nameKey(folderTokens);
 
+    // Check merge pair — if this folder's pair partner was already processed, reuse that foreignerId
+    const mergeCanonical = MERGE_MAP.get(personDir.toLowerCase());
+
     console.log(`\n--- ${personDir} ---`);
-    console.log(`  Parsed: imie="${parsed.imie}", nazwisko="${parsed.nazwisko}", key="${key}"`);
+    console.log(`  Parsed: imie="${parsed.imie}", nazwisko="${parsed.nazwisko}", key="${key}"${mergeCanonical ? ` (merge pair → ${mergeCanonical})` : ""}`);
 
     // Match: first exact, then subset (folder tokens ⊂ DB tokens or DB tokens ⊂ folder tokens)
     let matches = foreignerMap.get(key) || [];
@@ -312,7 +421,13 @@ async function main() {
     let foreignerId = null;
     let profileStatus = "";
 
-    if (matches.length === 1) {
+    // Merge pair: if partner already processed, reuse that foreignerId
+    if (mergeCanonical && mergeProcessed.has(mergeCanonical)) {
+      foreignerId = mergeProcessed.get(mergeCanonical);
+      profileStatus = "scalony-duplikat";
+      summary.matched++;
+      console.log(`  SCALONY z partnerem → id=${foreignerId}`);
+    } else if (matches.length === 1) {
       foreignerId = matches[0].id;
       profileStatus = "istniejacy";
       summary.matched++;
@@ -371,6 +486,11 @@ async function main() {
 
         console.log(`  UTWORZONO profil: id=${foreignerId} — ZWERYFIKOWAĆ IMIĘ/NAZWISKO`);
       }
+    }
+
+    // Track merge pair foreignerId for partner folder
+    if (mergeCanonical && foreignerId) {
+      mergeProcessed.set(mergeCanonical, foreignerId);
     }
 
     // Collect files
@@ -788,7 +908,9 @@ async function scrapeViaDb(attachmentId) {
   // Check if document belongs to a different person
   const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
   const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
-  if (extractedFullName.length > 2 && profileFullName.length > 2 && foreigner.nazwisko !== "Nowy") {
+  const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
+  const isJunkName = JUNK_NAME_RE.some((p) => p.test(extractedFullName));
+  if (extractedFullName.length > 2 && profileFullName.length > 2 && foreigner.nazwisko !== "Nowy" && !isJunkName) {
     const eTokens = normalizeNameTokens(extractedFullName);
     const pTokens = normalizeNameTokens(profileFullName);
     let matchCount = 0;

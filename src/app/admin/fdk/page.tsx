@@ -16,6 +16,7 @@ const VALID_PER_PAGE = [50, 100, 200];
 
 const RESIDENCE_BADGES: Record<ResidenceStatus, { label: string; cls: string }> = {
   aktualna: { label: "Aktualna", cls: "bg-green-100 text-green-800" },
+  aktualna_z_procedura: { label: "Aktualna + procedura", cls: "bg-green-100 text-green-800" },
   wygasla: { label: "Wygasła", cls: "bg-red-100 text-red-800" },
   w_procedurze: { label: "W procedurze", cls: "bg-amber-100 text-amber-800" },
   brak: { label: "Brak", cls: "bg-gray-100 text-gray-500" },
@@ -121,7 +122,13 @@ export default async function FdkPage({
   // Residence filter (app-level — computed from multiple fields)
   if (pobytFilter) {
     foreigners = foreigners.filter((f) => {
-      try { return computeResidenceStatus(f) === pobytFilter; } catch { return false; }
+      try {
+        const rs = computeResidenceStatus(f);
+        if (rs === pobytFilter) return true;
+        // "aktualna_z_procedura" matches both "aktualna" and "w_procedurze" filters
+        if (rs === "aktualna_z_procedura") return pobytFilter === "aktualna" || pobytFilter === "w_procedurze";
+        return false;
+      } catch { return false; }
     });
   }
 

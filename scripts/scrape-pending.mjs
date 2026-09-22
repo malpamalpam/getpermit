@@ -600,7 +600,10 @@ async function processAttachment(att, mode) {
 
     // Step 3: Name match check
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
-    if (extractedFullName.length > 2 && personName.length > 2 && att.foreigner.nazwisko !== "Nowy") {
+    // Skip junk names: form labels ("Nazwisko Nadawcy"), country fragments ("Republiki Południowej")
+    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
+    const isJunkName = JUNK_NAME_RE.some((p) => p.test(extractedFullName));
+    if (extractedFullName.length > 2 && personName.length > 2 && att.foreigner.nazwisko !== "Nowy" && !isJunkName) {
       if (!namesMatchTokens(extractedFullName, personName)) {
         // Different person!
         await db.fdkAttachment.update({

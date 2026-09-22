@@ -166,15 +166,21 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {hiddenCount > 0 && !showAll && (
-            <button
-              type="button"
-              onClick={() => setShowAll(true)}
-              className="text-xs text-accent hover:underline"
-            >
-              Pokaż wszystkie ({bases.length}) — ukrytych: {hiddenCount} (wchłonięte/nieaktywne)
-            </button>
-          )}
+          {hiddenCount > 0 && !showAll && (() => {
+            const hiddenUa = bases.filter((b) =>
+              (b.typ === "ZGLOSZENIE_UA" || b.typ === "POWIADOMIENIE_UA") && !visibleBases.includes(b)
+            ).length;
+            const uaNote = hiddenUa > 0 ? `, w tym ${hiddenUa} powiadomień UA` : "";
+            return (
+              <button
+                type="button"
+                onClick={() => setShowAll(true)}
+                className="text-xs text-accent hover:underline"
+              >
+                Pokaż wszystkie ({bases.length}) — ukrytych: {hiddenCount} (wchłonięte/nieaktywne{uaNote})
+              </button>
+            );
+          })()}
           {showAll && hiddenCount > 0 && (
             <button
               type="button"

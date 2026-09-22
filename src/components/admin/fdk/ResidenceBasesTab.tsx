@@ -11,6 +11,30 @@ interface ForeignerResidence {
   upoDoreczone: Date | null;
   upoUwagi: string | null;
   ochronaCzasowaUkr: boolean;
+  employmentBases?: { typ: string; status: string; dataDo: Date | null }[];
+}
+
+const TRC_LABELS: Record<string, string> = {
+  TRC_FDK: "TRC — FDK",
+  TRC_HUMANITARNE: "TRC — humanitarne",
+  TRC_POBYT_Z_CUDZ: "TRC — pobyt z cudzoziemcem",
+  TRC_MALZONEK_PL: "TRC — małżonek PL",
+  TRC_STUDIA: "TRC — studia",
+  TRC_ABSOLWENT: "TRC — absolwent",
+  TRC_DZIALALNOSC: "TRC — działalność",
+  TRC_BLUE_CARD: "Blue Card",
+  BLUE_CARD: "Blue Card",
+  KARTA_POBYTU: "TRC",
+};
+
+function deriveTrcLabel(bases: ForeignerResidence["employmentBases"], fallback: string | null): string {
+  if (!bases || bases.length === 0) return fallback || "Karta pobytu";
+  const trcTypes = Object.keys(TRC_LABELS);
+  const trcBases = bases
+    .filter((b) => trcTypes.includes(b.typ) && b.typ !== "KARTA_POBYTU")
+    .sort((a, b) => (b.dataDo?.getTime() ?? 0) - (a.dataDo?.getTime() ?? 0));
+  if (trcBases.length > 0) return TRC_LABELS[trcBases[0].typ] ?? "TRC";
+  return fallback || "Karta pobytu";
 }
 
 function fmt(d: Date | null | undefined): string {
@@ -41,7 +65,7 @@ function buildCards(f: ForeignerResidence): ResidenceCard[] {
     const isActive = d >= today;
     cards.push({
       basisType: "karta",
-      type: f.typDokumentuPobytowego || "Karta pobytu",
+      type: deriveTrcLabel(f.employmentBases, f.typDokumentuPobytowego),
       period: `do ${fmt(f.decyzjaPobytowaDo)}`,
       details: f.typDokumentuPobytowego && f.typDokumentuPobytowego !== "Karta pobytu" ? "" : "",
       status: isActive

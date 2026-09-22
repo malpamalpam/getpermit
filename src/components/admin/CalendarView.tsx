@@ -830,19 +830,37 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                       );
                     })()}
 
-                    {/* Events positioned on the grid */}
-                    {dayEvents.map((ev) => {
+                    {/* Events positioned on the grid — offset overlapping events */}
+                    {(() => {
+                      // Group events by start hour to detect overlaps
+                      const slotMap = new Map<number, typeof dayEvents>();
+                      for (const ev of dayEvents) {
+                        const t = parseTime(ev.eventTime);
+                        if (t === null) continue;
+                        const hour = Math.floor(t);
+                        if (!slotMap.has(hour)) slotMap.set(hour, []);
+                        slotMap.get(hour)!.push(ev);
+                      }
+                      return dayEvents.map((ev) => {
                       const time = parseTime(ev.eventTime);
                       if (time === null) return null;
                       const top = Math.max(0, (time - WEEK_HOURS_START) * HOUR_HEIGHT_PX);
-                      const eventDuration = 1; // default 1 hour
+                      const eventDuration = 1;
                       const height = eventDuration * HOUR_HEIGHT_PX - 2;
+                      // Calculate horizontal offset for overlapping events
+                      const hour = Math.floor(time);
+                      const siblings = slotMap.get(hour) ?? [ev];
+                      const colIndex = siblings.indexOf(ev);
+                      const totalCols = siblings.length;
+                      const colWidthPct = totalCols > 1 ? 100 / totalCols : 100;
+                      const leftPct = totalCols > 1 ? colIndex * colWidthPct : 0;
+                      const rightPct = totalCols > 1 ? 100 - (colIndex + 1) * colWidthPct : 0;
                       return (
                         <button
                           key={ev.id}
                           type="button"
-                          className={`absolute left-0.5 right-0.5 z-20 rounded border-l-[3px] px-1.5 py-1 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"} ${ev.done ? "opacity-50" : ""}`}
-                          style={{ top: `${top}px`, minHeight: `${height}px` }}
+                          className={`absolute z-20 rounded border-l-[3px] px-1.5 py-1 text-left overflow-hidden cursor-pointer transition-shadow hover:shadow-md ${TYPE_BORDER_COLORS[ev.type] ?? "border-l-gray-500"} ${TYPE_BG_LIGHT[ev.type] ?? "bg-gray-50 hover:bg-gray-100"} ${ev.done ? "opacity-50" : ""}`}
+                          style={{ top: `${top}px`, minHeight: `${height}px`, left: `${leftPct}%`, right: `${rightPct}%` }}
                           onClick={(e) => { e.stopPropagation(); startEditById(ev.id); }}
                           title={`${ev.title}${ev.done ? " ✓ DONE" : ""} — kliknij aby edytować`}
                         >
@@ -857,7 +875,8 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                           )}
                         </button>
                       );
-                    })}
+                    });
+                    })()}
                   </div>
                 );
               })}
