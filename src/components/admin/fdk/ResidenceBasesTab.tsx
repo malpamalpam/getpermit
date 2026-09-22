@@ -73,7 +73,7 @@ function buildCards(f: ForeignerResidence): ResidenceCard[] {
       type: "W procedurze",
       period: `złożono ${fmt(f.upoDoreczone)}`,
       details: f.upoUwagi || "",
-      status: { label: "W procedurze", cls: "bg-amber-100 text-amber-800" },
+      status: { label: "Aktualna", cls: "bg-amber-100 text-amber-800" },
       date: f.upoDoreczone.toISOString().slice(0, 10),
       note: f.upoUwagi ?? undefined,
     });

@@ -195,11 +195,16 @@ export default async function FdkForeignerPage({
               return null;
             })()}
             {(() => {
-              const best = getCurrentEmploymentBasis(foreigner.employmentBases);
-              if (best?.status === "NIEAKTYWNE" && best.dataZakPracy) {
+              const activeBasis = getCurrentEmploymentBasis(foreigner.employmentBases);
+              if (activeBasis) return null; // has active employment — no "zakończył pracę"
+              // Find most recent NIEAKTYWNE base with dataZakPracy
+              const ended = foreigner.employmentBases
+                .filter((b) => b.status === "NIEAKTYWNE" && b.dataZakPracy)
+                .sort((a, b) => (b.dataZakPracy!.getTime() - a.dataZakPracy!.getTime()));
+              if (ended.length > 0) {
                 return (
                   <span className="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2.5 py-0.5 text-xs font-semibold text-gray-700">
-                    Zakończył pracę {fmt(best.dataZakPracy)}
+                    Zakończył pracę {fmt(ended[0].dataZakPracy)}
                   </span>
                 );
               }
@@ -387,17 +392,30 @@ export default async function FdkForeignerPage({
                 <div className="flex flex-wrap gap-1.5">
                   {(() => {
                     const best = getCurrentEmploymentBasis(foreigner.employmentBases);
-                    if (!best) return <span className="text-sm text-primary/40">Brak</span>;
-                    const badge = TYPE_BADGES[best.typ];
-                    return (
-                      <div className="flex items-center gap-2">
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badge?.cls ?? "bg-gray-100"}`}>
-                          {badge?.label ?? best.typ}
+                    if (best) {
+                      const badge = TYPE_BADGES[best.typ];
+                      return (
+                        <div className="flex items-center gap-2">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badge?.cls ?? "bg-gray-100"}`}>
+                            {badge?.label ?? best.typ}
+                          </span>
+                          {best.stanowisko && <span className="text-xs text-primary/60">{best.stanowisko}</span>}
+                          {best.dataDo && <span className="text-xs text-primary/40">do {fmt(best.dataDo)}</span>}
+                        </div>
+                      );
+                    }
+                    // No active basis — check for "Zakończył pracę"
+                    const ended = foreigner.employmentBases
+                      .filter((b) => b.status === "NIEAKTYWNE" && b.dataZakPracy)
+                      .sort((a, b) => (b.dataZakPracy!.getTime() - a.dataZakPracy!.getTime()));
+                    if (ended.length > 0) {
+                      return (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                          Zakończył pracę {fmt(ended[0].dataZakPracy)}
                         </span>
-                        {best.stanowisko && <span className="text-xs text-primary/60">{best.stanowisko}</span>}
-                        {best.dataDo && <span className="text-xs text-primary/40">do {fmt(best.dataDo)}</span>}
-                      </div>
-                    );
+                      );
+                    }
+                    return <span className="text-sm text-primary/40">Brak</span>;
                   })()}
                 </div>
                 <div className="text-sm text-primary/60">Załączniki: {foreigner.attachments.length}</div>

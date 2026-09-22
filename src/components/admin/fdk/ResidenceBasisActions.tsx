@@ -59,15 +59,33 @@ export function ResidenceBasisActions({
   });
   const [dataOd, setDataOd] = useState("");
   const [dataDo, setDataDo] = useState(currentDate ?? "");
-  const [uwagi, setUwagi] = useState(currentNote ?? "");
+
+  // Parse structured note: "nrDokumentu | urzad | free-text uwagi"
+  const [nrDokumentu, setNrDokumentu] = useState(() => {
+    const parts = (currentNote ?? "").split("|").map((s) => s.trim());
+    return parts.length >= 3 ? parts[0] : "";
+  });
+  const [urzadWojewoda, setUrzadWojewoda] = useState(() => {
+    const parts = (currentNote ?? "").split("|").map((s) => s.trim());
+    return parts.length >= 3 ? parts[1] : "";
+  });
+  const [uwagi, setUwagi] = useState(() => {
+    const parts = (currentNote ?? "").split("|").map((s) => s.trim());
+    return parts.length >= 3 ? parts.slice(2).join(" | ") : (currentNote ?? "");
+  });
 
   const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
+      // Compose structured note: "nrDokumentu | urzad | uwagi"
+      const parts = [nrDokumentu.trim(), urzadWojewoda.trim(), uwagi.trim()];
+      const hasStructured = parts[0] || parts[1];
+      const composedNote = hasStructured ? parts.join(" | ") : uwagi.trim();
+
       const result = await editResidenceBasisAction(foreignerId, {
         basisType,
         date: dataDo || dataOd,
-        note: uwagi || undefined,
+        note: composedNote || undefined,
       });
       if (result.ok) {
         setMode("view");
@@ -144,9 +162,20 @@ export function ResidenceBasisActions({
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Nr dokumentu / karty</label>
+              <input value={nrDokumentu} onChange={(e) => setNrDokumentu(e.target.value)} className={inputCls} placeholder="np. AB 1234567" />
+            </div>
+            <div>
+              <label className={labelCls}>Urząd / wojewoda</label>
+              <input value={urzadWojewoda} onChange={(e) => setUrzadWojewoda(e.target.value)} className={inputCls} placeholder="np. Wojewoda Mazowiecki" />
+            </div>
+          </div>
+
           <div>
             <label className={labelCls}>Uwagi / komentarz</label>
-            <textarea value={uwagi} onChange={(e) => setUwagi(e.target.value)} className={inputCls} rows={3} placeholder="Nr dokumentu, urząd, wojewoda, uwagi..." />
+            <textarea value={uwagi} onChange={(e) => setUwagi(e.target.value)} className={inputCls} rows={2} placeholder="Dodatkowe uwagi..." />
           </div>
         </div>
 
