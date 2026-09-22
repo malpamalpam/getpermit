@@ -563,29 +563,22 @@ export default async function FdkForeignerPage({
               // Build map: attachment filename → scraped document info (type + nr)
               // Use employment bases directly — match by sourceAttachmentId or by changelog
               const attachmentDocInfo = new Map<string, { typ: string; nr: string }>();
-              // First: direct match via changelogs (unlimited scrape logs)
-              for (const log of foreigner.changeLogs) {
-                if (log.field !== "scrape") continue;
-                const val = log.newValue ?? "";
-                const m = val.match(/podstaw[eę]\s+#(\d+)\s+\(([^)]+)\)\s+z\s+pliku:\s+(.+)$/);
-                if (!m) continue;
-                const [, baseIdStr, baseTyp, fileName] = m;
-                const baseId = parseInt(baseIdStr, 10);
-                const base = foreigner.employmentBases.find((b) => b.id === baseId);
-                const nr = base?.nrDecyzji || base?.nrOswiadczenia || base?.sygnatura || "";
-                if (nr) attachmentDocInfo.set(fileName.trim(), { typ: baseTyp, nr });
-              }
-              // Also check additional scrape logs fetched separately (beyond changeLogs take limit)
-              for (const log of scrapeLogs) {
+              // Match from all scrape logs (dedicated query, no limit)
+              const allScrapeSources = [...foreigner.changeLogs.filter(l => l.field === "scrape"), ...scrapeLogs];
+              const seenFiles = new Set<string>();
+              for (const log of allScrapeSources) {
                 const val = log.newValue ?? "";
                 const m = val.match(/podstaw[eę]\s+#(\d+)\s+\(([^)]+)\)\s+z\s+pliku:\s+(.+)$/);
                 if (!m) continue;
                 const fn = m[3].trim();
-                if (attachmentDocInfo.has(fn)) continue;
+                if (seenFiles.has(fn)) continue;
+                seenFiles.add(fn);
                 const baseId = parseInt(m[1], 10);
+                const baseTyp = m[2];
                 const base = foreigner.employmentBases.find((b) => b.id === baseId);
                 const nr = base?.nrDecyzji || base?.nrOswiadczenia || base?.sygnatura || "";
-                if (nr) attachmentDocInfo.set(fn, { typ: m[2], nr });
+                // Show type badge even without nr; show nr if available
+                attachmentDocInfo.set(fn, { typ: baseTyp, nr });
               }
 
               const groups = new Map<string, typeof foreigner.attachments>();

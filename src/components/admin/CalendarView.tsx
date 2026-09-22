@@ -689,7 +689,7 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                         <button
                           key={`exp-${i}`}
                           type="button"
-                          onClick={(e) => { e.stopPropagation(); if (exp.baseId) { setNoteExpiry(exp); setNoteText(expiryNotes[exp.baseId] ?? ""); } }}
+                          onClick={(e) => { e.stopPropagation(); setNoteExpiry(exp); setNoteText(exp.baseId ? (expiryNotes[exp.baseId] ?? "") : ""); }}
                           className={`truncate rounded px-1.5 py-1 text-[11px] font-medium text-left w-full ${ec.bg} ${ec.text}`}
                           title={expiryTooltip(exp)}
                         >
@@ -1309,35 +1309,44 @@ export function CalendarView({ events, documentExpiries, foreigners, staffList }
                 {noteExpiry.rodzajUmowy && ` | ${noteExpiry.rodzajUmowy}`}
               </div>
             </div>
-            <textarea
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Wpisz notatkę..."
-              className="w-full rounded-lg border border-primary/15 bg-white px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/20"
-              rows={4}
-              autoFocus
-            />
-            <div className="mt-4 flex justify-end gap-3">
-              <button type="button" onClick={() => setNoteExpiry(null)} className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5">
-                Anuluj
-              </button>
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => {
-                  if (!noteExpiry.baseId) return;
-                  startTransition(async () => {
-                    await updateEmploymentBaseNoteAction(noteExpiry.baseId!, noteText);
-                    setExpiryNotes((prev) => ({ ...prev, [noteExpiry.baseId!]: noteText }));
-                    setNoteExpiry(null);
-                  });
-                }}
-                className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50"
+            {noteExpiry.baseId ? (
+              <>
+                <textarea
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
+                  placeholder="Wpisz notatkę..."
+                  className="w-full rounded-lg border border-primary/15 bg-white px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/20"
+                  rows={4}
+                  autoFocus
+                />
+                <div className="mt-4 flex justify-end gap-3">
+                  <button type="button" onClick={() => setNoteExpiry(null)} className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5">
+                    Anuluj
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => {
+                      startTransition(async () => {
+                        await updateEmploymentBaseNoteAction(noteExpiry.baseId!, noteText);
+                        setExpiryNotes((prev) => ({ ...prev, [noteExpiry.baseId!]: noteText }));
+                        setNoteExpiry(null);
+                      });
+                    }}
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50"
               >
                 {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Zapisz
               </button>
             </div>
+              </>
+            ) : (
+              <div className="mt-2 flex justify-end">
+                <button type="button" onClick={() => setNoteExpiry(null)} className="rounded-lg border border-primary/15 px-4 py-2 text-sm font-medium text-primary/60 hover:bg-primary/5">
+                  Zamknij
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
