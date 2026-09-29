@@ -60,7 +60,6 @@ const SKIP_PATTERNS = [
   /ks\.?\s*pracy/i,
   /pesel/i,
   /karta[\s_]*polak/i,
-  /wiza/i, /visa/i,
   /t[lł]umaczeni/i, /translat/i,
   /WoPC[\s-]*zal/i,
   /urzedowe[\s_]*poswiadczeni/i, /urz[eę]dowe[\s_]*po[sś]wiadczeni/i,
@@ -111,7 +110,6 @@ const OCR_WORTH_PATTERNS = [
 
 /** Wiza/visa/karta polaka — skip for OCR (visual ID cards, no employment data) */
 const SKIP_FOR_OCR = [
-  /wiza/i, /visa/i,
   /karta[\s_]*polak/i,
   /legitymac/i,
 ];
@@ -209,12 +207,14 @@ async function main() {
   });
 
   // Extract attachment filenames from scrape logs to detect already-scraped
-  // Log format: "Utworzono/Zaktualizowano podstawe ... z pliku: FILENAME"
-  // or "Rozpoznano odwolanie ... pliku: FILENAME"
+  // Only mark as done if base was created/updated or doc recognized (not "nieczytelny")
   const scrapedFileNames = new Set();
   for (const log of scrapeLogs) {
-    const match = log.newValue?.match(/pliku[: ]+(.+?)$/);
-    if (match) scrapedFileNames.add(match[1].trim());
+    const val = log.newValue ?? "";
+    if (/Utworzono|Zaktualizowano|Rozpoznano/.test(val)) {
+      const match = val.match(/pliku[: ]+(.+?)$/);
+      if (match) scrapedFileNames.add(match[1].trim());
+    }
   }
 
   // Also check for "INNA OSOBA" logs
@@ -237,10 +237,9 @@ async function main() {
   console.log(`Już zescrapowanych (z logów): ${scrapedFileNames.size}`);
   console.log(`Oflagowanych (inna osoba): ${flaggedIds.size}\n`);
 
-  // Load all attachments in target categories
+  // Load all attachments (all categories — trc_2024, wp_2024 etc. also have scrapable docs)
   const attachments = await db.fdkAttachment.findMany({
     where: {
-      kategoria: { in: ["glowne", "trc"] },
       typPliku: { in: ["pdf", "jpeg", "jpg", "png"] },
     },
     include: {
@@ -601,8 +600,13 @@ async function processAttachment(att, mode) {
     // Step 3: Name match check
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
     // Skip junk names: form labels ("Nazwisko Nadawcy"), country fragments ("Republiki Południowej")
-    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
+    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /lub\s+imion/i, /^pan[aiu]?\s+/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /wielk\w+\s+brytan/i, /zjednoczon\w+\s+kr[oó]lestw/i, /stan[yó]\s+zjednoczon/i, /ameryk/i, /zimbabwe/i, /armeni/i, /^ukrain/i, /^indie\b|^indii\b/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
     const isJunkName = JUNK_NAME_RE.some((p) => p.test(extractedFullName));
+    // Transliterate Cyrillic before comparing
+    const CYR = {"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"zh","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"kh","ц":"ts","ч":"ch","ш":"sh","щ":"shch","ъ":"","ы":"y","ь":"","э":"e","ю":"yu","я":"ya"};
+    if (/[\u0400-\u04FF]/.test(extractedFullName)) {
+      extractedFullName = extractedFullName.split("").map(c => { const l = c.toLowerCase(); return CYR[l] !== undefined ? (c === l ? CYR[l] : (CYR[l].charAt(0).toUpperCase() + CYR[l].slice(1))) : c; }).join("");
+    }
     if (extractedFullName.length > 2 && personName.length > 2 && att.foreigner.nazwisko !== "Nowy" && !isJunkName) {
       if (!namesMatchTokens(extractedFullName, personName)) {
         // Different person!
@@ -681,7 +685,8 @@ async function processAttachment(att, mode) {
     }
 
     // Guard: nie twórz podstawy jeśli brak dat, numeru i żadnych sensownych danych
-    const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia;
+    const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia
+      || parsed.detectedType === "ZGLOSZENIE_UA";
     if (!hasUsefulData) {
       await db.fdkChangeLog.create({
         data: {
@@ -829,7 +834,9 @@ async function processAttachment(att, mode) {
     });
 
     // Handle residence permits
-    if ((docType === "KARTA_POBYTU" || docType === "BLUE_CARD") && parsed.dataDo) {
+    // Handle residence permits — update foreigner.decyzjaPobytowaDo
+    const RESIDENCE_TYPES = ["KARTA_POBYTU", "BLUE_CARD", "TRC_FDK", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL", "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC", "TRC_BLUE_CARD"];
+    if (RESIDENCE_TYPES.includes(docType) && parsed.dataDo) {
       const dataDo = new Date(parsed.dataDo);
       if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
         await db.fdkForeigner.update({
@@ -864,7 +871,7 @@ function parseTextBasic(text, filename) {
 
   if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(sentencja)) {
     result.detectedType = "ODWOLANIE";
-  } else if (/PSZ[\s-]*OPWP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
+  } else if (/PSZ[\s-]*OPWP|PSZ[\s-]*ZOPP|PSZ[\s-]*OPPC|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
     result.detectedType = "OSWIADCZENIE";
   } else if (/powiadomi\w*\s+o\s+powierzeni|zg[lł]oszeni\w*\s+(?:o\s+)?powierzeni|powiadomienie\s+PUP/i.test(sentencja)) {
     result.detectedType = "ZGLOSZENIE_UA";
@@ -875,7 +882,7 @@ function parseTextBasic(text, filename) {
   } else if (/wiz[aęy]\s+(?:krajow|schengeno|typu|nr)|decyzj\w+\s+wizow/i.test(sentencja)) {
     result.detectedType = "WIZA";
   } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(sentencja)) {
-    result.detectedType = "ZEZWOLENIE";
+    result.detectedType = "ZEZWOLENIE_A";
   }
 
   // Nr oswiadczenia — from sentencja only
@@ -894,15 +901,21 @@ function parseTextBasic(text, filename) {
 
   // Extract dates — from sentencja only (avoid dates from uzasadnienie)
   const datePattern = /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/g;
-  const dates = [];
+  const allDates = [];
   let m;
   while ((m = datePattern.exec(sentencja)) !== null) {
     const d = parseInt(m[1], 10);
     const mo = parseInt(m[2], 10);
     const y = parseInt(m[3], 10);
     if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 1980 && y <= 2040) {
-      dates.push(`${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`);
+      allDates.push(`${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`);
     }
+  }
+  // Filter out birth dates (< 2000)
+  const dates = allDates.filter((d) => d >= "2000-01-01");
+  const birthDates = allDates.filter((d) => d < "2000-01-01");
+  if (birthDates.length > 0 && !result.dataUrodzenia) {
+    result.dataUrodzenia = birthDates[0];
   }
   if (dates.length >= 2) {
     dates.sort();
@@ -932,7 +945,17 @@ function parseTextBasic(text, filename) {
 
   // Stanowisko — from sentencja only
   const stanMatch = sentencja.match(/stanowisk\w+[:\s]+([^\n,]+)/i);
-  if (stanMatch) result.stanowisko = stanMatch[1].trim();
+  if (stanMatch) {
+    let stan = stanMatch[1].trim();
+    // Strip prefix "/ w charakterze" or "w charakterze"
+    stan = stan.replace(/^[\/\s]*w\s+charakterze\s*/i, "").trim();
+    // Deduplicate: "admin baz danychadmin baz danych" → "admin baz danych"
+    const half = Math.floor(stan.length / 2);
+    if (half > 3 && stan.substring(0, half) === stan.substring(half)) {
+      stan = stan.substring(0, half);
+    }
+    result.stanowisko = stan;
+  }
 
   // Firma — from sentencja only
   const firmaMatch = sentencja.match(/(?:na rzecz|podmiot\w*)[:\s]+([^\n]+?)(?:\s*,\s*(?:ul|NIP|KRS|REGON))/i);
@@ -1030,8 +1053,9 @@ ZASADY:
     const data = JSON.parse(jsonMatch[0]);
     const result = {};
 
-    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE", "ZGLOSZENIE_UA", "WIZA"].includes(data.detectedType)) {
-      result.detectedType = data.detectedType;
+    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "ZEZWOLENIE_A", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE", "ZGLOSZENIE_UA", "WIZA"].includes(data.detectedType)) {
+      // Map legacy ZEZWOLENIE to ZEZWOLENIE_A
+      result.detectedType = data.detectedType === "ZEZWOLENIE" ? "ZEZWOLENIE_A" : data.detectedType;
     }
     if (data.imie && typeof data.imie === "string") result.imie = data.imie.trim();
     if (data.nazwisko && typeof data.nazwisko === "string") result.nazwisko = data.nazwisko.trim();
@@ -1041,9 +1065,17 @@ ZASADY:
       if (cit.length > 1) result.obywatelstwo = cit;
     }
     if (data.nrPaszportu && typeof data.nrPaszportu === "string") result.nrPaszportu = data.nrPaszportu.trim();
-    if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) result.dataOd = data.dataOd;
+    if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) {
+      if (data.dataOd >= "2000-01-01") result.dataOd = data.dataOd;
+      else if (!result.dataUrodzenia) result.dataUrodzenia = data.dataOd;
+    }
     if (data.dataDo && /^\d{4}-\d{2}-\d{2}$/.test(data.dataDo)) result.dataDo = data.dataDo;
-    if (data.stanowisko && typeof data.stanowisko === "string") result.stanowisko = data.stanowisko.trim();
+    if (data.stanowisko && typeof data.stanowisko === "string") {
+      let s = data.stanowisko.trim().replace(/^[\/\s]*w\s+charakterze\s*/i, "").trim();
+      const h = Math.floor(s.length / 2);
+      if (h > 3 && s.substring(0, h) === s.substring(h)) s = s.substring(0, h);
+      result.stanowisko = s;
+    }
     if (data.rodzajUmowy && typeof data.rodzajUmowy === "string") result.rodzajUmowy = data.rodzajUmowy.trim();
     if (data.firma && typeof data.firma === "string") result.firma = data.firma.trim();
     if (data.nrDecyzji && typeof data.nrDecyzji === "string") result.nrDecyzji = data.nrDecyzji.trim();

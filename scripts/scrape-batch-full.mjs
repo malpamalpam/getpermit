@@ -63,7 +63,6 @@ const SKIP_PATTERNS = [
   /ks\.?\s*pracy/i,
   /pesel/i,
   /karta[\s_]*polak/i,
-  /wiza/i, /visa/i,
   /t[lł]umaczeni/i, /translat/i,
   /WoPC[\s-]*zal/i,
   /urzedowe[\s_]*poswiadczeni/i, /urz[eę]dowe[\s_]*po[sś]wiadczeni/i,
@@ -108,7 +107,6 @@ const OCR_WORTH_PATTERNS = [
 ];
 
 const SKIP_FOR_OCR = [
-  /wiza/i, /visa/i,
   /karta[\s_]*polak/i,
   /legitymac/i,
 ];
@@ -179,28 +177,53 @@ const JUNK_NAME_PATTERNS = [
   /wnioskodawc/i,                 // "Wnioskodawca"
   /cudzoziemiec/i,                // "Cudzoziemiec"
   /strona\s+post[eę]powan/i,     // "Strona postępowania"
-  // Country names / adjectives
+  /lub\s+imion/i,                 // "Lub Imiona" (from form label "Nazwisko lub imiona")
+  /^pan[aiu]?\s+/i,              // "Pana Diego", "Pani Anna" (honorific prefix)
+  // Country names / adjectives (including declined forms)
   /^republik/i,
   /po[łl]udniow/i,               // "Południowej"
   /federacj/i,                   // "Federacji"
   /rosyjsk/i,
   /rzeczpospolit/i,
+  /wielk\w+\s+brytan/i,          // "Wielkiej Brytanii"
+  /zjednoczon\w+\s+kr[oó]lestw/i,// "Zjednoczonego Królestwa"
+  /stan[yó]\s+zjednoczon/i,      // "Stany Zjednoczone"
+  /ameryk/i,                      // "Ameryki"
+  /zimbabwe/i,
+  /armeni/i,
+  /^ukrain/i,
+  /^indie\b|^indii\b/i,
   // Generic junk
   /^nr\s+/i,                     // "Nr dokumentu"
   /^data\s+/i,                   // "Data wydania"
   /organ\s+wydaj/i,              // "Organ wydający"
 ];
 
+/** Basic Cyrillic → Latin transliteration for name matching */
+const CYR_MAP = {
+  "а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"zh","з":"z","и":"i","й":"y",
+  "к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f",
+  "х":"kh","ц":"ts","ч":"ch","ш":"sh","щ":"shch","ъ":"","ы":"y","ь":"","э":"e","ю":"yu","я":"ya",
+};
+function translitCyrillic(text) {
+  return text.split("").map((c) => {
+    const lower = c.toLowerCase();
+    if (CYR_MAP[lower] !== undefined) {
+      const mapped = CYR_MAP[lower];
+      return c === lower ? mapped : mapped.charAt(0).toUpperCase() + mapped.slice(1);
+    }
+    return c;
+  }).join("");
+}
+function hasCyrillic(text) { return /[\u0400-\u04FF]/.test(text); }
+
 function isJunkExtractedName(name) {
   if (!name || name.length < 3) return true;
-  // Too short to be a real name
   const words = name.trim().split(/\s+/);
   if (words.length === 1 && words[0].length < 3) return true;
-  // Match against junk patterns
   for (const pat of JUNK_NAME_PATTERNS) {
     if (pat.test(name)) return true;
   }
-  // All-uppercase single word that looks like a label (e.g. "NADAWCA", "ADRESAT")
   if (words.length === 1 && name === name.toUpperCase() && name.length > 5) return true;
   return false;
 }
@@ -262,7 +285,7 @@ function parseTextBasic(text, filename) {
 
   if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(sentencja)) {
     result.detectedType = "ODWOLANIE";
-  } else if (/PSZ[\s-]*OPWP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
+  } else if (/PSZ[\s-]*OPWP|PSZ[\s-]*ZOPP|PSZ[\s-]*OPPC|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
     result.detectedType = "OSWIADCZENIE";
   } else if (/powiadomi\w*\s+o\s+powierzeni|zg[lł]oszeni\w*\s+(?:o\s+)?powierzeni|powiadomienie\s+PUP/i.test(sentencja)) {
     result.detectedType = "ZGLOSZENIE_UA";
@@ -274,7 +297,7 @@ function parseTextBasic(text, filename) {
   } else if (/wiz[aęy]\s+(?:krajow|schengeno|typu|nr)|decyzj\w+\s+wizow/i.test(sentencja)) {
     result.detectedType = "WIZA";
   } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(sentencja)) {
-    result.detectedType = "ZEZWOLENIE";
+    result.detectedType = "ZEZWOLENIE_A";
   }
 
   // Nr oswiadczenia
@@ -292,15 +315,22 @@ function parseTextBasic(text, filename) {
 
   // Dates
   const datePattern = /(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/g;
-  const dates = [];
+  const allDates = [];
   let m;
   while ((m = datePattern.exec(sentencja)) !== null) {
     const d = parseInt(m[1], 10);
     const mo = parseInt(m[2], 10);
     const y = parseInt(m[3], 10);
     if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 1980 && y <= 2040) {
-      dates.push(`${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`);
+      allDates.push(`${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`);
     }
+  }
+  // Filter out birth dates (< 2000) — these are not document dates
+  const dates = allDates.filter((d) => d >= "2000-01-01");
+  // Keep birth dates separately for dataUrodzenia
+  const birthDates = allDates.filter((d) => d < "2000-01-01");
+  if (birthDates.length > 0 && !result.dataUrodzenia) {
+    result.dataUrodzenia = birthDates[0];
   }
   if (dates.length >= 2) {
     dates.sort();
@@ -330,7 +360,15 @@ function parseTextBasic(text, filename) {
 
   // Stanowisko
   const stanMatch = sentencja.match(/stanowisk\w+[:\s]+([^\n,]+)/i);
-  if (stanMatch) result.stanowisko = stanMatch[1].trim();
+  if (stanMatch) {
+    let stan = stanMatch[1].trim();
+    stan = stan.replace(/^[\/\s]*w\s+charakterze\s*/i, "").trim();
+    const half = Math.floor(stan.length / 2);
+    if (half > 3 && stan.substring(0, half) === stan.substring(half)) {
+      stan = stan.substring(0, half);
+    }
+    result.stanowisko = stan;
+  }
 
   // Firma
   const firmaMatch = sentencja.match(/(?:na rzecz|podmiot\w*)[:\s]+([^\n]+?)(?:\s*,\s*(?:ul|NIP|KRS|REGON))/i);
@@ -428,7 +466,8 @@ ZASADY:
     const data = JSON.parse(jsonMatch[0]);
     const result = {};
 
-    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE", "ZGLOSZENIE_UA", "WIZA"].includes(data.detectedType)) {
+    if (data.detectedType && ["OSWIADCZENIE", "ZEZWOLENIE", "ZEZWOLENIE_A", "KARTA_POBYTU", "BLUE_CARD", "ODWOLANIE", "ZGLOSZENIE_UA", "WIZA"].includes(data.detectedType)) {
+      if (data.detectedType === "ZEZWOLENIE") data.detectedType = "ZEZWOLENIE_A";
       result.detectedType = data.detectedType;
     }
     if (data.imie && typeof data.imie === "string") result.imie = data.imie.trim();
@@ -439,9 +478,17 @@ ZASADY:
       if (cit.length > 1) result.obywatelstwo = cit;
     }
     if (data.nrPaszportu && typeof data.nrPaszportu === "string") result.nrPaszportu = data.nrPaszportu.trim();
-    if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) result.dataOd = data.dataOd;
+    if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) {
+      if (data.dataOd >= "2000-01-01") result.dataOd = data.dataOd;
+      else if (!result.dataUrodzenia) result.dataUrodzenia = data.dataOd;
+    }
     if (data.dataDo && /^\d{4}-\d{2}-\d{2}$/.test(data.dataDo)) result.dataDo = data.dataDo;
-    if (data.stanowisko && typeof data.stanowisko === "string") result.stanowisko = data.stanowisko.trim();
+    if (data.stanowisko && typeof data.stanowisko === "string") {
+      let s = data.stanowisko.trim().replace(/^[\/\s]*w\s+charakterze\s*/i, "").trim();
+      const h = Math.floor(s.length / 2);
+      if (h > 3 && s.substring(0, h) === s.substring(h)) s = s.substring(0, h);
+      result.stanowisko = s;
+    }
     if (data.rodzajUmowy && typeof data.rodzajUmowy === "string") result.rodzajUmowy = data.rodzajUmowy.trim();
     if (data.firma && typeof data.firma === "string") result.firma = data.firma.trim();
     if (data.nrDecyzji && typeof data.nrDecyzji === "string") result.nrDecyzji = data.nrDecyzji.trim();
@@ -621,7 +668,11 @@ async function processAttachment(att, mode, foreigner) {
     result.typDokumentu = parsed.detectedType || "";
 
     // Step 3: Name match — pelnomocnik != strona
-    const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
+    let extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
+    // Transliterate Cyrillic to Latin before comparison (e.g. "Алексей Горный" → "Aleksey Gornyy")
+    if (hasCyrillic(extractedFullName)) {
+      extractedFullName = translitCyrillic(extractedFullName);
+    }
     const KNOWN_AGENTS = ["stanko", "antoshka", "glapinska", "glapińska", "lytvynchuk"];
     if (extractedFullName.length > 2 && personName.length > 2 && foreigner.nazwisko !== "Nowy" && !isJunkExtractedName(extractedFullName)) {
       if (!namesMatchTokens(extractedFullName, personName)) {
@@ -681,7 +732,9 @@ async function processAttachment(att, mode, foreigner) {
     if (parsed.rodzajUmowy && isJunkFieldValue(parsed.rodzajUmowy)) parsed.rodzajUmowy = null;
 
     // Guard: no dates AND no document number
-    const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia;
+    // ZGLOSZENIE_UA often has only dataOd (notification date) — allow if type detected
+    const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia
+      || parsed.detectedType === "ZGLOSZENIE_UA";
     if (!hasUsefulData) {
       await db.fdkChangeLog.create({
         data: {
@@ -942,22 +995,31 @@ async function main() {
   const doneProfileIds = new Set(checkpointData.processedProfileIds || []);
   const doneAttIds = new Set(checkpointData.processedAttIds || []);
 
-  // Find already-scraped attachment filenames (from previous runs including scrape-pending)
+  // Find already-scraped attachments per foreignerId (from previous runs)
+  // Only consider files where a base was actually CREATED or UPDATED
   const scrapeLogs = await db.fdkChangeLog.findMany({
     where: { field: "scrape" },
-    select: { newValue: true },
+    select: { foreignerId: true, newValue: true },
   });
-  const scrapedFileNames = new Set();
+  // Map: foreignerId → Set of filenames where base was created
+  const scrapedPerForeigner = new Map();
   for (const log of scrapeLogs) {
-    const match = log.newValue?.match(/pliku[: ]+(.+?)$/);
-    if (match) scrapedFileNames.add(match[1].trim());
+    const val = log.newValue ?? "";
+    if (/Utworzono|Zaktualizowano|Rozpoznano/.test(val)) {
+      const match = val.match(/pliku[: ]+(.+?)$/);
+      if (match) {
+        if (!scrapedPerForeigner.has(log.foreignerId)) scrapedPerForeigner.set(log.foreignerId, new Set());
+        scrapedPerForeigner.get(log.foreignerId).add(match[1].trim());
+      }
+    }
   }
   const flaggedAttachments = await db.fdkAttachment.findMany({
     where: { opis: { startsWith: "\u26a0" } },
     select: { id: true },
   });
   const flaggedIds = new Set(flaggedAttachments.map((a) => a.id));
-  console.log(`Juz zescrapowanych (z logow): ${scrapedFileNames.size}, oflagowanych: ${flaggedIds.size}\n`);
+  const totalScraped = [...scrapedPerForeigner.values()].reduce((s, set) => s + set.size, 0);
+  console.log(`Juz zescrapowanych (z logow): ${totalScraped}, oflagowanych: ${flaggedIds.size}\n`);
 
   // Query: profiles with attachments > 0 and 0 bases
   const allProfiles = await db.fdkForeigner.findMany({
@@ -970,7 +1032,6 @@ async function main() {
       },
       attachments: {
         where: {
-          kategoria: { in: ["glowne", "trc"] },
           typPliku: { in: ["pdf", "jpeg", "jpg", "png"] },
         },
         orderBy: { id: "asc" },
@@ -1018,7 +1079,8 @@ async function main() {
   let totalOcrEstimate = 0;
   for (const profile of targetProfiles) {
     for (const att of profile.attachments) {
-      if (scrapedFileNames.has(att.nazwaPliku) || flaggedIds.has(att.id) || doneAttIds.has(att.id)) continue;
+      const fScraped = scrapedPerForeigner.get(profile.id);
+      if ((fScraped && fScraped.has(att.nazwaPliku)) || flaggedIds.has(att.id) || doneAttIds.has(att.id)) continue;
       const classification = classifyFile(att.nazwaPliku, att.typPliku);
       if (classification === "skip") continue;
       totalToProcess++;
@@ -1079,8 +1141,9 @@ async function main() {
     for (const att of profile.attachments) {
       if (aborted) break;
 
-      // Skip already processed
-      if (scrapedFileNames.has(att.nazwaPliku) || flaggedIds.has(att.id) || processedAttIds.has(att.id)) {
+      // Skip already processed (per-foreigner, not global)
+      const foreignerScraped = scrapedPerForeigner.get(profile.id);
+      if ((foreignerScraped && foreignerScraped.has(att.nazwaPliku)) || flaggedIds.has(att.id) || processedAttIds.has(att.id)) {
         skippedFiles.push(`${att.nazwaPliku} (juz_zescrapowany)`);
         continue;
       }

@@ -71,7 +71,14 @@ export function computeStatus(base: {
 export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null }>(
   bases: T[]
 ): T[] {
-  const computed = bases.map((b) => ({ ...b, status: computeStatus(b) as typeof b.status }));
+  const uaTypes = ["ZGLOSZENIE_UA", "POWIADOMIENIE_UA"];
+  const computed = bases.map((b) => {
+    // For UA notifications: preserve DB status (managed by enforceNewestUaOnly, not dates)
+    if (b.typ && uaTypes.includes(b.typ) && (b.status === "AKTYWNE" || b.status === "NIEAKTYWNE")) {
+      return { ...b };
+    }
+    return { ...b, status: computeStatus(b) as typeof b.status };
+  });
 
   // Enforce only one active residence permit — mark older ones as NIEAKTYWNE
   const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];

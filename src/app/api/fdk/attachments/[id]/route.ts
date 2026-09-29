@@ -154,13 +154,19 @@ export async function GET(
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
     const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
     // Skip junk names: form labels ("Nazwisko Nadawcy"), country fragments ("Republiki Południowej")
-    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
+    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /lub\s+imion/i, /^pan[aiu]?\s+/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /wielk\w+\s+brytan/i, /zjednoczon\w+\s+kr[oó]lestw/i, /stan[yó]\s+zjednoczon/i, /ameryk/i, /zimbabwe/i, /armeni/i, /^ukrain/i, /^indie\b|^indii\b/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
     const isJunkName = JUNK_NAME_RE.some((p) => p.test(extractedFullName));
-    const isDifferentPerson = extractedFullName.length > 2
+    // Transliterate Cyrillic names before comparing
+    const CYR: Record<string, string> = {"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"zh","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"kh","ц":"ts","ч":"ch","ш":"sh","щ":"shch","ъ":"","ы":"y","ь":"","э":"e","ю":"yu","я":"ya"};
+    let compareExtracted = extractedFullName;
+    if (/[\u0400-\u04FF]/.test(compareExtracted)) {
+      compareExtracted = compareExtracted.split("").map(c => { const l = c.toLowerCase(); return CYR[l] !== undefined ? (c === l ? CYR[l] : (CYR[l].charAt(0).toUpperCase() + CYR[l].slice(1))) : c; }).join("");
+    }
+    const isDifferentPerson = compareExtracted.length > 2
       && profileFullName.length > 2
       && foreigner.nazwisko !== "Nowy"
       && !isJunkName
-      && !namesMatch(extractedFullName, profileFullName);
+      && !namesMatch(compareExtracted, profileFullName);
 
     if (isDifferentPerson) {
       // Flag the attachment and log — do NOT create employment base

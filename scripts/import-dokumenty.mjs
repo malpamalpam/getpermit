@@ -1274,7 +1274,10 @@ Pola, ktorych nie mozesz znalezc = null.`;
       if (cit.length > 1) result.obywatelstwo = cit;
     }
     if (data.nrPaszportu && typeof data.nrPaszportu === "string") result.nrPaszportu = data.nrPaszportu.trim();
-    if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) result.dataOd = data.dataOd;
+    if (data.dataOd && /^\d{4}-\d{2}-\d{2}$/.test(data.dataOd)) {
+      if (data.dataOd >= "2000-01-01") result.dataOd = data.dataOd;
+      else if (!result.dataUrodzenia) result.dataUrodzenia = data.dataOd;
+    }
     if (data.dataDo && /^\d{4}-\d{2}-\d{2}$/.test(data.dataDo)) result.dataDo = data.dataDo;
     if (data.stanowisko && typeof data.stanowisko === "string") result.stanowisko = data.stanowisko.trim();
     if (data.rodzajUmowy && typeof data.rodzajUmowy === "string") result.rodzajUmowy = data.rodzajUmowy.trim();
