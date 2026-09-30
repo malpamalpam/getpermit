@@ -17,6 +17,7 @@ import { EmploymentBasesTab } from "@/components/admin/fdk/EmploymentBasesTab";
 import { ResidenceBasesTab } from "@/components/admin/fdk/ResidenceBasesTab";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
 import { ResidenceReminderButton } from "@/components/admin/fdk/ResidenceReminderButton";
+import { ToggleHiddenButton } from "@/components/admin/fdk/ToggleHiddenButton";
 import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -170,15 +171,21 @@ export default async function FdkForeignerPage({
             <ArrowLeft className="h-4 w-4" /> Lista cudzoziemców
           </Link>
           <div className="flex items-center justify-between gap-4">
-            <h1 className="font-display text-3xl font-extrabold text-primary">
-              {foreigner.imie} {foreigner.nazwisko}
-            </h1>
-            <DeleteForeignerButton
-              foreignerId={foreigner.id}
-              name={`${foreigner.imie ?? ""} ${foreigner.nazwisko}`.trim()}
-              redirectTo="/admin/fdk"
-              variant="button"
-            />
+            <div className="flex items-center gap-3">
+              <h1 className="font-display text-3xl font-extrabold text-primary">
+                {foreigner.imie} {foreigner.nazwisko}
+              </h1>
+              {foreigner.hidden && <span className="rounded-full bg-gray-200 px-3 py-1 text-xs font-bold text-gray-600">UKRYTY</span>}
+            </div>
+            <div className="flex items-center gap-2">
+              <ToggleHiddenButton foreignerId={foreigner.id} hidden={foreigner.hidden} />
+              <DeleteForeignerButton
+                foreignerId={foreigner.id}
+                name={`${foreigner.imie ?? ""} ${foreigner.nazwisko}`.trim()}
+                redirectTo="/admin/fdk"
+                variant="button"
+              />
+            </div>
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             {foreigner.obywatelstwo && (

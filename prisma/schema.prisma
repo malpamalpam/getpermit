@@ -454,6 +454,13 @@ model FdkForeigner {
   /// Ochrona czasowa UKR (PESEL UKR / status ochrony) — aktualna podstawa pobytowa
   ochronaCzasowaUkr Boolean @default(false) @map("ochrona_czasowa_ukr")
 
+  /// Ukryty (archiwum) — profil nie pokazuje się na liście, ale dane zachowane
+  hidden Boolean @default(false)
+  /// ID pracownika z systemu kadrowego (synchronizacja)
+  employeeId String? @map("employee_id")
+  /// ID użytkownika z systemu kadrowego
+  externalUserId String? @map("external_user_id")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -466,6 +473,7 @@ model FdkForeigner {
 
   @@index([nazwisko])
   @@index([pesel])
+  @@index([hidden])
   @@map("fdk_foreigners")
 }
 

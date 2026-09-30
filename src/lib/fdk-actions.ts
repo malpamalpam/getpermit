@@ -1099,6 +1099,27 @@ export async function toggleCalendarEventDoneAction(id: number): Promise<FdkResu
   return { ok: true };
 }
 
+export async function toggleForeignerHiddenAction(foreignerId: number): Promise<FdkResult> {
+  const user = await requireAdmin();
+  const foreigner = await db.fdkForeigner.findUnique({ where: { id: foreignerId } });
+  if (!foreigner) return { ok: false, error: "not_found" };
+
+  const newHidden = !foreigner.hidden;
+  await db.fdkForeigner.update({ where: { id: foreignerId }, data: { hidden: newHidden } });
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId,
+      changedBy: user.email ?? "admin",
+      field: "hidden",
+      oldValue: String(foreigner.hidden),
+      newValue: `${newHidden ? "Ukryto" : "Przywrócono"} profil`,
+    },
+  });
+
+  revalidateFdk(foreignerId);
+  return { ok: true };
+}
+
 // =============================================================================
 // RESIDENCE BASIS (ręczne dodawanie podstaw pobytowych)
 // =============================================================================

@@ -71,11 +71,19 @@ export default async function FdkPage({
   const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
   const typeFilter = sp.type ?? "";
   const pobytFilter = sp.pobyt ?? "";
+  const showHidden = sp.hidden === "1";
   const rawPerPage = parseInt(sp.perPage ?? "50", 10);
   const PAGE_SIZE = VALID_PER_PAGE.includes(rawPerPage) ? rawPerPage : 50;
 
+  // Count hidden for toggle label
+  const hiddenCount = await db.fdkForeigner.count({ where: { hidden: true } });
+
   // Build where clause
   const where: Record<string, unknown> = {};
+  // Search includes hidden profiles (to find archived people)
+  if (!q) {
+    where.hidden = showHidden ? true : false;
+  }
   if (q) {
     where.OR = [
       { nazwisko: { contains: q, mode: "insensitive" } },
@@ -146,6 +154,7 @@ export default async function FdkPage({
     if (q) u.set("q", q);
     if (typeFilter) u.set("type", typeFilter);
     if (pobytFilter) u.set("pobyt", pobytFilter);
+    if (showHidden) u.set("hidden", "1");
     if (PAGE_SIZE !== 50) u.set("perPage", String(PAGE_SIZE));
     Object.entries(params).forEach(([k, v]) => v ? u.set(k, v) : u.delete(k));
     return `/admin/fdk?${u.toString()}`;
@@ -242,6 +251,20 @@ export default async function FdkPage({
           </div>
 
           <a href="/admin/fdk" className="text-xs text-accent hover:underline">Wyczyść filtry</a>
+
+          {/* Hidden toggle */}
+          {hiddenCount > 0 && (
+            <a
+              href={buildUrl({ hidden: showHidden ? "" : "1", page: "1" })}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                showHidden
+                  ? "bg-gray-600 text-white"
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+              }`}
+            >
+              {showHidden ? "Ukrytych" : "Pokaż ukrytych"} ({hiddenCount})
+            </a>
+          )}
         </div>
 
         {/* Table */}
@@ -273,12 +296,13 @@ export default async function FdkPage({
                 const resBadge = RESIDENCE_BADGES[rs];
 
                 return (
-                  <tr key={f.id} className="group relative cursor-pointer transition-colors hover:bg-accent/5">
+                  <tr key={f.id} className={`group relative cursor-pointer transition-colors hover:bg-accent/5 ${f.hidden ? "opacity-50" : ""}`}>
                     <td className="px-4 py-3 text-primary/40">{(page - 1) * PAGE_SIZE + idx + 1}</td>
                     <td className="px-4 py-3 font-medium text-primary">
                       <Link href={`/admin/fdk/${f.id}`} className="hover:text-accent hover:underline after:absolute after:inset-0 after:content-['']">
                         {f.nazwisko}
                       </Link>
+                      {f.hidden && <span className="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-[9px] font-bold text-gray-500">UKRYTY</span>}
                     </td>
                     <td className="px-4 py-3 text-primary/70">{f.imie}</td>
                     <td className="px-4 py-3">
