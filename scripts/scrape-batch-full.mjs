@@ -283,21 +283,85 @@ function parseTextBasic(text, filename) {
   const result = {};
   const sentencja = text.split(/UZASADNIENIE/i)[0];
 
+  // --- Full 13-type classifier (per instructions v1.1) ---
+  // Extract article number
+  const artMatch = sentencja.match(/art(?:yku[łl])?\.\s*(\d+)/i);
+  const articleNum = artMatch ? artMatch[1] : null;
+  result._article = articleNum;
+  result._secondaryType = null;
+  result._isIndefinite = false;
+  result._dateSource = "issue_date";
+  result._setsUkrProtection = false;
+
   if (/odwo[łl]anie\s+od\s+decyzji|za[żz]alenie|procedura\s+odwo[łl]awcz/i.test(sentencja)) {
     result.detectedType = "ODWOLANIE";
-  } else if (/PSZ[\s-]*OPWP|PSZ[\s-]*ZOPP|PSZ[\s-]*OPPC|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
+  } else if (/status(?:u)?\s+uchod[źz]c/i.test(sentencja) || /art\.?\s*13\s+ustawy\s+.*ochroni/i.test(sentencja)) {
+    // Refugee — check for partial: "odmówić uchodźcy + udzielić ochrony"
+    if (/odmówi[ćc].*status.*uchod[źz]c/i.test(sentencja) && /udzi[eę]li[ćc].*ochrony\s+uzupe[łl]niaj/i.test(sentencja)) {
+      result.detectedType = "OD_OCHRONA_UZUP";
+    } else {
+      result.detectedType = "OD_UCHODZCA";
+    }
+    result._isIndefinite = true;
+  } else if (/ochrony?\s+uzupe[łl]niaj/i.test(sentencja)) {
+    result.detectedType = "OD_OCHRONA_UZUP";
+    result._isIndefinite = true;
+  } else if (/PSZ[\s-]*OP[WP]C|PSZ[\s-]*OPWP|PSZ[\s-]*ZOPP|o[śs]wiadczenie\s+podmiotu\s+.*powierzeni/i.test(sentencja)) {
     result.detectedType = "OSWIADCZENIE";
-  } else if (/powiadomi\w*\s+o\s+powierzeni|zg[lł]oszeni\w*\s+(?:o\s+)?powierzeni|powiadomienie\s+PUP/i.test(sentencja)) {
-    result.detectedType = "ZGLOSZENIE_UA";
+    result._dateSource = "annotation";
+  } else if (/powiadomi\w*\s+o\s+powierzeni|zg[lł]oszeni\w*\s+(?:o\s+)?powierzeni|powiadomienie\s+PUP|PSZ[\s-]*PPWPU/i.test(sentencja)) {
+    result.detectedType = "POWIADOMIENIE_UA";
+    result._setsUkrProtection = true;
+  } else if (/pobyt(?:u)?\s+sta[łl]e(?:go)?/i.test(sentencja) || articleNum === "195" || articleNum === "201") {
+    result.detectedType = "OD_POBYT_STALY";
+    result._isIndefinite = true;
+  } else if (/rezydent\w*\s+d[łl]ugoterminow/i.test(sentencja) || articleNum === "211" || articleNum === "218") {
+    result.detectedType = "OD_REZYDENT_UE";
+    result._isIndefinite = true;
   } else if (/niebieska\s+karta|blue\s+card|wysoki(?:ch|e)\s+kwalifikacj|art\.?\s*127/i.test(sentencja)) {
-    result.detectedType = "BLUE_CARD";
-  } else if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow/i.test(sentencja)) {
-    // Use TRC subtype classifier
-    result.detectedType = classifyTrcSubtype(sentencja);
+    result.detectedType = "TRC_BLUE_CARD";
+    result._secondaryType = "ZEZWOLENIE_A";
+  } else if (/zarejestrowani\w*\s+pobytu\s+obywatel/i.test(sentencja) || /dyrektywa?\s+2004\/38/i.test(sentencja)) {
+    if (/art\.?\s*50\s+TUE|umow[aey]\s+wyst[aą]pieni/i.test(sentencja)) {
+      result.detectedType = "OD_UK_WYSTAPIENIE";
+    } else {
+      result.detectedType = "OD_UE";
+    }
+  } else if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow|udzi[eę]l\w+\s+zezwoleni\w+\s+na\s+pobyt/i.test(sentencja)) {
+    // TRC — classify by article or keywords
+    if (articleNum === "114" || /na\s+rzecz|podmiot|stanowisk|wynagrodzeni/i.test(sentencja)) {
+      result.detectedType = "TRC_FDK";
+      result._secondaryType = "ZEZWOLENIE_A";
+      // Check for absolwent clause
+      if (/art\.?\s*3\s+ust\.?\s*5\s+pkt\.?\s*2/i.test(sentencja)) {
+        result._secondaryType = "OD_ABSOLWENT";
+      }
+    } else if (articleNum === "127") {
+      result.detectedType = "TRC_BLUE_CARD";
+      result._secondaryType = "ZEZWOLENIE_A";
+    } else if (articleNum === "144" || /studi[aóo]w|kszta[łl]ceni|student/i.test(sentencja)) {
+      result.detectedType = "TRC_STUDIA";
+      result._secondaryType = "OD_STUDENT";
+    } else if (articleNum === "158" || /ma[łl][żz]on/i.test(sentencja)) {
+      result.detectedType = "TRC_MALZONEK_PL";
+    } else if (articleNum === "159" || /rodzin|po[łl][aą]czeni\w*\s+z\s+rodzin/i.test(sentencja)) {
+      result.detectedType = "TRC_POBYT_Z_CUDZ";
+    } else if (/humanitarn/i.test(sentencja) || (articleNum === "186" && /pkt\.?\s*9/i.test(sentencja))) {
+      result.detectedType = "TRC_HUMANITARNE";
+    } else if (articleNum === "186" && /pkt\.?\s*6/i.test(sentencja)) {
+      result.detectedType = "TRC_FDK"; // inne okoliczności + OD
+      result._secondaryType = "OD_POBYT_STALY";
+    } else {
+      result.detectedType = classifyTrcSubtype(sentencja);
+    }
   } else if (/wiz[aęy]\s+(?:krajow|schengeno|typu|nr)|decyzj\w+\s+wizow/i.test(sentencja)) {
     result.detectedType = "WIZA";
   } else if (/zezwoleni[eao]\s+na\s+prac[ęe]/i.test(sentencja)) {
     result.detectedType = "ZEZWOLENIE_A";
+    result._dateSource = "od_do_clause";
+    if (/art\.?\s*3\s+ust\.?\s*5\s+pkt\.?\s*2/i.test(sentencja)) {
+      result._secondaryType = "OD_ABSOLWENT";
+    }
   }
 
   // Nr oswiadczenia
@@ -332,12 +396,46 @@ function parseTextBasic(text, filename) {
   if (birthDates.length > 0 && !result.dataUrodzenia) {
     result.dataUrodzenia = birthDates[0];
   }
-  if (dates.length >= 2) {
-    dates.sort();
-    result.dataOd = dates[0];
-    result.dataDo = dates[dates.length - 1];
-  } else if (dates.length === 1) {
-    result.dataOd = dates[0];
+  // Apply date source rules
+  if (result._dateSource === "od_do_clause") {
+    // Work permit: extract from "od dnia X do dnia Y" clause
+    const odDoMatch = sentencja.match(/(?:od\s+dnia|na\s+okres\s+od)\s+(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})\s*(?:r\.?)?\s*do\s+(?:dnia\s+)?(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/i);
+    if (odDoMatch) {
+      const [, d1, m1, y1, d2, m2, y2] = odDoMatch;
+      result.dataOd = `${y1}-${m1.padStart(2, "0")}-${d1.padStart(2, "0")}`;
+      result.dataDo = `${y2}-${m2.padStart(2, "0")}-${d2.padStart(2, "0")}`;
+    } else if (dates.length >= 2) {
+      dates.sort();
+      result.dataOd = dates[0];
+      result.dataDo = dates[dates.length - 1];
+    }
+  } else if (result._dateSource === "annotation") {
+    // PSZ-OPPC: extract from "wpisano do ewidencji ... w okresie Od X Do Y"
+    const annMatch = text.match(/w\s+okresie\s+od\s+(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})\s+do\s+(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/i);
+    if (annMatch) {
+      const [, d1, m1, y1, d2, m2, y2] = annMatch;
+      result.dataOd = `${y1}-${m1.padStart(2, "0")}-${d1.padStart(2, "0")}`;
+      result.dataDo = `${y2}-${m2.padStart(2, "0")}-${d2.padStart(2, "0")}`;
+    } else if (dates.length >= 2) {
+      dates.sort();
+      result.dataOd = dates[0];
+      result.dataDo = dates[dates.length - 1];
+    }
+  } else if (result._isIndefinite) {
+    // Indefinite: dataOd from header, no dataDo
+    if (dates.length >= 1) {
+      dates.sort();
+      result.dataOd = dates[0];
+    }
+    // explicitly no dataDo
+  } else {
+    if (dates.length >= 2) {
+      dates.sort();
+      result.dataOd = dates[0];
+      result.dataDo = dates[dates.length - 1];
+    } else if (dates.length === 1) {
+      result.dataOd = dates[0];
+    }
   }
 
   // Name
@@ -732,9 +830,10 @@ async function processAttachment(att, mode, foreigner) {
     if (parsed.rodzajUmowy && isJunkFieldValue(parsed.rodzajUmowy)) parsed.rodzajUmowy = null;
 
     // Guard: no dates AND no document number
-    // ZGLOSZENIE_UA often has only dataOd (notification date) — allow if type detected
+    // Allow through: UA notifications, indefinite documents, any recognized type with some data
     const hasUsefulData = parsed.dataOd || parsed.dataDo || parsed.nrDecyzji || parsed.nrOswiadczenia
-      || parsed.detectedType === "ZGLOSZENIE_UA";
+      || parsed.detectedType === "ZGLOSZENIE_UA" || parsed.detectedType === "POWIADOMIENIE_UA"
+      || parsed._isIndefinite;
     if (!hasUsefulData) {
       await db.fdkChangeLog.create({
         data: {
@@ -877,6 +976,14 @@ async function processAttachment(att, mode, foreigner) {
       },
     });
 
+    // Indefinite: set status AKTYWNE, no dataDo
+    if (parsed._isIndefinite) {
+      await db.fdkEmploymentBase.update({
+        where: { id: baseId },
+        data: { status: "AKTYWNE", dataDo: null },
+      });
+    }
+
     // Track whether this was a work or residence base
     if (WORK_BASE_TYPES.has(docType)) result.createdWorkBase = true;
     if (RESIDENCE_BASE_TYPES.has(docType)) result.createdResidenceBase = true;
@@ -891,8 +998,82 @@ async function processAttachment(att, mode, foreigner) {
         });
       }
     }
+    // Indefinite residence — update with far-future date as marker
+    if (parsed._isIndefinite && RESIDENCE_BASE_TYPES.has(docType)) {
+      await db.fdkForeigner.update({
+        where: { id: att.foreignerId },
+        data: { decyzjaPobytowaDo: new Date("2099-12-31") },
+      });
+    }
 
-    const partial = !parsed.dataOd || !parsed.dataDo || !parsed.detectedType;
+    // UKR protection flag
+    if (parsed._setsUkrProtection && !foreigner.ochronaCzasowaUkr) {
+      await db.fdkForeigner.update({
+        where: { id: att.foreignerId },
+        data: { ochronaCzasowaUkr: true },
+      });
+    }
+
+    // --- DUAL BASE: create secondary base if classifier says so ---
+    if (parsed._secondaryType) {
+      const secType = parsed._secondaryType;
+      // Check if secondary base already exists
+      let existingSec = await db.fdkEmploymentBase.findFirst({
+        where: { foreignerId: att.foreignerId, typ: secType, nrDecyzji: parsed.nrDecyzji || undefined },
+      });
+      if (!existingSec && parsed.dataOd && parsed.dataDo) {
+        existingSec = await db.fdkEmploymentBase.findFirst({
+          where: { foreignerId: att.foreignerId, typ: secType, dataOd: new Date(parsed.dataOd), dataDo: parsed.dataDo ? new Date(parsed.dataDo) : undefined },
+        });
+      }
+
+      const secData = {
+        foreignerId: att.foreignerId,
+        typ: secType,
+        status: parsed._isIndefinite ? "AKTYWNE" : "BRAK_DANYCH",
+        dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+        dataDo: parsed._isIndefinite ? null : (parsed.dataDo ? new Date(parsed.dataDo) : null),
+        stanowisko: parsed.stanowisko || null,
+        firma: parsed.firma || null,
+        rodzajUmowy: parsed.rodzajUmowy || null,
+        nrDecyzji: secType !== "OSWIADCZENIE" ? (parsed.nrDecyzji || null) : null,
+        nrOswiadczenia: secType === "OSWIADCZENIE" ? (parsed.nrOswiadczenia || null) : null,
+      };
+      if (parsed.wynagrodzenie) {
+        const numMatch = parsed.wynagrodzenie.match(/([0-9]+[.,]?\d*)/);
+        if (numMatch) secData.stawka = parseFloat(numMatch[1].replace(",", "."));
+      }
+
+      let secBaseId;
+      if (existingSec) {
+        const secUpdate = {};
+        for (const [k, v] of Object.entries(secData)) {
+          if (k === "foreignerId") continue;
+          if (v !== null && v !== undefined) secUpdate[k] = v;
+        }
+        await db.fdkEmploymentBase.update({ where: { id: existingSec.id }, data: secUpdate });
+        secBaseId = existingSec.id;
+      } else {
+        const sec = await db.fdkEmploymentBase.create({ data: secData });
+        secBaseId = sec.id;
+      }
+
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: att.foreignerId,
+          changedBy: CHANGED_BY,
+          field: "scrape",
+          oldValue: null,
+          newValue: `${existingSec ? "Zaktualizowano" : "Utworzono"} dodatkowa podstawe #${secBaseId} (${secType}) z pliku: ${att.nazwaPliku}`,
+        },
+      });
+
+      if (WORK_BASE_TYPES.has(secType)) result.createdWorkBase = true;
+      if (RESIDENCE_BASE_TYPES.has(secType)) result.createdResidenceBase = true;
+      console.log(`    [DUAL] +${secType} #${secBaseId}`);
+    }
+
+    const partial = !parsed.dataOd && !parsed._isIndefinite;
     result.scrapeResult = partial ? "partial" : "ok";
     return result;
 
