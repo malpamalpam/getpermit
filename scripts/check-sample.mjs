@@ -3,7 +3,10 @@ dotenv.config({ path: ".env.local" });
 import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
-const ids = [927, 616, 704, 721, 826, 230, 7, 326];
+// Test profiles from section D (acceptance tests)
+// Hanson=280, Abrazhevich=63, Efremov=539, Pozniak=282, Akagawa=190
+// Dryk=500, Arenas=472, Jasi=258, Stoliar=230, Kurei=704
+const ids = [280, 63, 539, 282, 190, 500, 472, 258, 230, 704, 927, 326];
 
 for (const id of ids) {
   const f = await db.fdkForeigner.findUnique({
