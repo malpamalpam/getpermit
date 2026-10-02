@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://getpermit.pl"),
   robots: { index: true, follow: true },
   verification: {
-    google: "RdGNnQ9EuMUT8wqPFzguMojZpbHrwW1MikAYC1x5fV0",
+    google: "0tjl-mHGqtwpCFA1GTwWVEX0_aJK6R02BXWjv6ASHiA",
   },
   openGraph: {
     type: "website",

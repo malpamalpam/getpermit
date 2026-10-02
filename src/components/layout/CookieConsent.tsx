@@ -21,6 +21,10 @@ export function CookieConsent() {
 
   const accept = () => {
     window.localStorage.setItem(STORAGE_KEY, new Date().toISOString());
+    // Update GA4 consent after user accepts cookies
+    if (typeof window.gtag === "function") {
+      window.gtag("consent", "update", { analytics_storage: "granted" });
+    }
     setVisible(false);
   };
 
