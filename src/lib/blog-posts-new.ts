@@ -14,7 +14,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Karta pobytu czasowego w 2026 roku \u2014 kompletny poradnik krok po kroku",
     description:
       "Jak uzyska\u0107 kart\u0119 pobytu czasowego w Polsce w 2026? Wymagane dokumenty, koszty, czas oczekiwania i najcz\u0119stsze b\u0142\u0119dy. Praktyczny przewodnik od ekspert\u00f3w getpermit.pl.",
-    date: "2026-04-15",
+    date: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1473163928189-364b2c4e1135?w=1600&q=80",
     imageAlt: "Karta pobytu czasowego w Polsce \u2014 dokumenty i procedura legalizacji pobytu",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
@@ -48,7 +48,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "Kto mo\u017ce ubiega\u0107 si\u0119 o kart\u0119 pobytu czasowego w Polsce",
         content: `<p>Wniosek o udzielenie zezwolenia na pobyt czasowy mo\u017ce z\u0142o\u017cy\u0107 ka\u017cdy cudzoziemiec przebywaj\u0105cy legalnie na terytorium Polski, kt\u00f3ry zamierza przebywa\u0107 tu d\u0142u\u017cej ni\u017c 3 miesi\u0105ce. Najcz\u0119stsze cele pobytu to:</p>
 <ul>
-<li><strong>Praca</strong> \u2014 zar\u00f3wno na umow\u0119 o prac\u0119, jak i w ramach jednolitego zezwolenia na pobyt i prac\u0119</li>
+<li><strong>Praca</strong> \u2014 w ramach jednolitego zezwolenia na pobyt i prac\u0119</li>
 <li><strong>Prowadzenie dzia\u0142alno\u015bci gospodarczej</strong> \u2014 sp\u00f3\u0142ka z o.o., JDG lub oddzia\u0142 firmy zagranicznej</li>
 <li><strong>Studia</strong> \u2014 studia stacjonarne na polskiej uczelni wy\u017cszej</li>
 <li><strong>\u0141\u0105czenie z rodzin\u0105</strong> \u2014 do\u0142\u0105czenie do ma\u0142\u017conka lub rodzica posiadaj\u0105cego zezwolenie na pobyt</li>
@@ -82,12 +82,12 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Przygotowanie dokument\u00f3w</strong> \u2014 skompletowanie wszystkich wymaganych za\u0142\u0105cznik\u00f3w</li>
 <li><strong>Z\u0142o\u017cenie wniosku</strong> \u2014 wy\u0142\u0105cznie przez system MOS (od 27 kwietnia 2026 r.)</li>
 <li><strong>Pobranie odcisk\u00f3w palc\u00f3w</strong> \u2014 biometria pobierana w urz\u0119dzie</li>
-<li><strong>Otrzymanie stempla w paszporcie</strong> \u2014 potwierdzenie z\u0142o\u017cenia wniosku, legalizuje pobyt na czas post\u0119powania</li>
+<li><strong>Otrzymanie za\u015bwiadczenia z urz\u0119du</strong> \u2014 potwierdzenie z\u0142o\u017cenia wniosku, legalizuje pobyt na czas post\u0119powania</li>
 <li><strong>Oczekiwanie na decyzj\u0119</strong> \u2014 urz\u0105d mo\u017ce wzywa\u0107 do uzupe\u0142nienia dokument\u00f3w</li>
 <li><strong>Odbi\u00f3r karty pobytu</strong> \u2014 po pozytywnej decyzji, karta jest produkowana przez urz\u0105d (czas zale\u017cy od obci\u0105\u017cenia)</li>
 </ol>
 <p>Wyj\u0105tki od wy\u0142\u0105czno\u015bci elektronicznej (nadal papierowo): wnioski ICT i mobilno\u015b\u0107 d\u0142ugoterminowa, \u0142\u0105czenie rodzin gdy wnioskodawca przebywa za granic\u0105, cz\u0142onkowie rodzin obywateli RP/UE/UK.</p>
-<p>Wa\u017cne: stempel w paszporcie pozwala na legalne przebywanie i prac\u0119 w Polsce przez ca\u0142y czas trwania post\u0119powania. Jest to kluczowa informacja dla pracodawc\u00f3w.</p>`,
+<p>Wa\u017cne: za\u015bwiadczenie z urz\u0119du potwierdzaj\u0105ce z\u0142o\u017cenie wniosku legalizuje pobyt na czas trwania post\u0119powania. Kwestia dost\u0119pu do pracy w tym okresie zale\u017cy od indywidualnej sytuacji cudzoziemca \u2014 <a href="/pl/kontakt">skonsultuj swoj\u0105 sytuacj\u0119</a>.</p>`,
       },
       {
         id: "koszty",
@@ -99,10 +99,10 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <tr><td>Op\u0142ata skarbowa \u2014 pobyt czasowy</td><td><strong>340 z\u0142</strong></td></tr>
 <tr><td>Op\u0142ata skarbowa \u2014 pobyt i praca (jednolite zezwolenie)</td><td><strong>440 z\u0142</strong></td></tr>
 <tr><td>Wydanie karty pobytu (plastikowy dokument)</td><td><strong>100 z\u0142</strong></td></tr>
-<tr><td>T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w (orientacyjnie)</td><td>50\u2013150 z\u0142 za stron\u0119 <em>(szacunek rynkowy)</em></td></tr>
+<tr><td>T\u0142umaczenia przysi\u0119g\u0142e dokument\u00f3w</td><td>Wyceniane indywidualnie przez t\u0142umacza przysi\u0119g\u0142ego</td></tr>
 </tbody>
 </table>
-<p>\u0141\u0105czny koszt procesu, w\u0142\u0105cznie z t\u0142umaczeniami i pomoc\u0105 prawn\u0105, wynosi zwykle <strong>od 800 do 2500 z\u0142</strong> <em>(szacunek rynkowy, obejmuje t\u0142umaczenia i pomoc prawn\u0105 \u2014 nie jest to op\u0142ata urz\u0119dowa)</em> w zale\u017cno\u015bci od z\u0142o\u017cono\u015bci sprawy. <a href="/pl/kontakt">Skontaktuj si\u0119 z nami po bezp\u0142atn\u0105 wycen\u0119</a>.</p>`,
+<p>Do op\u0142at urz\u0119dowych dochodz\u0105 koszty t\u0142umacze\u0144 oraz opcjonalnie pomoc prawna. <a href="/pl/kontakt">Skontaktuj si\u0119 z nami po indywidualn\u0105 wycen\u0119</a>.</p>`,
       },
       {
         id: "czas-oczekiwania",
@@ -128,9 +128,9 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "Najcz\u0119\u015bciej zadawane pytania o kart\u0119 pobytu czasowego",
         content: `<div class="faq-list">
 <details><summary><strong>Ile kosztuje karta pobytu czasowego w 2026 roku?</strong></summary>
-<p>Op\u0142ata skarbowa wynosi 340 z\u0142 (lub 440 z\u0142 przy jednolitym zezwoleniu na pobyt i prac\u0119). Dodatkowo 100 z\u0142 za wydanie karty. \u0141\u0105cznie z t\u0142umaczeniami i obs\u0142ug\u0105 prawn\u0105 koszt wynosi od 800 do 2500 z\u0142.</p></details>
+<p>Op\u0142ata skarbowa wynosi 340 z\u0142 (lub 440 z\u0142 przy jednolitym zezwoleniu na pobyt i prac\u0119). Dodatkowo 100 z\u0142 za wydanie karty. Do tego dochodz\u0105 koszty t\u0142umacze\u0144 przysi\u0119g\u0142ych (wyceniane indywidualnie).</p></details>
 <details><summary><strong>Czy mog\u0119 pracowa\u0107 czekaj\u0105c na kart\u0119 pobytu?</strong></summary>
-<p>Tak. Stempel w paszporcie potwierdzaj\u0105cy z\u0142o\u017cenie wniosku uprawnia do legalnej pracy na warunkach okre\u015blonych we wniosku.</p></details>
+<p>To zale\u017cy od indywidualnej sytuacji. Mo\u017cliwo\u015b\u0107 pracy w czasie oczekiwania na decyzj\u0119 zale\u017cy m.in. od tego, czy cudzoziemiec mia\u0142 wcze\u015bniej dost\u0119p do rynku pracy, jaki posiada tytu\u0142 pobytowy i jaki jest cel z\u0142o\u017conego wniosku. Samo z\u0142o\u017cenie wniosku nie zawsze uprawnia do podj\u0119cia lub kontynuowania pracy. <a href="/pl/kontakt">Skonsultuj swoj\u0105 sytuacj\u0119 z naszym zespo\u0142em</a>.</p></details>
 <details><summary><strong>Co je\u015bli wniosek zostanie odrzucony?</strong></summary>
 <p>Od decyzji odmownej przys\u0142uguje odwo\u0142anie do Szefa Urz\u0119du do Spraw Cudzoziemc\u00f3w w terminie 14 dni. Pomagamy w procedurze odwo\u0142awczej z 98% skuteczno\u015bci\u0105.</p></details>
 <details><summary><strong>Jak d\u0142ugo wa\u017cna jest karta pobytu czasowego?</strong></summary>
@@ -268,7 +268,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Niebieska Karta UE (EU Blue Card) w Polsce 2026 \u2014 nowe zasady i wymagania",
     description:
       "EU Blue Card po zmianach od 2025. Kto mo\u017ce uzyska\u0107 Niebiesk\u0105 Kart\u0119 UE w Polsce? Wymagania, dokumenty, koszty i korzy\u015bci mobilno\u015bci w UE. Poradnik getpermit.pl.",
-    date: "2026-04-13",
+    date: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80",
     imageAlt: "EU Blue Card \u2014 Niebieska Karta UE dla specjalist\u00f3w w Polsce",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
@@ -291,7 +291,6 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
 <li><strong>Mobilno\u015b\u0107 w UE</strong> \u2014 po 12 miesi\u0105cach mo\u017cliwo\u015b\u0107 przeniesienia si\u0119 do innego pa\u0144stwa cz\u0142onkowskiego</li>
 <li><strong>\u0141atwiejsze \u0142\u0105czenie rodzin</strong> \u2014 uproszczona procedura sprowadzenia ma\u0142\u017conka i dzieci</li>
 <li><strong>Szybsza \u015bcie\u017cka do rezydenta UE</strong> \u2014 mo\u017cliwo\u015b\u0107 sumowania okres\u00f3w pobytu w r\u00f3\u017cnych krajach UE</li>
-<li><strong>Uproszczona procedura</strong> \u2014 mniej wymog\u00f3w formalnych ni\u017c przy standardowym zezwoleniu na prac\u0119</li>
 </ul>`,
       },
       {
@@ -300,7 +299,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         content: `<p>Od <strong>1 czerwca 2025 roku</strong> obowi\u0105zuj\u0105 zmienione przepisy wynikaj\u0105ce z implementacji dyrektywy 2021/1883. Kluczowe zmiany:</p>
 <ul>
 <li><strong>Pr\u00f3g wynagrodzenia</strong> \u2014 150% przeci\u0119tnego rocznego wynagrodzenia (w 2026: ok. 160 264 z\u0142/rok \u2248 13 355,34 z\u0142 brutto/miesi\u0105c, wg komunikatu GUS z 9.02.2026: \u015brednia 8 903,56 z\u0142). Pr\u00f3g jest jednolity \u2014 Polska nie wprowadzi\u0142a obni\u017conego progu 0,8 dla zawod\u00f3w deficytowych</li>
-<li><strong>Rozszerzony katalog kwalifikacji</strong> \u2014 opr\u00f3cz dyplomu wy\u017cszej uczelni, w zawodach deficytowych (np. IT) akceptowane jest minimum 3 lata do\u015bwiadczenia zawodowego (z\u0142agodzenie dotyczy wymogu kwalifikacji, nie progu p\u0142acowego)</li>
+<li><strong>Rozszerzony katalog kwalifikacji</strong> \u2014 opr\u00f3cz dyplomu wy\u017cszej uczelni, mo\u017cna wykaza\u0107 co najmniej <strong>5 lat do\u015bwiadczenia zawodowego</strong> na por\u00f3wnywalnym stanowisku; wyj\u0105tek: w zawodach deficytowych z bran\u017cy IT (programowanie, DevOps, cybersecurity, Data Science) wystarczaj\u0105 <strong>3 lata do\u015bwiadczenia</strong> (z\u0142agodzenie dotyczy wymogu kwalifikacji, nie progu p\u0142acowego)</li>
 <li><strong>Kontrakty kr\u00f3tkoterminowe</strong> \u2014 umowa na minimum 6 miesi\u0119cy (wcze\u015bniej 12)</li>
 <li><strong>Mobilno\u015b\u0107 kr\u00f3tkoterminowa</strong> \u2014 do 90 dni pracy w innym pa\u0144stwie UE bez dodatkowych formalno\u015bci</li>
 <li><strong>Samozatrudnienie</strong> \u2014 ograniczona mo\u017cliwo\u015b\u0107 r\u00f3wnoleg\u0142ego prowadzenia dzia\u0142alno\u015bci</li>
@@ -313,7 +312,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         heading: "Wymagania do uzyskania Niebieskiej Karty UE w Polsce",
         content: `<p>Aby uzyska\u0107 EU Blue Card, musisz spe\u0142nia\u0107 \u0142\u0105cznie nast\u0119puj\u0105ce warunki:</p>
 <ol>
-<li><strong>Wy\u017csze wykszta\u0142cenie</strong> (dyplom uko\u0144czenia studi\u00f3w wy\u017cszych, min. 3-letni cykl) <strong>lub min. 3 lata do\u015bwiadczenia</strong> w zawodach IT (po zmianach 2025)</li>
+<li><strong>Wy\u017csze wykszta\u0142cenie</strong> (dyplom uko\u0144czenia studi\u00f3w wy\u017cszych, min. 3-letni cykl) <strong>lub co najmniej 5 lat do\u015bwiadczenia zawodowego</strong> na por\u00f3wnywalnym stanowisku (wyj\u0105tek: <strong>3 lata</strong> w zawodach IT)</li>
 <li><strong>Umowa o prac\u0119</strong> na co najmniej 6 miesi\u0119cy z polskim pracodawc\u0105</li>
 <li><strong>Wynagrodzenie</strong> brutto r\u00f3wne lub wy\u017csze ni\u017c <strong>150% przeci\u0119tnego rocznego wynagrodzenia</strong> (\u2265 160 264 z\u0142/rok, tj. \u2265 13 355,34 z\u0142 brutto/miesi\u0105c w 2026)</li>
 <li><strong>Ubezpieczenie zdrowotne</strong></li>
@@ -393,7 +392,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Wnioski pobytowe online przez MOS w 2026 \u2014 jak dzia\u0142a nowy system",
     description:
       "Od 2026 wnioski o kart\u0119 pobytu sk\u0142adasz przez MOS (Modu\u0142 Obs\u0142ugi Spraw). Jak za\u0142o\u017cy\u0107 konto, wype\u0142ni\u0107 e-wniosek i unikn\u0105\u0107 b\u0142\u0119d\u00f3w. Poradnik getpermit.pl.",
-    date: "2026-04-12",
+    date: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80",
     imageAlt: "System MOS \u2014 sk\u0142adanie wniosk\u00f3w pobytowych online w Polsce 2026",
     author: "Grzegorz St\u0119pie\u0144, UTM Group",
@@ -468,7 +467,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
         content: `<p>Po wys\u0142aniu wniosku system:</p>
 <ol>
 <li>Nadaje <strong>numer sprawy</strong> \u2014 u\u017cywaj go we wszystkich kontaktach z urz\u0119dem</li>
-<li>Generuje <strong>elektroniczne potwierdzenie z\u0142o\u017cenia</strong> \u2014 odpowiednik stempla w paszporcie</li>
+<li>Generuje <strong>za\u015bwiadczenie o z\u0142o\u017ceniu wniosku</strong> \u2014 legalizuje pobyt na czas post\u0119powania</li>
 <li>Wysy\u0142a <strong>wezwanie na wizyt\u0119</strong> \u2014 w celu pobrania biometrii (odciski palc\u00f3w)</li>
 <li>Powiadamia o <strong>wezwaniach do uzupe\u0142nienia</strong> \u2014 przez MOS i e-mail</li>
 <li>Informuje o <strong>decyzji</strong> \u2014 pozytywnej lub odmownej</li>
@@ -513,8 +512,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     slug: "ile-kosztuje-karta-pobytu-2026",
     title: "Ile kosztuje karta pobytu w 2026? Pełny cennik opłat",
     description:
-      "Aktualne koszty karty pobytu w 2026 roku: opłaty skarbowe, wydanie karty, tłumaczenia przysięgłe i pomoc prawna. Cennik i kalkulator kosztów od getpermit.pl.",
-    date: "2026-04-11",
+      "Aktualne koszty karty pobytu w 2026 roku: opłaty skarbowe, wydanie karty i pomoc prawna. Cennik opłat od getpermit.pl.",
+    date: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&q=80",
     imageAlt: "Koszty karty pobytu w Polsce 2026 — cennik opłat urzędowych",
     author: "Grzegorz Stępień, UTM Group",
@@ -529,10 +528,10 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     sections: [
       { id: "oplaty-skarbowe", heading: "Opłaty skarbowe za kartę pobytu w 2026 roku", content: `<table><thead><tr><th>Rodzaj zezwolenia</th><th>Opłata skarbowa</th></tr></thead><tbody><tr><td>Pobyt czasowy</td><td><strong>340 zł</strong></td></tr><tr><td>Pobyt czasowy i praca (jednolite)</td><td><strong>440 zł</strong></td></tr><tr><td>Niebieska Karta UE</td><td><strong>440 zł</strong></td></tr><tr><td>Pobyt stały</td><td><strong>640 zł</strong></td></tr><tr><td>Rezydent długoterminowy UE</td><td><strong>640 zł</strong></td></tr></tbody></table><p>Opłatę należy uiścić <strong>przed złożeniem wniosku</strong>.</p>` },
       { id: "wydanie-karty", heading: "Opłata za wydanie karty", content: `<p>Po wydaniu pozytywnej decyzji urząd produkuje plastikową kartę. Opłata za wydanie karty wynosi <strong>100 zł</strong> niezależnie od rodzaju zezwolenia. Czas produkcji karty zależy od urzędu.</p>` },
-      { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<table><thead><tr><th>Dokument</th><th>Przybliżony koszt</th></tr></thead><tbody><tr><td>Paszport</td><td>50–100 zł</td></tr><tr><td>Akt urodzenia</td><td>60–80 zł</td></tr><tr><td>Akt małżeństwa</td><td>60–80 zł</td></tr><tr><td>Dyplom ukończenia studiów</td><td>80–150 zł</td></tr></tbody></table><p>Łączne koszty tłumaczeń w typowej sprawie: <strong>150–400 zł</strong>. <a href="/pl/uslugi/tlumaczenia-przysiegle">Oferujemy konkurencyjne ceny tłumaczeń</a>.</p>` },
+      { id: "tlumaczenia", heading: "Koszty tłumaczeń przysięgłych", content: `<p>Koszt tłumaczeń przysięgłych zależy od rodzaju dokumentu, liczby stron i języka źródłowego — tłumacz przysięgły wycenia każde zlecenie indywidualnie. Wszystkie dokumenty zagraniczne dołączane do wniosku muszą posiadać tłumaczenie przysięgłe na język polski.</p><p><a href="/pl/uslugi/tlumaczenia-przysiegle">Zapytaj o wycenę tłumaczeń</a>.</p>` },
       { id: "pomoc-prawna", heading: "Koszt profesjonalnej pomocy prawnej", content: `<ul><li><strong>Wstępna konsultacja</strong> — 250 zł (ok. 15 min, w getpermit.pl)</li><li><strong>Przygotowanie wniosku</strong> — od 600 zł</li><li><strong>Kompleksowe prowadzenie sprawy</strong> — od 800 zł</li><li><strong>Pobyt stały / rezydent UE</strong> — od 1 200 zł</li><li><strong>Ponaglenie / odwołanie</strong> — od 500 zł</li></ul><p>Nasz wskaźnik skuteczności wynosi <strong>98%</strong>. <a href="/pl/kontakt">Umów się na konsultację</a>.</p>` },
-      { id: "calkowity-koszt", heading: "Całkowity koszt karty pobytu — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td>Tłumaczenia</td><td>150–400 zł</td><td>150–400 zł</td><td>200–500 zł</td></tr><tr><td>Pomoc prawna (opcjonalnie)</td><td>od 600 zł</td><td>od 800 zł</td><td>od 1 200 zł</td></tr><tr><td><strong>Razem</strong></td><td><strong>590–1 440 zł</strong></td><td><strong>690–1 740 zł</strong></td><td><strong>940–2 440 zł</strong></td></tr></tbody></table>` },
-      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div><p>Dodatkowe informacje: przy decyzji odmownej przysługuje zwrot 50% opłaty skarbowej (na wniosek). Zwolnienie z opłaty skarbowej przysługuje m.in. posiadaczom Karty Polaka (przy pobycie stałym). Opłata za wydanie karty pobytu dla dzieci poniżej 16 lat wynosi 50 zł (zamiast 100 zł).</p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>` },
+      { id: "calkowity-koszt", heading: "Opłaty urzędowe — podsumowanie", content: `<table><thead><tr><th>Składnik</th><th>Pobyt czasowy</th><th>Czas. + praca</th><th>Pobyt stały</th></tr></thead><tbody><tr><td>Opłata skarbowa</td><td>340 zł</td><td>440 zł</td><td>640 zł</td></tr><tr><td>Wydanie karty</td><td>100 zł</td><td>100 zł</td><td>100 zł</td></tr><tr><td><strong>Razem opłaty urzędowe</strong></td><td><strong>440 zł</strong></td><td><strong>540 zł</strong></td><td><strong>740 zł</strong></td></tr></tbody></table><p>Do powyższych opłat dochodzą koszty tłumaczeń przysięgłych (wyceniane indywidualnie) oraz opcjonalnie pomoc prawna. <a href="/pl/kontakt">Skontaktuj się po indywidualną wycenę</a>.</p>` },
+      { id: "faq-koszty", heading: "FAQ — koszty karty pobytu", content: `<div class="faq-list"><details><summary><strong>Czy opłata skarbowa jest zwracana w razie odmowy?</strong></summary><p>Nie. Opłata skarbowa nie podlega zwrotowi w przypadku decyzji negatywnej. Dlatego warto skorzystać z profesjonalnej pomocy, aby zminimalizować ryzyko odmowy.</p></details><details><summary><strong>Ile kosztuje karta pobytu dla obywatela Ukrainy?</strong></summary><p>Opłaty są takie same dla wszystkich cudzoziemców, niezależnie od obywatelstwa. Ukraińcy objęci ochroną czasową mogą korzystać z uproszczonych procedur, ale opłaty pozostają standardowe.</p></details><details><summary><strong>Ile kosztuje konsultacja w getpermit.pl?</strong></summary><p>Konsultacja wstępna kosztuje 250 zł (ok. 15 min). Oceniamy Twoją sytuację, proponujemy strategię i podajemy dokładną wycenę dalszej obsługi.</p></details></div><p>Dodatkowe informacje: przy decyzji odmownej przysługuje zwrot 50% opłaty skarbowej (na wniosek). Zwolnienie z opłaty skarbowej przysługuje m.in. posiadaczom Karty Polaka (przy pobycie stałym). Opłata za wydanie karty pobytu dla dzieci poniżej 16 lat wynosi 50 zł (zamiast 100 zł).</p><p><em>(stan prawny: październik 2026)</em></p><p class="disclaimer"><em>Powyższa treść ma charakter informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewoda).</em></p>` },
     ],
   },
 
@@ -584,7 +583,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     slug: "rok-nowej-ustawy-o-zatrudnianiu-cudzoziemcow",
     title: "Rok nowej ustawy o zatrudnianiu cudzoziemców — co się realnie zmieniło?",
     description: "1 czerwca 2025 weszła w życie ustawa o warunkach dopuszczalności powierzania pracy cudzoziemcom. Podsumowujemy 12 miesięcy: elektronizacja, koniec testu rynku pracy, nowe obowiązki.",
-    date: "2026-06-02",
+    date: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600&q=80",
     imageAlt: "Uścisk dłoni pracodawcy i pracownika — zatrudnianie cudzoziemców po nowej ustawie",
     author: "Zespół getpermit.pl",
@@ -603,7 +602,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "koniec-testu",
         heading: "Koniec testu rynku pracy",
-        content: `<p>Zniesiono informację starosty — pracodawca nie musi już udowadniać, że nie znalazł pracownika lokalnie. To skróciło procedury o tygodnie, choć urzędy zyskały nowe narzędzia weryfikacji fikcyjnego zatrudnienia.</p>`,
+        content: `<p>Zniesiono informację starosty — pracodawca nie musi już udowadniać, że nie znalazł pracownika lokalnie. Mimo to czas oczekiwania na rozpatrzenie wniosków w praktyce się wydłużył — urzędy zyskały nowe narzędzia weryfikacji fikcyjnego zatrudnienia i korzystają z nich intensywnie.</p>`,
       },
       {
         id: "obowiazki",
@@ -613,7 +612,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "bilans",
         heading: "Bilans dla pracodawców i cudzoziemców",
-        content: `<p>Procedury są szybsze i tańsze logistycznie, ale wymagają dyscypliny cyfrowej: profil na praca.gov.pl, podpis elektroniczny i pilnowanie terminów to dziś podstawa legalnego zatrudnienia.</p><p>Warto też wiedzieć: w miejsce testu rynku pracy starosta może prowadzić listę zawodów, dla których odmawia się wydania zezwoleń (art. 31 ust. 3 ustawy z 20.03.2025).</p><p><strong>Zatrudniasz cudzoziemców? getpermit.pl poprowadzi cały proces — od oświadczenia po kartę pobytu pracownika.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
+        content: `<p>Pełna elektronizacja uprościła logistykę, ale wymaga dyscypliny cyfrowej: profil na praca.gov.pl, podpis elektroniczny i pilnowanie terminów to dziś podstawa legalnego zatrudnienia. Jednocześnie czas oczekiwania na rozpatrzenie wniosków w wielu urzędach się wydłużył — mimo zniesienia testu rynku pracy.</p><p>Warto też wiedzieć: w miejsce testu rynku pracy starosta może prowadzić listę zawodów, dla których odmawia się wydania zezwoleń (art. 31 ust. 3 ustawy z 20.03.2025).</p><p><strong>Zatrudniasz cudzoziemców? getpermit.pl poprowadzi cały proces — od oświadczenia po kartę pobytu pracownika.</strong></p><p><em>(stan prawny: październik 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
       },
     ],
   },
@@ -718,7 +717,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "posiadacze-kart",
         heading: "Co z posiadaczami kart pobytu?",
-        content: `<p>Cudzoziemcy posiadający polską kartę pobytu lub wizę długoterminową <strong>nie podlegają rejestracji w EES</strong> — system dotyczy pobytów krótkoterminowych. To kolejny argument, by uporządkować swój status pobytowy zamiast funkcjonować na ruchu bezwizowym.</p><p>Uwaga: koniec stempli dotyczy <strong>stempli granicznych Schengen</strong>. Krajowy stempel wojewody w paszporcie (potwierdzający złożenie wniosku pobytowego) nadal istnieje i legalizuje pobyt do wydania decyzji.</p><p><strong>Kończy Ci się limit 90/180? Pomożemy zalegalizować pobyt długoterminowo — umów konsultację z getpermit.pl.</strong></p><p><em>(stan prawny: sierpień 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
+        content: `<p>Cudzoziemcy posiadający polską kartę pobytu lub wizę długoterminową <strong>nie podlegają rejestracji w EES</strong> — system dotyczy pobytów krótkoterminowych. To kolejny argument, by uporządkować swój status pobytowy zamiast funkcjonować na ruchu bezwizowym.</p><p>Uwaga: koniec stempli dotyczy <strong>stempli granicznych Schengen</strong> (wjazd/wyjazd). Potwierdzeniem złożenia wniosku pobytowego jest zaświadczenie z urzędu, które legalizuje pobyt na czas postępowania.</p><p><strong>Kończy Ci się limit 90/180? Pomożemy zalegalizować pobyt długoterminowo — umów konsultację z getpermit.pl.</strong></p><p><em>(stan prawny: październik 2026)</em></p><p class="disclaimer"><em>Niniejszy materiał ma charakter wyłącznie informacyjny i nie stanowi porady prawnej. Ostateczna decyzja należy do właściwego organu (wojewody).</em></p>`,
       },
     ],
   },
