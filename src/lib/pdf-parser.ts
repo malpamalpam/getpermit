@@ -42,6 +42,8 @@ export interface ParsedDocumentData {
   parsedSalary?: ParsedSalary;
   // Confidence flag — if true, dates may be unreliable and need manual verification
   lowConfidence?: boolean;
+  // A3: dataOd requires manual completion (e.g. Wojewoda Wielkopolski decisions without start date)
+  dataOdManualFlag?: boolean;
 }
 
 // Keep backward compatibility
@@ -152,6 +154,27 @@ export function detectDocumentType(text: string, filenameHint?: string): string 
   // "oświadczenie podmiotu powierzającego wykonywanie pracy cudzoziemcowi" — mocny sygnał
   if (/o[śs]wiadczenie\s+podmiotu\s+powierzaj[aą]cego/i.test(text)) return "OSWIADCZENIE";
 
+  // === B7: KARTA POBYTU BLANKIET (skan karty RS/RR) — filename-based, check early ===
+  // Karta tworzy podstawę pobytową SAMODZIELNIE, bez decyzji.
+  if (/karta[\s_]*pobytu/i.test(filenameLower) && !/decyzj/i.test(filenameLower)) {
+    // B7: CUKR detection — card indicating previous temporary protection holder
+    if (/CUKR|poprzednio[\s_]*posiadacz[\s_]*ochrony[\s_]*czasowej/i.test(text)
+      || /CUKR/i.test(filenameLower)) {
+      return "POBYT_CUKR";
+    }
+    return "KARTA_POBYTU";
+  }
+
+  // === B8: Rejestracja pobytu obywatela UE / UK Withdrawal ===
+  if (/zarejestrowani\w*\s+pobytu\s+obywatel/i.test(text) || /dyrektywa?\s+2004\/38/i.test(lower)
+    || /rejestr(?:acja|acja)[\s_]*(?:pobytu[\s_]*)?(?:UE|EU)/i.test(filenameLower)) {
+    if (/art\.?\s*50\s+TUE|umow[aey]\s+wyst[aą]pieni/i.test(text)
+      || /march|GBR/i.test(filenameLower)) {
+      return "OD_UK_WYSTAPIENIE";
+    }
+    return "OD_UE";
+  }
+
   // === EU BLUE CARD — check before generic karta pobytu ===
   if (lower.includes("niebieska karta") || lower.includes("blue card")) return "TRC_BLUE_CARD";
   if (lower.includes("eu blue card") || lower.includes("karta ue")) return "TRC_BLUE_CARD";
@@ -168,10 +191,12 @@ export function detectDocumentType(text: string, filenameHint?: string): string 
     || (lower.includes("decyzja") && lower.includes("pobyt") && !(/zezwoleni[ea]\s+na\s+prac[eę]/i.test(text) && !lower.includes("na pobyt")));
   if (isTrc) {
     // Klasyfikacja podtypu TRC na podstawie celu pobytu z sentencji
+    // B9: Also check UZASADNIENIE section for family/study purpose keywords
     if (/w\s+celu\s+kszta[łl]cenia|na\s+studiach|kszta[łl]cenie\s+si[eę]/i.test(text)) return "TRC_STUDIA";
     if (/po[łl][aą]czeni[ea]\s+z\s+rodzin[aą]|pobyt\s+z\s+cudzoziemcem|cz[łl]onk\w*\s+rodziny/i.test(text)) return "TRC_POBYT_Z_CUDZ";
     if (/wzgl[eę]d[oó]w\s+humanitarnych|ochrona\s+uzupe[łl]niaj/i.test(text)) return "TRC_HUMANITARNE";
-    if (/ma[łl][żz]on\w*\s+obywatel\w*\s+polsk|ma[łl][żz]on\w*\s+obywatel\w*\s+RP/i.test(text)) return "TRC_MALZONEK_PL";
+    if (/ma[łl][żz]on\w*\s+obywatel\w*\s+(?:polsk|RP|Rzeczypospolit)/i.test(text)
+      || /zwi[aą]z(?:ek|ku)\s+ma[łl][żz]e[ńn]ski\w*\s+z\s+obywatel/i.test(text)) return "TRC_MALZONEK_PL";
     if (/dzia[łl]alno[śs][ćc]\s+gospodarcz/i.test(text)) return "TRC_DZIALALNOSC";
     if (/absolwent/i.test(text) && lower.includes("pobyt")) return "TRC_ABSOLWENT";
     // Domyślnie: praca na rzecz pracodawcy = TRC_FDK
@@ -1045,14 +1070,15 @@ function parseElectronicDecision(normalized: string, result: ParsedDocumentData)
  * Field values appear BEFORE the field label in parentheses.
  */
 function parseZezwolenie(normalized: string, result: ParsedDocumentData): ParsedDocumentData {
-  // --- Nr decyzji: "(typu A) nr 69056/2025" ---
-  const typNrMatch = normalized.match(/\(typu\s+[A-E]\)\s+nr\s+(\d+\/\d+)/i);
+  // --- B5: Nr zezwolenia typ A: "(typu A) nr 26031/2026" = NUMER ZEZWOLENIA (nie WRP) ---
+  const typNrMatch = normalized.match(/\(typu\s+[A-E]\)\s+nr\s+(\d+\/\d{4})/i);
   if (typNrMatch) result.nrDecyzji = typNrMatch[1].trim();
+  // For non-work-permit decisions: try other patterns
   if (!result.nrDecyzji) {
-    const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|sygnatura|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
+    const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
     if (nrDecMatch) result.nrDecyzji = nrDecMatch[1].trim();
   }
-  // Fallback: document header sygnatura "WRP-II.8671.42150.2025"
+  // B5: WRP-... is the SYGNATURA, not the permit number — use as fallback only for non-typ-A
   if (!result.nrDecyzji) {
     const sygMatch = normalized.match(/([A-Z]{2,5}(?:[-.](?:[A-Z]+|[IVX]+))*[-.](?:\d+\.?)+\.\d{4})/);
     if (sygMatch) result.nrDecyzji = sygMatch[1].trim();
@@ -1218,6 +1244,12 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   // Parse salary into structured form
   if (result.wynagrodzenie) {
     result.parsedSalary = parseSalary(result.wynagrodzenie);
+  }
+
+  // A3: Decyzje Wojewody Wielkopolskiego — brak daty początkowej
+  // Parser NIE zgaduje daty od — zostawia pole puste i ustawia flagę.
+  if (/[Ww]ojewod(?:a|y)\s+[Ww]ielkopolski/i.test(normalized) && !result.dataOd) {
+    result.dataOdManualFlag = true;
   }
 
   return result;

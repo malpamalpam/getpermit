@@ -404,6 +404,12 @@ enum FdkBaseType {
   DOSTEP_DYPLOM_PL      // legacy
   OD_ABSOLWENT
   OD_UK_WYSTAPIENIE
+  OD_BLUE_CARD          // Blue Card bez warunków zatrudnienia (OD/Blue Card)
+  OD_MALZONEK_PL        // OD — małżonek obywatela PL
+  OD_CZLONEK_RODZINY    // OD — członek rodziny (łączenie rodzin)
+  OD_HUMANITARNE        // OD — TRC humanitarne
+  // === Pobyt CUKR ===
+  POBYT_CUKR            // Pobyt z tytułu poprzedniej ochrony czasowej
   // === Odwołanie ===
   ODWOLANIE
 }

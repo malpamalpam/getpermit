@@ -39,11 +39,15 @@ async function main() {
   for (const f of foreigners) {
     if (f.employmentBases.length < 2) continue;
 
-    // Group by (typ, dataDo, nrDecyzji/nrOswiadczenia)
+    // A2 v1.2: Group by (typ, dataDo, nrDecyzji/nrOswiadczenia).
+    // WAŻNE: dwa różne numery ważne równolegle to NIE duplikat.
+    // Scalanie tylko dokumentów o tym samym numerze/tej samej umowie.
     const groups = new Map();
     for (const base of f.employmentBases) {
       const dataDo = base.dataDo ? base.dataDo.toISOString().slice(0, 10) : "null";
       const docNr = base.nrDecyzji || base.nrOswiadczenia || "";
+      // A2: If document has a number, it MUST match to be considered a duplicate.
+      // Two different valid document numbers = two separate bases, never merge.
       const key = `${base.typ}|${dataDo}|${docNr}`;
 
       if (!groups.has(key)) groups.set(key, []);
@@ -52,6 +56,12 @@ async function main() {
 
     for (const [key, bases] of groups) {
       if (bases.length < 2) continue;
+
+      // A2 v1.2: Skip dedup if bases come from different source attachments and both have active status
+      // (two parallel work permits for different contracts = NOT duplicates)
+      const allActive = bases.every(b => b.status === "AKTYWNE");
+      const differentSources = new Set(bases.map(b => b.sourceAttachmentId).filter(Boolean)).size > 1;
+      if (allActive && differentSources) continue;
 
       // Keep the one with most data (count non-null fields)
       const scored = bases.map((b) => {
