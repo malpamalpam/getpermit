@@ -120,7 +120,7 @@ export default async function CookiesPage({
                     <li className={liClass}><strong>Google Analytics</strong> — analityka ruchu na stronie (dostawca: Google LLC)</li>
                     <li className={liClass}><strong>Google Tag Manager</strong> — zarządzanie tagami i skryptami analitycznymi</li>
                     <li className={liClass}><strong>Meta Pixel (Facebook)</strong> — śledzenie konwersji i remarketing (dostawca: Meta Platforms)</li>
-                    <li className={liClass}><strong>Vercel Analytics</strong> — analityka wydajności strony (dostawca: Vercel Inc.)</li>
+                    <li className={liClass}><strong>Vercel Web Analytics</strong> — pomiar ruchu i wydajności strony (dostawca: Vercel Inc., USA). Vercel Web Analytics działa w modelu bezcookiesowym (cookieless) — nie zapisuje plików cookies na urządzeniu Użytkownika ani nie przechowuje danych osobowych. Zbierane są wyłącznie anonimowe dane o odsłonach stron i wydajności ładowania.</li>
                   </ul>
                 </li>
                 <li className={pClass}>

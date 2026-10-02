@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://getpermit.pl"),
   robots: { index: true, follow: true },
+  verification: {
+    google: "RdGNnQ9EuMUT8wqPFzguMojZpbHrwW1MikAYC1x5fV0",
+  },
   openGraph: {
     type: "website",
     siteName: "getpermit.pl",

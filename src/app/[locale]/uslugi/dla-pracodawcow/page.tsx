@@ -67,7 +67,7 @@ export default async function EmployersPage({
     { icon: Briefcase, key: "declarations", slug: "oswiadczenie-o-powierzeniu-pracy" },
     { icon: Shield, key: "audit", slug: "" },
     { icon: Bell, key: "notifications", slug: "powiadomienia-o-powierzeniu-pracy" },
-    { icon: Building2, key: "b2bIncubator", slug: "legalizacja-pracy-b2b-inkubator" },
+    { icon: Building2, key: "b2bIncubator", slug: "legalizacja-b2b-inkubator" },
   ];
 
   const benefits = ["benefit1", "benefit2", "benefit3", "benefit4", "benefit5"];

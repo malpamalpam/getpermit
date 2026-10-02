@@ -86,12 +86,6 @@ export const SERVICE_SLUG_MAP: Record<string, Record<string, string>> = {
     ru: "legalizaciya-b2b-inkubator",
     uk: "legalizaciya-b2b-inkubator",
   },
-  "legalizacja-pracy-b2b-inkubator": {
-    pl: "legalizacja-pracy-b2b-inkubator",
-    en: "work-legalization-b2b-incubator",
-    ru: "legalizaciya-raboty-b2b-inkubator",
-    uk: "legalizaciya-roboty-b2b-inkubator",
-  },
   // Dla pracodawców — dedykowany landing
   "dla-pracodawcow": {
     pl: "dla-pracodawcow",

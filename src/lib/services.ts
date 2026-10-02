@@ -1021,43 +1021,6 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           },
         ],
       },
-      {
-        slug: "legalizacja-pracy-b2b-inkubator",
-        categorySlug: "dla-pracodawcow",
-        order: 4,
-        title: loc(
-          "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości",
-          "Work legalization via B2B contract in a business incubator",
-          "Легализация работы на основе договора B2B в бизнес-инкубаторе",
-          "Легалізація роботи на основі договору B2B у бізнес-інкубаторі"
-        ),
-        shortDescription: loc(
-          "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości — dedykowana ścieżka dla pracodawców i cudzoziemców.",
-          "Work legalization via a B2B contract in a business incubator — a dedicated path for employers and foreigners.",
-          "Легализация работы на основе договора B2B в бизнес-инкубаторе — выделенный путь для работодателей и иностранцев.",
-          "Легалізація роботи на основі договору B2B у бізнес-інкубаторі — виділений шлях для роботодавців та іноземців."
-        ),
-        fullDescription: loc(
-          "Legalizacja pracy cudzoziemca na podstawie umowy B2B zawartej z inkubatorem przedsiębiorczości. Procedura obejmuje zawarcie umowy współpracy z inkubatorem oraz uzyskanie zezwolenia na pracę. Pomagamy pracodawcom i cudzoziemcom w koordynacji z inkubatorem, przygotowaniu dokumentacji i reprezentacji przed urzędami.",
-          "Work legalization for a foreigner based on a B2B contract with a business incubator (Fundacja Firma Dla Każdego). The procedure involves concluding a cooperation agreement with the incubator and obtaining a work permit. We help employers and foreigners with coordination with the incubator, documentation preparation, and representation before the authorities.",
-          "Легализация работы иностранца на основе договора B2B, заключённого с бизнес-инкубатором (inkubator przedsiębiorczości). Процедура включает заключение договора сотрудничества с инкубатором и получение разрешения на работу (zezwolenie na pracę). Помогаем работодателям и иностранцам в координации с инкубатором, подготовке документации и представительстве перед ведомствами.",
-          "Легалізація роботи іноземця на основі договору B2B, укладеного з бізнес-інкубатором (inkubator przedsiębiorczości). Процедура включає укладення договору співпраці з інкубатором та отримання дозволу на роботу (zezwolenie na pracę). Допомагаємо роботодавцям та іноземцям з координацією з інкубатором, підготовкою документації та представництвом перед відомствами."
-        ),
-        forWhom: loc(
-          "Pracodawcy i cudzoziemcy korzystający z umowy B2B w inkubatorze przedsiębiorczości.",
-          "Employers and foreigners using a B2B contract in a business incubator.",
-          "Работодатели и иностранцы, использующие договор B2B в бизнес-инкубаторе.",
-          "Роботодавці та іноземці, що використовують договір B2B у бізнес-інкубаторі."
-        ),
-        requiredDocuments: {
-          pl: ["Szczegółowa lista dokumentów zależy od indywidualnej sytuacji — zostanie przedstawiona na konsultacji."],
-          en: ["The detailed list of documents depends on the individual situation — it will be presented during the consultation."],
-          ru: ["Подробный список документов зависит от индивидуальной ситуации — он будет представлен на консультации."],
-          uk: ["Детальний список документів залежить від індивідуальної ситуації — він буде представлений на консультації."],
-        },
-        estimatedTime: loc("Od 1 do 3 miesięcy", "1 to 3 months", "От 1 до 3 месяцев", "Від 1 до 3 місяців"),
-        price: null,
-      },
     ],
   },
 ];

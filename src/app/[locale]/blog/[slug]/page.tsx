@@ -54,6 +54,9 @@ export async function generateMetadata({
       title: post.title,
       description: post.description,
       type: "article",
+      publishedTime: post.date,
+      modifiedTime: post.date,
+      authors: [post.author],
       images: [{ url: post.imageUrl, width: 1200, height: 630, alt: post.imageAlt }],
     },
     alternates: {
@@ -89,7 +92,9 @@ export default async function BlogPostPage({
   // Build canonical URL for JSON-LD
   const plSlug = getCanonicalBlogSlug(slug, locale) ?? post.slug;
   const localizedSlug = getLocalizedBlogSlug(plSlug, locale);
-  const canonicalUrl = `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
+  const canonicalUrl = locale === "pl"
+    ? `${siteConfig.url}/blog/${localizedSlug}`
+    : `${siteConfig.url}/${locale}/blog/${localizedSlug}`;
 
   const jsonLd = {
     "@context": "https://schema.org",

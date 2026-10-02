@@ -136,16 +136,6 @@ export const SERVICE_HERO_IMAGES: Record<string, ServiceImage> = {
     },
     credit: "Unsplash / Cytonn Photography",
   },
-  "legalizacja-pracy-b2b-inkubator": {
-    src: "/images/services/zezwolenie-na-prace-getpermit.jpg",
-    alt: {
-      pl: "Legalizacja pracy na podstawie umowy B2B w inkubatorze przedsiębiorczości",
-      en: "Work legalization via B2B contract in a business incubator",
-      ru: "Легализация работы на основе договора B2B в бизнес-инкубаторе",
-      uk: "Легалізація роботи на основі договору B2B у бізнес-інкубаторі",
-    },
-    credit: "Unsplash / Cytonn Photography",
-  },
   "powiadomienia-o-powierzeniu-pracy": {
     src: "/images/services/oswiadczenie-o-powierzeniu-pracy-getpermit.jpg",
     alt: {
