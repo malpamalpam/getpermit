@@ -20,6 +20,7 @@ async function main() {
       if (file.endsWith(".jpg")) {
         // Image — use OCR directly
         const result = await parseOswiadczeniePdf(buf.buffer, { ocrFallback: true, filename: file });
+        if (!result) { console.log(`${file} | [OCR FAILED] | - | - | - | - |`); continue; }
         const flags = [
           result.dataOdManualFlag ? "MANUAL_OD" : "",
           result.lowConfidence ? "LOW_CONF" : "",
@@ -48,6 +49,7 @@ async function main() {
         // Scanned PDF — use OCR
         console.log(`  [OCR] ${file}...`);
         const result = await parseOswiadczeniePdf(buf.buffer, { ocrFallback: true, filename: file });
+        if (!result) { console.log(`${file} | [OCR FAILED] | - | - | - | - |`); continue; }
         const flags = [
           result.dataOdManualFlag ? "MANUAL_OD" : "",
           result.lowConfidence ? "LOW_CONF" : "",
