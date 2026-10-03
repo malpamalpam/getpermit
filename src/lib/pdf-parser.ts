@@ -1321,9 +1321,21 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
    - "względy humanitarne" → TRC_HUMANITARNE
    - "małżonek obywatela polskiego" → TRC_MALZONEK_PL
    - "działalność gospodarcza" → TRC_DZIALALNOSC
+   - "absolwent polskiej uczelni" lub art. 186 ust. 1 pkt 6 → TRC_ABSOLWENT
    - "w związku z wykonywaniem pracy na rzecz:" → TRC_FDK
+   - "pobyt stały" lub art. 195/201 → OD_POBYT_STALY (dataDo = null)
+   - "rezydent długoterminowy" lub art. 211/218 → OD_REZYDENT_UE (dataDo = null)
+   - "status uchodźcy" → OD_UCHODZCA (dataDo = null)
+   - "ochrona uzupełniająca" → OD_OCHRONA_UZUP (dataDo = null)
    - "zezwolenie na pracę" (bez "na pobyt") → ZEZWOLENIE_A
    Jesli nie pasuje zaden cel → TRC_FDK.
+   DLA KART POBYTU (skan plastikowej karty, nr RS/RR):
+   - Karta z napisem "poprzednio posiadacz ochrony czasowej" lub CUKR → POBYT_CUKR
+   - Karta z art. 50 TUE, "Umowa Wystapienia", GBR → OD_UK_WYSTAPIENIE
+   - Karta/zaswiadczenie o rejestracji pobytu obywatela UE/EOG → OD_UE (dataDo = null jesli brak)
+   - Inna karta pobytu → KARTA_POBYTU
+   DLA POWIADOMIEN UA (PSZ-PPWPU, "powiadomienie o powierzeniu pracy"):
+   - detectedType = POWIADOMIENIE_UA
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
 
 DLA OSWIADCZEN (formularze PSZ-OPWP, "Oswiadczenie podmiotu o powierzeniu pracy"):
@@ -1607,6 +1619,35 @@ async function ocrWithClaude(buffer: ArrayBuffer): Promise<string | null> {
  * @param ocrFallback - if true (default), attempt Claude OCR when no text layer detected.
  *   Set to false on upload (fast path) — user can trigger OCR explicitly via Scrape button.
  */
+/**
+ * Post-process OCR results: apply filename-based type overrides.
+ * OCR model may not know about new types (POBYT_CUKR, OD_UK_WYSTAPIENIE, OD_UE).
+ */
+function applyFilenameOverrides(result: ParsedDocumentData, filename?: string): void {
+  const fn = filename ?? "";
+  // B7: CUKR detection from filename
+  if (/cukr/i.test(fn) || /poprzednio[\s_]*posiadacz/i.test(fn)) {
+    result.detectedType = "POBYT_CUKR";
+    return;
+  }
+  // B8: UK Withdrawal from filename (KP_March, GBR)
+  if (/march|gbr|withdrawal|wyst[aą]pieni/i.test(fn) && /kp[_\s.]|karta/i.test(fn)) {
+    result.detectedType = "OD_UK_WYSTAPIENIE";
+    return;
+  }
+  // B8: EU registration from filename (handles typo "rejetracja" too)
+  if (/rejetr.*ue|rejestr.*ue|karta[\s_]*ue|bevz/i.test(fn)) {
+    result.detectedType = "OD_UE";
+    return;
+  }
+  // B8: EU citizen by nationality (France, Germany etc.) + card without decision
+  if (result.obywatelstwo && /francja|niemcy|hiszpania|włochy|holandia|belgia|austria|szwecja|czechy|słowacja/i.test(result.obywatelstwo)
+    && /karta|rejetr|rejestr/i.test(fn) && !/decyzj/i.test(fn)) {
+    result.detectedType = "OD_UE";
+    return;
+  }
+}
+
 export async function parseOswiadczeniePdf(
   buffer: ArrayBuffer,
   { ocrFallback = true, filename }: { ocrFallback?: boolean; filename?: string } = {}
@@ -1631,6 +1672,7 @@ export async function parseOswiadczeniePdf(
       const pdfBetaResult = await ocrExtractStructured(buffer, "application/pdf", filename);
       if (pdfBetaResult) {
         console.log("[pdf-parser] PDF beta OCR succeeded");
+        applyFilenameOverrides(pdfBetaResult, filename);
         return pdfBetaResult;
       }
       console.log(`[pdf-parser] PDF beta OCR returned null. lastOcrError=${JSON.stringify(lastOcrError)}`);
@@ -1736,6 +1778,7 @@ export async function parseOswiadczeniePdf(
         }
 
         if (bestResult) {
+          applyFilenameOverrides(bestResult, filename);
           sanitizeDates(bestResult);
           return bestResult;
         }
