@@ -432,6 +432,7 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     }
 
     sanitizeDates(result);
+    sanitizeDocumentNumber(result);
     return result;
   }
 
@@ -543,6 +544,7 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (result.stanowisko) result.stanowisko = deduplicateStanowisko(result.stanowisko);
     if (result.wynagrodzenie) result.parsedSalary = parseSalary(result.wynagrodzenie);
     sanitizeDates(result);
+    sanitizeDocumentNumber(result);
     return result;
   }
 
@@ -736,6 +738,7 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   }
 
   sanitizeDates(result);
+  sanitizeDocumentNumber(result);
   return result;
 }
 
@@ -784,6 +787,37 @@ function sanitizeDates(result: ParsedDocumentData): void {
     result.dataOd = undefined;
     result.lowConfidence = true;
   }
+
+  // A2 v2: dataOd far in future (>today+12mo) with no dataDo → likely "date of expiry"
+  // parsed into the wrong field. Move to dataDo.
+  const now = new Date();
+  const future12m = new Date(now);
+  future12m.setMonth(future12m.getMonth() + 12);
+  if (result.dataOd && !result.dataDo) {
+    const odDate = new Date(result.dataOd);
+    if (odDate > future12m) {
+      result.dataDo = result.dataOd;
+      result.dataOd = undefined;
+      result.lowConfidence = true;
+    }
+  }
+}
+
+/**
+ * Reject junk document numbers: too short (<5 chars) or pure numeric too short (<8 digits).
+ * "069" is a known OCR artifact from page numbers or barcode fragments.
+ */
+function sanitizeDocumentNumber(result: ParsedDocumentData): void {
+  const isJunk = (val: string | undefined): boolean => {
+    if (!val) return false;
+    const trimmed = val.trim();
+    if (trimmed.length < 5) return true;
+    if (/^\d+$/.test(trimmed) && trimmed.length < 8) return true;
+    return false;
+  };
+  if (isJunk(result.nrDecyzji)) result.nrDecyzji = undefined;
+  if (isJunk(result.nrOswiadczenia)) result.nrOswiadczenia = undefined;
+  if (isJunk(result.nrPaszportu)) result.nrPaszportu = undefined;
 }
 
 /**
@@ -1247,10 +1281,12 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   }
 
   // A3: Decyzje Wojewody Wielkopolskiego — brak daty początkowej
-  // Parser NIE zgaduje daty od — zostawia pole puste i ustawia flagę.
   if (/[Ww]ojewod(?:a|y)\s+[Ww]ielkopolski/i.test(normalized) && !result.dataOd) {
     result.dataOdManualFlag = true;
   }
+
+  // B2: Reject junk document numbers (<5 chars or pure numeric <8 digits)
+  sanitizeDocumentNumber(result);
 
   return result;
 }
