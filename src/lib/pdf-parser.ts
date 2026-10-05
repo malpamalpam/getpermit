@@ -256,8 +256,8 @@ function extractPersonalData(normalized: string, result: ParsedDocumentData): vo
     if (citizenship.length > 1) result.obywatelstwo = citizenship;
   }
 
-  // Paszport
-  const paszportMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
+  // Paszport — min 5 chars to avoid junk like "069"
+  const paszportMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]{5,})/);
   if (paszportMatch) result.nrPaszportu = paszportMatch[1].trim();
 }
 
@@ -1218,8 +1218,8 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     if (decDateMatch) result.dataOd = parseDatePL(decDateMatch[1]);
   }
 
-  // --- Paszport ---
-  const paszMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]+)/);
+  // --- Paszport — min 5 chars to avoid junk like "069" ---
+  const paszMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]{5,})/);
   if (paszMatch) result.nrPaszportu = paszMatch[1].trim();
 
   // --- Electronic decision parsing (UW with qualified signature) ---
