@@ -102,12 +102,23 @@ function getTrcLabel(
   employmentBases: { typ: string; status: string; dataDo: Date | null }[],
   typDokumentuPobytowego: string | null | undefined
 ): string {
-  // Find the most recent active TRC base
+  // Find the most relevant active residence base
+  // Priority: indefinite (dataDo=null) first, then by latest dataDo
   const trcTypes = Object.keys(TRC_LABELS);
   const trcBases = employmentBases
+    .filter((b) => trcTypes.includes(b.typ) && b.typ !== "KARTA_POBYTU" && b.status === "AKTYWNE")
+    .sort((a, b) => {
+      // Indefinite (null dataDo) = highest priority (Infinity)
+      const aTime = a.dataDo === null ? Infinity : (a.dataDo?.getTime() ?? 0);
+      const bTime = b.dataDo === null ? Infinity : (b.dataDo?.getTime() ?? 0);
+      return bTime - aTime;
+    });
+  if (trcBases.length > 0) return TRC_LABELS[trcBases[0].typ] ?? "TRC";
+  // Try non-active bases too (for historical display)
+  const allTrcBases = employmentBases
     .filter((b) => trcTypes.includes(b.typ) && b.typ !== "KARTA_POBYTU")
     .sort((a, b) => (b.dataDo?.getTime() ?? 0) - (a.dataDo?.getTime() ?? 0));
-  if (trcBases.length > 0) return TRC_LABELS[trcBases[0].typ] ?? "TRC";
+  if (allTrcBases.length > 0) return TRC_LABELS[allTrcBases[0].typ] ?? "TRC";
   // Fallback to legacy KARTA_POBYTU bases
   const kpBases = employmentBases.filter((b) => b.typ === "KARTA_POBYTU");
   if (kpBases.length > 0 && typDokumentuPobytowego) return typDokumentuPobytowego;
