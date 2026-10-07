@@ -360,8 +360,12 @@ export default async function FdkForeignerPage({
                   const wizaActive = foreigner.wizaDo && foreigner.wizaDo >= now;
                   const hasUpo = !!foreigner.upoDoreczone;
                   const hasOchronaUkr = foreigner.ochronaCzasowaUkr;
-                  const isEuCitizen = foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
-                  const hasAny = kpActive || kpExpired || wizaActive || wizaExpired || hasUpo || hasOchronaUkr || isEuCitizen;
+                  const isEuCitizen = foreigner.employmentBases.some((b) => (b.typ === "DOSTEP_UE" || b.typ === "OD_UE") && b.status === "AKTYWNE");
+                  // Indefinite residence: OD_REZYDENT_UE, OD_POBYT_STALY etc. with dataDo=null
+                  const hasIndefiniteResidence = foreigner.employmentBases.some(
+                    (b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE"
+                  );
+                  const hasAny = kpActive || kpExpired || wizaActive || wizaExpired || hasUpo || hasOchronaUkr || isEuCitizen || hasIndefiniteResidence;
 
                   return (
                     <>
@@ -382,8 +386,22 @@ export default async function FdkForeignerPage({
                           )}
                         </div>
                       )}
+                      {/* Bezterminowa podstawa pobytowa (rezydent UE, pobyt stały etc.) */}
+                      {hasIndefiniteResidence && !kpActive && (
+                        <div className="rounded-lg bg-emerald-50 p-3 text-sm">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="font-semibold text-emerald-800">
+                                {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)}
+                              </div>
+                              <div className="text-emerald-700">Bezterminowo</div>
+                            </div>
+                            <ResidenceBasisActions foreignerId={foreigner.id} basisType="karta" currentDate={undefined} />
+                          </div>
+                        </div>
+                      )}
                       {/* Karta pobytu — wygasła */}
-                      {kpExpired && (
+                      {kpExpired && !hasIndefiniteResidence && (
                         <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm">
                           <div className="flex items-start justify-between">
                             <div>
