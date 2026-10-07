@@ -378,7 +378,7 @@ async function main() {
         }
       }
       if (cls.isIndefinite && RESIDENCE_BASE_TYPES.has(newType || oldType) && DO_RUN) {
-        await db.fdkForeigner.update({ where: { id: foreignerId }, data: { decyzjaPobytowaDo: new Date("2099-12-31") } });
+        await db.fdkForeigner.update({ where: { id: foreignerId }, data: { decyzjaPobytowaDo: null } });
       }
     }
 
