@@ -71,7 +71,7 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
 };
 
 
-/** Map TRC base type to human-readable label for residence display */
+/** Map TRC/residence base type to human-readable label for residence display */
 const TRC_LABELS: Record<string, string> = {
   TRC_FDK: "TRC — FDK",
   TRC_HUMANITARNE: "TRC — humanitarne",
@@ -83,6 +83,15 @@ const TRC_LABELS: Record<string, string> = {
   TRC_BLUE_CARD: "Blue Card",
   BLUE_CARD: "Blue Card",
   KARTA_POBYTU: "TRC",
+  OD_REZYDENT_UE: "Rezydent długoterminowy UE",
+  DOSTEP_REZYDENT_UE: "Rezydent długoterminowy UE",
+  OD_POBYT_STALY: "Pobyt stały",
+  DOSTEP_POBYT_STALY: "Pobyt stały",
+  OD_UCHODZCA: "Status uchodźcy",
+  OD_OCHRONA_UZUP: "Ochrona uzupełniająca",
+  OD_UE: "Obywatel UE/EOG",
+  OD_UK_WYSTAPIENIE: "Umowa wystąpienia (UK)",
+  POBYT_CUKR: "Pobyt CUKR",
 };
 
 /**
@@ -152,6 +161,11 @@ export default async function FdkForeignerPage({
 
   // Check if foreigner has active residence permit (KARTA_POBYTU or BLUE_CARD)
   const now = new Date();
+  // Indefinite residence types (dataDo=null means valid forever)
+  const INDEFINITE_RESIDENCE_TYPES = new Set([
+    "OD_REZYDENT_UE", "DOSTEP_REZYDENT_UE", "OD_POBYT_STALY", "DOSTEP_POBYT_STALY",
+    "OD_UCHODZCA", "OD_OCHRONA_UZUP", "OD_UE", "DOSTEP_UE", "OD_UK_WYSTAPIENIE",
+  ]);
   const hasActiveResidence =
     (foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo > now) ||
     foreigner.upoDoreczone ||
@@ -159,7 +173,12 @@ export default async function FdkForeignerPage({
     foreigner.employmentBases.some(
       (b) => (b.typ === "KARTA_POBYTU" || b.typ === "BLUE_CARD") && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
     ) ||
-    foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
+    foreigner.employmentBases.some(
+      (b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE"
+    ) ||
+    foreigner.employmentBases.some(
+      (b) => Object.keys(TRC_LABELS).includes(b.typ) && b.status === "AKTYWNE" && (b.dataDo === null || b.dataDo > now)
+    );
 
   return (
     <>
@@ -196,7 +215,8 @@ export default async function FdkForeignerPage({
 
               // Helper: render the active document badge
               const renderActiveDoc = () => {
-                const isEu = foreigner.employmentBases.some((b) => b.typ === "DOSTEP_UE" && b.status === "AKTYWNE");
+                const isEu = foreigner.employmentBases.some((b) => (b.typ === "DOSTEP_UE" || b.typ === "OD_UE") && b.status === "AKTYWNE");
+                const isIndefinite = foreigner.employmentBases.some((b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE");
                 if (foreigner.ochronaCzasowaUkr) {
                   return (
                     <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">
@@ -204,10 +224,18 @@ export default async function FdkForeignerPage({
                     </span>
                   );
                 }
-                if (isEu) {
+                if (isEu && !isIndefinite) {
                   return (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
                       <Shield className="h-3 w-3" /> Pobyt obywatela UE
+                    </span>
+                  );
+                }
+                if (isIndefinite) {
+                  const label = getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego);
+                  return (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+                      <Shield className="h-3 w-3" /> {label} — bezterminowo
                     </span>
                   );
                 }
