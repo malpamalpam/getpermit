@@ -5,6 +5,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { randomUUID } from "crypto";
 import { parseOswiadczeniePdf } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits, namesMatch } from "@/lib/fdk-queries";
+import { classifyToFolder } from "@/lib/folder-classifier";
 
 // Allow up to 60s for upload (large scanned documents from phones can be 5-10 MB)
 export const maxDuration = 60;
@@ -262,6 +263,28 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       console.error("[fdk/upload] PDF parsing error (non-fatal):", err);
     }
+  }
+
+  // Auto-classify folder based on detected type and name match
+  if (extracted || typPliku !== "pdf") {
+    const isDiffPerson = extracted
+      ? (() => {
+          const extractedFullName = `${extracted.imie ?? ""} ${extracted.nazwisko ?? ""}`.trim();
+          const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
+          return extractedFullName.length > 2
+            && profileFullName.length > 2
+            && foreigner.nazwisko !== "Nowy"
+            && !namesMatch(extractedFullName, profileFullName);
+        })()
+      : false;
+    const folder = classifyToFolder(extracted?.detectedType ?? null, isDiffPerson, file.name);
+    await db.fdkAttachment.update({
+      where: { id: attachment.id },
+      data: {
+        folder,
+        detectedType: extracted?.detectedType ?? null,
+      },
+    });
   }
 
   // Build info about partial extraction

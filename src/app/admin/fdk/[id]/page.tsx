@@ -10,6 +10,7 @@ import { ScrapeButton } from "@/components/admin/fdk/ScrapeButton";
 import { AddResidenceBasisButton } from "@/components/admin/fdk/AddResidenceBasisButton";
 import { ResidenceBasisActions } from "@/components/admin/fdk/ResidenceBasisActions";
 import { DeleteAttachmentButton } from "@/components/admin/fdk/DeleteAttachmentButton";
+import FolderSelect from "@/components/admin/fdk/FolderSelect";
 import { SendHrEmailButton } from "@/components/admin/fdk/SendHrEmailButton";
 import { FdkEditForeignerForm } from "@/components/admin/fdk/FdkEditForeignerForm";
 import { FdkChangeHistory } from "@/components/admin/fdk/FdkChangeHistory";
@@ -645,12 +646,19 @@ export default async function FdkForeignerPage({
                 attachmentDocInfo.set(fn, { typ: baseTyp, nr });
               }
 
-              const groups = new Map<string, typeof foreigner.attachments>();
-              for (const a of foreigner.attachments) {
-                const list = groups.get(a.kategoria) ?? [];
-                list.push(a);
-                groups.set(a.kategoria, list);
-              }
+              // Group attachments by folder (Ważne / Inne dokumenty / Dokumenty rodziny)
+              // then by kategoria within each folder
+              const FOLDER_LABELS: Record<string, string> = {
+                wazne: "Ważne",
+                inne_dokumenty: "Inne dokumenty",
+                dokumenty_rodziny: "Dokumenty członków rodziny",
+              };
+              const FOLDER_ORDER = ["wazne", "inne_dokumenty", "dokumenty_rodziny"];
+              const FOLDER_COLORS: Record<string, string> = {
+                wazne: "border-emerald-200 bg-emerald-50/50",
+                inne_dokumenty: "border-slate-200 bg-slate-50/50",
+                dokumenty_rodziny: "border-blue-200 bg-blue-50/50",
+              };
               const CATEGORY_LABELS: Record<string, string> = {
                 glowne: "Dokumenty główne",
                 wp_2023: "WP 2023",
@@ -662,61 +670,88 @@ export default async function FdkForeignerPage({
                 hr: "HR",
                 inne: "Inne",
               };
-              return Array.from(groups.entries()).map(([cat, files]) => (
-                <div key={cat}>
-                  <h3 className="mb-3 font-display text-lg font-bold text-primary">
-                    {CATEGORY_LABELS[cat] ?? cat}
-                  </h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {files.map((f) => (
-                      <div key={f.id} className="flex items-start gap-3 rounded-lg border border-primary/10 bg-white p-4 shadow-sm">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent/10 text-xs font-bold uppercase text-accent">
-                          {f.typPliku}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
-                          {(() => {
-                            const docInfo = attachmentDocInfo.get(f.nazwaPliku);
-                            if (docInfo) {
-                              const badge = TYPE_BADGES[docInfo.typ];
-                              return (
-                                <p className="mt-0.5 flex items-center gap-1.5 text-xs text-primary/60">
-                                  {badge && <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${badge.cls}`}>{badge.label}</span>}
-                                  <span className="font-mono">{docInfo.nr}</span>
-                                </p>
-                              );
-                            }
-                            return null;
-                          })()}
-                          {f.opis && (
-                            <p className={`mt-0.5 text-xs ${f.opis.startsWith("\u26a0") ? "font-semibold text-amber-600" : "text-primary/50"}`}>
-                              {f.opis}
-                            </p>
-                          )}
-                          <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <a
-                              href={`/api/fdk/attachments/${f.id}?action=preview`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
-                            >
-                              <Eye className="h-3 w-3" /> Podgląd
-                            </a>
-                            <a
-                              href={`/api/fdk/attachments/${f.id}?action=download`}
-                              className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
-                            >
-                              <Download className="h-3 w-3" /> Pobierz
-                            </a>
-                            <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
-                            <DeleteAttachmentButton attachmentId={f.id} nazwa={f.nazwaWyswietlana} />
+
+              // Build folder → kategoria → attachments hierarchy
+              const folderGroups = new Map<string, Map<string, typeof foreigner.attachments>>();
+              for (const a of foreigner.attachments) {
+                const folderKey = a.folder ?? "inne_dokumenty";
+                if (!folderGroups.has(folderKey)) folderGroups.set(folderKey, new Map());
+                const catMap = folderGroups.get(folderKey)!;
+                const list = catMap.get(a.kategoria) ?? [];
+                list.push(a);
+                catMap.set(a.kategoria, list);
+              }
+
+              return FOLDER_ORDER
+                .filter((fk) => folderGroups.has(fk))
+                .map((folderKey) => {
+                  const catMap = folderGroups.get(folderKey)!;
+                  const totalCount = Array.from(catMap.values()).reduce((s, arr) => s + arr.length, 0);
+                  return (
+                    <div key={folderKey} className={`rounded-xl border p-4 ${FOLDER_COLORS[folderKey] ?? ""}`}>
+                      <h3 className="mb-4 font-display text-lg font-bold text-primary">
+                        {FOLDER_LABELS[folderKey] ?? folderKey}
+                        <span className="ml-2 text-sm font-normal text-primary/50">({totalCount})</span>
+                      </h3>
+                      {Array.from(catMap.entries()).map(([cat, files]) => (
+                        <div key={cat} className="mb-4 last:mb-0">
+                          <h4 className="mb-2 text-sm font-semibold text-primary/70">
+                            {CATEGORY_LABELS[cat] ?? cat}
+                          </h4>
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            {files.map((f) => (
+                              <div key={f.id} className="flex items-start gap-3 rounded-lg border border-primary/10 bg-white p-4 shadow-sm">
+                                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent/10 text-xs font-bold uppercase text-accent">
+                                  {f.typPliku}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="truncate text-sm font-medium text-primary">{f.nazwaWyswietlana}</p>
+                                  {(() => {
+                                    const docInfo = attachmentDocInfo.get(f.nazwaPliku);
+                                    if (docInfo) {
+                                      const badge = TYPE_BADGES[docInfo.typ];
+                                      return (
+                                        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-primary/60">
+                                          {badge && <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${badge.cls}`}>{badge.label}</span>}
+                                          <span className="font-mono">{docInfo.nr}</span>
+                                        </p>
+                                      );
+                                    }
+                                    return null;
+                                  })()}
+                                  {f.opis && (
+                                    <p className={`mt-0.5 text-xs ${f.opis.startsWith("\u26a0") ? "font-semibold text-amber-600" : "text-primary/50"}`}>
+                                      {f.opis}
+                                    </p>
+                                  )}
+                                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                                    <a
+                                      href={`/api/fdk/attachments/${f.id}?action=preview`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent hover:bg-accent/20"
+                                    >
+                                      <Eye className="h-3 w-3" /> Podgląd
+                                    </a>
+                                    <a
+                                      href={`/api/fdk/attachments/${f.id}?action=download`}
+                                      className="inline-flex items-center gap-1 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-medium text-primary/70 hover:bg-primary/10"
+                                    >
+                                      <Download className="h-3 w-3" /> Pobierz
+                                    </a>
+                                    <FolderSelect attachmentId={f.id} currentFolder={f.folder ?? "inne_dokumenty"} />
+                                    <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
+                                    <DeleteAttachmentButton attachmentId={f.id} nazwa={f.nazwaWyswietlana} />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ));
+                      ))}
+                    </div>
+                  );
+                });
             })()}
             <FdkUploadForm foreignerId={foreigner.id} />
           </div>

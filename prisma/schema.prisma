@@ -631,10 +631,18 @@ model FdkAttachment {
   rozmiarBytes      BigInt?  @map("rozmiar_bytes")
   uploadedAt        DateTime @default(now()) @map("uploaded_at")
 
+  /// Folder: "wazne", "inne_dokumenty", "dokumenty_rodziny"
+  folder            String?
+  /// Typ dokumentu rozpoznany przez parser/OCR (np. TRC_FDK, OSWIADCZENIE, ZEZWOLENIE_A)
+  detectedType      String?  @map("detected_type")
+  /// Jeśli true, auto-klasyfikacja folderu nie nadpisuje ręcznego wyboru
+  folderManual      Boolean  @default(false) @map("folder_manual")
+
   foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
 
   @@index([foreignerId])
   @@index([kategoria])
+  @@index([folder])
   @@map("fdk_attachments")
 }
 

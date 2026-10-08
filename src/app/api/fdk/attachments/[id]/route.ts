@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError, detectDocumentType } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits, namesMatch, isOswiadczenieAllowedForCitizenship } from "@/lib/fdk-queries";
+import { classifyToFolder } from "@/lib/folder-classifier";
 
 // Allow up to 120s for scrape action (OCR via Claude can take 30-60s for large multi-page scans)
 export const maxDuration = 120;
@@ -167,6 +168,18 @@ export async function GET(
       && foreigner.nazwisko !== "Nowy"
       && !isJunkName
       && !namesMatch(compareExtracted, profileFullName);
+
+    // Update folder + detectedType (unless user manually set the folder)
+    const updateFolderData: Record<string, unknown> = {
+      detectedType: parsed.detectedType ?? null,
+    };
+    if (!attachment.folderManual) {
+      updateFolderData.folder = classifyToFolder(parsed.detectedType ?? null, isDifferentPerson, attachment.nazwaPliku);
+    }
+    await db.fdkAttachment.update({
+      where: { id: attachment.id },
+      data: updateFolderData,
+    });
 
     if (isDifferentPerson) {
       // Flag the attachment and log — do NOT create employment base
@@ -511,6 +524,31 @@ export async function POST(
     }
   }
 
+  // Auto-classify folder for confirmed presigned uploads
+  if (extracted) {
+    const foreigner = await db.fdkForeigner.findUnique({ where: { id: attachment.foreignerId } });
+    if (foreigner) {
+      const extractedFullName = `${extracted.imie ?? ""} ${extracted.nazwisko ?? ""}`.trim();
+      const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
+      const isDiffPerson = extractedFullName.length > 2
+        && profileFullName.length > 2
+        && foreigner.nazwisko !== "Nowy"
+        && !namesMatch(extractedFullName, profileFullName);
+      const folder = classifyToFolder(extracted.detectedType ?? null, isDiffPerson, attachment.nazwaPliku);
+      await db.fdkAttachment.update({
+        where: { id: attachment.id },
+        data: { folder, detectedType: extracted.detectedType ?? null },
+      });
+    }
+  } else {
+    // No extraction — classify by filename only
+    const folder = classifyToFolder(null, false, attachment.nazwaPliku);
+    await db.fdkAttachment.update({
+      where: { id: attachment.id },
+      data: { folder },
+    });
+  }
+
   return NextResponse.json({
     ok: true,
     id: attachment.id,
@@ -521,4 +559,42 @@ export async function POST(
         ? undefined
         : "Plik wgrany (brak warstwy tekstowej). Uzyj przycisku Zescrapuj dane aby uruchomic OCR.",
   });
+}
+
+/**
+ * PATCH /api/fdk/attachments/[id]
+ *
+ * Update attachment folder manually. Body: { folder: "wazne" | "inne_dokumenty" | "dokumenty_rodziny" }
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  await requireAdmin();
+
+  const { id: idStr } = await params;
+  const id = parseInt(idStr, 10);
+  if (isNaN(id)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  const body = await request.json();
+  const { folder } = body;
+
+  const VALID_FOLDERS = ["wazne", "inne_dokumenty", "dokumenty_rodziny"];
+  if (!folder || !VALID_FOLDERS.includes(folder)) {
+    return NextResponse.json({ error: `folder must be one of: ${VALID_FOLDERS.join(", ")}` }, { status: 400 });
+  }
+
+  const attachment = await db.fdkAttachment.findUnique({ where: { id } });
+  if (!attachment) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  await db.fdkAttachment.update({
+    where: { id },
+    data: { folder, folderManual: true },
+  });
+
+  return NextResponse.json({ ok: true });
 }
