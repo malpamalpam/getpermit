@@ -103,18 +103,9 @@ export default async function FdkPage({
     }
   }
 
-  // Status filter: "w procesie" = has non-expired base OR pending UPO
+  // Status filter: "w procesie" = flagged via wProcesie field
   if (statusFilter === "aktywne") {
-    const statusConditions = [
-      { employmentBases: { some: { status: { notIn: ["WYGASLE", "NIEAKTYWNE"] } } } },
-      { upoDoreczone: { not: null } },
-    ];
-    // Wrap with AND to not conflict with search OR
-    if (where.OR) {
-      where.AND = [...(Array.isArray(where.AND) ? where.AND : []), { OR: statusConditions }];
-    } else {
-      where.OR = statusConditions;
-    }
+    where.wProcesie = true;
   }
 
   // --- Query ---

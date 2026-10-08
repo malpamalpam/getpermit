@@ -460,6 +460,8 @@ model FdkForeigner {
   /// Ochrona czasowa UKR (PESEL UKR / status ochrony) — aktualna podstawa pobytowa
   ochronaCzasowaUkr Boolean @default(false) @map("ochrona_czasowa_ukr")
 
+  /// W procesie — aktywna sprawa TRC, wyświetlany na filtrowanej liście
+  wProcesie Boolean @default(false) @map("w_procesie")
   /// Ukryty (archiwum) — profil nie pokazuje się na liście, ale dane zachowane
   hidden Boolean @default(false)
   /// ID pracownika z systemu kadrowego (synchronizacja)
