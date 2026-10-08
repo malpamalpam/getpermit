@@ -103,12 +103,18 @@ export default async function FdkPage({
     }
   }
 
-  // Status filter: if "aktywne", require at least one active/in-progress base
+  // Status filter: "w procesie" = has non-expired base OR pending UPO
   if (statusFilter === "aktywne") {
-    where.employmentBases = {
-      ...((where.employmentBases as object) ?? {}),
-      some: { status: { in: ["AKTYWNE", "W_TRAKCIE"] } },
-    };
+    const statusConditions = [
+      { employmentBases: { some: { status: { notIn: ["WYGASLE", "NIEAKTYWNE"] } } } },
+      { upoDoreczone: { not: null } },
+    ];
+    // Wrap with AND to not conflict with search OR
+    if (where.OR) {
+      where.AND = [...(Array.isArray(where.AND) ? where.AND : []), { OR: statusConditions }];
+    } else {
+      where.OR = statusConditions;
+    }
   }
 
   // --- Query ---
