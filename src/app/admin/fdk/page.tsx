@@ -71,7 +71,8 @@ export default async function FdkPage({
   const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
   const typeFilter = sp.type ?? "";
   const pobytFilter = sp.pobyt ?? "";
-  const showHidden = sp.hidden === "1";
+  const statusFilter = sp.status ?? ""; // "" = all, "aktywne" = w procesie (has active base)
+  const hiddenMode = sp.hidden ?? ""; // "" = active only, "1" = hidden only, "all" = everyone
   const rawPerPage = parseInt(sp.perPage ?? "50", 10);
   const PAGE_SIZE = VALID_PER_PAGE.includes(rawPerPage) ? rawPerPage : 50;
 
@@ -80,9 +81,11 @@ export default async function FdkPage({
 
   // Build where clause
   const where: Record<string, unknown> = {};
-  // Search includes hidden profiles (to find archived people)
+  // Filter by hidden mode (search always shows all)
   if (!q) {
-    where.hidden = showHidden ? true : false;
+    if (hiddenMode === "1") where.hidden = true;
+    else if (hiddenMode === "all") { /* no filter — show everyone */ }
+    else where.hidden = false; // default: active only
   }
   if (q) {
     where.OR = [
@@ -98,6 +101,14 @@ export default async function FdkPage({
     } else {
       where.employmentBases = { some: { typ: typeFilter as never } };
     }
+  }
+
+  // Status filter: if "aktywne", require at least one active/in-progress base
+  if (statusFilter === "aktywne") {
+    where.employmentBases = {
+      ...((where.employmentBases as object) ?? {}),
+      some: { status: { in: ["AKTYWNE", "W_TRAKCIE"] } },
+    };
   }
 
   // --- Query ---
@@ -154,7 +165,8 @@ export default async function FdkPage({
     if (q) u.set("q", q);
     if (typeFilter) u.set("type", typeFilter);
     if (pobytFilter) u.set("pobyt", pobytFilter);
-    if (showHidden) u.set("hidden", "1");
+    if (statusFilter) u.set("status", statusFilter);
+    if (hiddenMode) u.set("hidden", hiddenMode);
     if (PAGE_SIZE !== 50) u.set("perPage", String(PAGE_SIZE));
     Object.entries(params).forEach(([k, v]) => v ? u.set(k, v) : u.delete(k));
     return `/admin/fdk?${u.toString()}`;
@@ -250,20 +262,57 @@ export default async function FdkPage({
             ))}
           </div>
 
+          {/* Status filter */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs text-primary/50">Status:</label>
+            {[
+              { value: "", label: "Wszyscy" },
+              { value: "aktywne", label: "W procesie" },
+            ].map((opt) => (
+              <a
+                key={opt.value}
+                href={buildUrl({ status: opt.value, page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  statusFilter === opt.value
+                    ? "bg-accent text-white"
+                    : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                }`}
+              >
+                {opt.label}
+              </a>
+            ))}
+          </div>
+
           <a href="/admin/fdk" className="text-xs text-accent hover:underline">Wyczyść filtry</a>
 
           {/* Hidden toggle */}
           {hiddenCount > 0 && (
-            <a
-              href={buildUrl({ hidden: showHidden ? "" : "1", page: "1" })}
-              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-                showHidden
-                  ? "bg-gray-600 text-white"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
-            >
-              {showHidden ? "Ukrytych" : "Pokaż ukrytych"} ({hiddenCount})
-            </a>
+            <div className="flex items-center gap-1">
+              <a
+                href={buildUrl({ hidden: "", page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  hiddenMode === "" ? "bg-accent text-white" : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                }`}
+              >
+                Aktywni
+              </a>
+              <a
+                href={buildUrl({ hidden: "1", page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  hiddenMode === "1" ? "bg-gray-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              >
+                Ukryci ({hiddenCount})
+              </a>
+              <a
+                href={buildUrl({ hidden: "all", page: "1" })}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  hiddenMode === "all" ? "bg-accent text-white" : "bg-primary/5 text-primary/70 hover:bg-primary/10"
+                }`}
+              >
+                Wszyscy
+              </a>
+            </div>
           )}
         </div>
 
