@@ -381,8 +381,8 @@ export default async function FdkForeignerPage({
 
                   return (
                     <>
-                      {/* Karta pobytu — aktywna */}
-                      {kpActive && (
+                      {/* Karta pobytu — aktywna (ale NIE gdy jest bezterminowa podstawa) */}
+                      {kpActive && !hasIndefiniteResidence && (
                         <div className="rounded-lg bg-blue-50 p-3 text-sm">
                           <div className="flex items-start justify-between">
                             <div>
@@ -399,7 +399,7 @@ export default async function FdkForeignerPage({
                         </div>
                       )}
                       {/* Bezterminowa podstawa pobytowa (rezydent UE, pobyt stały etc.) */}
-                      {hasIndefiniteResidence && !kpActive && (
+                      {hasIndefiniteResidence && (
                         <div className="rounded-lg bg-emerald-50 p-3 text-sm">
                           <div className="flex items-start justify-between">
                             <div>
@@ -412,8 +412,8 @@ export default async function FdkForeignerPage({
                           </div>
                         </div>
                       )}
-                      {/* Karta pobytu — wygasła */}
-                      {kpExpired && !hasIndefiniteResidence && (
+                      {/* Karta pobytu — wygasła (ukryta gdy jest bezterminowa podstawa) */}
+                      {kpExpired && !kpActive && !hasIndefiniteResidence && (
                         <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm">
                           <div className="flex items-start justify-between">
                             <div>
