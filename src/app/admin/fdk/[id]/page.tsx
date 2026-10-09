@@ -429,8 +429,8 @@ export default async function FdkForeignerPage({
                           </div>
                         </div>
                       )}
-                      {/* UPO — w procedurze */}
-                      {hasUpo && (() => {
+                      {/* UPO — w procedurze (ukryte gdy bezterminowa podstawa) */}
+                      {hasUpo && !hasIndefiniteResidence && (() => {
                         const uwagi = foreigner.upoUwagi?.toLowerCase() ?? "";
                         const isCukr = uwagi.includes("cukr") || (foreigner.ochronaCzasowaUkr && !uwagi.includes("stempel"));
                         const isStempel = uwagi.includes("stempel");
@@ -458,15 +458,15 @@ export default async function FdkForeignerPage({
                           </div>
                         );
                       })()}
-                      {/* Wiza — aktywna */}
-                      {wizaActive && (
+                      {/* Wiza — aktywna (ukryta gdy bezterminowa podstawa) */}
+                      {wizaActive && !hasIndefiniteResidence && (
                         <div className="rounded-lg bg-purple-50 p-3 text-sm">
                           <div className="font-semibold text-purple-800">Wiza</div>
                           <div className="text-purple-700">Ważna do: {fmt(foreigner.wizaDo)}</div>
                         </div>
                       )}
-                      {/* Wiza — wygasła */}
-                      {wizaExpired && (
+                      {/* Wiza — wygasła (ukryta gdy bezterminowa podstawa) */}
+                      {wizaExpired && !hasIndefiniteResidence && (
                         <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-red-800">Wiza</span>
@@ -475,8 +475,8 @@ export default async function FdkForeignerPage({
                           <div className="text-red-700">Ważna do: {fmt(foreigner.wizaDo)}</div>
                         </div>
                       )}
-                      {/* Ochrona czasowa UKR / Karta CUKR */}
-                      {hasOchronaUkr && (() => {
+                      {/* Ochrona czasowa UKR / Karta CUKR (ukryta gdy bezterminowa podstawa) */}
+                      {hasOchronaUkr && !hasIndefiniteResidence && (() => {
                         const hasCukrCard = foreigner.typDokumentuPobytowego?.toLowerCase().includes("cukr");
                         if (hasCukrCard && kpActive) {
                           return (
@@ -499,8 +499,8 @@ export default async function FdkForeignerPage({
                           </div>
                         );
                       })()}
-                      {/* Obywatel UE */}
-                      {isEuCitizen && (
+                      {/* Obywatel UE (ukryte gdy bezterminowa podstawa — już pokazana wyżej) */}
+                      {isEuCitizen && !hasIndefiniteResidence && (
                         <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-emerald-800">Pobyt obywatela UE</span>
