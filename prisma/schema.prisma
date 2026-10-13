@@ -377,16 +377,18 @@ enum FdkBaseType {
   // === TRC (karta pobytu / pobyt czasowy) ===
   KARTA_POBYTU          // legacy — mapowane na TRC_FDK
   TRC_FDK
+  TRC_INNY_PRACODAWCA   // TRC – inny pracodawca (nie FDK)
   TRC_HUMANITARNE
   TRC_POBYT_Z_CUDZ
   TRC_MALZONEK_PL
   TRC_STUDIA
   TRC_ABSOLWENT
   TRC_DZIALALNOSC
+  TRC_INNE_OKOLICZNOSCI // TRC – inne okoliczności (art. 170-187 bez specjalnych podtypów)
   // === Blue Card ===
   BLUE_CARD             // legacy — mapowane na TRC_BLUE_CARD
   TRC_BLUE_CARD
-  // === Otwarty dostęp (OD) ===
+  // === Otwarty dostęp (OD) — legacy aliases ===
   DOSTEP_UE             // legacy
   OD_UE
   DOSTEP_STUDENT        // legacy
@@ -412,6 +414,22 @@ enum FdkBaseType {
   POBYT_CUKR            // Pobyt z tytułu poprzedniej ochrony czasowej
   // === Odwołanie ===
   ODWOLANIE
+  // === Nowe typy podstaw pobytowych (v2 — Reguły mapowania 10.2026) ===
+  POBYT_STALY           // Pobyt stały (art. 195) — bezterminowo
+  REZYDENT_UE           // Rezydent długoterminowy UE (art. 211) — bezterminowo
+  STATUS_UCHODZCY       // Status uchodźcy (art. 13 ustawy o ochronie) — bezterminowo
+  OCHRONA_UZUPELNIAJACA // Ochrona uzupełniająca (art. 15/19) — bezterminowo
+  ZGODA_HUMANITARNA     // Zgoda na pobyt ze względów humanitarnych (art. 348)
+  OBYWATEL_UE           // Obywatel UE/EOG/Szwajcarii — bezterminowo
+  UMOWA_WYSTAPIENIA     // Umowa wystąpienia (obywatel UK, art. 50 TUE)
+  WIZA                  // Wiza D/C — pobytowa
+  WIZA_HUMANITARNA      // Wiza humanitarna — zatrudnieniowa
+  RUCH_BEZWIZOWY        // Ruch bezwizowy (stempel wjazdu + 90 dni)
+  POBYT_NA_PRZEDLUZENIU // Pobyt na przedłużeniu (stempel/UPO, art. 108 ust. 1)
+  PESEL_UKR             // PESEL z adnotacją UKR — ochrona czasowa
+  KARTA_POLAKA          // Karta Polaka — tylko zatrudnieniowa
+  STATUS_STUDENTA       // Status studenta (zaświadczenie uczelni) — zatrudnieniowa
+  STATUS_ABSOLWENTA     // Status absolwenta (dyplom PL) — zatrudnieniowa, bezterminowo
 }
 
 enum FdkStatus {
@@ -472,6 +490,7 @@ model FdkForeigner {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  residenceBases     FdkResidenceBasis[]
   employmentBases    FdkEmploymentBase[]
   hrContracts        FdkHrContract[]
   detailedDocuments  FdkDetailedDocument[]
@@ -564,6 +583,66 @@ model FdkEmploymentBase {
   @@index([dataDo])
   @@index([sourceAttachmentId])
   @@map("fdk_employment_bases")
+}
+
+// =============================================================================
+// PODSTAWY POBYTU (Residence Bases) — v2, Reguły mapowania 10.2026
+// =============================================================================
+
+model FdkResidenceBasis {
+  id            Int         @id @default(autoincrement())
+  foreignerId   Int         @map("foreigner_id")
+  typ           FdkBaseType
+  status        FdkStatus   @default(BRAK_DANYCH)
+
+  dataOd        DateTime?   @map("data_od")
+  dataDo        DateTime?   @map("data_do")
+
+  /// Nr decyzji / sygnatura (klucz dokumentu dla decyzji)
+  nrDecyzji     String?     @map("nr_decyzji")
+  /// Nr wizy (klucz dokumentu)
+  nrWizy        String?     @map("nr_wizy")
+  /// Nr karty pobytu (2 litery + 7 cyfr) — powiązanie z kartą
+  nrKartyPobytu String?     @map("nr_karty_pobytu")
+  /// Data ważności karty pobytu (nie = data końca legalności przy pobycie stałym/rezydencie)
+  kartaPobytuWaznaDo DateTime? @map("karta_pobytu_wazna_do")
+  /// Typ karty pobytu ("Rodzaj zezwolenia" z blankietu)
+  typKartyPobytu String?    @map("typ_karty_pobytu")
+
+  /// Urząd wydający (Wojewoda / Szef UdSC)
+  urzad         String?
+  /// Czy decyzja jest ostateczna
+  ostateczna    Boolean?
+  /// Data ostateczności (jeśli znana)
+  dataOstatecznosci DateTime? @map("data_ostatecznosci")
+
+  /// Adnotacja o decyzji zmieniającej (nr sygnatury)
+  zmienionaDecyzja String?  @map("zmieniona_decyzja")
+
+  /// Confidence score (0-1) z OCR/klasyfikacji
+  confidence    Float?
+  /// Źródło danych (strona + fragment tekstu) — JSON
+  source        Json?       @default("{}")
+  /// Flagi do weryfikacji — JSON array (np. ["nazwa_pliku_niezgodna", "do_weryfikacji"])
+  flags         Json?       @default("[]")
+
+  uwagi         String?     @db.Text
+
+  /// Powiązanie z załącznikiem źródłowym (idempotentność scrapera)
+  sourceAttachmentId Int?   @map("source_attachment_id")
+
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
+
+  @@unique([foreignerId, sourceAttachmentId, typ], name: "uq_residence_foreigner_attachment_type")
+  @@index([foreignerId])
+  @@index([typ])
+  @@index([status])
+  @@index([dataDo])
+  @@index([sourceAttachmentId])
+  @@map("fdk_residence_bases")
 }
 
 model FdkHrContract {

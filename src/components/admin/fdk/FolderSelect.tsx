@@ -6,8 +6,11 @@ import { FolderOpen } from "lucide-react";
 
 const FOLDER_OPTIONS = [
   { value: "wazne", label: "Ważne" },
-  { value: "inne_dokumenty", label: "Inne dokumenty" },
+  { value: "trc", label: "TRC" },
+  { value: "oswiadczenie", label: "Oświadczenie" },
+  { value: "zezwolenie", label: "Zezwolenie" },
   { value: "dokumenty_rodziny", label: "Dok. rodziny" },
+  { value: "inne_dokumenty", label: "Inne dokumenty" },
 ] as const;
 
 interface Props {

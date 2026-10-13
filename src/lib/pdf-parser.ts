@@ -199,8 +199,8 @@ export function detectDocumentType(text: string, filenameHint?: string): string 
       || /zwi[aą]z(?:ek|ku)\s+ma[łl][żz]e[ńn]ski\w*\s+z\s+obywatel/i.test(text)) return "TRC_MALZONEK_PL";
     if (/dzia[łl]alno[śs][ćc]\s+gospodarcz/i.test(text)) return "TRC_DZIALALNOSC";
     if (/absolwent/i.test(text) && lower.includes("pobyt")) return "TRC_ABSOLWENT";
-    // Domyślnie: praca na rzecz pracodawcy = TRC_FDK
-    return "TRC_FDK";
+    // No default — unrecognized TRC subtype goes to verification, not TRC_FDK (section 4.1 rule 2)
+    return undefined;
   }
 
   // === ZEZWOLENIE NA PRACĘ ===
@@ -432,6 +432,8 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     }
 
     sanitizeDates(result);
+    sanitizeFirma(result);
+    sanitizePassportNumber(result);
     sanitizeDocumentNumber(result);
     return result;
   }
@@ -544,6 +546,8 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     if (result.stanowisko) result.stanowisko = deduplicateStanowisko(result.stanowisko);
     if (result.wynagrodzenie) result.parsedSalary = parseSalary(result.wynagrodzenie);
     sanitizeDates(result);
+    sanitizeFirma(result);
+    sanitizePassportNumber(result);
     sanitizeDocumentNumber(result);
     return result;
   }
@@ -555,6 +559,8 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
     || result.detectedType?.startsWith("TRC_")) {
     const zezResult = parseZezwolenie(normalized, result);
     sanitizeDates(zezResult);
+    sanitizeFirma(zezResult);
+    sanitizePassportNumber(zezResult);
     return zezResult;
   }
 
@@ -738,6 +744,8 @@ export function parseOswiadczenieText(text: string, filenameHint?: string): Pars
   }
 
   sanitizeDates(result);
+  sanitizeFirma(result);
+  sanitizePassportNumber(result);
   sanitizeDocumentNumber(result);
   return result;
 }
@@ -800,6 +808,46 @@ function sanitizeDates(result: ParsedDocumentData): void {
       result.dataOd = undefined;
       result.lowConfidence = true;
     }
+  }
+}
+
+/**
+ * Sanitize firma field: strip NIP, REGON, KRS, addresses, sentencja fragments.
+ */
+function sanitizeFirma(result: ParsedDocumentData): void {
+  if (!result.firma) return;
+  // Remove NIP / REGON / KRS with values
+  result.firma = result.firma
+    .replace(/\s*(?:Nr\s+)?NIP[:\s]*[\d-]+/gi, "")
+    .replace(/\s*(?:Numer\s+)?REGON[:\s]*[\d-]+/gi, "")
+    .replace(/\s*KRS[:\s]*[\d-]+/gi, "")
+    .replace(/\s*(?:ul\.|al\.|pl\.)\s+[^\n,;]{3,60}(?:,\s*\d{2}-\d{3}\s+[A-ZĄĆĘŁŃÓŚŹŻa-ząćęłńóśźż]+)?/gi, "")
+    .trim();
+  // If firma contains sentencja keywords, it's a parsing error
+  if (/udzielam\b|zezwala\s+si[ęe]|orzekam\b|ur\.\s+\d|ob\.\s+[A-Z]/i.test(result.firma)) {
+    result.firma = undefined;
+    result.lowConfidence = true;
+  }
+  // If firma is now empty or too short
+  if (result.firma && result.firma.length < 3) {
+    result.firma = undefined;
+  }
+}
+
+/**
+ * Sanitize passport number: reject residence card numbers (2 letters + 7 digits starting with R)
+ * and ID card numbers (3 letters + 6 digits).
+ */
+function sanitizePassportNumber(result: ParsedDocumentData): void {
+  if (!result.nrPaszportu) return;
+  const nr = result.nrPaszportu.trim();
+  // 2 letters + 7 digits starting with R = residence card (RP, RS, RR, RT, RN)
+  if (/^(RP|RS|RR|RT|RN)\d{7}$/.test(nr)) {
+    result.nrPaszportu = undefined;
+  }
+  // 3 letters + 6 digits = Polish ID card
+  if (/^[A-Z]{3}\d{6}$/.test(nr)) {
+    result.nrPaszportu = undefined;
   }
 }
 
@@ -1256,6 +1304,11 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
   const paszMatch = normalized.match(/(?:[Ss]eria\s+i\s+numer|[Nn]umer\s+dokumentu\s+podr[óo][żz]y|paszport(?:u)?)[:\s]+([A-Z0-9]{5,})/);
   if (paszMatch) result.nrPaszportu = paszMatch[1].trim();
 
+  // --- Fallback: extractPersonalData for fields not found by zezwolenie-specific patterns ---
+  if (!result.imie || !result.nazwisko) {
+    extractPersonalData(normalized, result);
+  }
+
   // --- Electronic decision parsing (UW with qualified signature) ---
   if (result.detectedType === "KARTA_POBYTU" || result.detectedType === "BLUE_CARD") {
     parseElectronicDecision(normalized, result);
@@ -1296,7 +1349,7 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
  * Requires ANTHROPIC_API_KEY environment variable.
  */
 /** OCR error details for caller to distinguish "no key" from "API error" */
-export type OcrError = { type: "no_key" } | { type: "api_error"; message: string } | null;
+export type OcrError = { type: "no_key" } | { type: "api_error"; message: string; retryable?: boolean } | null;
 let lastOcrError: OcrError = null;
 export function getLastOcrError(): OcrError { return lastOcrError; }
 
@@ -1364,7 +1417,7 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
    - "status uchodźcy" → OD_UCHODZCA (dataDo = null)
    - "ochrona uzupełniająca" → OD_OCHRONA_UZUP (dataDo = null)
    - "zezwolenie na pracę" (bez "na pobyt") → ZEZWOLENIE_A
-   Jesli nie pasuje zaden cel → TRC_FDK.
+   Jesli nie pasuje zaden cel → detectedType = null (NIE wybieraj TRC_FDK domyslnie — dokument trafi do weryfikacji recznej).
    DLA KART POBYTU (skan plastikowej karty, nr RS/RR):
    - Karta z napisem "poprzednio posiadacz ochrony czasowej" lub CUKR → POBYT_CUKR
    - Karta z art. 50 TUE, "Umowa Wystapienia", GBR → OD_UK_WYSTAPIENIE
@@ -1394,20 +1447,50 @@ Pola, ktorych nie mozesz znalezc = null.`;
       ? { type: "document" as const, source: { type: "base64" as const, media_type: "application/pdf" as const, data: base64 } }
       : { type: "image" as const, source: { type: "base64" as const, media_type: mediaType as "image/jpeg" | "image/png", data: base64 } };
 
+    // Retry with exponential backoff for transient errors (429, 500, 503, credit balance)
+    const MAX_RETRIES = 3;
+    const RETRY_DELAYS = [2000, 5000, 15000]; // ms
     let response;
-    if (isPdf) {
-      response = await client.beta.messages.create({
-        model,
-        max_tokens: 2048,
-        betas: ["pdfs-2024-09-25"],
-        messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
-      });
-    } else {
-      response = await client.messages.create({
-        model,
-        max_tokens: 2048,
-        messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
-      });
+    let lastError: unknown = null;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        if (isPdf) {
+          response = await client.beta.messages.create({
+            model,
+            max_tokens: 2048,
+            betas: ["pdfs-2024-09-25"],
+            messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
+          });
+        } else {
+          response = await client.messages.create({
+            model,
+            max_tokens: 2048,
+            messages: [{ role: "user", content: [contentBlock, { type: "text", text: extractionPrompt }] }],
+          });
+        }
+        break; // success
+      } catch (retryErr: unknown) {
+        lastError = retryErr;
+        const errMsg = retryErr instanceof Error ? retryErr.message : String(retryErr);
+        const statusMatch = errMsg.match(/status[:\s]*(\d{3})/i);
+        const httpStatus = statusMatch ? parseInt(statusMatch[1], 10) : 0;
+        const isRetryable = httpStatus === 429 || httpStatus === 500 || httpStatus === 503
+          || /rate.limit|overloaded|credit.balance|too.low/i.test(errMsg);
+
+        if (isRetryable && attempt < MAX_RETRIES) {
+          const delay = RETRY_DELAYS[attempt] ?? 15000;
+          console.warn(`[pdf-parser] OCR attempt ${attempt + 1} failed (${errMsg}). Retrying in ${delay}ms...`);
+          await new Promise((r) => setTimeout(r, delay));
+          continue;
+        }
+        // Non-retryable or max retries exceeded — propagate
+        throw retryErr;
+      }
+    }
+
+    if (!response) {
+      throw lastError ?? new Error("OCR failed after retries");
     }
 
     const textBlocks = response.content.filter((b: { type: string }) => b.type === "text");
@@ -1457,8 +1540,10 @@ Pola, ktorych nie mozesz znalezc = null.`;
       // Parse salary
       if (result.wynagrodzenie) result.parsedSalary = parseSalary(result.wynagrodzenie);
 
-      // Validate dates
+      // Validate and sanitize
       sanitizeDates(result);
+      sanitizeFirma(result);
+      sanitizePassportNumber(result);
 
       const hasAnyData = result.dataOd || result.dataDo || result.nazwisko || result.imie
         || result.stanowisko || result.nrPaszportu || result.nrDecyzji || result.wynagrodzenie;
@@ -1477,8 +1562,9 @@ Pola, ktorych nie mozesz znalezc = null.`;
 
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error(`[pdf-parser] OCR structured extraction error: ${errMsg}`);
-    lastOcrError = { type: "api_error", message: errMsg };
+    console.error(`[pdf-parser] OCR structured extraction error (after retries): ${errMsg}`);
+    const isRetryable = /rate.limit|overloaded|credit.balance|too.low|429|500|503/i.test(errMsg);
+    lastOcrError = { type: "api_error", message: errMsg, retryable: isRetryable };
     return null;
   }
 }

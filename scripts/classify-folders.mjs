@@ -17,37 +17,68 @@ const APPLY = args.includes("--apply");
 const limitIdx = args.indexOf("--limit");
 const LIMIT = limitIdx >= 0 ? parseInt(args[limitIdx + 1], 10) : null;
 
-// === FOLDER CLASSIFICATION (mirrors src/lib/folder-classifier.ts) ===
+// === FOLDER CLASSIFICATION (mirrors src/lib/folder-classifier.ts — 6-folder system) ===
 
 const WAZNE_TYPES = new Set([
-  "ZEZWOLENIE_A", "TRC_FDK", "TRC_STUDIA", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL",
+  "ZEZWOLENIE_A", "ZEZWOLENIE_A_KONT", "TRC_FDK", "TRC_INNY_PRACODAWCA",
+  "TRC_STUDIA", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL",
   "TRC_HUMANITARNE", "TRC_ABSOLWENT", "TRC_BLUE_CARD", "TRC_DZIALALNOSC",
-  "KARTA_POBYTU", "POBYT_CUKR", "OSWIADCZENIE", "POWIADOMIENIE_UA", "ZGLOSZENIE_UA",
-  "WIZA", "OD_POBYT_STALY", "OD_REZYDENT_UE", "OD_MALZONEK_PL", "OD_CZLONEK_RODZINY",
+  "TRC_INNE_OKOLICZNOSCI", "KARTA_POBYTU", "POBYT_CUKR",
+  "OSWIADCZENIE", "POWIADOMIENIE_UA", "ZGLOSZENIE_UA",
+  "WIZA", "WIZA_HUMANITARNA",
+  "POBYT_STALY", "REZYDENT_UE", "STATUS_UCHODZCY", "OCHRONA_UZUPELNIAJACA",
+  "ZGODA_HUMANITARNA", "OBYWATEL_UE", "UMOWA_WYSTAPIENIA",
+  "RUCH_BEZWIZOWY", "POBYT_NA_PRZEDLUZENIU", "PESEL_UKR",
+  "KARTA_POLAKA", "STATUS_STUDENTA", "STATUS_ABSOLWENTA",
+  "OD_POBYT_STALY", "OD_REZYDENT_UE", "OD_MALZONEK_PL", "OD_CZLONEK_RODZINY",
   "OD_BLUE_CARD", "OD_HUMANITARNE", "OD_OCHRONA_UZUP", "OD_STUDENT", "OD_UE",
-  "OD_UK_WYSTAPIENIE", "ODWOLANIE",
+  "OD_UK_WYSTAPIENIE", "OD_UCHODZCA", "OD_WIZA_HUMAN", "OD_ABSOLWENT", "OD_KARTA_POLAKA",
+  "ODWOLANIE",
 ]);
 
-const WAZNE_FILENAME_PATTERNS = [
-  /paszport/i, /passport/i, /паспорт/i,
-  /dyplom/i, /diploma/i, /диплом/i,
+const WAZNE_FN = [
+  /paszport/i, /passport/i, /паспорт/i, /dyplom/i, /diploma/i, /диплом/i,
   /decyzj[aiy]/i, /decision/i, /решение/i,
   /karta[\s_-]*pobytu/i, /residence[\s_-]*card/i,
   /zezwoleni[ea][\s_-]*na[\s_-]*prac/i, /work[\s_-]*permit/i,
-  /o[śs]wiadczeni[ea]/i, /declaration/i,
-  /rezydent/i, /long[\s_-]*term/i,
-  /wiza/i, /visa/i, /виза/i,
+  /wiza/i, /visa/i, /виза/i, /rezydent/i,
   /odwo[łl]anie/i, /za[żz]alenie/i,
-  /\bTRC\b/i, /\bWP[\s_-]?\d{4}/i, /\bKP[\s_-]?skan/i, /\bPSZ[\s_-]?OP/i,
-  /powiadomienie[\s_-]*ua/i, /zg[łl]oszenie[\s_-]*ua/i,
+  /\bWP[\s_-]?\d{4}/i, /\bKP[\s_-]?skan/i,
 ];
 
-function classifyToFolder(detectedType, isDifferentPerson, filename) {
+const OSW_FN = [
+  /WNIOSEK-OSW/i, /PSZ-OPPC|PSZ-OPWP|PSZ-ZOPP/i, /PSZ-PPPO|PSZ-PZPO|PGP-UZC/i,
+  /podj[ęe]ci[ea].*(?:pracy|zatrudnieni)/i, /niepodj[ęe]ci[ea].*pracy/i,
+  /zako[ńn]czeni[ea].*pracy/i, /zg[łl]oszeni[ea].*umowy/i,
+  /o[śs]w.*draft/i,
+];
+
+const TRC_FN = [
+  /wniosek.*(?:pobyt|TRC|MOS|INPOL)/i, /za[łl][aą]cznik[\s_]*nr[\s_]*[12]/i,
+  /stempel/i, /\bupo\b/i, /wezwani[ea]/i, /zawiadomieni[ea]/i, /ponagleni[ea]/i,
+  /przyspieszeni[ea].*TRC/i, /uzupe[łl]nieni[ea]/i,
+  /op[łl]ata.*(?:skarbow|440|100\s*PLN|pobyt|kart)/i,
+  /pe[łl]nomocnictw[ao]|PoA[_\s]/i, /pismo.*przewodni/i,
+  /OSW-UTRZYMANIE/i, /OSW-NIEKARALNOSC/i, /OSW-POBYT-3-LATA/i,
+  /o[śs]wiadczeni[ea].*(?:utrzymani|niekaraln|pobyt.*3.*lat|liczb.*os[oó]b)/i,
+  /umowa.*najm/i, /polisa|ubezpieczeni/i, /PIT[-_\s]?\d|ZUS(?:[\s_]|$)/i,
+  /rachunek|rachunki/i, /umowa.*(?:dzieł|zleceni|prac|współprac)/i, /anex|aneks/i,
+  /informacja.*starost/i, /odpowied[źz].*wezwani/i,
+  /t[łl]umaczeni[ea]/i, /do[śs]wiadczeni[ea]/i,
+  /potwierdzen.*(?:wys[łl]an|z[łl]o[żz]en|epuap|poczta|CEN\d)/i,
+];
+
+const ZEZW_FN = [/wniosek.*zezwoleni.*prac/i, /WRP[-.\s]/i];
+
+function classifyToFolder(detectedType, isDifferentPerson, filename, kategoria) {
   if (isDifferentPerson) return "dokumenty_rodziny";
   if (detectedType && WAZNE_TYPES.has(detectedType)) return "wazne";
-  for (const p of WAZNE_FILENAME_PATTERNS) {
-    if (p.test(filename.toLowerCase())) return "wazne";
-  }
+  const fn = filename.toLowerCase();
+  if (OSW_FN.some((p) => p.test(fn))) return "oswiadczenie";
+  if (ZEZW_FN.some((p) => p.test(fn))) return "zezwolenie";
+  if (TRC_FN.some((p) => p.test(fn))) return "trc";
+  if (kategoria && /^trc/i.test(kategoria)) return "trc";
+  if (WAZNE_FN.some((p) => p.test(fn))) return "wazne";
   return "inne_dokumenty";
 }
 
@@ -255,7 +286,7 @@ async function main() {
           detectedType = attachTypMap.get(att.id);
         }
 
-        const folder = classifyToFolder(detectedType, isDiffPerson, att.nazwaPliku);
+        const folder = classifyToFolder(detectedType, isDiffPerson, att.nazwaPliku, att.kategoria);
 
         if (folder === "wazne") countWazne++;
         else if (folder === "dokumenty_rodziny") countRodzina++;

@@ -5,6 +5,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseOswiadczeniePdf, ocrExtractStructured, getLastOcrError, detectDocumentType } from "@/lib/pdf-parser";
 import { deactivatePreviousResidencePermits, namesMatch, isOswiadczenieAllowedForCitizenship } from "@/lib/fdk-queries";
 import { classifyToFolder } from "@/lib/folder-classifier";
+import { runPreWriteChecks, checkEmploymentResidenceConsistency } from "@/lib/pre-write-checks";
+import { mapDetectedTypeToBaseTypes } from "@/lib/legalizacja-config";
 
 // Allow up to 120s for scrape action (OCR via Claude can take 30-60s for large multi-page scans)
 export const maxDuration = 120;
@@ -86,7 +88,14 @@ export async function GET(
   }
 
   // Scrape — parse PDF/image and auto-fill foreigner + create employment base
+  // Section 2: only scrape files from "Ważne" folder
   if (action === "scrape") {
+    if (attachment.folder && attachment.folder !== "wazne" && attachment.folder !== "inne_dokumenty" && !attachment.folder.startsWith("trc")) {
+      return NextResponse.json({
+        error: "Scraping jest dostępny tylko dla plików z kategorii Ważne. Przenieś plik do Ważne, jeśli to dokument tworzący podstawę.",
+      }, { status: 400 });
+    }
+
     const scrapableTypes = ["pdf", "jpeg", "jpg", "png"];
     if (!scrapableTypes.includes(attachment.typPliku)) {
       return NextResponse.json({ error: "Only PDF and image files (JPG, PNG) can be scraped" }, { status: 400 });
@@ -124,17 +133,24 @@ export async function GET(
     if (!parsed) {
       const ocrErr = getLastOcrError();
       let errorMsg: string;
+      let userFriendly = true;
       if (ocrErr?.type === "no_key") {
-        errorMsg = "Brak klucza ANTHROPIC_API_KEY w srodowisku serwera. OCR nie moze dzialac bez niego. Skontaktuj sie z administratorem.";
+        errorMsg = "Brak klucza API do OCR. Skontaktuj się z administratorem.";
+      } else if (ocrErr?.type === "api_error" && ocrErr.retryable) {
+        // Retryable error (429, 500, credit balance) — user-friendly message, no raw error
+        errorMsg = "Odczyt czeka w kolejce — administrator został powiadomiony. Spróbuj ponownie za kilka minut.";
+        console.error(`[scrape] Retryable OCR error for attachment ${id}: ${ocrErr.message}`);
       } else if (ocrErr?.type === "api_error") {
-        errorMsg = `OCR nie powiodl sie: ${ocrErr.message}. Sprobuj ponownie lub wprowadz dane recznie.`;
+        errorMsg = "OCR nie powiódł się. Spróbuj ponownie lub wprowadź dane ręcznie.";
+        console.error(`[scrape] Non-retryable OCR error for attachment ${id}: ${ocrErr.message}`);
       } else {
-        errorMsg = "Nie udalo sie wyciagnac danych z PDF (brak warstwy tekstowej i OCR nie zwrocil danych). Wprowadz dane recznie w zakladce Podstawy zatrudnienia.";
+        errorMsg = "Nie udało się wyciągnąć danych z PDF (brak warstwy tekstowej i OCR nie zwrócił danych). Wprowadź dane ręcznie.";
       }
       return NextResponse.json({
         error: errorMsg,
         manualEntryRequired: true,
         ocrDiagnostic: ocrErr?.type ?? "no_text_layer",
+        retryable: ocrErr?.type === "api_error" && ocrErr.retryable,
       }, { status: 422 });
     }
 
@@ -155,7 +171,29 @@ export async function GET(
     const extractedFullName = `${parsed.imie ?? ""} ${parsed.nazwisko ?? ""}`.trim();
     const profileFullName = `${foreigner.imie ?? ""} ${foreigner.nazwisko ?? ""}`.trim();
     // Skip junk names: form labels ("Nazwisko Nadawcy"), country fragments ("Republiki Południowej")
-    const JUNK_NAME_RE = [/nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i, /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i, /strona\s+post[eę]powan/i, /lub\s+imion/i, /^pan[aiu]?\s+/i, /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i, /wielk\w+\s+brytan/i, /zjednoczon\w+\s+kr[oó]lestw/i, /stan[yó]\s+zjednoczon/i, /ameryk/i, /zimbabwe/i, /armeni/i, /^ukrain/i, /^indie\b|^indii\b/i, /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i];
+    const JUNK_NAME_RE = [
+      /nazwisk\w*\s+nadawc/i, /imi[eę]\s+i?\s*nazwisk/i, /nadawc[aey]/i, /podpis\s+osoby/i,
+      /pe[lł]nomocnik/i, /adresat/i, /wnioskodawc/i, /cudzoziemiec/i,
+      /strona\s+post[eę]powan/i, /lub\s+imion/i, /^pan[aiu]?\s+/i,
+      /^republik/i, /po[łl]udniow/i, /federacj/i, /rosyjsk/i, /rzeczpospolit/i,
+      /wielk\w+\s+brytan/i, /zjednoczon\w+\s+kr[oó]lestw/i, /stan[yó]\s+zjednoczon/i,
+      /ameryk/i, /zimbabwe/i, /armeni/i, /^ukrain/i, /^indie\b|^indii\b/i,
+      /^nr\s+/i, /^data\s+/i, /organ\s+wydaj/i,
+      // Fix false positives from form labels (diagnosed in Skuratovich/Liudvichenka/Morozov/Valovich)
+      /^I\s+Nazwisko/i,            // "I Nazwisko Pełnomocnika", "I Nazwisko Mp", "I Nazwisko Paszport", "I Nazwisko Nadawcy"
+      /^Poprzednie\s+Rodowe/i,     // INPOL form label "Poprzednie Rodowe"
+      /^Odojcowskie/i,             // Birth certificate form label
+      /^Pl\s+Pl$/i,               // BPOP/BPWP form artifact
+      /\bMp$/i,                   // Form label "Mp" (miejscowość podpisania)
+      /^Krs$/i,                   // KRS label parsed as name
+      /^Poland$/i,                // Country name parsed as person
+      /\bPaszport$/i,             // "I Nazwisko Paszport" form label
+      /\bNadawcy$/i,              // "I Nazwisko Nadawcy"
+      /^Pozosta[łl]ych\s+Pe[łl]nomocnik/i, // "Pozostałych Pełnomocników"
+      /^Noszone\s+Po/i,           // Birth certificate: "Noszone Po"
+      /^Urodzony/i,               // Birth certificate: "Urodzony"
+      /GRA[ŻZ]YNA\s+KOWALSKA/i,   // Known authorization agreement template name
+    ];
     const isJunkName = JUNK_NAME_RE.some((p) => p.test(extractedFullName));
     // Transliterate Cyrillic names before comparing
     const CYR: Record<string, string> = {"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"zh","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"kh","ц":"ts","ч":"ch","ш":"sh","щ":"shch","ъ":"","ы":"y","ь":"","э":"e","ю":"yu","я":"ya"};
@@ -174,7 +212,7 @@ export async function GET(
       detectedType: parsed.detectedType ?? null,
     };
     if (!attachment.folderManual) {
-      updateFolderData.folder = classifyToFolder(parsed.detectedType ?? null, isDifferentPerson, attachment.nazwaPliku);
+      updateFolderData.folder = classifyToFolder(parsed.detectedType ?? null, isDifferentPerson, attachment.nazwaPliku, attachment.kategoria);
     }
     await db.fdkAttachment.update({
       where: { id: attachment.id },
@@ -251,8 +289,107 @@ export async function GET(
       });
     }
 
+    // --- ODMOWA / ZMIANA_DECYZJI / UNKNOWN: no basis ---
+    if (parsed.detectedType === "ODMOWA" || parsed.detectedType === "ZMIANA_DECYZJI" || parsed.detectedType === "UNKNOWN") {
+      const label = parsed.detectedType === "ODMOWA" ? "decyzję odmowną/umorzenie"
+        : parsed.detectedType === "ZMIANA_DECYZJI" ? "decyzję zmieniającą (art. 120)"
+        : "nierozpoznany typ dokumentu";
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Rozpoznano ${label} w pliku: ${attachment.nazwaPliku}. Podstawa NIE utworzona — do weryfikacji ręcznej.`,
+        },
+      });
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        foreignerUpdated: Object.keys(foreignerUpdateData),
+        employmentBaseCreated: null,
+        warning: `Rozpoznano ${label}. Podstawa NIE została utworzona.${parsed.detectedType === "ODMOWA" ? " ⚠ ALERT: ryzyko utraty legalności pobytu." : ""}`,
+      });
+    }
+
+    // --- Documents that NEVER create bases (section 5 of legalization rules) ---
+    // Check by filename patterns — these documents are procedural attachments, not basis-creating
+    const NO_BASIS_FILENAME_PATTERNS = [
+      /opłata|oplata|fee|potwierdzenie.*(?:CEN|przelew|wpłat|oplat)/i,
+      /wniosek.*(?:TRC|MOS|INPOL|pobyt|rezydent)/i,
+      /za[łl][aą]cznik\s*nr\s*[12]/i,
+      /WNIOSEK-OSW_|OSW-UTRZYMANIE_|OSW-NIEKARALNOSC_|OSW-POBYT-3-LATA_/i,
+      /PSZ-PPPO|PSZ-PZPO|PGP-UZC/i,
+      /pe[łl]nomocnictwo|power.*attorney|PoA[_\s]/i,
+      /pismo.*przewodnie|cover.*letter/i,
+      /wezwani[ea]|zawiadomieni[ea]|ponagleni[ea]|przyspieszeni[ea]/i,
+      /ankiet[ay]|kwestionariusz/i,
+      /umowa.*(?:najm|zleceni|dzieł|prac|współprac)|anex|aneks|rachunek|rachunki/i,
+      /polisa|ubezpieczeni[ea]|insurance/i,
+      /PIT[-_\s]?\d|ZUS|zus.*sk[łl]adk/i,
+      /tłumaczeni[ea]|translation/i,
+      /akt.*(?:urodzeni|małżeńst|ślubu)/i,
+      /legitymacj[ay].*(?:studenck|szkoln)/i,
+      /świadectw[ao].*szkoł/i,
+      /formular[z]|szablon|template|draft/i,
+      /informacja.*starost/i,
+      /odpowied[źz].*wezwani/i,
+      /upo(?:[\s_.]|$)/i,
+      /(?:potwierdzenie|confirmation).*(?:wysłan|wyslani|send|deliver|złożen|epuap|poczta)/i,
+      /oswiadczenie.*(?:utrzymani|niekaraln|pobyt.*3.*lat|liczb.*osób)/i,
+      /o[śs]wiadczeni[ea].*(?:o\s+liczbie|praca.*tabelka)/i,
+      /(?:podjęci[ea]|niepodjęci[ea]|zakończeni[ea]).*(?:pracy|zatrudnieni)/i,
+      /zg[łl]oszeni[ea].*umowy/i,
+      /KRS|sprawozdani[ea]/i,
+      /loginy.*has[łl]a/i,
+      /tabela.*dane.*rezerwacj/i,
+      /uzupe[łl]nieni[ea](?!.*decyzj)/i,
+    ];
+    const fnLower = attachment.nazwaPliku.toLowerCase();
+    const isNoBasisByFilename = NO_BASIS_FILENAME_PATTERNS.some((p) => p.test(fnLower));
+
+    if (isNoBasisByFilename && !parsed.detectedType) {
+      // Filename strongly suggests non-basis document AND parser couldn't detect a basis type
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Plik ${attachment.nazwaPliku}: dokument proceduralny (nie tworzy podstaw). Dane odczytane, ale podstawa NIE utworzona.`,
+        },
+      });
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        foreignerUpdated: Object.keys(foreignerUpdateData),
+        employmentBaseCreated: null,
+        message: "Rozpoznano dokument proceduralny (opłata, wniosek, pełnomocnictwo, pismo itp.). Podstawa NIE została utworzona.",
+      });
+    }
+
+    // --- No default type. Unrecognized document = no basis (section 4.1 rule 2) ---
+    if (!parsed.detectedType) {
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Plik ${attachment.nazwaPliku}: nie rozpoznano typu dokumentu. Podstawa NIE utworzona — do weryfikacji ręcznej.`,
+        },
+      });
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        foreignerUpdated: Object.keys(foreignerUpdateData),
+        employmentBaseCreated: null,
+        warning: "Nie rozpoznano typu dokumentu. Podstawa NIE została utworzona. Wprowadź dane ręcznie lub oznacz typ dokumentu.",
+      });
+    }
+
     // All other detected types create/update employment base
-    let docType = (parsed.detectedType ?? "OSWIADCZENIE") as import("@prisma/client").FdkBaseType;
+    let docType = parsed.detectedType as import("@prisma/client").FdkBaseType;
 
     // --- Walidacja obywatelstwa dla oświadczeń (pkt 1 — reguła krajów) ---
     if (docType === "OSWIADCZENIE") {
@@ -301,6 +438,30 @@ export async function GET(
           }
         }
       }
+    }
+
+    // --- Pre-write checks BEFORE creating basis (section 9) ---
+    const preWriteIssues = runPreWriteChecks(parsed, { imie: foreigner.imie, nazwisko: foreigner.nazwisko });
+    const blockingIssues = preWriteIssues.filter((i) => i.severity === "error");
+    if (blockingIssues.length > 0) {
+      const errorMsgs = blockingIssues.map((i) => `[#${i.checkId}] ${i.message}`);
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: null,
+          newValue: `Plik ${attachment.nazwaPliku}: kontrola przed zapisem zablokował utworzenie podstawy. ${errorMsgs.join("; ")}`,
+        },
+      });
+      return NextResponse.json({
+        ok: true,
+        extracted: parsed,
+        foreignerUpdated: Object.keys(foreignerUpdateData),
+        employmentBaseCreated: null,
+        preWriteIssues,
+        warning: `Kontrola przed zapisem wykryła błędy: ${errorMsgs.join(" | ")}. Podstawa NIE została utworzona — do weryfikacji ręcznej.`,
+      });
     }
 
     // Match existing base: first by sourceAttachmentId (idempotency), then by document number, then by dates
@@ -398,7 +559,8 @@ export async function GET(
     });
 
     // For residence permits (TRC/Blue Card): update decyzjaPobytowaDo + deactivate previous active permits
-    const isResidencePermit = docType === "KARTA_POBYTU" || docType === "BLUE_CARD" || docType.startsWith("TRC_");
+    const isResidencePermit = docType === "KARTA_POBYTU" || docType === "BLUE_CARD" || docType.startsWith("TRC_")
+      || ["POBYT_STALY", "REZYDENT_UE", "STATUS_UCHODZCY", "OCHRONA_UZUPELNIAJACA", "ZGODA_HUMANITARNA", "OBYWATEL_UE", "UMOWA_WYSTAPIENIA", "WIZA", "RUCH_BEZWIZOWY", "POBYT_NA_PRZEDLUZENIU", "PESEL_UKR", "POBYT_CUKR"].includes(docType as string);
     if (isResidencePermit && parsed.dataDo) {
       const dataDo = new Date(parsed.dataDo);
       if (!foreigner.decyzjaPobytowaDo || dataDo > foreigner.decyzjaPobytowaDo) {
@@ -411,6 +573,72 @@ export async function GET(
       await deactivatePreviousResidencePermits(attachment.foreignerId, baseId, changedBy);
     }
 
+    // --- v2: Create FdkResidenceBasis for documents that have a residence component ---
+    let residenceBaseId: number | null = null;
+    try {
+      // Map parser's detectedType to v2 residence/employment types
+      const typeMapping = mapDetectedTypeToBaseTypes(parsed.detectedType, parsed.firma);
+
+      const residenceType = typeMapping.residenceType;
+      if (residenceType && residenceType !== "UNKNOWN") {
+        // Check if valid FdkBaseType
+        const validResidenceType = residenceType as import("@prisma/client").FdkBaseType;
+
+        // Match existing residence base (idempotency)
+        let existingResidence = await db.fdkResidenceBasis.findFirst({
+          where: { foreignerId: attachment.foreignerId, sourceAttachmentId: attachment.id, typ: validResidenceType },
+        });
+        if (!existingResidence && parsed.nrDecyzji) {
+          existingResidence = await db.fdkResidenceBasis.findFirst({
+            where: { foreignerId: attachment.foreignerId, typ: validResidenceType, nrDecyzji: parsed.nrDecyzji },
+          });
+        }
+
+        const residenceData: Record<string, unknown> = {
+          foreignerId: attachment.foreignerId,
+          typ: validResidenceType,
+          status: "BRAK_DANYCH",
+          sourceAttachmentId: attachment.id,
+          dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
+          dataDo: typeMapping.isIndefinite ? null : (parsed.dataDo ? new Date(parsed.dataDo) : null),
+          nrDecyzji: parsed.nrDecyzji || null,
+          urzad: null, // TODO: extract from header
+          confidence: null,
+          flags: typeMapping.flags.length > 0 ? JSON.stringify(typeMapping.flags) : "[]",
+        };
+
+        if (existingResidence) {
+          const updateFields: Record<string, unknown> = {};
+          for (const [key, value] of Object.entries(residenceData)) {
+            if (key === "foreignerId") continue;
+            if (value !== null && value !== undefined) updateFields[key] = value;
+          }
+          await db.fdkResidenceBasis.update({
+            where: { id: existingResidence.id },
+            data: updateFields,
+          });
+          residenceBaseId = existingResidence.id;
+        } else {
+          const rb = await db.fdkResidenceBasis.create({ data: residenceData as never });
+          residenceBaseId = rb.id;
+        }
+
+        await db.fdkChangeLog.create({
+          data: {
+            foreignerId: attachment.foreignerId,
+            changedBy,
+            field: "residence_base",
+            oldValue: null,
+            newValue: `${existingResidence ? "Zaktualizowano" : "Utworzono"} podstawę pobytu #${residenceBaseId} (${validResidenceType}) z pliku: ${attachment.nazwaPliku}`,
+          },
+        });
+      }
+    } catch (rbErr) {
+      // Non-fatal: residence basis creation failure shouldn't block employment base
+      console.error(`[scrape] Residence basis creation error for attachment ${id}: ${rbErr}`);
+    }
+
+    // Pre-write checks already ran above (blockingIssues); reuse preWriteIssues for warnings
     // Build list of fields that could NOT be extracted (for user feedback)
     const expectedFields = ["detectedType", "dataOd", "dataDo", "imie", "nazwisko"];
     const missingFields = expectedFields.filter((f) => !parsed[f as keyof typeof parsed]);
@@ -426,12 +654,24 @@ export async function GET(
     if (parsed.dataOdSource === "data_podpisu") {
       warnings.push(`Data "od" pochodzi z daty podpisu elektronicznego — może nie być datą rozpoczęcia okresu ważności.`);
     }
+    // Add non-blocking pre-write check warnings
+    for (const issue of preWriteIssues.filter((i) => i.severity === "warning")) {
+      warnings.push(`[Kontrola #${issue.checkId}] ${issue.message}`);
+    }
+
+    // Check employment/residence consistency
+    const hasActiveEmployment = !!baseId;
+    const hasActiveResidence = !!residenceBaseId || !!foreigner.decyzjaPobytowaDo;
+    const consistencyWarning = checkEmploymentResidenceConsistency(hasActiveResidence, hasActiveEmployment);
+    if (consistencyWarning) warnings.push(consistencyWarning);
 
     return NextResponse.json({
       ok: true,
       extracted: parsed,
       foreignerUpdated: Object.keys(foreignerUpdateData),
       employmentBaseCreated: baseId,
+      residenceBaseCreated: residenceBaseId,
+      preWriteIssues: preWriteIssues.length > 0 ? preWriteIssues : undefined,
       missingFields: missingFields.length > 0 ? missingFields : undefined,
       message: warnings.length > 0 ? warnings.join(" ") : undefined,
     });
@@ -534,7 +774,7 @@ export async function POST(
         && profileFullName.length > 2
         && foreigner.nazwisko !== "Nowy"
         && !namesMatch(extractedFullName, profileFullName);
-      const folder = classifyToFolder(extracted.detectedType ?? null, isDiffPerson, attachment.nazwaPliku);
+      const folder = classifyToFolder(extracted.detectedType ?? null, isDiffPerson, attachment.nazwaPliku, attachment.kategoria);
       await db.fdkAttachment.update({
         where: { id: attachment.id },
         data: { folder, detectedType: extracted.detectedType ?? null },
@@ -542,7 +782,7 @@ export async function POST(
     }
   } else {
     // No extraction — classify by filename only
-    const folder = classifyToFolder(null, false, attachment.nazwaPliku);
+    const folder = classifyToFolder(null, false, attachment.nazwaPliku, attachment.kategoria);
     await db.fdkAttachment.update({
       where: { id: attachment.id },
       data: { folder },

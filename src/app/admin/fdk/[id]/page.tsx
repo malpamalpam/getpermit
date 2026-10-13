@@ -646,29 +646,32 @@ export default async function FdkForeignerPage({
                 attachmentDocInfo.set(fn, { typ: baseTyp, nr });
               }
 
-              // Split attachments: "Ważne" folder first, then rest by kategoria
-              const CATEGORY_LABELS: Record<string, string> = {
-                glowne: "Dokumenty główne",
-                wp_2023: "WP 2023",
-                wp_2024: "WP 2024",
-                wp_2025: "WP 2025",
-                trc_2024: "TRC 2024",
-                trc_2025: "TRC 2025",
-                trc_2026: "TRC 2026",
-                hr: "HR",
-                inne: "Inne",
+              // Split attachments by folder (new 6-folder system)
+              const FOLDER_LABELS: Record<string, string> = {
+                wazne: "Ważne",
+                trc: "TRC",
+                oswiadczenie: "Oświadczenie",
+                zezwolenie: "Zezwolenie",
+                dokumenty_rodziny: "Dokumenty członków rodziny",
+                inne_dokumenty: "Inne dokumenty",
+              };
+              const FOLDER_STYLES: Record<string, string> = {
+                wazne: "border-emerald-200 bg-emerald-50/50",
+                trc: "border-indigo-200 bg-indigo-50/50",
+                oswiadczenie: "border-amber-200 bg-amber-50/50",
+                zezwolenie: "border-purple-200 bg-purple-50/50",
+                dokumenty_rodziny: "border-blue-200 bg-blue-50/50",
+                inne_dokumenty: "",
               };
 
-              const wazne = foreigner.attachments.filter((a) => a.folder === "wazne");
-              const rodzina = foreigner.attachments.filter((a) => a.folder === "dokumenty_rodziny");
-              const rest = foreigner.attachments.filter((a) => a.folder !== "wazne" && a.folder !== "dokumenty_rodziny");
-
-              // Group rest by kategoria
-              const restGroups = new Map<string, typeof foreigner.attachments>();
-              for (const a of rest) {
-                const list = restGroups.get(a.kategoria) ?? [];
+              // Group by folder, preserving order
+              const folderOrder = ["wazne", "trc", "oswiadczenie", "zezwolenie", "dokumenty_rodziny", "inne_dokumenty"];
+              const folderGroups = new Map<string, typeof foreigner.attachments>();
+              for (const a of foreigner.attachments) {
+                const folder = a.folder ?? "inne_dokumenty";
+                const list = folderGroups.get(folder) ?? [];
                 list.push(a);
-                restGroups.set(a.kategoria, list);
+                folderGroups.set(folder, list);
               }
 
               const renderCard = (f: typeof foreigner.attachments[0]) => (
@@ -712,7 +715,9 @@ export default async function FdkForeignerPage({
                         <Download className="h-3 w-3" /> Pobierz
                       </a>
                       <FolderSelect attachmentId={f.id} currentFolder={f.folder ?? "inne_dokumenty"} />
-                      <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
+                      {(!f.folder || f.folder === "wazne" || f.folder === "inne_dokumenty") && (
+                        <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
+                      )}
                       <DeleteAttachmentButton attachmentId={f.id} nazwa={f.nazwaWyswietlana} />
                     </div>
                   </div>
@@ -721,43 +726,37 @@ export default async function FdkForeignerPage({
 
               return (
                 <>
-                  {/* Ważne documents — highlighted section */}
-                  {wazne.length > 0 && (
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
-                      <h3 className="mb-3 font-display text-lg font-bold text-primary">
-                        Ważne
-                        <span className="ml-2 text-sm font-normal text-primary/50">({wazne.length})</span>
-                      </h3>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {wazne.map(renderCard)}
+                  {folderOrder.map((folder) => {
+                    const files = folderGroups.get(folder);
+                    if (!files || files.length === 0) return null;
+                    const style = FOLDER_STYLES[folder] ?? "";
+                    const label = FOLDER_LABELS[folder] ?? folder;
+                    return (
+                      <div key={folder} className={style ? `rounded-xl border ${style} p-4` : undefined}>
+                        <h3 className="mb-3 font-display text-lg font-bold text-primary">
+                          {label}
+                          <span className="ml-2 text-sm font-normal text-primary/50">({files.length})</span>
+                        </h3>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {files.map(renderCard)}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Family member documents — only if present */}
-                  {rodzina.length > 0 && (
-                    <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4">
-                      <h3 className="mb-3 font-display text-lg font-bold text-primary">
-                        Dokumenty członków rodziny
-                        <span className="ml-2 text-sm font-normal text-primary/50">({rodzina.length})</span>
-                      </h3>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {rodzina.map(renderCard)}
+                    );
+                  })}
+                  {/* Any unknown folder values not in folderOrder */}
+                  {Array.from(folderGroups.entries())
+                    .filter(([f]) => !folderOrder.includes(f))
+                    .map(([folder, files]) => (
+                      <div key={folder}>
+                        <h3 className="mb-3 font-display text-lg font-bold text-primary">
+                          {FOLDER_LABELS[folder] ?? folder}
+                          <span className="ml-2 text-sm font-normal text-primary/50">({files.length})</span>
+                        </h3>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {files.map(renderCard)}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Rest — grouped by kategoria */}
-                  {Array.from(restGroups.entries()).map(([cat, files]) => (
-                    <div key={cat}>
-                      <h3 className="mb-3 font-display text-lg font-bold text-primary">
-                        {CATEGORY_LABELS[cat] ?? cat}
-                      </h3>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {files.map(renderCard)}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </>
               );
             })()}

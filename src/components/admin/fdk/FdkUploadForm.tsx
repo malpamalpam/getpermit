@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import { Upload, Loader2 } from "lucide-react";
 
 const CATEGORIES = [
-  { value: "glowne", label: "Dokumenty główne" },
-  { value: "wp_2023", label: "WP 2023" },
-  { value: "wp_2024", label: "WP 2024" },
-  { value: "wp_2025", label: "WP 2025" },
-  { value: "trc_2024", label: "TRC 2024" },
-  { value: "trc_2025", label: "TRC 2025" },
-  { value: "hr", label: "HR" },
-  { value: "inne", label: "Inne" },
+  { value: "wazne", label: "Ważne" },
+  { value: "trc", label: "TRC" },
+  { value: "oswiadczenie", label: "Oświadczenie" },
+  { value: "zezwolenie", label: "Zezwolenie" },
+  { value: "dokumenty_rodziny", label: "Dokumenty członków rodziny" },
+  { value: "inne", label: "Inne dokumenty" },
 ];
 
 // Vercel Hobby plan has ~4.5 MB body limit for serverless functions.
@@ -26,7 +24,7 @@ export function FdkUploadForm({ foreignerId }: { foreignerId: number }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [kategoria, setKategoria] = useState("glowne");
+  const [kategoria, setKategoria] = useState("wazne");
   const [nazwaWyswietlana, setNazwaWyswietlana] = useState("");
   const [opis, setOpis] = useState("");
 

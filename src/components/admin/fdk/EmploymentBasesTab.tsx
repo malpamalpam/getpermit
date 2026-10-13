@@ -98,6 +98,31 @@ const TYPE_BADGES: Record<string, { label: string; cls: string }> = {
   DOSTEP_DYPLOM_PL: { label: "OD absolwent", cls: "bg-emerald-100 text-emerald-800" },
   OD_ABSOLWENT: { label: "OD absolwent", cls: "bg-emerald-100 text-emerald-800" },
   OD_UK_WYSTAPIENIE: { label: "OD UK", cls: "bg-emerald-100 text-emerald-800" },
+  OD_BLUE_CARD: { label: "OD Blue Card", cls: "bg-emerald-100 text-emerald-800" },
+  OD_MALZONEK_PL: { label: "OD małżonek PL", cls: "bg-emerald-100 text-emerald-800" },
+  OD_CZLONEK_RODZINY: { label: "OD rodzina", cls: "bg-emerald-100 text-emerald-800" },
+  OD_HUMANITARNE: { label: "OD humanitarne", cls: "bg-emerald-100 text-emerald-800" },
+  // Nowe TRC
+  TRC_INNY_PRACODAWCA: { label: "TRC — inny prac.", cls: "bg-yellow-100 text-yellow-800" },
+  TRC_INNE_OKOLICZNOSCI: { label: "TRC inne okol.", cls: "bg-yellow-100 text-yellow-800" },
+  // CUKR
+  POBYT_CUKR: { label: "CUKR", cls: "bg-amber-100 text-amber-800" },
+  // Nowe typy v2 (Reguły mapowania 10.2026)
+  POBYT_STALY: { label: "Pobyt stały", cls: "bg-indigo-100 text-indigo-800" },
+  REZYDENT_UE: { label: "Rezydent UE", cls: "bg-indigo-100 text-indigo-800" },
+  STATUS_UCHODZCY: { label: "Status uchodźcy", cls: "bg-indigo-100 text-indigo-800" },
+  OCHRONA_UZUPELNIAJACA: { label: "Ochrona uzup.", cls: "bg-indigo-100 text-indigo-800" },
+  ZGODA_HUMANITARNA: { label: "Zgoda humanit.", cls: "bg-indigo-100 text-indigo-800" },
+  OBYWATEL_UE: { label: "Obywatel UE", cls: "bg-indigo-100 text-indigo-800" },
+  UMOWA_WYSTAPIENIA: { label: "Umowa wyst.", cls: "bg-indigo-100 text-indigo-800" },
+  WIZA: { label: "Wiza", cls: "bg-sky-100 text-sky-800" },
+  WIZA_HUMANITARNA: { label: "Wiza humanit.", cls: "bg-sky-100 text-sky-800" },
+  RUCH_BEZWIZOWY: { label: "Ruch bezwizowy", cls: "bg-sky-100 text-sky-800" },
+  POBYT_NA_PRZEDLUZENIU: { label: "Na przedłużeniu", cls: "bg-amber-100 text-amber-800" },
+  PESEL_UKR: { label: "PESEL UKR", cls: "bg-pink-100 text-pink-800" },
+  KARTA_POLAKA: { label: "Karta Polaka", cls: "bg-emerald-100 text-emerald-800" },
+  STATUS_STUDENTA: { label: "Status studenta", cls: "bg-emerald-100 text-emerald-800" },
+  STATUS_ABSOLWENTA: { label: "Status absolwenta", cls: "bg-emerald-100 text-emerald-800" },
   // Odwołanie
   ODWOLANIE: { label: "Odwołanie", cls: "bg-orange-100 text-orange-800" },
 };

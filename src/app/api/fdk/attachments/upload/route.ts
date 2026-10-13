@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
   const foreignerIdStr = formData.get("foreignerId") as string | null;
-  const kategoria = (formData.get("kategoria") as string) ?? "glowne";
+  const kategoria = (formData.get("kategoria") as string) ?? "wazne";
   const nazwaWyswietlana = (formData.get("nazwaWyswietlana") as string) ?? file?.name ?? "Bez nazwy";
   const opis = (formData.get("opis") as string) || null;
 
@@ -343,7 +343,7 @@ async function handlePresignedUpload(request: NextRequest, changedBy: string) {
   const attachment = await db.fdkAttachment.create({
     data: {
       foreignerId: fid,
-      kategoria: kategoria ?? "glowne",
+      kategoria: kategoria ?? "wazne",
       nazwaWyswietlana: nazwaWyswietlana ?? fileName,
       nazwaPliku: fileName,
       opis: opis || null,
@@ -359,7 +359,7 @@ async function handlePresignedUpload(request: NextRequest, changedBy: string) {
       changedBy,
       field: "attachment_upload",
       oldValue: null,
-      newValue: `Wgrano załącznik (presigned): ${nazwaWyswietlana ?? fileName} (${kategoria ?? "glowne"})`,
+      newValue: `Wgrano załącznik (presigned): ${nazwaWyswietlana ?? fileName} (${kategoria ?? "wazne"})`,
     },
   });
 
