@@ -123,7 +123,7 @@ function getTrcLabel(
     POBYT_NA_PRZEDLUZENIU: "Pobyt na przedłużeniu",
   };
   const allLabels = { ...V2_LABELS, ...TRC_LABELS };
-  const HIDDEN_STATUSES = new Set(["UCHYLONE", "UMORZONE"]);
+  const HIDDEN_STATUSES = new Set(["UCHYLONE", "UMORZONE", "NIEAKTYWNE"]);
 
   // Try residenceBases first (v2 — more accurate)
   if (residenceBases && residenceBases.length > 0) {
