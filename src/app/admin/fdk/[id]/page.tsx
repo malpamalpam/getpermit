@@ -209,6 +209,12 @@ export default async function FdkForeignerPage({
     "OD_REZYDENT_UE", "DOSTEP_REZYDENT_UE", "OD_POBYT_STALY", "DOSTEP_POBYT_STALY",
     "OD_UCHODZCA", "OD_OCHRONA_UZUP", "OD_UE", "DOSTEP_UE", "OD_UK_WYSTAPIENIE",
   ]);
+  // Truly indefinite types for hasActiveResidence check
+  const TRULY_INDEFINITE_SET = new Set([
+    "POBYT_STALY", "REZYDENT_UE", "STATUS_UCHODZCY", "OCHRONA_UZUPELNIAJACA",
+    "OBYWATEL_UE", "OD_POBYT_STALY", "OD_REZYDENT_UE", "OD_UCHODZCA",
+    "OD_OCHRONA_UZUP", "OD_UE", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_UE",
+  ]);
   const hasActiveResidence =
     (foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo > now) ||
     foreigner.upoDoreczone ||
@@ -217,10 +223,14 @@ export default async function FdkForeignerPage({
       (b) => (b.typ === "KARTA_POBYTU" || b.typ === "BLUE_CARD") && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
     ) ||
     foreigner.employmentBases.some(
-      (b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE"
+      (b) => TRULY_INDEFINITE_SET.has(b.typ) && b.status === "AKTYWNE"
     ) ||
     foreigner.employmentBases.some(
-      (b) => Object.keys(TRC_LABELS).includes(b.typ) && b.status === "AKTYWNE" && (b.dataDo === null || b.dataDo > now)
+      // TRC with dataDo=null is NOT indefinite — only count if dataDo exists and is future
+      (b) => Object.keys(TRC_LABELS).includes(b.typ) && b.status === "AKTYWNE" && b.dataDo && b.dataDo > now
+    ) ||
+    (foreigner.residenceBases ?? []).some(
+      (rb) => rb.status === "AKTYWNE" && (TRULY_INDEFINITE_SET.has(rb.typ) || (rb.dataDo && rb.dataDo > now))
     );
 
   return (
@@ -257,10 +267,18 @@ export default async function FdkForeignerPage({
               const rs = computeResidenceStatus(foreigner);
 
               // Helper: render the active document badge
+              // "Bezterminowo" ONLY for: pobyt stały, rezydent UE, uchodźca, ochrona uzupełniająca, UE/EOG/CH
+              // TRC without dataDo → "do weryfikacji", NOT "bezterminowo"
+              const TRULY_INDEFINITE = new Set([
+                "POBYT_STALY", "REZYDENT_UE", "STATUS_UCHODZCY", "OCHRONA_UZUPELNIAJACA",
+                "OBYWATEL_UE", "OD_POBYT_STALY", "OD_REZYDENT_UE", "OD_UCHODZCA",
+                "OD_OCHRONA_UZUP", "OD_UE", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_UE",
+              ]);
               const renderActiveDoc = () => {
-                const isEu = foreigner.employmentBases.some((b) => (b.typ === "DOSTEP_UE" || b.typ === "OD_UE") && b.status === "AKTYWNE");
-                const isIndefinite = foreigner.employmentBases.some((b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE")
-                  || (foreigner.residenceBases ?? []).some((rb) => INDEFINITE_RESIDENCE_TYPES.has(rb.typ) && rb.status === "AKTYWNE");
+                const isEu = foreigner.employmentBases.some((b) => (b.typ === "DOSTEP_UE" || b.typ === "OD_UE" || b.typ === "OBYWATEL_UE") && b.status === "AKTYWNE");
+                // Check truly indefinite types (NOT TRC!) in both residence and employment bases
+                const isIndefinite = foreigner.employmentBases.some((b) => TRULY_INDEFINITE.has(b.typ) && b.status === "AKTYWNE")
+                  || (foreigner.residenceBases ?? []).some((rb) => TRULY_INDEFINITE.has(rb.typ) && rb.status === "AKTYWNE");
                 if (foreigner.ochronaCzasowaUkr) {
                   return (
                     <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">
@@ -283,16 +301,16 @@ export default async function FdkForeignerPage({
                     </span>
                   );
                 }
+                // For TRC/Blue Card: show type + date
                 const activeDate = foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now
                   ? foreigner.decyzjaPobytowaDo
                   : foreigner.wizaDo && foreigner.wizaDo >= now ? foreigner.wizaDo : null;
                 const isWiza = foreigner.wizaDo && foreigner.wizaDo >= now && !(foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now);
-                const docLabel = isWiza
-                  ? "Wiza ważna"
-                  : `${getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases)} ważna`;
+                const label = getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases);
+                const docLabel = isWiza ? "Wiza ważna" : `${label} ważna`;
                 return (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
-                    <Shield className="h-3 w-3" /> {docLabel}{activeDate && <> do {fmt(activeDate)}</>}
+                    <Shield className="h-3 w-3" /> {docLabel}{activeDate ? <> do {fmt(activeDate)}</> : " — do weryfikacji"}
                   </span>
                 );
               };
