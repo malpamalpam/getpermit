@@ -73,6 +73,11 @@ export function withComputedStatuses<T extends { id?: number; typ?: string; stat
 ): T[] {
   const uaTypes = ["ZGLOSZENIE_UA", "POWIADOMIENIE_UA"];
   const computed = bases.map((b) => {
+    // Preserve manually set statuses: NIEAKTYWNE (hidden by cleanup), UCHYLONE, UMORZONE
+    // These are administrative overrides that computeStatus must not reverse.
+    if (b.status === "NIEAKTYWNE" || b.status === "UCHYLONE" || b.status === "UMORZONE") {
+      return { ...b };
+    }
     // For UA notifications: preserve DB status (managed by enforceNewestUaOnly, not dates)
     if (b.typ && uaTypes.includes(b.typ) && (b.status === "AKTYWNE" || b.status === "NIEAKTYWNE")) {
       return { ...b };

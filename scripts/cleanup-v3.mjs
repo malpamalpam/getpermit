@@ -227,16 +227,17 @@ async function main() {
     // FIX specific records
     // =============================================
 
-    // Morozov #28: residence TRC_FDK → TRC_BLUE_CARD for Blue Card decision
-    if (f.id === 28) {
+    // ALL profiles: if employment base is TRC_BLUE_CARD but matching residence is TRC_FDK → fix residence
+    for (const eb of f.employmentBases) {
+      if (eb.typ !== "TRC_BLUE_CARD" || !eb.nrDecyzji) continue;
       for (const rb of f.residenceBases) {
-        if (rb.typ === "TRC_FDK" && rb.nrDecyzji === "WSC-II-P.6151.82277.2024") {
-          console.log(`  [FIX] ${name} residence #${rb.id}: TRC_FDK → TRC_BLUE_CARD`);
-          csv.push(`"${name}";${f.id};FIX;res;${rb.id};TRC_FDK;${rb.status};TRC_BLUE_CARD;"Blue Card decision"`);
+        if (rb.nrDecyzji === eb.nrDecyzji && rb.typ === "TRC_FDK") {
+          console.log(`  [FIX BLUE] ${name} residence #${rb.id}: TRC_FDK → TRC_BLUE_CARD (${rb.nrDecyzji})`);
+          csv.push(`"${name}";${f.id};FIX;res;${rb.id};TRC_FDK;${rb.status};TRC_BLUE_CARD;"Blue Card z emp #${eb.id}"`);
           fixedCount++;
           if (APPLY) {
             await db.fdkResidenceBasis.update({ where: { id: rb.id }, data: { typ: "TRC_BLUE_CARD" } });
-            await db.fdkChangeLog.create({ data: { foreignerId: f.id, changedBy: CHANGED_BY, field: "res_type_fix", oldValue: "TRC_FDK", newValue: "TRC_BLUE_CARD (Blue Card art. 127)" } });
+            await db.fdkChangeLog.create({ data: { foreignerId: f.id, changedBy: CHANGED_BY, field: "res_blue_card_fix", oldValue: `TRC_FDK (${rb.nrDecyzji})`, newValue: "TRC_BLUE_CARD" } });
           }
         }
       }
@@ -277,14 +278,28 @@ async function main() {
           if (APPLY) await db.fdkEmploymentBase.update({ where: { id: b.id }, data: { dataDo: new Date("2026-07-31"), status: "WYGASLE" } });
         }
 
-        // Clean stanowisko in PZC.4390.18013.EP.2026
-        if (b.nrOswiadczenia === "PZC.4390.18013.EP.2026" && b.stanowisko) {
-          let clean = b.stanowisko.replace(/^\s*\/?\s*rodzaj\s+pracy:\s*/i, "").replace(/\s+\d+\s*$/, "").trim();
-          if (clean !== b.stanowisko) {
-            console.log(`  [FIX] ${name} emp #${b.id}: stanowisko → "${clean}"`);
-            csv.push(`"${name}";${f.id};FIX;emp;${b.id};stanowisko;-;-;"clean etykieta"`);
+        // Clean stanowisko + fill missing fields in PZC.4390.18013.EP.2026
+        if (b.nrOswiadczenia === "PZC.4390.18013.EP.2026") {
+          const updates = {};
+          if (b.stanowisko) {
+            let clean = b.stanowisko.replace(/^\s*\/?\s*rodzaj\s+pracy:\s*/i, "").replace(/\s+\d+\s*$/, "").trim();
+            if (clean !== b.stanowisko) {
+              updates.stanowisko = clean;
+              console.log(`  [FIX] ${name} emp #${b.id}: stanowisko → "${clean}"`);
+            }
+          }
+          if (!b.rodzajUmowy) {
+            updates.rodzajUmowy = "umowa zlecenie";
+            console.log(`  [FIX] ${name} emp #${b.id}: rodzajUmowy → "umowa zlecenie"`);
+          }
+          if (!b.firma) {
+            updates.firma = "FUNDACJA FIRMA DLA KAŻDEGO";
+            console.log(`  [FIX] ${name} emp #${b.id}: firma → "FUNDACJA FIRMA DLA KAŻDEGO"`);
+          }
+          if (Object.keys(updates).length > 0) {
+            csv.push(`"${name}";${f.id};FIX;emp;${b.id};fields;-;-;"stanowisko+umowa+firma"`);
             fixedCount++;
-            if (APPLY) await db.fdkEmploymentBase.update({ where: { id: b.id }, data: { stanowisko: clean } });
+            if (APPLY) await db.fdkEmploymentBase.update({ where: { id: b.id }, data: updates });
           }
         }
       }
