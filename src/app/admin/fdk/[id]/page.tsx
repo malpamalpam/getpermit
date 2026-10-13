@@ -96,33 +96,63 @@ const TRC_LABELS: Record<string, string> = {
 };
 
 /**
- * Derive the best TRC type label from employment bases.
- * Falls back to typDokumentuPobytowego from foreigner profile, then "Karta pobytu".
+ * Derive the best residence type label.
+ * Uses residenceBases (v2) first, then falls back to employmentBases.
+ * Excludes hidden/UCHYLONE records. Prioritizes by hierarchy, then latest dataDo.
  */
 function getTrcLabel(
   employmentBases: { typ: string; status: string; dataDo: Date | null }[],
-  typDokumentuPobytowego: string | null | undefined
+  typDokumentuPobytowego: string | null | undefined,
+  residenceBases?: { typ: string; status: string; dataDo: Date | null }[],
 ): string {
-  // Find the most relevant active residence base
-  // Priority: indefinite (dataDo=null) first, then by latest dataDo
   const trcTypes = Object.keys(TRC_LABELS);
-  const trcBases = employmentBases
-    .filter((b) => trcTypes.includes(b.typ) && b.typ !== "KARTA_POBYTU" && b.status === "AKTYWNE")
+  // Add v2 residence types to labels
+  const V2_LABELS: Record<string, string> = {
+    ...TRC_LABELS,
+    POBYT_STALY: "Pobyt stały",
+    REZYDENT_UE: "Rezydent długoterminowy UE",
+    STATUS_UCHODZCY: "Status uchodźcy",
+    OCHRONA_UZUPELNIAJACA: "Ochrona uzupełniająca",
+    OBYWATEL_UE: "Obywatel UE/EOG",
+    UMOWA_WYSTAPIENIA: "Umowa wystąpienia (UK)",
+    TRC_INNY_PRACODAWCA: "TRC — inny pracodawca",
+    TRC_INNE_OKOLICZNOSCI: "TRC — inne okoliczności",
+    PESEL_UKR: "PESEL UKR",
+    WIZA: "Wiza",
+    RUCH_BEZWIZOWY: "Ruch bezwizowy",
+    POBYT_NA_PRZEDLUZENIU: "Pobyt na przedłużeniu",
+  };
+  const allLabels = { ...V2_LABELS, ...TRC_LABELS };
+  const HIDDEN_STATUSES = new Set(["UCHYLONE", "UMORZONE"]);
+
+  // Try residenceBases first (v2 — more accurate)
+  if (residenceBases && residenceBases.length > 0) {
+    const active = residenceBases
+      .filter((b) => !HIDDEN_STATUSES.has(b.status) && allLabels[b.typ])
+      .sort((a, b) => {
+        const aTime = a.dataDo === null ? Infinity : (a.dataDo?.getTime() ?? 0);
+        const bTime = b.dataDo === null ? Infinity : (b.dataDo?.getTime() ?? 0);
+        return bTime - aTime;
+      });
+    if (active.length > 0) return allLabels[active[0].typ] ?? "TRC";
+  }
+
+  // Fallback: employmentBases (exclude hidden)
+  const visible = employmentBases.filter((b) => !HIDDEN_STATUSES.has(b.status));
+  const activeTrc = visible
+    .filter((b) => (trcTypes.includes(b.typ) || allLabels[b.typ]) && b.typ !== "KARTA_POBYTU" && b.status === "AKTYWNE")
     .sort((a, b) => {
-      // Indefinite (null dataDo) = highest priority (Infinity)
       const aTime = a.dataDo === null ? Infinity : (a.dataDo?.getTime() ?? 0);
       const bTime = b.dataDo === null ? Infinity : (b.dataDo?.getTime() ?? 0);
       return bTime - aTime;
     });
-  if (trcBases.length > 0) return TRC_LABELS[trcBases[0].typ] ?? "TRC";
-  // Try non-active bases too (for historical display)
-  const allTrcBases = employmentBases
-    .filter((b) => trcTypes.includes(b.typ) && b.typ !== "KARTA_POBYTU")
+  if (activeTrc.length > 0) return allLabels[activeTrc[0].typ] ?? "TRC";
+
+  const allTrc = visible
+    .filter((b) => (trcTypes.includes(b.typ) || allLabels[b.typ]) && b.typ !== "KARTA_POBYTU")
     .sort((a, b) => (b.dataDo?.getTime() ?? 0) - (a.dataDo?.getTime() ?? 0));
-  if (allTrcBases.length > 0) return TRC_LABELS[allTrcBases[0].typ] ?? "TRC";
-  // Fallback to legacy KARTA_POBYTU bases
-  const kpBases = employmentBases.filter((b) => b.typ === "KARTA_POBYTU");
-  if (kpBases.length > 0 && typDokumentuPobytowego) return typDokumentuPobytowego;
+  if (allTrc.length > 0) return allLabels[allTrc[0].typ] ?? "TRC";
+
   return typDokumentuPobytowego || "Karta pobytu";
 }
 
@@ -152,6 +182,7 @@ export default async function FdkForeignerPage({
     where: { id },
     include: {
       employmentBases: { orderBy: { dataOd: "desc" } },
+      residenceBases: { orderBy: { dataOd: "desc" } },
       hrContracts: { include: { monthlyEntries: { orderBy: { miesiac: "asc" } } }, orderBy: { rok: "desc" } },
       attachments: { orderBy: [{ kategoria: "asc" }, { uploadedAt: "asc" }] },
       changeLogs: { orderBy: { changedAt: "desc" }, take: 200 },
@@ -228,7 +259,8 @@ export default async function FdkForeignerPage({
               // Helper: render the active document badge
               const renderActiveDoc = () => {
                 const isEu = foreigner.employmentBases.some((b) => (b.typ === "DOSTEP_UE" || b.typ === "OD_UE") && b.status === "AKTYWNE");
-                const isIndefinite = foreigner.employmentBases.some((b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE");
+                const isIndefinite = foreigner.employmentBases.some((b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE" && b.status !== "UCHYLONE")
+                  || (foreigner.residenceBases ?? []).some((rb) => INDEFINITE_RESIDENCE_TYPES.has(rb.typ) && rb.status === "AKTYWNE");
                 if (foreigner.ochronaCzasowaUkr) {
                   return (
                     <span className="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">
@@ -244,7 +276,7 @@ export default async function FdkForeignerPage({
                   );
                 }
                 if (isIndefinite) {
-                  const label = getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego);
+                  const label = getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases);
                   return (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
                       <Shield className="h-3 w-3" /> {label} — bezterminowo
@@ -257,7 +289,7 @@ export default async function FdkForeignerPage({
                 const isWiza = foreigner.wizaDo && foreigner.wizaDo >= now && !(foreigner.decyzjaPobytowaDo && foreigner.decyzjaPobytowaDo >= now);
                 const docLabel = isWiza
                   ? "Wiza ważna"
-                  : `${getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)} ważna`;
+                  : `${getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases)} ważna`;
                 return (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
                     <Shield className="h-3 w-3" /> {docLabel}{activeDate && <> do {fmt(activeDate)}</>}
@@ -387,7 +419,7 @@ export default async function FdkForeignerPage({
                           <div className="flex items-start justify-between">
                             <div>
                               <div className="font-semibold text-blue-800">
-                                {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)}
+                                {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases)}
                               </div>
                               <div className="text-blue-700">Ważna do: {fmt(foreigner.decyzjaPobytowaDo)}</div>
                             </div>
@@ -404,7 +436,7 @@ export default async function FdkForeignerPage({
                           <div className="flex items-start justify-between">
                             <div>
                               <div className="font-semibold text-emerald-800">
-                                {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)}
+                                {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases)}
                               </div>
                               <div className="text-emerald-700">Bezterminowo</div>
                             </div>
@@ -419,7 +451,7 @@ export default async function FdkForeignerPage({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-red-800">
-                                  {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego)}
+                                  {getTrcLabel(foreigner.employmentBases, foreigner.typDokumentuPobytowego, foreigner.residenceBases)}
                                 </span>
                                 <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">WYGASŁA</span>
                               </div>
