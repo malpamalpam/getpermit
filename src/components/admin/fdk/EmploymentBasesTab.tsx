@@ -179,8 +179,12 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
         if (hasActiveResidence && b.typ === "ZEZWOLENIE" && b.status !== "WYGASLE" && b.status !== "UCHYLONE" && b.status !== "UMORZONE") {
           return false;
         }
-        // Hide inactive/wygasle/nieaktywne bases
-        if (b.status === "NIEAKTYWNE" || b.status === "WYGASLE") {
+        // Hide inactive/wygasle/nieaktywne/uchylone bases
+        if (b.status === "NIEAKTYWNE" || b.status === "WYGASLE" || b.status === "UCHYLONE" || b.status === "UMORZONE") {
+          return false;
+        }
+        // Hide BRAK_DANYCH without any useful data
+        if (b.status === "BRAK_DANYCH" && !b.dataOd && !b.dataDo && !b.nrDecyzji && !b.nrOswiadczenia && !b.firma) {
           return false;
         }
         // Show only the most recent active residence permit, hide other active ones
@@ -247,11 +251,12 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
           b.status !== "WYGASLE" &&
           b.status !== "UCHYLONE" &&
           b.status !== "UMORZONE";
+        const isHidden = b.status === "NIEAKTYWNE" || b.status === "UCHYLONE" || b.status === "UMORZONE";
         return (
           <div
             key={b.id}
             className={`rounded-xl border bg-white p-6 shadow-sm ${
-              isSuperseded ? "border-orange-200 opacity-60" : "border-primary/10"
+              isHidden ? "border-gray-200 opacity-40" : isSuperseded ? "border-orange-200 opacity-60" : "border-primary/10"
             }`}
           >
             <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -266,6 +271,11 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
               {isSuperseded && (
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
                   Wchłonięte przez decyzję pobytową
+                </span>
+              )}
+              {isHidden && (
+                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                  Ukryte (sprzątanie)
                 </span>
               )}
               {b.status === "BRAK_DANYCH" && !b.typ.startsWith("OD_") && !["POWIADOMIENIE_UA", "ZGLOSZENIE_UA", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"].includes(b.typ) && (
