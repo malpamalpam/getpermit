@@ -259,7 +259,7 @@ export default async function FdkForeignerPage({
               // Helper: render the active document badge
               const renderActiveDoc = () => {
                 const isEu = foreigner.employmentBases.some((b) => (b.typ === "DOSTEP_UE" || b.typ === "OD_UE") && b.status === "AKTYWNE");
-                const isIndefinite = foreigner.employmentBases.some((b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE" && b.status !== "UCHYLONE")
+                const isIndefinite = foreigner.employmentBases.some((b) => INDEFINITE_RESIDENCE_TYPES.has(b.typ) && b.status === "AKTYWNE")
                   || (foreigner.residenceBases ?? []).some((rb) => INDEFINITE_RESIDENCE_TYPES.has(rb.typ) && rb.status === "AKTYWNE");
                 if (foreigner.ochronaCzasowaUkr) {
                   return (
