@@ -499,8 +499,8 @@ model FdkForeigner {
   notificationLogs   FdkNotificationLog[]
   /// Członkowie rodziny, dla których ten profil jest głową rodziny
   familyMembers      FdkFamilyMember[]   @relation("FamilyHead")
-  /// Powiązanie jako członek rodziny innego cudzoziemca (max 1)
-  memberOf           FdkFamilyMember?    @relation("FamilyMember")
+  /// Powiązanie jako członek rodziny innego cudzoziemca
+  memberOf           FdkFamilyMember[]   @relation("FamilyMember")
 
   @@index([nazwisko])
   @@index([pesel])
