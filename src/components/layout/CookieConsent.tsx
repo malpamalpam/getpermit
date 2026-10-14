@@ -28,6 +28,12 @@ export function CookieConsent() {
     setVisible(false);
   };
 
+  const decline = () => {
+    // Dismiss banner without granting analytics consent
+    window.localStorage.setItem(STORAGE_KEY, "dismissed");
+    setVisible(false);
+  };
+
   return (
     <div className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-3xl rounded-2xl border border-primary/10 bg-white p-5 shadow-2xl md:p-6">
       <div className="flex items-start gap-4">
@@ -58,7 +64,7 @@ export function CookieConsent() {
           </button>
           <button
             type="button"
-            onClick={accept}
+            onClick={decline}
             aria-label="Close"
             className="hidden h-9 w-9 items-center justify-center rounded-md text-primary/40 hover:bg-primary/5 hover:text-primary md:flex"
           >

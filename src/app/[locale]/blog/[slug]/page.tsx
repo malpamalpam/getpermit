@@ -106,10 +106,9 @@ export default async function BlogPostPage({
       : `${siteConfig.url}${post.imageUrl}`,
     datePublished: post.date,
     dateModified: post.date,
-    author: {
-      "@type": "Person",
-      name: post.author,
-    },
+    author: post.author === "Zespół getpermit.pl"
+      ? { "@type": "Organization", name: "getpermit.pl", url: siteConfig.url }
+      : { "@type": "Person", name: post.author },
     publisher: {
       "@type": "Organization",
       name: "getpermit.pl",

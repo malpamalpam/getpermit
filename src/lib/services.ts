@@ -469,7 +469,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
           },
           {
             heading: loc("Na co uważać", "What to watch out for", "На что обратить внимание", "На що звернути увагу"),
-            body: loc("<p>Wymiana karty NIE przedłuża zezwolenia pobytowego — jeśli kończy się decyzja, potrzebny jest nowy <a href=\"/uslugi/karta-pobytu-czasowego\">wniosek pobytowy</a>.</p>", "<p>Replacing the card does NOT extend your residence permit — if your decision is expiring, you need a new <a href=\"/uslugi/karta-pobytu-czasowego\">residence application</a>.</p>", "<p>Замена карты НЕ продлевает разрешение на проживание — если срок решения истекает, необходимо подать новое <a href=\"/uslugi/karta-pobytu-czasового\">заявление на проживание</a>.</p>", "<p>Заміна карти НЕ подовжує дозволу на проживання — якщо закінчується рішення, потрібна нова <a href=\"/uslugi/karta-pobytu-czasowego\">заява на проживання</a>.</p>"),
+            body: loc("<p>Wymiana karty NIE przedłuża zezwolenia pobytowego — jeśli kończy się decyzja, potrzebny jest nowy <a href=\"/uslugi/karta-pobytu-czasowego\">wniosek pobytowy</a>.</p>", "<p>Replacing the card does NOT extend your residence permit — if your decision is expiring, you need a new <a href=\"/uslugi/karta-pobytu-czasowego\">residence application</a>.</p>", "<p>Замена карты НЕ продлевает разрешение на проживание — если срок решения истекает, необходимо подать новое <a href=\"/ru/uslugi/vremennyj-vid-na-zhitelstvo\">заявление на проживание</a>.</p>", "<p>Заміна карти НЕ подовжує дозволу на проживання — якщо закінчується рішення, потрібна нова <a href=\"/uslugi/karta-pobytu-czasowego\">заява на проживання</a>.</p>"),
           },
         ],
         faq: [

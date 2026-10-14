@@ -138,7 +138,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-gtag('consent','default',{analytics_storage:localStorage.getItem('getpermit-cookie-consent')?'granted':'denied'});
+gtag('consent','default',{analytics_storage:(function(){var v=localStorage.getItem('getpermit-cookie-consent');return v&&v!=='dismissed'?'granted':'denied'})()});
 gtag('js',new Date());gtag('config','G-ZR3FLZ59T8',{send_page_view:true});`,
           }}
         />
