@@ -175,6 +175,17 @@ export function detectDocumentType(text: string, filenameHint?: string): string 
     return "OD_UE";
   }
 
+  // === ZAŚWIADCZENIE O TOCZĄCYM SIĘ POSTĘPOWANIU (art. 217 KPA) ===
+  // Issued by voivode confirming a pending residence application exists.
+  // Does NOT grant any right — informational only. Must detect BEFORE TRC block.
+  if (
+    /za[śs]wiadczenie\s+o\s+tocz[aą]cym\s+si[eę]\s+post[eę]powaniu/i.test(text)
+    || (/za[śs]wiadczen/i.test(lower) && lower.includes("art. 217") && lower.includes("kpa"))
+    || (/za[śs]wiadczen/i.test(lower) && /podpisane\s+elektronicznie/i.test(text) && /post[eę]powani[aeu]/i.test(lower))
+  ) {
+    return "ZASWIADCZENIE_POSTEPOWANIE";
+  }
+
   // === EU BLUE CARD — check before generic karta pobytu ===
   if (lower.includes("niebieska karta") || lower.includes("blue card")) return "TRC_BLUE_CARD";
   if (lower.includes("eu blue card") || lower.includes("karta ue")) return "TRC_BLUE_CARD";

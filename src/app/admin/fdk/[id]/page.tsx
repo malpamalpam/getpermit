@@ -19,6 +19,7 @@ import { ResidenceBasesTab } from "@/components/admin/fdk/ResidenceBasesTab";
 import { DeleteForeignerButton } from "@/components/admin/fdk/DeleteForeignerButton";
 import { ResidenceReminderButton } from "@/components/admin/fdk/ResidenceReminderButton";
 import { ToggleHiddenButton } from "@/components/admin/fdk/ToggleHiddenButton";
+import { PinFolderButton } from "@/components/admin/fdk/PinFolderButton";
 import { withComputedStatuses, computeResidenceStatus, getCurrentEmploymentBasis } from "@/lib/fdk-queries";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -186,6 +187,16 @@ export default async function FdkForeignerPage({
       hrContracts: { include: { monthlyEntries: { orderBy: { miesiac: "asc" } } }, orderBy: { rok: "desc" } },
       attachments: { orderBy: [{ kategoria: "asc" }, { uploadedAt: "asc" }] },
       changeLogs: { orderBy: { changedAt: "desc" }, take: 200 },
+      familyMembers: {
+        include: {
+          member: {
+            include: {
+              attachments: { orderBy: [{ uploadedAt: "asc" }] },
+            },
+          },
+        },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
@@ -722,6 +733,14 @@ export default async function FdkForeignerPage({
                 const list = folderGroups.get(folder) ?? [];
                 list.push(a);
                 folderGroups.set(folder, list);
+                // extraFolders: also add to additional folders (e.g. final declarations pinned to "wazne")
+                for (const ef of (a.extraFolders ?? [])) {
+                  if (ef !== folder) {
+                    const efList = folderGroups.get(ef) ?? [];
+                    if (!efList.some((x) => x.id === a.id)) efList.push(a);
+                    folderGroups.set(ef, efList);
+                  }
+                }
               }
 
               const renderCard = (f: typeof foreigner.attachments[0]) => (
@@ -765,7 +784,25 @@ export default async function FdkForeignerPage({
                         <Download className="h-3 w-3" /> Pobierz
                       </a>
                       <FolderSelect attachmentId={f.id} currentFolder={f.folder ?? "inne_dokumenty"} />
-                      {(!f.folder || f.folder === "wazne" || f.folder === "inne_dokumenty") && (
+                      {/* Pin to "Oświadczenie" — for final declarations in "Ważne" */}
+                      {f.folder === "wazne" && f.detectedType === "OSWIADCZENIE" && (
+                        <PinFolderButton
+                          attachmentId={f.id}
+                          targetFolder="oswiadczenie"
+                          targetLabel="Oświadczenie"
+                          isPinned={(f.extraFolders ?? []).includes("oswiadczenie")}
+                        />
+                      )}
+                      {/* Pin to "Ważne" — for final declarations currently in "Oświadczenie" */}
+                      {f.folder === "oswiadczenie" && (
+                        <PinFolderButton
+                          attachmentId={f.id}
+                          targetFolder="wazne"
+                          targetLabel="Ważne"
+                          isPinned={(f.extraFolders ?? []).includes("wazne")}
+                        />
+                      )}
+                      {(!f.folder || f.folder === "wazne" || f.folder === "inne_dokumenty" || f.folder === "trc" || f.folder === "oswiadczenie") && (
                         <ScrapeButton attachmentId={f.id} typPliku={f.typPliku} />
                       )}
                       <DeleteAttachmentButton attachmentId={f.id} nazwa={f.nazwaWyswietlana} />
@@ -778,17 +815,72 @@ export default async function FdkForeignerPage({
                 <>
                   {folderOrder.map((folder) => {
                     const files = folderGroups.get(folder);
-                    if (!files || files.length === 0) return null;
+                    // For dokumenty_rodziny, also collect from familyMembers
+                    const familyFiles = folder === "dokumenty_rodziny" ? (foreigner.familyMembers ?? []) : [];
+                    if ((!files || files.length === 0) && familyFiles.length === 0) return null;
                     const style = FOLDER_STYLES[folder] ?? "";
                     const label = FOLDER_LABELS[folder] ?? folder;
+
+                    if (folder === "dokumenty_rodziny") {
+                      // Group own attachments by subfolder/person
+                      const byPerson = new Map<string, typeof foreigner.attachments>();
+                      for (const a of (files ?? [])) {
+                        const person = a.subfolder
+                          || (a.opis?.startsWith("⚠ Dokument innej osoby: ") ? a.opis.replace("⚠ Dokument innej osoby: ", "") : null)
+                          || "Nieprzypisane";
+                        const list = byPerson.get(person) ?? [];
+                        list.push(a);
+                        byPerson.set(person, list);
+                      }
+                      const totalOwn = files?.length ?? 0;
+                      const totalFamily = familyFiles.reduce((s, fm) => s + fm.member.attachments.length, 0);
+                      return (
+                        <div key={folder} className={`rounded-xl border ${FOLDER_STYLES.dokumenty_rodziny} p-4`}>
+                          <h3 className="mb-3 font-display text-lg font-bold text-primary">
+                            {label}
+                            <span className="ml-2 text-sm font-normal text-primary/50">({totalOwn + totalFamily})</span>
+                          </h3>
+                          {/* Own attachments grouped by person */}
+                          {byPerson.size > 0 && Array.from(byPerson.entries()).map(([person, pFiles]) => (
+                            <div key={person} className="mb-4">
+                              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-700">{person}</div>
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                {pFiles.map(renderCard)}
+                              </div>
+                            </div>
+                          ))}
+                          {/* Family member profiles (FdkFamilyMember) */}
+                          {familyFiles.map((fm) => {
+                            const memberName = `${fm.member.imie ?? ""} ${fm.member.nazwisko}`.trim();
+                            return (
+                              <div key={fm.id} className="mb-4">
+                                <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-blue-700">
+                                  <span>{memberName}</span>
+                                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium capitalize text-blue-600">{fm.relacja}</span>
+                                  <Link href={`/admin/fdk/${fm.member.id}`} className="text-[10px] text-accent hover:underline">profil #{fm.member.id}</Link>
+                                </div>
+                                {fm.member.attachments.length === 0 ? (
+                                  <p className="text-xs text-primary/40">Brak załączników</p>
+                                ) : (
+                                  <div className="grid gap-3 sm:grid-cols-2">
+                                    {fm.member.attachments.map(renderCard)}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    }
+
                     return (
                       <div key={folder} className={style ? `rounded-xl border ${style} p-4` : undefined}>
                         <h3 className="mb-3 font-display text-lg font-bold text-primary">
                           {label}
-                          <span className="ml-2 text-sm font-normal text-primary/50">({files.length})</span>
+                          <span className="ml-2 text-sm font-normal text-primary/50">({files!.length})</span>
                         </h3>
                         <div className="grid gap-3 sm:grid-cols-2">
-                          {files.map(renderCard)}
+                          {files!.map(renderCard)}
                         </div>
                       </div>
                     );

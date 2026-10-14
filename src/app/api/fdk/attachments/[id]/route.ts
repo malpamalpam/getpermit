@@ -804,7 +804,13 @@ export async function POST(
 /**
  * PATCH /api/fdk/attachments/[id]
  *
- * Update attachment folder manually. Body: { folder: "wazne" | "inne_dokumenty" | "dokumenty_rodziny" }
+ * Update attachment folder / subfolder / extraFolders manually.
+ * Body: {
+ *   folder?: "wazne"|"trc"|"oswiadczenie"|"zezwolenie"|"dokumenty_rodziny"|"inne_dokumenty"
+ *   subfolder?: string          — person name for dokumenty_rodziny sub-grouping
+ *   addExtraFolder?: string     — add a folder tag (e.g. "wazne" for final declarations)
+ *   removeExtraFolder?: string  — remove a folder tag
+ * }
  */
 export async function PATCH(
   request: NextRequest,
@@ -819,22 +825,49 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { folder } = body;
+  const { folder, subfolder, addExtraFolder, removeExtraFolder } = body;
 
-  const VALID_FOLDERS = ["wazne", "inne_dokumenty", "dokumenty_rodziny"];
-  if (!folder || !VALID_FOLDERS.includes(folder)) {
-    return NextResponse.json({ error: `folder must be one of: ${VALID_FOLDERS.join(", ")}` }, { status: 400 });
-  }
+  const VALID_FOLDERS = ["wazne", "trc", "oswiadczenie", "zezwolenie", "dokumenty_rodziny", "inne_dokumenty"];
 
   const attachment = await db.fdkAttachment.findUnique({ where: { id } });
   if (!attachment) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  await db.fdkAttachment.update({
-    where: { id },
-    data: { folder, folderManual: true },
-  });
+  const updateData: Record<string, unknown> = {};
+
+  if (folder !== undefined) {
+    if (!VALID_FOLDERS.includes(folder)) {
+      return NextResponse.json({ error: `folder must be one of: ${VALID_FOLDERS.join(", ")}` }, { status: 400 });
+    }
+    updateData.folder = folder;
+    updateData.folderManual = true;
+  }
+
+  if (subfolder !== undefined) {
+    updateData.subfolder = subfolder || null;
+  }
+
+  if (addExtraFolder !== undefined) {
+    if (!VALID_FOLDERS.includes(addExtraFolder)) {
+      return NextResponse.json({ error: `addExtraFolder must be one of: ${VALID_FOLDERS.join(", ")}` }, { status: 400 });
+    }
+    const current = attachment.extraFolders ?? [];
+    if (!current.includes(addExtraFolder)) {
+      updateData.extraFolders = [...current, addExtraFolder];
+    }
+  }
+
+  if (removeExtraFolder !== undefined) {
+    const current = attachment.extraFolders ?? [];
+    updateData.extraFolders = current.filter((f: string) => f !== removeExtraFolder);
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+  }
+
+  await db.fdkAttachment.update({ where: { id }, data: updateData });
 
   return NextResponse.json({ ok: true });
 }

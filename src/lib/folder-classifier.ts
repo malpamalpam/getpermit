@@ -192,6 +192,11 @@ export function classifyToFolder(
 
   const fnLower = filename.toLowerCase();
 
+  // 2b. ZASWIADCZENIE_POSTEPOWANIE → trc (not wazne — it's informational, not a final decision)
+  if (detectedType === "ZASWIADCZENIE_POSTEPOWANIE") {
+    return "trc";
+  }
+
   // 3. Procedure detection by filename
   // Check oświadczenie BEFORE TRC (OSW patterns are more specific)
   if (OSW_FILENAME_PATTERNS.some((p) => p.test(fnLower))) {

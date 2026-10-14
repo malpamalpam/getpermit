@@ -497,6 +497,10 @@ model FdkForeigner {
   attachments        FdkAttachment[]
   changeLogs         FdkChangeLog[]
   notificationLogs   FdkNotificationLog[]
+  /// Członkowie rodziny, dla których ten profil jest głową rodziny
+  familyMembers      FdkFamilyMember[]   @relation("FamilyHead")
+  /// Powiązanie jako członek rodziny innego cudzoziemca (max 1)
+  memberOf           FdkFamilyMember?    @relation("FamilyMember")
 
   @@index([nazwisko])
   @@index([pesel])
@@ -712,12 +716,16 @@ model FdkAttachment {
   rozmiarBytes      BigInt?  @map("rozmiar_bytes")
   uploadedAt        DateTime @default(now()) @map("uploaded_at")
 
-  /// Folder: "wazne", "inne_dokumenty", "dokumenty_rodziny"
+  /// Folder: "wazne", "trc", "oswiadczenie", "zezwolenie", "dokumenty_rodziny", "inne_dokumenty"
   folder            String?
   /// Typ dokumentu rozpoznany przez parser/OCR (np. TRC_FDK, OSWIADCZENIE, ZEZWOLENIE_A)
   detectedType      String?  @map("detected_type")
   /// Jeśli true, auto-klasyfikacja folderu nie nadpisuje ręcznego wyboru
   folderManual      Boolean  @default(false) @map("folder_manual")
+  /// Podkatalog w folderze dokumenty_rodziny (imię i nazwisko członka rodziny)
+  subfolder         String?
+  /// Dodatkowe foldery (np. ["wazne"] dla finalnego oświadczenia widocznego w Ważne)
+  extraFolders      String[] @default([]) @map("extra_folders")
 
   foreigner FdkForeigner @relation(fields: [foreignerId], references: [id], onDelete: Cascade)
 
@@ -725,6 +733,30 @@ model FdkAttachment {
   @@index([kategoria])
   @@index([folder])
   @@map("fdk_attachments")
+}
+
+// =============================================================================
+// RELACJE RODZINNE — CZŁONKOWIE RODZINY CUDZOZIEMCA
+// =============================================================================
+
+/// Relacja między głównym cudzoziemcem (headId) a ukrytym profilem członka rodziny (memberId).
+/// Pozwala pokazać dokumenty Daminika/Daryiana w profilu Aliaksei jako podkatalog.
+model FdkFamilyMember {
+  id        Int      @id @default(autoincrement())
+  /// Głowa rodziny — aktywny profil
+  headId    Int      @map("head_id")
+  /// Ukryty profil członka rodziny
+  memberId  Int      @map("member_id")
+  /// Relacja: "żona" | "mąż" | "syn" | "córka" | "matka" | "ojciec" | "inne"
+  relacja   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  head   FdkForeigner @relation("FamilyHead",   fields: [headId],   references: [id], onDelete: Cascade)
+  member FdkForeigner @relation("FamilyMember", fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([headId, memberId])
+  @@index([headId])
+  @@map("fdk_family_members")
 }
 
 // =============================================================================
