@@ -115,7 +115,7 @@ export default async function PanelDashboardPage({ searchParams }: Props) {
               {t("noCasesDescription")}
             </p>
             <div className="mt-6">
-              <Link href={`/${locale}/kontakt`}>
+              <Link href={`${locale === "pl" ? "" : `/${locale}`}/kontakt`}>
                 <Button variant="accent" size="md">
                   <Mail className="h-4 w-4" />
                   {t("contactButton")}

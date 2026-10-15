@@ -164,7 +164,7 @@ export default async function BlogPostPage({
         <Container className="relative flex h-full items-end pb-10 md:pb-14">
           <div className="max-w-3xl">
             <Link
-              href={`/${locale}/blog`}
+              href={`${locale === "pl" ? "" : `/${locale}`}/blog`}
               className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-white/70 transition-colors hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -234,10 +234,11 @@ export default async function BlogPostPage({
             </details>
 
             {post.sections.map((section) => {
-              // Zamień /pl/, /en/, /ru/, /uk/ na /${locale}/ w linkach wewnętrznych
+              // Zamień /pl/, /en/, /ru/, /uk/ na aktualny locale (PL bez prefiksu)
+              const locPrefix = locale === "pl" ? "" : `/${locale}`;
               const localizedContent = section.content.replace(
                 /href="\/(pl|en|ru|uk)\//g,
-                `href="/${locale}/`
+                `href="${locPrefix}/`
               );
               return (
                 <section key={section.id} id={section.id} className="mb-10 scroll-mt-24">
@@ -254,7 +255,7 @@ export default async function BlogPostPage({
 
             <div className="mt-12 border-t border-primary/10 pt-8">
               <Link
-                href={`/${locale}/blog`}
+                href={`${locale === "pl" ? "" : `/${locale}`}/blog`}
                 className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />

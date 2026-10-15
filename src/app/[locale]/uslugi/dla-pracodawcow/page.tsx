@@ -124,13 +124,14 @@ export default async function EmployersPage({
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((s) => {
             const Icon = s.icon;
+            const locPrefix = locale === "pl" ? "" : `/${locale}`;
             const href = s.slug
-              ? `/${locale}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}/${getLocalizedSlug(s.slug, locale)}`
+              ? `${locPrefix}/${SERVICE_BASE_PATH[locale] ?? "uslugi"}/${getLocalizedSlug(s.slug, locale)}`
               : undefined;
             return (
               <a
                 key={s.key}
-                href={href ?? `/${locale}/kontakt`}
+                href={href ?? `${locPrefix}/kontakt`}
                 className="block rounded-2xl border border-primary/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
