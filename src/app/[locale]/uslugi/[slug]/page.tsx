@@ -54,9 +54,12 @@ export async function generateMetadata({
       images: [{ url: heroImg.src, width: 1440, height: 480 }],
     },
     alternates: {
-      canonical: locale === "pl"
-        ? `${siteConfig.url}/${SERVICE_BASE_PATH[locale]}/${slug}`
-        : `${siteConfig.url}/${locale}/${SERVICE_BASE_PATH[locale]}/${slug}`,
+      canonical: (() => {
+        const canonicalSlug = getLocalizedSlug(internalSlug, locale);
+        return locale === "pl"
+          ? `${siteConfig.url}/${SERVICE_BASE_PATH[locale]}/${canonicalSlug}`
+          : `${siteConfig.url}/${locale}/${SERVICE_BASE_PATH[locale]}/${canonicalSlug}`;
+      })(),
       languages: {
         ...Object.fromEntries(
           routing.locales.map((l) => {

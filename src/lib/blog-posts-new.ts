@@ -14,10 +14,11 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Karta pobytu czasowego w 2026 roku \u2014 kompletny poradnik krok po kroku",
     description:
       "Jak uzyska\u0107 kart\u0119 pobytu czasowego w Polsce w 2026? Wymagane dokumenty, koszty, czas oczekiwania i najcz\u0119stsze b\u0142\u0119dy. Praktyczny przewodnik od ekspert\u00f3w getpermit.pl.",
-    date: "2026-10-02",
+    date: "2026-04-15",
+    dateModified: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1473163928189-364b2c4e1135?w=1600&q=80",
     imageAlt: "Karta pobytu czasowego w Polsce \u2014 dokumenty i procedura legalizacji pobytu",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest", title: "Czym jest karta pobytu czasowego" },
       { id: "kto-moze", title: "Kto mo\u017ce z\u0142o\u017cy\u0107 wniosek" },
@@ -154,7 +155,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     date: "2026-04-14",
     imageUrl: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?w=1600&q=80",
     imageAlt: "Karta sta\u0142ego pobytu w Polsce \u2014 procedura uzyskania dokumentu pobytowego",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest-staly", title: "Czym jest karta sta\u0142ego pobytu" },
       { id: "warunki", title: "Warunki uzyskania" },
@@ -268,10 +269,11 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Niebieska Karta UE (EU Blue Card) w Polsce 2026 \u2014 nowe zasady i wymagania",
     description:
       "EU Blue Card po zmianach od 2025. Kto mo\u017ce uzyska\u0107 Niebiesk\u0105 Kart\u0119 UE w Polsce? Wymagania, dokumenty, koszty i korzy\u015bci mobilno\u015bci w UE. Poradnik getpermit.pl.",
-    date: "2026-10-02",
+    date: "2026-04-15",
+    dateModified: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80",
     imageAlt: "EU Blue Card \u2014 Niebieska Karta UE dla specjalist\u00f3w w Polsce",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest-blue", title: "Czym jest Niebieska Karta UE" },
       { id: "nowe-zasady", title: "Zmiany od 2025 roku" },
@@ -392,10 +394,11 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Wnioski pobytowe online przez MOS w 2026 \u2014 jak dzia\u0142a nowy system",
     description:
       "Od 2026 wnioski o kart\u0119 pobytu sk\u0142adasz przez MOS (Modu\u0142 Obs\u0142ugi Spraw). Jak za\u0142o\u017cy\u0107 konto, wype\u0142ni\u0107 e-wniosek i unikn\u0105\u0107 b\u0142\u0119d\u00f3w. Poradnik getpermit.pl.",
-    date: "2026-10-02",
+    date: "2026-04-15",
+    dateModified: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80",
     imageAlt: "System MOS \u2014 sk\u0142adanie wniosk\u00f3w pobytowych online w Polsce 2026",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest-mos", title: "Czym jest MOS" },
       { id: "jak-zalozyc", title: "Jak za\u0142o\u017cy\u0107 konto w MOS" },
@@ -513,10 +516,11 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     title: "Ile kosztuje karta pobytu w 2026? Pełny cennik opłat",
     description:
       "Aktualne koszty karty pobytu w 2026 roku: opłaty skarbowe, wydanie karty i pomoc prawna. Cennik opłat od getpermit.pl.",
-    date: "2026-10-02",
+    date: "2026-04-15",
+    dateModified: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&q=80",
     imageAlt: "Koszty karty pobytu w Polsce 2026 — cennik opłat urzędowych",
-    author: "Grzegorz Stępień, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "oplaty-skarbowe", title: "Opłaty skarbowe" },
       { id: "wydanie-karty", title: "Koszt wydania karty" },
@@ -583,7 +587,8 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
     slug: "rok-nowej-ustawy-o-zatrudnianiu-cudzoziemcow",
     title: "Rok nowej ustawy o zatrudnianiu cudzoziemców — co się realnie zmieniło?",
     description: "1 czerwca 2025 weszła w życie ustawa o warunkach dopuszczalności powierzania pracy cudzoziemcom. Podsumowujemy 12 miesięcy: elektronizacja, koniec testu rynku pracy, nowe obowiązki.",
-    date: "2026-10-02",
+    date: "2026-06-01",
+    dateModified: "2026-10-02",
     imageUrl: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600&q=80",
     imageAlt: "Uścisk dłoni pracodawcy i pracownika — zatrudnianie cudzoziemców po nowej ustawie",
     author: "Zespół getpermit.pl",

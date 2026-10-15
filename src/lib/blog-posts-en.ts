@@ -9,7 +9,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     date: "2026-04-15",
     imageUrl: "https://images.unsplash.com/photo-1473163928189-364b2c4e1135?w=1600&q=80",
     imageAlt: "Temporary residence card in Poland \u2014 documents and legalization procedure",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest", title: "What is a temporary residence card" },
       { id: "kto-moze", title: "Who can apply" },
@@ -39,7 +39,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     date: "2026-04-14",
     imageUrl: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?w=1600&q=80",
     imageAlt: "Permanent residence card in Poland \u2014 procedure for obtaining the document",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest-staly", title: "What is a permanent residence card" },
       { id: "warunki", title: "Eligibility conditions" },
@@ -65,7 +65,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     date: "2026-04-13",
     imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80",
     imageAlt: "EU Blue Card for specialists in Poland",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest-blue", title: "What is the EU Blue Card" },
       { id: "nowe-zasady", title: "Changes from 2025" },
@@ -93,7 +93,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     date: "2026-04-12",
     imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80",
     imageAlt: "MOS system \u2014 online residence applications in Poland 2026",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "czym-jest-mos", title: "What is MOS" },
       { id: "jak-zalozyc", title: "How to create an account" },
@@ -121,7 +121,7 @@ export const BLOG_POSTS_EN: BlogPost[] = [
     date: "2026-04-11",
     imageUrl: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&q=80",
     imageAlt: "Residence card costs in Poland 2026 \u2014 official fee price list",
-    author: "Grzegorz St\u0119pie\u0144, UTM Group",
+    author: "Grzegorz St\u0119pie\u0144",
     toc: [
       { id: "oplaty-skarbowe", title: "Stamp duties" },
       { id: "wydanie-karty", title: "Card issuance cost" },

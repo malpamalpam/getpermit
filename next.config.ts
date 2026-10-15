@@ -179,11 +179,59 @@ const nextConfig: NextConfig = {
         permanent: true,
       });
     }
+    // RU: redirect polskich slugów usług na rosyjskie
+    const ruServiceRedirects: Array<{ from: string; to: string }> = [
+      { from: "zezwolenie-na-prace", to: "razreshenie-na-rabotu" },
+      { from: "oswiadczenie-o-powierzeniu-pracy", to: "zayavlenie-o-poruchenii-raboty" },
+      { from: "karta-pobytu-czasowego", to: "vremennyj-vid-na-zhitelstvo" },
+      { from: "zezwolenie-na-pobyt-czasowy-i-prace", to: "razreshenie-na-prozhivanie-i-rabotu" },
+      { from: "eu-blue-card", to: "golubaya-karta-es" },
+      { from: "wymiana-karty-pobytu", to: "zamena-karty-pobytu" },
+      { from: "rezydent-dlugoterminowy-ue", to: "dolgosrochnyj-rezident-es" },
+      { from: "karta-stalego-pobytu", to: "postoyannyj-vid-na-zhitelstvo" },
+      { from: "ponaglenia-i-odwolania", to: "zhaloby-i-apellyatsii" },
+      { from: "tlumaczenia-przysiegle", to: "prisyazhnye-perevody" },
+      { from: "powiadomienia-o-powierzeniu-pracy", to: "uvedomleniya-o-poruchenii-raboty" },
+      { from: "legalizacja-b2b-inkubator", to: "legalizaciya-b2b-inkubator" },
+      { from: "dla-pracodawcow", to: "dlya-rabotodatelej" },
+    ];
+    for (const { from, to } of ruServiceRedirects) {
+      if (from === to) continue;
+      redirects.push({
+        source: `/ru/uslugi/${from}`,
+        destination: `/ru/uslugi/${to}`,
+        permanent: true,
+      });
+    }
+
+    // UK: redirect polskich slugów usług na ukraińskie
+    const ukServiceRedirects: Array<{ from: string; to: string }> = [
+      { from: "zezwolenie-na-prace", to: "dozvil-na-robotu" },
+      { from: "oswiadczenie-o-powierzeniu-pracy", to: "oswiadchennia-pro-doruchennia-roboty" },
+      { from: "karta-pobytu-czasowego", to: "karta-tymchasovogo-pobutu" },
+      { from: "zezwolenie-na-pobyt-czasowy-i-prace", to: "dozvil-na-prozyvannia-ta-robotu" },
+      { from: "eu-blue-card", to: "blakytna-karta-es" },
+      { from: "wymiana-karty-pobytu", to: "zamina-karty-pobutu" },
+      { from: "rezydent-dlugoterminowy-ue", to: "dovgostrokovyj-rezydent-es" },
+      { from: "karta-stalego-pobytu", to: "karta-postijnogo-pobutu" },
+      { from: "ponaglenia-i-odwolania", to: "skargy-ta-apeliatsii" },
+      { from: "tlumaczenia-przysiegle", to: "prysyazhni-pereklady" },
+      { from: "powiadomienia-o-powierzeniu-pracy", to: "povdomlennya-pro-doruchennya-roboty" },
+      { from: "legalizacja-b2b-inkubator", to: "legalizaciya-b2b-inkubator" },
+      { from: "dla-pracodawcow", to: "dlya-robotodavciv" },
+    ];
+    for (const { from, to } of ukServiceRedirects) {
+      if (from === to) continue;
+      redirects.push({
+        source: `/uk/uslugi/${from}`,
+        destination: `/uk/uslugi/${to}`,
+        permanent: true,
+      });
+    }
+
     // UWAGA: redirecty EN/RU/UK ścieżek bazowych (uslugi→services, o-nas→about itd.)
     // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
     // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
-
-    // localePrefix: "as-needed" — middleware nie redirectuje, ale redirect / → /pl jest jawny.
 
     return redirects;
   },

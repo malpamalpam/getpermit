@@ -105,10 +105,14 @@ export default async function BlogPostPage({
       ? post.imageUrl
       : `${siteConfig.url}${post.imageUrl}`,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.dateModified ?? post.date,
     author: post.author === "Zespół getpermit.pl"
       ? { "@type": "Organization", name: "getpermit.pl", url: siteConfig.url }
-      : { "@type": "Person", name: post.author },
+      : {
+          "@type": "Person",
+          name: post.author,
+          worksFor: { "@type": "Organization", name: "UTM Group" },
+        },
     publisher: {
       "@type": "Organization",
       name: "getpermit.pl",
@@ -176,6 +180,12 @@ export default async function BlogPostPage({
                 <Clock className="h-4 w-4" aria-hidden="true" />
                 {readingTime} {labels.minRead}
               </span>
+              {post.dateModified && post.dateModified !== post.date && (
+                <span className="flex items-center gap-1.5 text-white/50">
+                  {locale === "pl" ? "Zaktualizowano" : locale === "en" ? "Updated" : locale === "ru" ? "Обновлено" : "Оновлено"}:{" "}
+                  {new Intl.DateTimeFormat(dateLocale, { day: "numeric", month: "long", year: "numeric" }).format(new Date(post.dateModified))}
+                </span>
+              )}
             </div>
           </div>
         </Container>
