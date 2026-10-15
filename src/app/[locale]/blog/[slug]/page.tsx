@@ -13,6 +13,7 @@ import {
   User,
   Clock,
   List,
+  Shield,
 } from "lucide-react";
 
 export async function generateStaticParams() {
