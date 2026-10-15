@@ -11,6 +11,7 @@ export function ServicesGrid() {
   const t = useTranslations("services");
   const locale = useLocale();
   const base = SERVICE_BASE_PATH[locale] ?? "uslugi";
+  const prefix = locale === "pl" ? "" : `/${locale}`;
 
   const foreignerCategories = SERVICE_CATEGORIES
     .filter((c) => c.slug !== "dla-pracodawcow")
@@ -26,7 +27,7 @@ export function ServicesGrid() {
       icon: Users,
       label: t("forForeigners"),
       benefit: t("foreignersBenefit"),
-      href: `/${locale}/${base}`,
+      href: `${prefix}/${base}`,
       items: foreignerCategories.map((c) => localized(c.title, locale)),
     },
     ...(employerCategory
@@ -36,7 +37,7 @@ export function ServicesGrid() {
             icon: Briefcase,
             label: t("forEmployers"),
             benefit: t("employersBenefit"),
-            href: `/${locale}/${base}/${getLocalizedSlug("dla-pracodawcow", locale)}`,
+            href: `${prefix}/${base}/${getLocalizedSlug("dla-pracodawcow", locale)}`,
             items: employerCategory.services.map((s) => localized(s.title, locale)),
           },
         ]

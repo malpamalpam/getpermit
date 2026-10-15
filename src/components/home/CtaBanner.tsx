@@ -28,7 +28,7 @@ export function CtaBanner() {
                 <ArrowRight className="h-5 w-5" />
               </BookingButton>
               <Link
-                href={`/${locale}/kontakt`}
+                href={`${locale === "pl" ? "" : `/${locale}`}/kontakt`}
                 className={buttonVariants({ variant: "outline", size: "xl", className: "bg-white text-primary border-transparent hover:bg-white/90" })}
               >
                 {t("buttonSecondary")}

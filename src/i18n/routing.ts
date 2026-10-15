@@ -4,9 +4,9 @@ import { createNavigation } from "next-intl/navigation";
 export const routing = defineRouting({
   locales: ["pl", "en", "ru", "uk"],
   defaultLocale: "pl",
-  // Każdy locale ma prefix w URL (/pl, /en, /ru, /uk).
-  // Root "/" robi redirect na /pl.
-  localePrefix: "always",
+  // PL = default locale, bez prefiksu w URL. EN/RU/UK mają prefix.
+  // beforeFiles rewrite obsługuje / → /pl wewnętrznie.
+  localePrefix: "as-needed",
   pathnames: {
     "/": "/",
     "/uslugi": {

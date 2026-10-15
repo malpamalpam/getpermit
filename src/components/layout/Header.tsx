@@ -54,7 +54,8 @@ export function Header() {
 
   const sectionHref = (id: string) => {
     const anchor = SECTION_ANCHORS[id]?.[locale] ?? id;
-    return onHome ? `#${anchor}` : `/${locale}/#${anchor}`;
+    const locPrefix = locale === "pl" ? "" : `/${locale}`;
+    return onHome ? `#${anchor}` : `${locPrefix}/#${anchor}`;
   };
 
   return (

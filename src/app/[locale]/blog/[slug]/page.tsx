@@ -113,6 +113,15 @@ export default async function BlogPostPage({
           name: post.author,
           worksFor: { "@type": "Organization", name: "UTM Group" },
         },
+    reviewedBy: {
+      "@type": "Person",
+      name: "Michalina",
+      jobTitle: locale === "pl" ? "Koordynatorka ds. legalizacji"
+        : locale === "en" ? "Legalization Coordinator"
+        : locale === "ru" ? "Координатор по легализации"
+        : "Координаторка з легалізації",
+      worksFor: { "@type": "Organization", name: "Fundacja Firma Dla Każdego" },
+    },
     publisher: {
       "@type": "Organization",
       name: "getpermit.pl",
@@ -186,6 +195,11 @@ export default async function BlogPostPage({
                   {new Intl.DateTimeFormat(dateLocale, { day: "numeric", month: "long", year: "numeric" }).format(new Date(post.dateModified))}
                 </span>
               )}
+              <span className="flex items-center gap-1.5 text-white/50">
+                <Shield className="h-4 w-4" aria-hidden="true" />
+                {locale === "pl" ? "Sprawdziła" : locale === "en" ? "Reviewed by" : locale === "ru" ? "Проверила" : "Перевірила"}: Michalina,{" "}
+                {locale === "pl" ? "koordynatorka ds. legalizacji" : locale === "en" ? "Legalization Coordinator" : locale === "ru" ? "координатор по легализации" : "координаторка з легалізації"}
+              </span>
             </div>
           </div>
         </Container>
