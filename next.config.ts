@@ -30,6 +30,7 @@ const LOCALES = ["pl", "en", "ru", "uk"] as const;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  trailingSlash: false,
   experimental: {
     serverActions: {
       bodySizeLimit: '20mb',
@@ -120,20 +121,27 @@ const nextConfig: NextConfig = {
     }> = [];
 
     for (const { from, to } of LEGACY_SERVICE_REDIRECTS) {
-      // Wszystkie lokale z prefiksem (localePrefix: "always")
+      // PL: bez prefiksu → canonical bez /pl (jeden skok)
+      redirects.push({
+        source: `/uslugi/${from}`,
+        destination: `/uslugi/${to}`,
+        permanent: true,
+      });
+      // /pl/uslugi/old → /uslugi/new (jeden skok, nie przez /pl/uslugi/new)
+      redirects.push({
+        source: `/pl/uslugi/${from}`,
+        destination: `/uslugi/${to}`,
+        permanent: true,
+      });
+      // EN/RU/UK: zachowaj prefix
       for (const locale of LOCALES) {
+        if (locale === "pl") continue;
         redirects.push({
           source: `/${locale}/uslugi/${from}`,
           destination: `/${locale}/uslugi/${to}`,
           permanent: true,
         });
       }
-      // Stare URL-e bez prefiksu locale → /pl/uslugi/...
-      redirects.push({
-        source: `/uslugi/${from}`,
-        destination: `/pl/uslugi/${to}`,
-        permanent: true,
-      });
     }
 
     // Kanoniczne polskie URL-e BEZ /pl — redirect /pl/* → /*
@@ -229,9 +237,16 @@ const nextConfig: NextConfig = {
       });
     }
 
-    // UWAGA: redirecty EN/RU/UK ścieżek bazowych (uslugi→services, o-nas→about itd.)
-    // są obsługiwane automatycznie przez next-intl middleware (pathnames config w routing.ts).
-    // NIE dodawaj ich tutaj — kolidują z middleware rewrite.
+    // Pkt 7: Polish page slugs under EN/RU/UK → redirect to localized slugs
+    // EN
+    redirects.push({ source: "/en/kontakt", destination: "/en/contact", permanent: true });
+    redirects.push({ source: "/en/o-nas", destination: "/en/about", permanent: true });
+    redirects.push({ source: "/en/polityka-prywatnosci", destination: "/en/privacy-policy", permanent: true });
+    redirects.push({ source: "/en/regulamin", destination: "/en/terms", permanent: true });
+    // RU
+    redirects.push({ source: "/ru/kontakt", destination: "/ru/kontakty", permanent: true });
+    // UK
+    redirects.push({ source: "/uk/kontakt", destination: "/uk/kontakty", permanent: true });
 
     return redirects;
   },

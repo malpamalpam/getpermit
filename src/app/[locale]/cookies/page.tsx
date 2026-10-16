@@ -106,7 +106,7 @@ export default async function CookiesPage({
                   <strong>Cookies funkcjonalne</strong> — zapamiętują preferencje Użytkownika, takie jak wybór języka (polski, angielski, rosyjski, ukraiński) i ustawienia regionalne.
                 </li>
                 <li className={liClass}>
-                  <strong>Cookies marketingowe</strong> — mogą być wykorzystywane do wyświetlania spersonalizowanych reklam i śledzenia skuteczności kampanii marketingowych (np. Meta Pixel).
+                  <strong>Cookies marketingowe</strong> — mogą być wykorzystywane do wyświetlania spersonalizowanych reklam i śledzenia skuteczności kampanii marketingowych (np. Google Ads remarketing).
                 </li>
               </ul>
             </section>
@@ -117,10 +117,10 @@ export default async function CookiesPage({
                 <li className={pClass}>
                   Serwis może korzystać z plików cookies podmiotów trzecich, w szczególności:
                   <ul className="mt-2 space-y-1">
-                    <li className={liClass}><strong>Google Analytics</strong> — analityka ruchu na stronie (dostawca: Google LLC)</li>
-                    <li className={liClass}><strong>Google Tag Manager</strong> — zarządzanie tagami i skryptami analitycznymi</li>
-                    <li className={liClass}><strong>Meta Pixel (Facebook)</strong> — śledzenie konwersji i remarketing (dostawca: Meta Platforms)</li>
-                    <li className={liClass}><strong>Vercel Web Analytics</strong> — pomiar ruchu i wydajności strony (dostawca: Vercel Inc., USA). Vercel Web Analytics działa w modelu bezcookiesowym (cookieless) — nie zapisuje plików cookies na urządzeniu Użytkownika ani nie przechowuje danych osobowych. Zbierane są wyłącznie anonimowe dane o odsłonach stron i wydajności ładowania.</li>
+                    <li className={liClass}><strong>Google Analytics 4</strong> (G-ZR3FLZ59T8) — analityka ruchu na stronie. Dostawca: Google LLC. Kategoria zgody: statystyka (analytics_storage). Cookies: _ga (do 2 lat), _ga_* (do 2 lat). Ładowany przez GTM po wyrażeniu zgody.</li>
+                    <li className={liClass}><strong>Google Tag Manager</strong> (GTM-WKPJ99HK) — zarządzanie tagami i skryptami. Dostawca: Google LLC. Sam GTM nie zapisuje cookies — zarządza wczytywaniem GA4 i Google Ads zgodnie z Consent Mode v2.</li>
+                    <li className={liClass}><strong>Google Ads</strong> — remarketing i tagi konwersji. Dostawca: Google LLC. Kategoria zgody: marketing (ad_storage). Cookies: _gcl_au (do 90 dni). Ładowany przez GTM po wyrażeniu zgody na reklamy.</li>
+                    <li className={liClass}><strong>Baner zgody cookies</strong> — własny komponent zapisujący decyzję użytkownika. Cookie: getpermit-cookie-consent (localStorage, bezterminowo do wycofania). Nie wymaga zgody (niezbędne do obsługi mechanizmu zgody).</li>
                   </ul>
                 </li>
                 <li className={pClass}>
@@ -179,7 +179,7 @@ export default async function CookiesPage({
                   Użytkownik może wycofać zgodę w dowolnym momencie za pośrednictwem banera cookies lub ustawień przeglądarki, co nie wpływa na zgodność z prawem przetwarzania dokonanego przed jej wycofaniem.
                 </li>
                 <li className={pClass}>
-                  Polityka Cookies obowiązuje od dnia 9 kwietnia 2026 r.
+                  Polityka Cookies obowiązuje od dnia 9 kwietnia 2026 r. Ostatnia aktualizacja: 16 października 2026 r.
                 </li>
               </ol>
             </section>

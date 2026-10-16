@@ -89,6 +89,20 @@ export function Footer() {
                   {t("cookies")}
                 </Link>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      window.localStorage.removeItem("getpermit-cookie-consent");
+                      window.location.reload();
+                    }
+                  }}
+                  className="hover:text-white"
+                >
+                  Ustawienia cookies
+                </button>
+              </li>
             </ul>
           </div>
 

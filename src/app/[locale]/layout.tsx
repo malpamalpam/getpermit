@@ -123,7 +123,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
       <head>
-        {/* Consent Mode v2 — default denied, then GTM */}
+        {/* 1. Consent Mode v2 defaults — BEFORE any tag loads */}
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
@@ -131,7 +131,7 @@ gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user
 (function(){var v=localStorage.getItem('getpermit-cookie-consent');if(v&&v!=='dismissed'){gtag('consent','update',{analytics_storage:'granted'})}})();`,
           }}
         />
-        {/* GTM — loads GA4 via container (single source, no duplicate gtag.js) */}
+        {/* 2. GTM — loads GA4, Google Ads etc. via container */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
