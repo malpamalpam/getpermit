@@ -627,14 +627,18 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
   // =========================================================================
   {
     slug: "oplata-400-zl-oswiadczenia-zezwolenia-na-prace",
-    title: "400 zł zamiast 100 zł — opłaty za legalizację pracy cudzoziemców po podwyżce",
-    description: "Od 1 grudnia 2025 opłata za oświadczenie o powierzeniu pracy wzrosła ze 100 do 400 zł. Zezwolenia na pracę: 200/400/800 zł. Sprawdź aktualny cennik.",
+    title: "Opłaty za legalizację pracy cudzoziemców po podwyżce od 1.12.2025",
+    description: "Od 1 grudnia 2025 wzrosły opłaty za oświadczenia o powierzeniu pracy (100→400 zł) i zezwolenia na pracę (50→200, 100→400, 200→800 zł). Aktualny cennik i porównanie stawek.",
     date: "2026-06-03",
+    dateModified: "2026-10-16",
     imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1600&q=80",
     imageAlt: "Kalkulator i dokumenty — wyższe opłaty za legalizację pracy cudzoziemców",
     author: "Zespół getpermit.pl",
     toc: [
       { id: "co-podrozalo", title: "Co podrożało" },
+      { id: "porownanie", title: "Tabela porównawcza" },
+      { id: "braki", title: "Braki formalne" },
+      { id: "przejsciowe", title: "Przepis przejściowy" },
       { id: "kto-ponosi", title: "Kto ponosi koszt" },
       { id: "jak-ograniczyc", title: "Jak ograniczyć wydatki" },
     ],
@@ -642,7 +646,22 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "co-podrozalo",
         heading: "Co podrożało od 1 grudnia 2025?",
-        content: `<p>Od 1 grudnia 2025 r. obowiązują nowe stawki opłat za dokumenty legalizujące pracę cudzoziemców (rozporządzenie z 20.11.2025, Dz.U. 2025 poz. 1622). Podwyżka ze 100 do 400 zł dotyczy <strong>wyłącznie oświadczeń o powierzeniu pracy</strong>. Opłaty za zezwolenia na pracę mają odrębną siatkę (stan prawny: sierpień 2026):</p><table><thead><tr><th>Dokument</th><th>Opłata</th></tr></thead><tbody><tr><td>Oświadczenie o powierzeniu pracy</td><td><strong>400 zł</strong></td></tr><tr><td>Zezwolenie na pracę — do 3 mies.</td><td><strong>200 zł</strong></td></tr><tr><td>Zezwolenie na pracę — powyżej 3 mies.</td><td><strong>400 zł</strong></td></tr><tr><td>Zezwolenie na pracę — delegowanie</td><td><strong>800 zł</strong></td></tr><tr><td>Zezwolenie na pracę sezonową</td><td><strong>100 zł</strong> (bez zmian)</td></tr></tbody></table><p>Opłaty za oświadczenia i zezwolenia sezonowe wnosi się na konto <strong>powiatowego urzędu pracy (PUP)</strong>; opłaty za zezwolenia na pracę typu A–E — na konto <strong>urzędu wojewódzkiego</strong>.</p>`,
+        content: `<p>Od 1 grudnia 2025 r. obowiązują nowe stawki opłat za dokumenty legalizujące pracę cudzoziemców na podstawie <strong>rozporządzenia Ministra Rodziny, Pracy i Polityki Społecznej z 20.11.2025 r.</strong> (<a href="https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20250001622" target="_blank" rel="noopener">Dz.U. 2025 poz. 1622</a>), które zastąpiło rozporządzenie z 2023 r. (<a href="https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20230001443" target="_blank" rel="noopener">Dz.U. 2023 poz. 1443</a>).</p><p>Podwyżka dotyczy <strong>oświadczeń o powierzeniu pracy i zezwoleń na pracę</strong>. Opłata za pracę sezonową wzrosła z 30 do 100 zł.</p>`,
+      },
+      {
+        id: "porownanie",
+        heading: "Stawki przed i po podwyżce",
+        content: `<table><thead><tr><th>Dokument</th><th>Przed 1.12.2025</th><th>Od 1.12.2025</th></tr></thead><tbody><tr><td>Oświadczenie o powierzeniu pracy</td><td>100 zł</td><td><strong>400 zł</strong></td></tr><tr><td>Zezwolenie na pracę — do 3 mies.</td><td>50 zł</td><td><strong>200 zł</strong></td></tr><tr><td>Zezwolenie na pracę — powyżej 3 mies.</td><td>100 zł</td><td><strong>400 zł</strong></td></tr><tr><td>Zezwolenie — delegowanie pracownika</td><td>200 zł</td><td><strong>800 zł</strong></td></tr><tr><td>Zezwolenie na pracę sezonową</td><td>30 zł</td><td><strong>100 zł</strong></td></tr></tbody></table><p>Od 1 stycznia 2026 r. wnioski o zezwolenie na pracę składa się elektronicznie przez <strong>praca.gov.pl</strong> na formularzach: <strong>ZC-WWZPP</strong> (zezwolenie na pracę na terytorium RP), <strong>ZC-WWZF</strong> (praca w ramach przeniesienia wewnątrz przedsiębiorstwa) i <strong>ZC-WWZD</strong> (delegowanie).</p><p>Opłaty za oświadczenia i zezwolenia sezonowe wnosi się na konto <strong>powiatowego urzędu pracy (PUP)</strong>; opłaty za zezwolenia na pracę — na konto <strong>urzędu wojewódzkiego</strong>.</p>`,
+      },
+      {
+        id: "braki",
+        heading: "Co jeśli wniosek ma braki formalne?",
+        content: `<p>W przypadku braków formalnych urząd <strong>wzywa do uzupełnienia</strong> w wyznaczonym terminie. Uzupełnienia dokonuje się przez korektę wniosku na <strong>praca.gov.pl</strong>. Pozostawienie wniosku bez rozpatrzenia następuje dopiero po <strong>bezskutecznym upływie terminu</strong> na uzupełnienie — samo wezwanie nie oznacza odrzucenia.</p>`,
+      },
+      {
+        id: "przejsciowe",
+        heading: "Przepis przejściowy (§ 3)",
+        content: `<p>Sprawy wszczęte <strong>przed 1 grudnia 2025 r.</strong> rozpatruje się według <strong>starych stawek</strong> (§ 3 rozporządzenia). Jeśli pracodawca złożył wniosek lub oświadczenie przed tą datą i wniósł opłatę według starego cennika, nie musi dopłacać różnicy.</p>`,
       },
       {
         id: "kto-ponosi",
@@ -652,7 +671,7 @@ export const NEW_BLOG_POSTS: BlogPost[] = [
       {
         id: "jak-ograniczyc",
         heading: "Jak ograniczyć wydatki?",
-        content: `<p>Czterokrotnie wyższa stawka oznacza, że błędy formalne kosztują realne pieniądze. Odrzucone oświadczenie z powodu braków to konieczność ponownej opłaty. Warto: weryfikować dane przed wysyłką w praca.gov.pl, wybierać właściwy typ dokumentu (oświadczenie vs zezwolenie) i planować zatrudnienie z wyprzedzeniem.</p><p><strong>Nie chcesz płacić podwójnie za błędy we wnioskach? Zespół getpermit.pl przygotuje dokumenty poprawnie za pierwszym razem.</strong></p><p><em>Niniejszy artykuł ma charakter informacyjny i nie stanowi porady prawnej. Stan prawny na sierpień 2026 — przepisy mogą ulec zmianie. W indywidualnych sprawach zalecamy konsultację z prawnikiem.</em></p>`,
+        content: `<p>Kilkukrotnie wyższe stawki oznaczają, że błędy formalne kosztują realne pieniądze. Odrzucony wniosek to konieczność ponownej opłaty. Warto: weryfikować dane przed wysyłką na praca.gov.pl, wybierać właściwy typ dokumentu (oświadczenie vs zezwolenie) i planować zatrudnienie z wyprzedzeniem.</p><p><strong>Nie chcesz płacić podwójnie za błędy we wnioskach? Zespół getpermit.pl przygotuje dokumenty poprawnie za pierwszym razem.</strong></p><p><em>Niniejszy artykuł ma charakter informacyjny i nie stanowi porady prawnej. Zaktualizowano: 16.10.2026. Podstawa prawna: rozporządzenie MRPiPS z 20.11.2025 r. (Dz.U. 2025 poz. 1622). W indywidualnych sprawach zalecamy konsultację z prawnikiem.</em></p>`,
       },
     ],
   },
