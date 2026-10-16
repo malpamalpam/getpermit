@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Container } from "@/components/ui/Container";
+import { CookieResetButton } from "@/components/layout/CookieResetButton";
 import { siteConfig } from "@/config/site";
 import Image from "next/image";
 import { Mail, MapPin, ArrowRight } from "lucide-react";
@@ -90,18 +91,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (typeof window !== "undefined") {
-                      window.localStorage.removeItem("getpermit-cookie-consent");
-                      window.location.reload();
-                    }
-                  }}
-                  className="hover:text-white"
-                >
-                  Ustawienia cookies
-                </button>
+                <CookieResetButton />
               </li>
             </ul>
           </div>
