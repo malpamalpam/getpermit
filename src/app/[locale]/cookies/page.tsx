@@ -120,7 +120,7 @@ export default async function CookiesPage({
                     <li className={liClass}><strong>Google Analytics 4</strong> (G-ZR3FLZ59T8) — analityka ruchu na stronie. Dostawca: Google LLC. Kategoria zgody: statystyka (analytics_storage). Cookies: _ga (do 2 lat), _ga_* (do 2 lat). Ładowany przez GTM po wyrażeniu zgody.</li>
                     <li className={liClass}><strong>Google Tag Manager</strong> (GTM-WKPJ99HK) — zarządzanie tagami i skryptami. Dostawca: Google LLC. Sam GTM nie zapisuje cookies — zarządza wczytywaniem GA4 i Google Ads zgodnie z Consent Mode v2.</li>
                     <li className={liClass}><strong>Google Ads</strong> — remarketing i tagi konwersji. Dostawca: Google LLC. Kategoria zgody: marketing (ad_storage). Cookies: _gcl_au (do 90 dni). Ładowany przez GTM po wyrażeniu zgody na reklamy.</li>
-                    <li className={liClass}><strong>Baner zgody cookies</strong> — własny komponent zapisujący decyzję użytkownika. Cookie: getpermit-cookie-consent (localStorage, bezterminowo do wycofania). Nie wymaga zgody (niezbędne do obsługi mechanizmu zgody).</li>
+                    <li className={liClass}><strong>Cookiebot</strong> — platforma zarządzania zgodą (CMP). Dostawca: Usercentrics A/S. Cookie: CookieConsent (do 12 miesięcy). Kategoria: niezbędne (obsługa mechanizmu zgody). Ładowany przez GTM.</li>
                   </ul>
                 </li>
                 <li className={pClass}>
@@ -179,7 +179,7 @@ export default async function CookiesPage({
                   Użytkownik może wycofać zgodę w dowolnym momencie za pośrednictwem banera cookies lub ustawień przeglądarki, co nie wpływa na zgodność z prawem przetwarzania dokonanego przed jej wycofaniem.
                 </li>
                 <li className={pClass}>
-                  Polityka Cookies obowiązuje od dnia 9 kwietnia 2026 r. Ostatnia aktualizacja: 16 października 2026 r.
+                  Polityka Cookies obowiązuje od dnia 9 kwietnia 2026 r. Ostatnia aktualizacja: 2 listopada 2026 r.
                 </li>
               </ol>
             </section>
