@@ -43,40 +43,54 @@ export const FOLDER_LABELS: Record<FolderType, string> = {
 // NOT procedural attachments (fees, applications, correspondence)
 // ============================================================================
 
-/** Document types that are FINAL documents → "Ważne" */
+/**
+ * Document types for "Ważne" — ONLY identity docs + final decisions/permits.
+ * These are the ONLY files that go to scraping.
+ * Per legalization dept rules (pkt 2.1):
+ * - paszport, karta pobytu, wiza
+ * - decyzja pobytowa (sentencja)
+ * - wpis oświadczenia (z nr PZC), zezwolenie na pracę
+ * - powiadomienie UA (PSZ-PPWPU), PESEL UKR
+ */
 const WAZNE_TYPES = new Set([
-  // Passport, visa, residence card (identity docs)
+  // Identity: passport scan, residence card, visa
   "KARTA_POBYTU", "POBYT_CUKR", "WIZA", "WIZA_HUMANITARNA",
-  // Final decisions — these are the result of a procedure
+  // Residence decisions (sentencja) — final documents
   "TRC_FDK", "TRC_INNY_PRACODAWCA", "TRC_STUDIA", "TRC_POBYT_Z_CUDZ",
   "TRC_MALZONEK_PL", "TRC_HUMANITARNE", "TRC_ABSOLWENT", "TRC_BLUE_CARD",
   "TRC_DZIALALNOSC", "TRC_INNE_OKOLICZNOSCI",
   "POBYT_STALY", "REZYDENT_UE", "STATUS_UCHODZCY", "OCHRONA_UZUPELNIAJACA",
   "ZGODA_HUMANITARNA", "OBYWATEL_UE", "UMOWA_WYSTAPIENIA",
   "RUCH_BEZWIZOWY", "POBYT_NA_PRZEDLUZENIU", "PESEL_UKR",
-  // Work permit decision
+  // Work permit — final decision
   "ZEZWOLENIE_A", "ZEZWOLENIE_A_KONT",
-  // Registered declaration (the registered document itself, not the application)
+  // Registered declaration — final document (wpis z nr PZC)
   "OSWIADCZENIE",
-  // UA notification
+  // UA notification (PSZ-PPWPU)
   "POWIADOMIENIE_UA", "ZGLOSZENIE_UA",
-  // Other employment-only
-  "KARTA_POLAKA", "STATUS_STUDENTA", "STATUS_ABSOLWENTA",
-  // Appeals
+  // Karta Polaka
+  "KARTA_POLAKA",
+]);
+
+/**
+ * Document types that go to TRC procedure folder (not Ważne).
+ * Zaświadczenie o toczącym się postępowaniu, procedural docs from scraping.
+ */
+const TRC_TYPES = new Set([
+  "ZASWIADCZENIE_POSTEPOWANIE",
   "ODWOLANIE",
-  // Legacy types
+  // Legacy OD_* types — procedural, not final documents
   "OD_POBYT_STALY", "OD_REZYDENT_UE", "OD_MALZONEK_PL", "OD_CZLONEK_RODZINY",
   "OD_BLUE_CARD", "OD_HUMANITARNE", "OD_OCHRONA_UZUP", "OD_STUDENT",
   "OD_UE", "OD_UK_WYSTAPIENIE", "OD_UCHODZCA", "OD_WIZA_HUMAN",
   "OD_ABSOLWENT", "OD_KARTA_POLAKA",
+  "STATUS_STUDENTA", "STATUS_ABSOLWENTA",
 ]);
 
 /** Filename patterns → "Ważne" (own identity docs and final documents ONLY) */
 const WAZNE_FILENAME_PATTERNS = [
   // Passport
   /paszport/i, /passport/i, /паспорт/i,
-  // Diploma (Polish)
-  /dyplom/i, /diploma/i, /диплом/i,
   // Decision (final document)
   /decyzj[aiy]/i, /decision/i, /решение/i,
   // Residence card
@@ -85,10 +99,6 @@ const WAZNE_FILENAME_PATTERNS = [
   /zezwoleni[ea][\s_-]*na[\s_-]*prac/i, /work[\s_-]*permit/i,
   // Visa
   /wiza/i, /visa/i, /виза/i,
-  // Long-term EU resident
-  /rezydent/i,
-  // Appeal
-  /odwo[łl]anie/i, /za[żz]alenie/i,
   // Abbreviations for FINAL documents only
   /\bWP[\s_-]?\d{4}/i,    // WP_2024, WP 2025
   /\bKP[\s_-]?skan/i,     // KP_skan, KP skan
@@ -100,6 +110,10 @@ const WAZNE_FILENAME_PATTERNS = [
 
 /** Filename patterns → "TRC" procedure folder */
 const TRC_FILENAME_PATTERNS = [
+  // Appeals (procedural, not final)
+  /odwo[łl]anie/i, /za[żz]alenie/i,
+  // Diploma/degree — attachment to TRC procedure
+  /dyplom/i, /diploma/i, /диплом/i,
   /wniosek.*(?:pobyt|TRC|MOS|INPOL)/i,
   /za[łl][aą]cznik[\s_]*nr[\s_]*[12]/i,
   /stempel/i,
@@ -190,12 +204,12 @@ export function classifyToFolder(
     return "wazne";
   }
 
-  const fnLower = filename.toLowerCase();
-
-  // 2b. ZASWIADCZENIE_POSTEPOWANIE → trc (not wazne — it's informational, not a final decision)
-  if (detectedType === "ZASWIADCZENIE_POSTEPOWANIE") {
+  // 2b. TRC procedure types (appeals, legacy OD_*, zaświadczenie) → trc
+  if (detectedType && TRC_TYPES.has(detectedType)) {
     return "trc";
   }
+
+  const fnLower = filename.toLowerCase();
 
   // 3. Procedure detection by filename
   // Check oświadczenie BEFORE TRC (OSW patterns are more specific)
