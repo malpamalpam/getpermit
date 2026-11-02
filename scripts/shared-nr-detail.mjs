@@ -34,10 +34,23 @@ async function main() {
       console.log(`    Obywatelstwo: ${f.obywatelstwo ?? "-"}`);
 
       for (const b of f.employmentBases) {
-        console.log(`    Podstawa #${b.id}: ${b.typ}, od=${b.dataOd?.toISOString().slice(0,10) ?? "-"}, do=${b.dataDo?.toISOString().slice(0,10) ?? "-"}`);
+        console.log(`    Podstawa #${b.id}: ${b.typ}, od=${b.dataOd?.toISOString().slice(0,10) ?? "-"}, do=${b.dataDo?.toISOString().slice(0,10) ?? "-"}, status=${b.status}`);
+        // Find source attachment — either by sourceAttachmentId or from change log
         if (b.sourceAttachmentId) {
           const att = f.attachments.find(a => a.id === b.sourceAttachmentId);
-          console.log(`      Załącznik: ${att?.nazwaPliku ?? `id=${b.sourceAttachmentId}`}`);
+          console.log(`      Załącznik źródłowy: ${att?.nazwaPliku ?? `id=${b.sourceAttachmentId}`}`);
+        } else {
+          // Try finding from change log
+          const log = await db.fdkChangeLog.findFirst({
+            where: { foreignerId: pid, field: "scrape", newValue: { contains: `#${b.id}` } },
+            select: { newValue: true },
+          });
+          if (log?.newValue) {
+            const fileMatch = log.newValue.match(/pliku:\s*(.+)$/);
+            console.log(`      Załącznik (z logu): ${fileMatch?.[1] ?? log.newValue.slice(-60)}`);
+          } else {
+            console.log(`      Załącznik: BRAK (brak sourceAttachmentId i logu)`);
+          }
         }
       }
     }
