@@ -266,8 +266,6 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
               <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
                 {b.status.replace("_", " ")}
               </span>
-              {b.nrDecyzji && <span className="text-xs text-primary/50">Nr: {b.nrDecyzji}</span>}
-              {b.nrOswiadczenia && <span className="text-xs text-primary/50">Nr: {b.nrOswiadczenia}</span>}
               {isSuperseded && (
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
                   Wchłonięte przez decyzję pobytową
@@ -275,7 +273,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
               )}
               {isHidden && (
                 <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">
-                  Ukryte (sprzątanie)
+                  {b.uwagi?.startsWith("Wchłonięte") ? b.uwagi : "Nieaktywne"}
                 </span>
               )}
               {b.status === "BRAK_DANYCH" && !b.typ.startsWith("OD_") && !["POWIADOMIENIE_UA", "ZGLOSZENIE_UA", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"].includes(b.typ) && (
@@ -300,16 +298,19 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
             </div>
             <dl className="grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
               {[
-                ["Okres", b.dataOd || b.dataDo ? (b.dataOd && !b.dataDo ? `od ${fmt(b.dataOd)}` : `${fmt(b.dataOd)} – ${fmt(b.dataDo)}`) : null],
-                ["Rodzaj umowy", b.rodzajUmowy],
-                ["Wynagrodzenie", b.wynagrodzenie],
-                ["Firma", b.firma],
-                ["Stanowisko / rodzaj pracy", b.stanowisko ?? b.podjeciePracy],
+                /* === Pola ZAWSZE widoczne (pkt 1 — jednolite pola) === */
+                ["Okres", b.dataOd || b.dataDo ? (b.dataOd && !b.dataDo ? `od ${fmt(b.dataOd)}` : `${fmt(b.dataOd)} – ${fmt(b.dataDo)}`) : "–"],
+                ["Wynagrodzenie", b.wynagrodzenie || "–"],
+                ["Stanowisko / rodzaj pracy", b.stanowisko ?? b.podjeciePracy ?? "–"],
+                ["Rodzaj umowy", b.rodzajUmowy || "–"],
+                ["Firma", b.firma || "–"],
+                ["Nr", b.nrDecyzji || b.nrOswiadczenia || b.sygnatura || "–"],
+                /* === Pola dodatkowe (widoczne gdy mają wartość) === */
                 ["Przedmiot dzieła", b.przedmiotDziela],
                 ["Urząd", b.urzad],
                 ["Rodzaj sprawy", b.rodzajSprawy],
-                ["Sygnatura", b.sygnatura],
-                ["Nr oświadczenia", b.nrOswiadczenia],
+                ["Sygnatura", b.sygnatura && b.nrDecyzji !== b.sygnatura ? b.sygnatura : null],
+                ["Nr oświadczenia", b.nrOswiadczenia && b.nrDecyzji !== b.nrOswiadczenia ? b.nrOswiadczenia : null],
                 ["Status podjęcia", b.podjeciePracyStatus === "PODJAL" ? "Podjął pracę" : b.podjeciePracyStatus === "NIE_PODJAL" ? "Nie podjął pracy" : null],
                 ["Data podjęcia pracy", b.podjeciePracyData ? fmt(b.podjeciePracyData) : null],
                 ["Data rozpoczęcia pracy", b.dataStartu ? fmt(b.dataStartu) : null],

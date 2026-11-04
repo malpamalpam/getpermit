@@ -186,13 +186,17 @@ export function detectDocumentType(text: string, filenameHint?: string): string 
     return "ZASWIADCZENIE_POSTEPOWANIE";
   }
 
-  // === EU BLUE CARD — check before generic karta pobytu ===
-  if (lower.includes("niebieska karta") || lower.includes("blue card")) return "TRC_BLUE_CARD";
-  if (lower.includes("eu blue card") || lower.includes("karta ue")) return "TRC_BLUE_CARD";
-  // Blue Card decree often says "zezwolenie na pobyt czasowy i pracę" for highly skilled
-  if (lower.includes("pobyt czasowy i prac") && (lower.includes("niebiesk") || lower.includes("blue"))) return "TRC_BLUE_CARD";
-  // "wysokie kwalifikacje" / art. 127 — Blue Card regime
-  if (lower.includes("wysokich kwalifikacji") || lower.includes("wysokie kwalifikacje")) return "TRC_BLUE_CARD";
+  // === EU BLUE CARD — ONLY if document explicitly names "niebieska karta" / "blue card" ===
+  // "wysokie kwalifikacje" alone is NOT enough (could be a regular work permit for highly skilled)
+  // Blue Card = residence decision (decyzja wojewody), NOT a work permit
+  const hasBlueCardPhrase = lower.includes("niebieska karta") || lower.includes("blue card")
+    || lower.includes("eu blue card") || lower.includes("karta ue");
+  if (hasBlueCardPhrase) {
+    // Only classify as Blue Card if it's a residence decision, not a standalone work permit
+    if (lower.includes("pobyt") || lower.includes("decyzja") || isPositiveDecision) {
+      return "TRC_BLUE_CARD";
+    }
+  }
 
   // === KARTA POBYTU / DECYZJA POBYTOWA — check BEFORE zezwolenie na pracę ===
   // "zezwolenie na pobyt czasowy i pracę" is a RESIDENCE PERMIT, not a work permit
