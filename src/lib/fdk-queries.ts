@@ -68,7 +68,7 @@ export function computeStatus(base: {
  * Also enforces: only one residence permit (KARTA_POBYTU/BLUE_CARD) can be AKTYWNE.
  * Others are marked NIEAKTYWNE (superseded by the newest one).
  */
-export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null }>(
+export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null; rodzajUmowy?: string | null }>(
   bases: T[]
 ): T[] {
   const uaTypes = ["ZGLOSZENIE_UA", "POWIADOMIENIE_UA"];
@@ -78,12 +78,40 @@ export function withComputedStatuses<T extends { id?: number; typ?: string; stat
     if (b.status === "NIEAKTYWNE" || b.status === "UCHYLONE" || b.status === "UMORZONE") {
       return { ...b };
     }
-    // For UA notifications: preserve DB status (managed by enforceNewestUaOnly, not dates)
-    if (b.typ && uaTypes.includes(b.typ) && (b.status === "AKTYWNE" || b.status === "NIEAKTYWNE")) {
-      return { ...b };
+    // For UA notifications: status is computed by enforceNewestUaOnly below
+    if (b.typ && uaTypes.includes(b.typ)) {
+      return { ...b, status: "AKTYWNE" as typeof b.status }; // tentatively active, enforced below
     }
     return { ...b, status: computeStatus(b) as typeof b.status };
   });
+
+  // --- Pkt 9a: Enforce newest UA notification per rodzajUmowy ---
+  // Active = newest notification for EACH contract type.
+  // If there are notifications for different contract types, each type has its own active.
+  // Older notifications for the same contract type get "ZASTAPIONE" display status.
+  const uaBases = computed.filter((b) => b.typ && uaTypes.includes(b.typ));
+  if (uaBases.length > 1) {
+    // Group by rodzajUmowy (null/undefined = "unknown")
+    const byContract = new Map<string, typeof uaBases>();
+    for (const b of uaBases) {
+      const key = (b.rodzajUmowy ?? "").toLowerCase().trim() || "_unknown";
+      const group = byContract.get(key) ?? [];
+      group.push(b);
+      byContract.set(key, group);
+    }
+    // For each contract type, keep only the newest as AKTYWNE
+    for (const [, group] of byContract) {
+      group.sort((a, b) => {
+        const aDate = a.dataOd ?? a.dataDo ?? new Date(0);
+        const bDate = b.dataOd ?? b.dataDo ?? new Date(0);
+        return bDate.getTime() - aDate.getTime();
+      });
+      // Newest stays AKTYWNE, rest become NIEAKTYWNE (displayed as "Zastąpione")
+      for (let i = 1; i < group.length; i++) {
+        (group[i] as { status: string }).status = "NIEAKTYWNE";
+      }
+    }
+  }
 
   // Enforce only one active residence permit — mark older ones as NIEAKTYWNE
   const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];

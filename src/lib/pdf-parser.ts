@@ -37,6 +37,7 @@ export interface ParsedDocumentData {
   // Document identifiers
   nrOswiadczenia?: string;
   nrDecyzji?: string;
+  sygnaturaSprawy?: string; // Sygnatura sprawy (np. WRP-II.8671.45311.2024) — osobne od nrDecyzji
   // Salary
   wynagrodzenie?: string;
   parsedSalary?: ParsedSalary;
@@ -1168,22 +1169,51 @@ function parseElectronicDecision(normalized: string, result: ParsedDocumentData)
  */
 function parseZezwolenie(normalized: string, result: ParsedDocumentData): ParsedDocumentData {
   // --- B5: Nr zezwolenia typ A: "(typu A) nr 26031/2026" = NUMER ZEZWOLENIA (nie WRP) ---
+  // Also: "nr dok 59055/2024" from "Identyfikator w systemie centralnym"
   const typNrMatch = normalized.match(/\(typu\s+[A-E]\)\s+nr\s+(\d+\/\d{4})/i);
   if (typNrMatch) result.nrDecyzji = typNrMatch[1].trim();
-  // For non-work-permit decisions: try other patterns
+  // Fallback: "nr dok NNNNN/RRRR" from header
+  if (!result.nrDecyzji) {
+    const nrDokMatch = normalized.match(/nr\s+dok\s+(\d{3,6}\/\d{4})/i);
+    if (nrDokMatch) result.nrDecyzji = nrDokMatch[1].trim();
+  }
+  // Standalone "nr NNNNN/RRRR" (permit number format)
+  if (!result.nrDecyzji) {
+    const standaloneNrMatch = normalized.match(/\bnr\s+(\d{3,6}\/\d{4})\b/i);
+    if (standaloneNrMatch) result.nrDecyzji = standaloneNrMatch[1].trim();
+  }
+
+  // --- Sygnatura sprawy: WRP-... or WSC-... — ALWAYS goes to sygnaturaSprawy, not nrDecyzji ---
+  const sygMatch = normalized.match(/([A-Z]{2,5}(?:[-.](?:[A-Z]+|[IVX]+))*[-.](?:\d+\.?)+\.\d{4})/);
+  if (sygMatch) {
+    const syg = sygMatch[1].trim();
+    if (/^WRP/i.test(syg)) {
+      // WRP is always sygnatura sprawy for work permits
+      result.sygnaturaSprawy = syg;
+    } else if (!result.nrDecyzji) {
+      // Non-WRP sygnatury (WSC-... etc) go to nrDecyzji as fallback
+      result.nrDecyzji = syg;
+    } else {
+      // We have a nrDecyzji already — store WSC etc. as sygnatura
+      result.sygnaturaSprawy = syg;
+    }
+  }
+  // Polish administrative signatures: WSC-II-P.6151.34116.2025, DL.WIPO.4100.8583.2024
+  if (!result.nrDecyzji && !result.sygnaturaSprawy) {
+    const adminSygMatch = normalized.match(/([A-Z]{2,5}[-][A-Z]{1,5}[-.][\w.-]+\.\d{4})/);
+    if (adminSygMatch) {
+      const syg = adminSygMatch[1].trim();
+      if (/^WRP/i.test(syg)) {
+        result.sygnaturaSprawy = syg;
+      } else {
+        result.nrDecyzji = syg;
+      }
+    }
+  }
+  // For non-work-permit decisions: try label-based patterns
   if (!result.nrDecyzji) {
     const nrDecMatch = normalized.match(/(?:nr\s+decyzji|numer\s+decyzji|znak\s+sprawy)[.:\s]+([A-Z0-9/.\-]+)/i);
     if (nrDecMatch) result.nrDecyzji = nrDecMatch[1].trim();
-  }
-  // B5: WRP-... is the SYGNATURA, not the permit number — use as fallback only for non-typ-A
-  if (!result.nrDecyzji) {
-    const sygMatch = normalized.match(/([A-Z]{2,5}(?:[-.](?:[A-Z]+|[IVX]+))*[-.](?:\d+\.?)+\.\d{4})/);
-    if (sygMatch) result.nrDecyzji = sygMatch[1].trim();
-  }
-  // Polish administrative signatures: WSC-II-P.6151.34116.2025, DL.WIPO.4100.8583.2024
-  if (!result.nrDecyzji) {
-    const adminSygMatch = normalized.match(/([A-Z]{2,5}[-][A-Z]{1,5}[-.][\w.-]+\.\d{4})/);
-    if (adminSygMatch) result.nrDecyzji = adminSygMatch[1].trim();
   }
   // Residence decision sygnatura: "nr sprawy: XXXX/2025" or "Decyzja nr ..."
   if (!result.nrDecyzji) {

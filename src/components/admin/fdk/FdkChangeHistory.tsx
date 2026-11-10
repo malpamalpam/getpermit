@@ -29,6 +29,8 @@ const FIELD_LABELS: Record<string, string> = {
   attachment_upload: "Wgranie załącznika",
   attachment_delete: "Usunięcie załącznika",
   foreigner_delete: "Usunięcie profilu",
+  residence_basis: "Podstawa pobytowa (legacy)",
+  residence_basis_v2: "Podstawa pobytowa",
   // Employment base field-level changes (prefixed with base_ID_)
   typ: "Typ",
   status: "Status",

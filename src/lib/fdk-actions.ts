@@ -211,7 +211,7 @@ function buildEmploymentBaseData(d: z.infer<typeof employmentBaseSchema>) {
     brakujaceDokumenty: d.brakujaceDokumenty || null,
     uwagiKp: d.uwagiKp || null,
     // Przedmiot dzieła
-    przedmiotDziela: d.przedmiotDziela || null,
+    // przedmiotDziela: usunięte z zapisu (pkt 3 reguł legalizacji)
     // Blue Card
     decyzjaOdebrana: toDate(d.decyzjaOdebrana),
     stanowisko: d.stanowisko || null,
@@ -913,6 +913,83 @@ export async function deleteResidenceBasisAction(
 }
 
 // =============================================================================
+// RESIDENCE BASIS V2 — operates on fdk_residence_bases rows
+// =============================================================================
+
+const residenceBasisV2Schema = z.object({
+  typ: z.string().optional(),
+  dataOd: z.string().optional(),
+  dataDo: z.string().optional(),
+  nrDecyzji: z.string().optional(),
+  nrKartyPobytu: z.string().optional(),
+  nrWizy: z.string().optional(),
+  urzad: z.string().optional(),
+  uwagi: z.string().optional(),
+});
+
+export async function editResidenceBasisV2Action(
+  residenceBasisId: number,
+  input: z.infer<typeof residenceBasisV2Schema>
+): Promise<FdkResult> {
+  const user = await requireAdmin();
+  const existing = await db.fdkResidenceBasis.findUnique({ where: { id: residenceBasisId } });
+  if (!existing) return { ok: false, error: "not_found" };
+
+  const data: Record<string, unknown> = {};
+  if (input.dataOd !== undefined) data.dataOd = input.dataOd ? new Date(input.dataOd) : null;
+  if (input.dataDo !== undefined) data.dataDo = input.dataDo ? new Date(input.dataDo) : null;
+  if (input.nrDecyzji !== undefined) data.nrDecyzji = input.nrDecyzji || null;
+  if (input.nrKartyPobytu !== undefined) data.nrKartyPobytu = input.nrKartyPobytu || null;
+  if (input.nrWizy !== undefined) data.nrWizy = input.nrWizy || null;
+  if (input.urzad !== undefined) data.urzad = input.urzad || null;
+  if (input.uwagi !== undefined) data.uwagi = input.uwagi || null;
+
+  if (Object.keys(data).length > 0) {
+    await db.fdkResidenceBasis.update({ where: { id: residenceBasisId }, data });
+    await db.fdkChangeLog.create({
+      data: {
+        foreignerId: existing.foreignerId,
+        changedBy: user.email ?? "admin",
+        field: "residence_basis_v2",
+        oldValue: JSON.stringify({
+          dataOd: existing.dataOd?.toISOString().slice(0, 10),
+          dataDo: existing.dataDo?.toISOString().slice(0, 10),
+          nrDecyzji: existing.nrDecyzji,
+          nrKartyPobytu: existing.nrKartyPobytu,
+          urzad: existing.urzad,
+        }),
+        newValue: `Edytowano podstawę pobytową #${residenceBasisId}: ${JSON.stringify(input)}`,
+      },
+    });
+  }
+
+  revalidateFdk(existing.foreignerId);
+  return { ok: true };
+}
+
+export async function deleteResidenceBasisV2Action(
+  residenceBasisId: number
+): Promise<FdkResult> {
+  const user = await requireAdmin();
+  const existing = await db.fdkResidenceBasis.findUnique({ where: { id: residenceBasisId } });
+  if (!existing) return { ok: false, error: "not_found" };
+
+  await db.fdkResidenceBasis.delete({ where: { id: residenceBasisId } });
+  await db.fdkChangeLog.create({
+    data: {
+      foreignerId: existing.foreignerId,
+      changedBy: user.email ?? "admin",
+      field: "residence_basis_v2",
+      oldValue: `Usunięto: ${existing.typ} ${existing.dataOd?.toISOString().slice(0, 10) ?? "?"} — ${existing.dataDo?.toISOString().slice(0, 10) ?? "?"} nr=${existing.nrDecyzji ?? ""}`,
+      newValue: `Usunięto podstawę pobytową #${residenceBasisId}`,
+    },
+  });
+
+  revalidateFdk(existing.foreignerId);
+  return { ok: true };
+}
+
+// =============================================================================
 // CALENDAR EVENTS
 // =============================================================================
 
@@ -1141,6 +1218,32 @@ export async function addResidenceBasisAction(
   const typLabel = input.typ.replace(/_/g, " ").toUpperCase();
 
   if (input.typ === "stempel" || input.typ === "przedluzenie") {
+    // Pkt 9b: "w procedurze" wymaga dowodu złożenia wniosku
+    // Sprawdź czy istnieje UPO / stempel / zaświadczenie o postępowaniu w załącznikach
+    const evidenceTypes = ["POBYT_NA_PRZEDLUZENIU", "ZASWIADCZENIE_POSTEPOWANIE"];
+    const evidencePatterns = ["upo", "stempel", "potwierdzenie"];
+    const attachments = await db.fdkAttachment.findMany({
+      where: { foreignerId },
+      select: { nazwaPliku: true, detectedType: true },
+    });
+    const hasEvidence = attachments.some(
+      (a) =>
+        (a.detectedType && evidenceTypes.includes(a.detectedType)) ||
+        evidencePatterns.some((p) => a.nazwaPliku.toLowerCase().includes(p))
+    );
+    // Log warning if no evidence, but don't block (admin decision)
+    if (!hasEvidence) {
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId,
+          changedBy: user.email ?? "admin",
+          field: "residence_basis",
+          oldValue: null,
+          newValue: `UWAGA: Ustawiono "w procedurze" bez dowodu złożenia wniosku (UPO/stempel/zaświadczenie). Pkt 9b reguł legalizacji wymaga dowodu.`,
+        },
+      });
+    }
+
     // W procedurze
     const label = input.typ === "stempel"
       ? `Stempel w paszporcie${uwagi ? ` — ${uwagi}` : ""}`

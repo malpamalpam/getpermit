@@ -391,6 +391,21 @@ export async function GET(
     // All other detected types create/update employment base
     let docType = parsed.detectedType as import("@prisma/client").FdkBaseType;
 
+    // --- Pkt 2: Dokument z sygnaturą WRP-... to ZAWSZE zezwolenie na pracę, nigdy TRC ---
+    if (parsed.nrDecyzji && /^WRP/i.test(parsed.nrDecyzji) && docType !== "ZEZWOLENIE_A" && docType !== "ZEZWOLENIE_A_KONT") {
+      const oldType = docType;
+      docType = "ZEZWOLENIE_A";
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: `typ=${oldType}`,
+          newValue: `Plik ${attachment.nazwaPliku}: przeklasyfikowano z ${oldType} na ZEZWOLENIE_A (sygnatura WRP: ${parsed.nrDecyzji})`,
+        },
+      });
+    }
+
     // --- Walidacja obywatelstwa dla oświadczeń (pkt 1 — reguła krajów) ---
     if (docType === "OSWIADCZENIE") {
       const citizenship = foreigner.obywatelstwo ?? parsed.obywatelstwo;
@@ -499,7 +514,7 @@ export async function GET(
       dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
       rodzajUmowy: parsed.rodzajUmowy || null,
       stanowisko: parsed.stanowisko || null,
-      przedmiotDziela: parsed.przedmiotDziela || null,
+      // przedmiotDziela: usunięte z zapisu (pkt 3 reguł legalizacji)
       firma: parsed.firma || null,
     };
 
@@ -511,6 +526,10 @@ export async function GET(
       // ZEZWOLENIE, KARTA_POBYTU, BLUE_CARD
       baseData.nrDecyzji = parsed.nrDecyzji || null;
       baseData.nrOswiadczenia = null;
+      // Pkt 1: sygnatura sprawy (WRP-...) w osobnym polu
+      if (parsed.sygnaturaSprawy) {
+        baseData.sygnatura = parsed.sygnaturaSprawy;
+      }
     }
 
     // Store wynagrodzenie — prefer structured format if available
@@ -581,6 +600,11 @@ export async function GET(
 
       const residenceType = typeMapping.residenceType;
       if (residenceType && residenceType !== "UNKNOWN") {
+        // Guard: don't create empty residence base (no number AND no dates) — pkt 6 reguł legalizacji
+        const hasResidenceData = !!(parsed.nrDecyzji || parsed.dataOd || parsed.dataDo);
+        if (!hasResidenceData) {
+          console.warn(`[scrape] Skipping empty residence base for attachment ${id}: no nrDecyzji, no dataOd, no dataDo`);
+        } else {
         // Check if valid FdkBaseType
         const validResidenceType = residenceType as import("@prisma/client").FdkBaseType;
 
@@ -632,6 +656,7 @@ export async function GET(
             newValue: `${existingResidence ? "Zaktualizowano" : "Utworzono"} podstawę pobytu #${residenceBaseId} (${validResidenceType}) z pliku: ${attachment.nazwaPliku}`,
           },
         });
+        } // end else (hasResidenceData)
       }
     } catch (rbErr) {
       // Non-fatal: residence basis creation failure shouldn't block employment base

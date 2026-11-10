@@ -400,7 +400,7 @@ export default async function FdkForeignerPage({
               )}
               {tab.key === "residence" && (
                 <span className="ml-1.5 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary/10 px-1.5 text-[10px] font-bold">
-                  {[foreigner.decyzjaPobytowaDo, foreigner.wizaDo, foreigner.upoDoreczone, foreigner.ochronaCzasowaUkr].filter(Boolean).length}
+                  {foreigner.residenceBases.length + [foreigner.upoDoreczone, foreigner.ochronaCzasowaUkr].filter(Boolean).length}
                 </span>
               )}
               {tab.key === "attachments" && foreigner.attachments.length > 0 && (
@@ -633,7 +633,7 @@ export default async function FdkForeignerPage({
         )}
 
         {activeTab === "residence" && (
-          <ResidenceBasesTab foreigner={foreigner} />
+          <ResidenceBasesTab foreigner={foreigner} residenceBases={foreigner.residenceBases} />
         )}
 
         {activeTab === "hr" && (

@@ -3,90 +3,101 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, X, Save, Loader2 } from "lucide-react";
-import { editResidenceBasisAction, deleteResidenceBasisAction } from "@/lib/fdk-actions";
+import {
+  editResidenceBasisAction,
+  deleteResidenceBasisAction,
+  editResidenceBasisV2Action,
+  deleteResidenceBasisV2Action,
+} from "@/lib/fdk-actions";
 
-type BasisType = "karta" | "wiza" | "upo" | "ochrona_ukr";
+// ============================================================================
+// Types
+// ============================================================================
 
-const RESIDENCE_TYPES = [
-  { value: "trc_fdk", label: "TRC — FDK" },
-  { value: "trc_inny", label: "TRC — inny pracodawca" },
-  { value: "trc_humanitarne", label: "TRC — ze względów humanitarnych" },
-  { value: "trc_pobyt_cudz", label: "TRC — pobyt z cudzoziemcem" },
-  { value: "trc_blue_card", label: "TRC — Blue Card" },
-  { value: "trc_malzonek_pl", label: "TRC — Małżonek obywatela PL" },
-  { value: "trc_studia", label: "TRC — studia" },
-  { value: "trc_absolwent", label: "TRC — absolwent" },
-  { value: "trc_dzialalnosc", label: "TRC — działalność gospodarcza" },
-  { value: "trc_inne", label: "TRC — inne okoliczności" },
-  { value: "wiza", label: "Wiza" },
-  { value: "ruch_bezwizowy", label: "Ruch bezwizowy" },
-  { value: "pobyt_staly", label: "Pobyt stały" },
-  { value: "rezydent_ue", label: "Rezydent długoterminowy UE" },
-  { value: "uchodzca", label: "Status uchodźcy" },
-  { value: "ochrona_uzup", label: "Ochrona uzupełniająca" },
-  { value: "zgoda_humanitarna", label: "Zgoda na pobyt ze wzgl. humanitarnych" },
-  { value: "zgoda_tolerowany", label: "Zgoda na pobyt tolerowany" },
-  { value: "uk_wystapienie", label: "Umowa wystąpienia (UK)" },
-  { value: "ue_eog", label: "Obywatel UE/EOG/Szwajcarii" },
-  { value: "pesel_ukr", label: "Pesel UKR" },
-  { value: "cukr", label: "CUKR" },
-  { value: "stempel", label: "W procedurze — stempel w paszporcie" },
-  { value: "przedluzenie", label: "Pobyt na przedłużeniu" },
-  { value: "inne", label: "Inna podstawa pobytu" },
-];
+type LegacyBasisType = "karta" | "wiza" | "upo" | "ochrona_ukr";
 
-export function ResidenceBasisActions({
-  foreignerId,
-  basisType,
-  currentDate,
-  currentNote,
-}: {
-  foreignerId: number;
-  basisType: BasisType;
-  currentDate?: string;
-  currentNote?: string;
-}) {
+interface ResidenceBasisData {
+  id: number;
+  typ: string;
+  dataOd: Date | null;
+  dataDo: Date | null;
+  nrDecyzji: string | null;
+  nrWizy: string | null;
+  nrKartyPobytu: string | null;
+  urzad: string | null;
+  uwagi: string | null;
+}
+
+type Props =
+  | {
+      foreignerId: number;
+      basisType: LegacyBasisType;
+      residenceBasisId?: never;
+      currentResidenceBasis?: never;
+      currentDate?: string;
+      currentNote?: string;
+    }
+  | {
+      foreignerId: number;
+      basisType: "residence_v2";
+      residenceBasisId: number;
+      currentResidenceBasis: ResidenceBasisData;
+      currentDate?: never;
+      currentNote?: never;
+    };
+
+// ============================================================================
+// Component
+// ============================================================================
+
+export function ResidenceBasisActions(props: Props) {
+  const { foreignerId, basisType } = props;
+  const isV2 = basisType === "residence_v2";
+
   const router = useRouter();
   const [mode, setMode] = useState<"view" | "edit" | "confirmDelete">("view");
   const [isPending, startTransition] = useTransition();
 
-  // Modal state
-  const [typ, setTyp] = useState(() => {
-    if (basisType === "karta") return "trc_fdk";
-    if (basisType === "wiza") return "wiza";
-    if (basisType === "upo") return "stempel";
-    return "inne";
-  });
-  const [dataOd, setDataOd] = useState("");
-  const [dataDo, setDataDo] = useState(currentDate ?? "");
+  // V2 form state
+  const rb = isV2 ? props.currentResidenceBasis : null;
+  const [dataOd, setDataOd] = useState(rb?.dataOd ? rb.dataOd.toISOString().slice(0, 10) : "");
+  const [dataDo, setDataDo] = useState(
+    rb?.dataDo ? rb.dataDo.toISOString().slice(0, 10) : (props.currentDate ?? ""),
+  );
+  const [nrDecyzji, setNrDecyzji] = useState(rb?.nrDecyzji ?? "");
+  const [nrKartyPobytu, setNrKartyPobytu] = useState(rb?.nrKartyPobytu ?? "");
+  const [nrWizy, setNrWizy] = useState(rb?.nrWizy ?? "");
+  const [urzad, setUrzad] = useState(rb?.urzad ?? "");
+  const [uwagi, setUwagi] = useState(rb?.uwagi ?? "");
 
-  // Parse structured note: "nrDokumentu | urzad | free-text uwagi"
-  const [nrDokumentu, setNrDokumentu] = useState(() => {
-    const parts = (currentNote ?? "").split("|").map((s) => s.trim());
-    return parts.length >= 3 ? parts[0] : "";
-  });
-  const [urzadWojewoda, setUrzadWojewoda] = useState(() => {
-    const parts = (currentNote ?? "").split("|").map((s) => s.trim());
-    return parts.length >= 3 ? parts[1] : "";
-  });
-  const [uwagi, setUwagi] = useState(() => {
-    const parts = (currentNote ?? "").split("|").map((s) => s.trim());
-    return parts.length >= 3 ? parts.slice(2).join(" | ") : (currentNote ?? "");
+  // Legacy form state (for UPO/ochrona_ukr)
+  const [legacyNote, setLegacyNote] = useState(() => {
+    if (isV2) return "";
+    const parts = (props.currentNote ?? "").split("|").map((s) => s.trim());
+    return parts.length >= 3 ? parts.slice(2).join(" | ") : (props.currentNote ?? "");
   });
 
   const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
-      // Compose structured note: "nrDokumentu | urzad | uwagi"
-      const parts = [nrDokumentu.trim(), urzadWojewoda.trim(), uwagi.trim()];
-      const hasStructured = parts[0] || parts[1];
-      const composedNote = hasStructured ? parts.join(" | ") : uwagi.trim();
-
-      const result = await editResidenceBasisAction(foreignerId, {
-        basisType,
-        date: dataDo || dataOd,
-        note: composedNote || undefined,
-      });
+      let result;
+      if (isV2 && props.residenceBasisId) {
+        result = await editResidenceBasisV2Action(props.residenceBasisId, {
+          dataOd: dataOd || undefined,
+          dataDo: dataDo || undefined,
+          nrDecyzji: nrDecyzji || undefined,
+          nrKartyPobytu: nrKartyPobytu || undefined,
+          nrWizy: nrWizy || undefined,
+          urzad: urzad || undefined,
+          uwagi: uwagi || undefined,
+        });
+      } else {
+        result = await editResidenceBasisAction(foreignerId, {
+          basisType: basisType as LegacyBasisType,
+          date: dataDo || dataOd,
+          note: legacyNote || undefined,
+        });
+      }
       if (result.ok) {
         setMode("view");
         router.refresh();
@@ -96,7 +107,11 @@ export function ResidenceBasisActions({
 
   const handleDelete = () => {
     startTransition(async () => {
-      await deleteResidenceBasisAction(foreignerId, basisType);
+      if (isV2 && props.residenceBasisId) {
+        await deleteResidenceBasisV2Action(props.residenceBasisId);
+      } else {
+        await deleteResidenceBasisAction(foreignerId, basisType);
+      }
       setMode("view");
       router.refresh();
     });
@@ -142,41 +157,66 @@ export function ResidenceBasisActions({
         </div>
 
         <div className="space-y-4">
-          <div>
-            <label className={labelCls}>Typ podstawy</label>
-            <select value={typ} onChange={(e) => setTyp(e.target.value)} className={inputCls}>
-              {RESIDENCE_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </div>
+          {isV2 ? (
+            <>
+              {/* V2: all structured fields */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelCls}>Data od</label>
+                  <input type="date" value={dataOd} onChange={(e) => setDataOd(e.target.value)} className={inputCls} />
+                </div>
+                <div>
+                  <label className={labelCls}>Data do</label>
+                  <input type="date" value={dataDo} onChange={(e) => setDataDo(e.target.value)} className={inputCls} />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>Data od</label>
-              <input type="date" value={dataOd} onChange={(e) => setDataOd(e.target.value)} className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>Data do</label>
-              <input type="date" value={dataDo} onChange={(e) => setDataDo(e.target.value)} className={inputCls} />
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelCls}>Nr decyzji / sygnatura</label>
+                  <input value={nrDecyzji} onChange={(e) => setNrDecyzji(e.target.value)} className={inputCls} placeholder="np. WSC-II-P.6151.34116.2025" />
+                </div>
+                <div>
+                  <label className={labelCls}>Nr karty pobytu</label>
+                  <input value={nrKartyPobytu} onChange={(e) => setNrKartyPobytu(e.target.value)} className={inputCls} placeholder="np. AB 1234567" />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>Nr dokumentu / karty</label>
-              <input value={nrDokumentu} onChange={(e) => setNrDokumentu(e.target.value)} className={inputCls} placeholder="np. AB 1234567" />
-            </div>
-            <div>
-              <label className={labelCls}>Urząd / wojewoda</label>
-              <input value={urzadWojewoda} onChange={(e) => setUrzadWojewoda(e.target.value)} className={inputCls} placeholder="np. Wojewoda Mazowiecki" />
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelCls}>Nr wizy</label>
+                  <input value={nrWizy} onChange={(e) => setNrWizy(e.target.value)} className={inputCls} placeholder="np. PL 12345678" />
+                </div>
+                <div>
+                  <label className={labelCls}>Urząd / wojewoda</label>
+                  <input value={urzad} onChange={(e) => setUrzad(e.target.value)} className={inputCls} placeholder="np. Wojewoda Mazowiecki" />
+                </div>
+              </div>
 
-          <div>
-            <label className={labelCls}>Uwagi / komentarz</label>
-            <textarea value={uwagi} onChange={(e) => setUwagi(e.target.value)} className={inputCls} rows={2} placeholder="Dodatkowe uwagi..." />
-          </div>
+              <div>
+                <label className={labelCls}>Uwagi</label>
+                <textarea value={uwagi} onChange={(e) => setUwagi(e.target.value)} className={inputCls} rows={2} placeholder="Dodatkowe uwagi..." />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Legacy: simple date + note */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelCls}>Data od</label>
+                  <input type="date" value={dataOd} onChange={(e) => setDataOd(e.target.value)} className={inputCls} />
+                </div>
+                <div>
+                  <label className={labelCls}>Data do</label>
+                  <input type="date" value={dataDo} onChange={(e) => setDataDo(e.target.value)} className={inputCls} />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>Uwagi / komentarz</label>
+                <textarea value={legacyNote} onChange={(e) => setLegacyNote(e.target.value)} className={inputCls} rows={2} placeholder="Dodatkowe uwagi..." />
+              </div>
+            </>
+          )}
         </div>
 
         <div className="mt-6 flex items-center justify-between">

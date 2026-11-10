@@ -264,7 +264,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
                 {TYPE_BADGES[b.typ]?.label ?? b.typ}
               </span>
               <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
-                {b.status.replace("_", " ")}
+                {b.status === "NIEAKTYWNE" && (b.typ === "POWIADOMIENIE_UA" || b.typ === "ZGLOSZENIE_UA") ? "ZASTĄPIONE" : b.status.replace("_", " ")}
               </span>
               {isSuperseded && (
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
@@ -306,7 +306,7 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
                 ["Firma", b.firma || "–"],
                 ["Nr", b.nrDecyzji || b.nrOswiadczenia || b.sygnatura || "–"],
                 /* === Pola dodatkowe (widoczne gdy mają wartość) === */
-                ["Przedmiot dzieła", b.przedmiotDziela],
+                // Przedmiot dzieła — usunięte z widoku (pkt 3 reguł legalizacji)
                 ["Urząd", b.urzad],
                 ["Rodzaj sprawy", b.rodzajSprawy],
                 ["Sygnatura", b.sygnatura && b.nrDecyzji !== b.sygnatura ? b.sygnatura : null],

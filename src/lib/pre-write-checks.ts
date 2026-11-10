@@ -292,6 +292,17 @@ export function runPreWriteChecks(
   // 26. Aktywna podstawa zatrudnienia bez aktywnej podstawy pobytu
   // (checked post-save in API route)
 
+  // 27. Pusty rekord: brak numeru dokumentu I brak okresu ważności
+  // Rekord bez numeru LUB bez okresu, którego nie da się powiązać z danymi źródłowymi.
+  const hasDocNumber = !!(parsed.nrDecyzji || parsed.nrOswiadczenia);
+  const hasPeriod = !!(parsed.dataOd || parsed.dataDo);
+  if (!hasDocNumber && !hasPeriod) {
+    issues.push({
+      checkId: 27, severity: "error",
+      message: "Brak numeru dokumentu i brak okresu ważności — nie twórz pustego rekordu (pkt 6 reguł legalizacji)",
+    });
+  }
+
   return issues;
 }
 

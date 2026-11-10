@@ -80,15 +80,26 @@ const TRC_FN = [
 ];
 
 function classify(detectedType, isDiffPerson, filename, kategoria) {
+  // Priority order matches src/lib/folder-classifier.ts exactly:
+  // 1. Family member → dokumenty_rodziny
   if (isDiffPerson) return "dokumenty_rodziny";
-  if (detectedType && WAZNE_TYPES.has(detectedType)) return "wazne";
-  if (detectedType && TRC_TYPES.has(detectedType)) return "trc";
   const fn = filename.toLowerCase();
+  // 2. FILENAME procedure patterns FIRST (catches procedural docs even with final detectedType)
   if (OSW_FN.some(p => p.test(fn))) return "oswiadczenie";
   if (ZEZW_FN.some(p => p.test(fn))) return "zezwolenie";
   if (TRC_FN.some(p => p.test(fn))) return "trc";
+  // 3. DetectedType → Ważne (only if filename didn't match procedure pattern)
+  if (detectedType && WAZNE_TYPES.has(detectedType)) {
+    if (kategoria && /^trc/i.test(kategoria)) return "trc";
+    return "wazne";
+  }
+  // 3b. TRC procedure types
+  if (detectedType && TRC_TYPES.has(detectedType)) return "trc";
+  if (TRC_FN.some(p => p.test(fn))) return "trc";
   if (kategoria && /^trc/i.test(kategoria)) return "trc";
+  // 4. Identity by filename → Ważne
   if (WAZNE_FN.some(p => p.test(fn))) return "wazne";
+  // 5. Fallback
   return "inne_dokumenty";
 }
 

@@ -208,8 +208,7 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
   const [sygnatura, setSygnatura] = useState(base?.sygnatura ?? "");
   const [brakujaceDokumenty, setBrakujaceDokumenty] = useState(base?.brakujaceDokumenty ?? "");
   const [uwagiKp, setUwagiKp] = useState(base?.uwagiKp ?? "");
-  // Przedmiot dzieła
-  const [przedmiotDziela, setPrzedmiotDziela] = useState(base?.przedmiotDziela ?? "");
+  // Przedmiot dzieła — usunięte z formularza (pkt 3 reguł legalizacji)
   // Blue Card
   const [decyzjaOdebrana, setDecyzjaOdebrana] = useState(fmtDate(base?.decyzjaOdebrana));
   const [stanowisko, setStanowisko] = useState(base?.stanowisko ?? "");
@@ -258,7 +257,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
       sygnatura,
       brakujaceDokumenty,
       uwagiKp,
-      przedmiotDziela,
       decyzjaOdebrana,
       stanowisko,
       dataPodjecia,
@@ -421,8 +419,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                 </div>
               </div>
               <div>
-                <label className={labelCls}>Przedmiot dzieła</label>
-                <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. wykonywanie prac spawalniczych" />
               </div>
               <div>
                 <label className={labelCls}>Wezwanie / braki</label>
@@ -514,8 +510,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                 </div>
               </div>
               <div>
-                <label className={labelCls}>Przedmiot dzieła</label>
-                <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. zakres umowy o dzieło" />
               </div>
 
               {/* Ticki podjęcie / niepodjęcie */}
@@ -608,8 +602,6 @@ export function EmploymentBaseEditForm({ foreignerId, base, obywatelstwo, onClos
                 <input value={nrDecyzji} onChange={(e) => setNrDecyzji(e.target.value)} className={inputCls} />
               </div>
               <div>
-                <label className={labelCls}>Przedmiot dzieła</label>
-                <input value={przedmiotDziela} onChange={(e) => setPrzedmiotDziela(e.target.value)} className={inputCls} placeholder="np. zakres umowy o dzieło" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
