@@ -304,7 +304,7 @@ async function step6() {
     where: {
       urzad: null,
       sourceAttachmentId: { not: null },
-      typ: { startsWith: "TRC" },
+      typ: { in: ["TRC_FDK", "TRC_INNY_PRACODAWCA", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL", "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC", "TRC_INNE_OKOLICZNOSCI", "TRC_BLUE_CARD"] },
     },
     select: { sourceAttachmentId: true },
   });
@@ -365,10 +365,10 @@ async function finalCounts() {
       where: { sourceAttachmentId: { not: null }, nrDecyzji: null, nrOswiadczenia: null },
     }),
     "TRC z pustym stanowiskiem": await prisma.fdkEmploymentBase.count({
-      where: { typ: { startsWith: "TRC" }, OR: [{ stanowisko: null }, { stanowisko: "" }] },
+      where: { typ: { in: ["TRC_FDK", "TRC_INNY_PRACODAWCA", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL", "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC", "TRC_INNE_OKOLICZNOSCI", "TRC_BLUE_CARD"] }, OR: [{ stanowisko: null }, { stanowisko: "" }] },
     }),
     "Residence z pustym urzad (TRC)": await prisma.fdkResidenceBasis.count({
-      where: { typ: { startsWith: "TRC" }, urzad: null },
+      where: { typ: { in: ["TRC_FDK", "TRC_INNY_PRACODAWCA", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ", "TRC_MALZONEK_PL", "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC", "TRC_INNE_OKOLICZNOSCI", "TRC_BLUE_CARD"] }, urzad: null },
     }),
     "Residence typu ZEZWOLENIE": await prisma.fdkResidenceBasis.count({
       where: { typ: { in: ["ZEZWOLENIE_A", "ZEZWOLENIE_A_KONT", "ZEZWOLENIE"] } },
