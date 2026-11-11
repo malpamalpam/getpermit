@@ -152,11 +152,15 @@ const OSW_FILENAME_PATTERNS = [
   /PSZ-PPPO|PSZ-PZPO|PGP-UZC/i,
   /podj[ęe]ci[ea].*(?:pracy|zatrudnieni)/i,
   /niepodj[ęe]ci[ea].*pracy/i,
+  /niepodjęcie/i,  // "niepodjęcie SKURATOVICH"
   /zako[ńn]czeni[ea].*pracy/i,
   /zg[łl]oszeni[ea].*umowy/i,
   /op[łl]ata.*(?:o[śs]wiadczen|400\s*PLN|PUP)/i,
   /kopia.*umowy.*o[śs]w/i,
   /o[śs]w.*draft/i,
+  /[oó][śs]w\s*uz\b/i,  // "ośw uz", "ośwuz" — wniosek o oświadczenie UZ
+  /wnisek.*o[śs]w/i,  // "Wnisek OŚW" (typo)
+  /wniosek.*o[śs]w/i,  // "Wniosek OŚW"
 ];
 
 /** Filename patterns → "Zezwolenie" procedure folder */
@@ -199,25 +203,36 @@ export function classifyToFolder(
     return "dokumenty_rodziny";
   }
 
-  // 2. Check by detected document type — FINAL documents go to "Ważne"
-  if (detectedType && WAZNE_TYPES.has(detectedType)) {
-    return "wazne";
-  }
-
-  // 2b. TRC procedure types (appeals, legacy OD_*, zaświadczenie) → trc
-  if (detectedType && TRC_TYPES.has(detectedType)) {
-    return "trc";
-  }
-
   const fnLower = filename.toLowerCase();
 
-  // 3. Procedure detection by filename
-  // Check oświadczenie BEFORE TRC (OSW patterns are more specific)
+  // 2. FILENAME-based procedure detection FIRST — catches procedural docs
+  //    even when detectedType says TRC_FDK or OSWIADCZENIE (scraper often
+  //    assigns those to attachments/supplements, not just final decisions).
+  //    OSW patterns before TRC (more specific).
   if (OSW_FILENAME_PATTERNS.some((p) => p.test(fnLower))) {
     return "oswiadczenie";
   }
   if (ZEZW_FILENAME_PATTERNS.some((p) => p.test(fnLower))) {
     return "zezwolenie";
+  }
+  if (TRC_FILENAME_PATTERNS.some((p) => p.test(fnLower))) {
+    return "trc";
+  }
+
+  // 3. Check by detected document type — FINAL documents go to "Ważne"
+  //    Only reaches here if filename didn't match any procedure pattern.
+  if (detectedType && WAZNE_TYPES.has(detectedType)) {
+    // Extra guard: files from legacy "trc" category that got detectedType
+    // from scraper should stay in TRC, not Ważne (e.g. ZUS with TRC_FDK type)
+    if (kategoria && /^trc/i.test(kategoria)) {
+      return "trc";
+    }
+    return "wazne";
+  }
+
+  // 3b. TRC procedure types (appeals, legacy OD_*, zaświadczenie) → trc
+  if (detectedType && TRC_TYPES.has(detectedType)) {
+    return "trc";
   }
   // TRC patterns — also use legacy kategoria as hint
   if (TRC_FILENAME_PATTERNS.some((p) => p.test(fnLower))) {

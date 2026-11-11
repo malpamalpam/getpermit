@@ -51,8 +51,10 @@ const WAZNE_FN = [
 const OSW_FN = [
   /WNIOSEK-OSW/i, /PSZ-OPPC|PSZ-OPWP|PSZ-ZOPP/i, /PSZ-PPPO|PSZ-PZPO|PGP-UZC/i,
   /podj[ęe]ci[ea].*(?:pracy|zatrudnieni)/i, /niepodj[ęe]ci[ea].*pracy/i,
+  /niepodjęcie/i,
   /zako[ńn]czeni[ea].*pracy/i, /zg[łl]oszeni[ea].*umowy/i,
   /op[łl]ata.*(?:o[śs]wiadczen|400\s*PLN|PUP)/i, /kopia.*umowy.*o[śs]w/i, /o[śs]w.*draft/i,
+  /[oó][śs]w\s*uz\b/i, /wnisek.*o[śs]w/i, /wniosek.*o[śs]w/i,
 ];
 
 const ZEZW_FN = [
