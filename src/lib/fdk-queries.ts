@@ -68,30 +68,61 @@ export function computeStatus(base: {
  * Also enforces: only one residence permit (KARTA_POBYTU/BLUE_CARD) can be AKTYWNE.
  * Others are marked NIEAKTYWNE (superseded by the newest one).
  */
-export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null; rodzajUmowy?: string | null }>(
+export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null; rodzajUmowy?: string | null; firma?: string | null }>(
   bases: T[]
 ): T[] {
   const uaTypes = ["ZGLOSZENIE_UA", "POWIADOMIENIE_UA"];
+  const TRC_TYPES = new Set([
+    "TRC_FDK", "TRC_INNY_PRACODAWCA", "TRC_HUMANITARNE", "TRC_POBYT_Z_CUDZ",
+    "TRC_MALZONEK_PL", "TRC_STUDIA", "TRC_ABSOLWENT", "TRC_DZIALALNOSC",
+    "TRC_INNE_OKOLICZNOSCI", "TRC_BLUE_CARD", "KARTA_POBYTU", "BLUE_CARD",
+  ]);
+  const ABSORBABLE_TYPES = new Set([
+    "ZEZWOLENIE_A", "ZEZWOLENIE_A_KONT", "ZEZWOLENIE", "OSWIADCZENIE",
+  ]);
+
+  // Step 1: Compute raw date-based status for all bases
   const computed = bases.map((b) => {
-    // Preserve manually set statuses: NIEAKTYWNE (hidden by cleanup), UCHYLONE, UMORZONE
-    // These are administrative overrides that computeStatus must not reverse.
-    if (b.status === "NIEAKTYWNE" || b.status === "UCHYLONE" || b.status === "UMORZONE") {
+    // Preserve terminal statuses: UCHYLONE, UMORZONE
+    if (b.status === "UCHYLONE" || b.status === "UMORZONE") {
       return { ...b };
     }
-    // For UA notifications: status is computed by enforceNewestUaOnly below
+    // For UA notifications: computed by enforceNewestUaOnly below
     if (b.typ && uaTypes.includes(b.typ)) {
-      return { ...b, status: "AKTYWNE" as typeof b.status }; // tentatively active, enforced below
+      return { ...b, status: "AKTYWNE" as typeof b.status };
     }
+    // ALL other types: compute from dates (ignore DB NIEAKTYWNE — it may be stale from scraper)
     return { ...b, status: computeStatus(b) as typeof b.status };
   });
 
-  // --- Pkt 9a: Enforce newest UA notification per rodzajUmowy ---
-  // Active = newest notification for EACH contract type.
-  // If there are notifications for different contract types, each type has its own active.
-  // Older notifications for the same contract type get "ZASTAPIONE" display status.
+  // Step 2: Absorption — active TRC absorbs overlapping zezwolenie/oświadczenie
+  // Rule: If there's an active TRC with the same employer AND overlapping period,
+  // the zezwolenie/oświadczenie gets status "NIEAKTYWNE" (displayed as "Wchłonięte")
+  const activeTrc = computed.filter(
+    (b) => b.typ && TRC_TYPES.has(b.typ) && b.status === "AKTYWNE"
+  );
+  if (activeTrc.length > 0) {
+    for (const b of computed) {
+      if (!b.typ || !ABSORBABLE_TYPES.has(b.typ) || b.status !== "AKTYWNE") continue;
+      // Check if any active TRC absorbs this record
+      const absorbed = activeTrc.some((trc) => {
+        // TRC period must encompass today (already checked by AKTYWNE status)
+        // Zezwolenie period must overlap with TRC period
+        if (!trc.dataOd || !b.dataDo) return false;
+        const trcStart = trc.dataOd.getTime();
+        const bEnd = b.dataDo.getTime();
+        // TRC starts on or before zezwolenie ends → overlap
+        return trcStart <= bEnd;
+      });
+      if (absorbed) {
+        (b as { status: string }).status = "NIEAKTYWNE";
+      }
+    }
+  }
+
+  // Step 3: UA — enforce newest per rodzajUmowy
   const uaBases = computed.filter((b) => b.typ && uaTypes.includes(b.typ));
   if (uaBases.length > 1) {
-    // Group by rodzajUmowy (null/undefined = "unknown")
     const byContract = new Map<string, typeof uaBases>();
     for (const b of uaBases) {
       const key = (b.rodzajUmowy ?? "").toLowerCase().trim() || "_unknown";
@@ -99,33 +130,29 @@ export function withComputedStatuses<T extends { id?: number; typ?: string; stat
       group.push(b);
       byContract.set(key, group);
     }
-    // For each contract type, keep only the newest as AKTYWNE
     for (const [, group] of byContract) {
       group.sort((a, b) => {
         const aDate = a.dataOd ?? a.dataDo ?? new Date(0);
         const bDate = b.dataOd ?? b.dataDo ?? new Date(0);
         return bDate.getTime() - aDate.getTime();
       });
-      // Newest stays AKTYWNE, rest become NIEAKTYWNE (displayed as "Zastąpione")
       for (let i = 1; i < group.length; i++) {
         (group[i] as { status: string }).status = "NIEAKTYWNE";
       }
     }
   }
 
-  // Enforce only one active residence permit — mark older ones as NIEAKTYWNE
+  // Step 4: Enforce only one active residence permit (KARTA_POBYTU/BLUE_CARD)
   const residenceTypes = ["KARTA_POBYTU", "BLUE_CARD"];
   const activeResidence = computed.filter(
     (b) => b.typ && residenceTypes.includes(b.typ) && b.status === "AKTYWNE"
   );
   if (activeResidence.length > 1) {
-    // Keep the one with the latest dataDo (or latest dataOd) as active
     activeResidence.sort((a, b) => {
       const aDate = a.dataDo ?? a.dataOd ?? new Date(0);
       const bDate = b.dataDo ?? b.dataOd ?? new Date(0);
       return bDate.getTime() - aDate.getTime();
     });
-    // Mark all but the first (newest) as NIEAKTYWNE
     for (let i = 1; i < activeResidence.length; i++) {
       (activeResidence[i] as { status: string }).status = "NIEAKTYWNE";
     }
@@ -171,6 +198,11 @@ export async function deactivatePreviousResidencePermits(
   newBaseId: number,
   changedBy: string
 ): Promise<number> {
+  // Don't write NIEAKTYWNE to DB — withComputedStatuses handles display status from dates.
+  // Only log the supersession for history. Status is always computed dynamically.
+  const newBase = await db.fdkEmploymentBase.findUnique({ where: { id: newBaseId } });
+  if (!newBase) return 0;
+
   const otherActive = await db.fdkEmploymentBase.findMany({
     where: {
       foreignerId,
@@ -180,23 +212,27 @@ export async function deactivatePreviousResidencePermits(
     },
   });
 
+  // Only deactivate bases whose period is FULLY superseded by the new base
+  let count = 0;
   for (const base of otherActive) {
-    await db.fdkEmploymentBase.update({
-      where: { id: base.id },
-      data: { status: "NIEAKTYWNE" },
-    });
+    // Skip if the other base has a LATER dataDo than the new one (it's the more recent permit)
+    if (base.dataDo && newBase.dataDo && base.dataDo > newBase.dataDo) continue;
+    // Skip if same type and same nrDecyzji (same document, just re-scraped)
+    if (base.typ === newBase.typ && base.nrDecyzji && base.nrDecyzji === newBase.nrDecyzji) continue;
+
     await db.fdkChangeLog.create({
       data: {
         foreignerId,
         changedBy,
         field: "employment_base_auto",
         oldValue: base.status,
-        newValue: `Podstawa #${base.id} (${base.typ}) dezaktywowana - zastapiona przez nowa decyzje pobytowa #${newBaseId}`,
+        newValue: `Podstawa #${base.id} (${base.typ}) zastąpiona przez nową decyzję pobytową #${newBaseId}`,
       },
     });
+    count++;
   }
 
-  return otherActive.length;
+  return count;
 }
 
 /**

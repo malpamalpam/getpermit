@@ -325,7 +325,9 @@ export function classifyDocument(fullText: string, filenameHint?: string): Docum
   }
 
   // --- 13. TRC decisions by keywords ---
-  if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt\s+czasow|udzi[eę]l\w+\s+zezwoleni\w+\s+na\s+pobyt/i.test(lower)) {
+  // Expanded: also match "jednolitego zezwolenia", "DECYZJA" + sygnatura WSC/DL, broken OCR
+  if (/kart[aęy]\s+pobytu|zezwoleni[eao]\s+na\s+pobyt|udzi[eę]l\w+\s+zezwoleni\w+\s+na\s+pobyt|jednolite\w*\s+zezwoleni|pobyt\w*\s+czasow\w*\s+i\s+prac/i.test(lower)
+    || (/\bDECYZJA\b/i.test(fullText) && /WSC[-.\s]|DL[-.]WIPO/i.test(fullText))) {
     const keywordType = matchKeywords(sentencja) ?? matchKeywords(fullText);
     if (keywordType && keywordType !== "TRC_FDK") {
       const mapping = CONFIG.article_map[keywordType] ??

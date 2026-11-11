@@ -391,7 +391,35 @@ export async function GET(
     // All other detected types create/update employment base
     let docType = parsed.detectedType as import("@prisma/client").FdkBaseType;
 
-    // --- Pkt 2: Dokument z sygnaturą WRP-... to ZAWSZE zezwolenie na pracę, nigdy TRC ---
+    // --- Pkt 2+3: Dokument z sygnaturą WRP-... lub sygnaturaSprawy WRP to ZAWSZE zezwolenie na pracę ---
+    // Also check filename hint: "Wp", "WP", "zezwolenie" in filename
+    if (parsed.sygnaturaSprawy && /^WRP/i.test(parsed.sygnaturaSprawy) && docType !== "ZEZWOLENIE_A" && docType !== "ZEZWOLENIE_A_KONT") {
+      const oldType = docType;
+      docType = "ZEZWOLENIE_A";
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: `typ=${oldType}`,
+          newValue: `Plik ${attachment.nazwaPliku}: przeklasyfikowano z ${oldType} na ZEZWOLENIE_A (sygnaturaSprawy WRP: ${parsed.sygnaturaSprawy})`,
+        },
+      });
+    }
+    // Filename hint: "WP", "Wp", "zezwolenie" → override TRC to ZEZWOLENIE_A
+    if (/\bWP\b|zezwoleni/i.test(attachment.nazwaPliku) && !/pobyt|TRC|decyzj/i.test(attachment.nazwaPliku) && docType.startsWith("TRC_")) {
+      const oldType = docType;
+      docType = "ZEZWOLENIE_A";
+      await db.fdkChangeLog.create({
+        data: {
+          foreignerId: attachment.foreignerId,
+          changedBy,
+          field: "scrape",
+          oldValue: `typ=${oldType}`,
+          newValue: `Plik ${attachment.nazwaPliku}: przeklasyfikowano z ${oldType} na ZEZWOLENIE_A (nazwa pliku wskazuje na zezwolenie)`,
+        },
+      });
+    }
     if (parsed.nrDecyzji && /^WRP/i.test(parsed.nrDecyzji) && docType !== "ZEZWOLENIE_A" && docType !== "ZEZWOLENIE_A_KONT") {
       const oldType = docType;
       docType = "ZEZWOLENIE_A";
