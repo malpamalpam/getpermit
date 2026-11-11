@@ -257,8 +257,8 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
               <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGES[b.typ]?.cls ?? "bg-gray-100"}`}>
                 {TYPE_BADGES[b.typ]?.label ?? b.typ}
               </span>
-              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
-                {b.status === "NIEAKTYWNE" && (b.typ === "POWIADOMIENIE_UA" || b.typ === "ZGLOSZENIE_UA") ? "ZASTĄPIONE" : b.status.replace("_", " ")}
+              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${isSuperseded ? "bg-orange-100 text-orange-800" : STATUS_COLORS[b.status] ?? STATUS_COLORS.BRAK_DANYCH}`}>
+                {isSuperseded ? "WCHŁONIĘTE" : b.status === "NIEAKTYWNE" && (b.typ === "POWIADOMIENIE_UA" || b.typ === "ZGLOSZENIE_UA") ? "ZASTĄPIONE" : b.status.replace("_", " ")}
               </span>
               {isSuperseded && (
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">

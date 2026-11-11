@@ -19,8 +19,8 @@ export function computeStatus(base: {
   dataDo: Date | null;
   dataZakPracy?: Date | null;
 }): string {
-  // Preserve manually/explicitly set statuses unconditionally
-  if (base.status === "UCHYLONE" || base.status === "UMORZONE" || base.status === "NIEAKTYWNE") {
+  // Preserve only true terminal statuses (administrative decisions, not scraper artifacts)
+  if (base.status === "UCHYLONE" || base.status === "UMORZONE") {
     return base.status;
   }
 
