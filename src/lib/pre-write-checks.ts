@@ -173,6 +173,21 @@ export function runPreWriteChecks(
     });
   }
 
+  // 7b. Nr dokumentu = numer umowy (UDD, rachunku, faktury) — nie numer decyzji
+  if (parsed.nrDecyzji && /\/UDD\/|\/UDZ\/|\/FV\/|\/RAC\//i.test(parsed.nrDecyzji)) {
+    issues.push({
+      checkId: 7, severity: "error", field: "nrDecyzji",
+      message: `Nr decyzji "${parsed.nrDecyzji}" wygląda na numer umowy/rachunku/faktury, nie decyzji urzędowej`,
+    });
+  }
+  // 7c. Nr decyzji z formatem umowy cywilnej (np. 31769/11/25/UDD/DK12/WWA)
+  if (parsed.nrDecyzji && parsed.nrDecyzji.split("/").length > 3) {
+    issues.push({
+      checkId: 7, severity: "warning", field: "nrDecyzji",
+      message: `Nr decyzji "${parsed.nrDecyzji}" ma >3 segmenty — może to nr umowy? Formaty decyzji: WSC-II-P.6151.xxx.RRRR, WRP-II.8671.xxx.RRRR, PZC.4390.xxx.RRRR, NNNNN/RRRR`,
+    });
+  }
+
   // 8. Nr karty pobytu w "Nr paszportu"
   if (parsed.nrPaszportu && /^[A-Z]{2}\d{7}$/.test(parsed.nrPaszportu)) {
     // 2 litery + 7 cyfr = format karty pobytu (RP, RS, RR, RT)

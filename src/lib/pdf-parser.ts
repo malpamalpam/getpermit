@@ -38,6 +38,7 @@ export interface ParsedDocumentData {
   nrOswiadczenia?: string;
   nrDecyzji?: string;
   sygnaturaSprawy?: string; // Sygnatura sprawy (np. WRP-II.8671.45311.2024) — osobne od nrDecyzji
+  urzad?: string; // Urząd wydający (np. "Wojewoda Mazowiecki")
   // Salary
   wynagrodzenie?: string;
   parsedSalary?: ParsedSalary;
@@ -1221,6 +1222,18 @@ function parseZezwolenie(normalized: string, result: ParsedDocumentData): Parsed
     if (decNrMatch) result.nrDecyzji = decNrMatch[1].trim();
   }
 
+  // --- Urząd / Wojewoda: "WOJEWODA MAZOWIECKI", "Wojewoda Wielkopolski" ---
+  if (!result.urzad) {
+    const wojewodaMatch = normalized.match(/Wojewod[aąy]\s+([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)/i);
+    if (wojewodaMatch) {
+      result.urzad = `Wojewoda ${wojewodaMatch[1].charAt(0).toUpperCase() + wojewodaMatch[1].slice(1).toLowerCase()}`;
+    }
+  }
+  if (!result.urzad) {
+    const szefMatch = normalized.match(/Szef\s+Urz[ęe]du\s+do\s+Spraw\s+Cudzoziemc[óo]w/i);
+    if (szefMatch) result.urzad = "Szef Urzędu do Spraw Cudzoziemców";
+  }
+
   // --- Imię i nazwisko: "Pana/Pani DANIEL DOMINIC ABRAHAM -" or "Pana/Pani IMIE NAZWISKO" ---
   const panMatch = normalized.match(/Pana\/Pani\s+([A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ\s-]+?)(?:\s*-\s*|\s*\()/);
   if (panMatch) {
@@ -1437,7 +1450,7 @@ export async function ocrExtractStructured(
 
 ZADANIE: Wyciagnij dane i zwroc TYLKO JSON (bez komentarzy, bez markdown):
 
-{"detectedType":"TRC_FDK","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","przedmiotDziela":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"..."}
+{"detectedType":"TRC_FDK","imie":"...","nazwisko":"...","dataUrodzenia":"YYYY-MM-DD","obywatelstwo":"kraj","nrPaszportu":"...","dataOd":"YYYY-MM-DD","dataDo":"YYYY-MM-DD","stanowisko":"...","rodzajUmowy":"...","firma":"...","nrDecyzji":"...","nrOswiadczenia":"...","wynagrodzenie":"...","urzad":"..."}
 
 KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody):
 0. DANE OSOBOWE: Decyzja ma STRONE (cudzoziemca) i moze miec PELNOMOCNIKA (reprezentanta). imie, nazwisko, dataUrodzenia, obywatelstwo, nrPaszportu = ZAWSZE dane STRONY (cudzoziemca), NIGDY pelnomocnika. Strona jest wymieniona w sentencji ("udzielam Panu/Pani IMIE NAZWISKO, ur. ..."). Pelnomocnik pojawia sie w naglowku lub w pouczeniu ("pelnomocnik: ...", "doreczono pelnomocnikowi"). IGNORUJ dane pelnomocnika.
@@ -1470,17 +1483,16 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
    - Inna karta pobytu → KARTA_POBYTU
    DLA POWIADOMIEN UA (PSZ-PPWPU, "powiadomienie o powierzeniu pracy"):
    - detectedType = POWIADOMIENIE_UA
+   - stanowisko = z pola "stanowisko / rodzaj pracy" formularza powiadomienia, NIE z przedmiotu umowy
+   - firma = podmiot powierzajacy prace (z naglowka lub sekcji "dane podmiotu")
+   - rodzajUmowy = "umowa o dzielo", "umowa zlecenie", "umowa o prace" z formularza
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
+10. urzad = organ wydajacy decyzje z naglowka: "WOJEWODA MAZOWIECKI" → "Wojewoda Mazowiecki", "Szef Urzedu do Spraw Cudzoziemcow". Dla oswiadczen i powiadomien UA = null.
 
 DLA OSWIADCZEN (formularze PSZ-OPWP, "Oswiadczenie podmiotu o powierzeniu pracy"):
 - detectedType = OSWIADCZENIE
 - nrOswiadczenia = numer wpisu (PZC.4390.XXXXX.XX.RRRR)
 - wynagrodzenie = kwota z pola stawki/wynagrodzenia brutto w sekcji warunkow pracy
-
-PRZEDMIOT DZIELA (pole przedmiotDziela):
-- W sentencji decyzji lub oswiadczenia moze byc osobno "stanowisko" i "przedmiot/zakres dziela".
-- stanowisko = nazwa stanowiska pracy (np. "spawacz", "programista").
-- przedmiotDziela = opis przedmiotu umowy o dzielo lub zakresu dziela (np. "wykonywanie prac spawalniczych", "opracowanie dokumentacji technicznej"). Jesli nie ma osobnego opisu dziela — null.
 
 Pola, ktorych nie mozesz znalezc = null.`;
 
@@ -1573,6 +1585,7 @@ Pola, ktorych nie mozesz znalezc = null.`;
       if (data.firma && typeof data.firma === "string") result.firma = data.firma.trim();
       if (data.nrDecyzji && typeof data.nrDecyzji === "string") result.nrDecyzji = data.nrDecyzji.trim();
       if (data.nrOswiadczenia && typeof data.nrOswiadczenia === "string") result.nrOswiadczenia = data.nrOswiadczenia.trim();
+      if (data.urzad && typeof data.urzad === "string") result.urzad = data.urzad.trim();
       if (data.wynagrodzenie && typeof data.wynagrodzenie === "string") {
         let wyn = data.wynagrodzenie.trim();
         wyn = wyn.replace(/\s+\d+\.\s*$/, "").replace(/\.\s*$/, "").trim();

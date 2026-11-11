@@ -516,6 +516,7 @@ export async function GET(
       stanowisko: parsed.stanowisko || null,
       // przedmiotDziela: usunięte z zapisu (pkt 3 reguł legalizacji)
       firma: parsed.firma || null,
+      urzad: parsed.urzad || null,
     };
 
     if (docType === "OSWIADCZENIE") {
@@ -626,7 +627,7 @@ export async function GET(
           dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
           dataDo: typeMapping.isIndefinite ? null : (parsed.dataDo ? new Date(parsed.dataDo) : null),
           nrDecyzji: parsed.nrDecyzji || null,
-          urzad: null, // TODO: extract from header
+          urzad: parsed.urzad || null,
           confidence: null,
           flags: typeMapping.flags.length > 0 ? JSON.stringify(typeMapping.flags) : "[]",
         };
