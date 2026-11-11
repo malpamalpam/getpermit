@@ -243,15 +243,9 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
       )}
 
       {visibleBases.map((b) => {
-        // Only ZEZWOLENIE is "wchłonięte" by active residence permit.
-        // OŚW is never wchłonięte — it gets NIEAKTYWNE status after zakończenie pracy.
-        const isSuperseded =
-          hasActiveResidence &&
-          b.typ === "ZEZWOLENIE" &&
-          b.status !== "WYGASLE" &&
-          b.status !== "UCHYLONE" &&
-          b.status !== "UMORZONE";
-        const isHidden = b.status === "NIEAKTYWNE" || b.status === "UCHYLONE" || b.status === "UMORZONE";
+        const absorbedBy = (b as unknown as Record<string, unknown>)._absorbedBy as string | undefined;
+        const isSuperseded = !!absorbedBy;
+        const isHidden = (b.status === "NIEAKTYWNE" && !isSuperseded) || b.status === "UCHYLONE" || b.status === "UMORZONE";
         return (
           <div
             key={b.id}
@@ -268,12 +262,12 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
               </span>
               {isSuperseded && (
                 <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
-                  Wchłonięte przez decyzję pobytową
+                  {absorbedBy}
                 </span>
               )}
               {isHidden && (
                 <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">
-                  {b.uwagi?.startsWith("Wchłonięte") ? b.uwagi : "Nieaktywne"}
+                  Nieaktywne
                 </span>
               )}
               {b.status === "BRAK_DANYCH" && !b.typ.startsWith("OD_") && !["POWIADOMIENIE_UA", "ZGLOSZENIE_UA", "DOSTEP_UE", "DOSTEP_STUDENT", "DOSTEP_POBYT_STALY", "DOSTEP_REZYDENT_UE", "DOSTEP_KARTA_POLAKA", "DOSTEP_OCHRONA_MIEDZ", "DOSTEP_DYPLOM_PL"].includes(b.typ) && (

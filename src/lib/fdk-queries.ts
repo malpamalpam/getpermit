@@ -96,26 +96,31 @@ export function withComputedStatuses<T extends { id?: number; typ?: string; stat
   });
 
   // Step 2: Absorption — active TRC absorbs overlapping zezwolenie/oświadczenie
-  // Rule: If there's an active TRC with the same employer AND overlapping period,
-  // the zezwolenie/oświadczenie gets status "NIEAKTYWNE" (displayed as "Wchłonięte")
+  // Rule: If there's an active TRC whose period overlaps, the zezwolenie/oświadczenie
+  // gets status "WCHŁONIĘTE" with a reference to the absorbing TRC.
+  const TYPE_LABELS: Record<string, string> = {
+    TRC_FDK: "TRC — FDK", TRC_BLUE_CARD: "Blue Card", TRC_HUMANITARNE: "TRC — humanitarne",
+    TRC_INNY_PRACODAWCA: "TRC — inny pracodawca", TRC_POBYT_Z_CUDZ: "TRC — pobyt z cudzoziemcem",
+    TRC_MALZONEK_PL: "TRC — małżonek PL", TRC_STUDIA: "TRC — studia",
+    TRC_ABSOLWENT: "TRC — absolwent", TRC_DZIALALNOSC: "TRC — działalność",
+    TRC_INNE_OKOLICZNOSCI: "TRC — inne okoliczności", KARTA_POBYTU: "TRC", BLUE_CARD: "Blue Card",
+  };
   const activeTrc = computed.filter(
     (b) => b.typ && TRC_TYPES.has(b.typ) && b.status === "AKTYWNE"
   );
   if (activeTrc.length > 0) {
     for (const b of computed) {
       if (!b.typ || !ABSORBABLE_TYPES.has(b.typ) || b.status !== "AKTYWNE") continue;
-      // Check if any active TRC absorbs this record
-      const absorbed = activeTrc.some((trc) => {
-        // TRC period must encompass today (already checked by AKTYWNE status)
-        // Zezwolenie period must overlap with TRC period
+      const absorbingTrc = activeTrc.find((trc) => {
         if (!trc.dataOd || !b.dataDo) return false;
-        const trcStart = trc.dataOd.getTime();
-        const bEnd = b.dataDo.getTime();
-        // TRC starts on or before zezwolenie ends → overlap
-        return trcStart <= bEnd;
+        return trc.dataOd.getTime() <= b.dataDo.getTime();
       });
-      if (absorbed) {
-        (b as { status: string }).status = "NIEAKTYWNE";
+      if (absorbingTrc) {
+        const label = TYPE_LABELS[absorbingTrc.typ ?? ""] ?? absorbingTrc.typ;
+        const nr = (absorbingTrc as { nrDecyzji?: string | null }).nrDecyzji ?? "";
+        const od = absorbingTrc.dataOd?.toISOString().slice(0, 10).split("-").reverse().join(".") ?? "";
+        (b as Record<string, unknown>).status = "NIEAKTYWNE";
+        (b as Record<string, unknown>)._absorbedBy = `Wchłonięte przez ${label}${nr ? ` (${nr})` : ""} od ${od}`;
       }
     }
   }
