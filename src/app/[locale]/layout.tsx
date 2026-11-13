@@ -6,7 +6,6 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { CookieConsent } from "@/components/layout/CookieConsent";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { siteConfig } from "@/config/site";
 
@@ -123,15 +122,14 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
       <head>
-        {/* 1. Consent Mode v2 defaults — BEFORE any tag loads */}
+        {/* Consent Mode v2 defaults — Cookiebot (loaded via GTM) manages consent updates */}
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
-(function(){var v=localStorage.getItem('getpermit-cookie-consent');if(v&&v!=='dismissed'){gtag('consent','update',{analytics_storage:'granted'})}})();`,
+gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});`,
           }}
         />
-        {/* 2. GTM — loads GA4, Google Ads etc. via container */}
+        {/* GTM — loads Cookiebot CMP, GA4, Google Ads via container */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -167,7 +165,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <main id="main" className="flex-1">{children}</main>
             <Footer />
           </div>
-          <CookieConsent />
           <ChatWidget />
         </NextIntlClientProvider>
       </body>

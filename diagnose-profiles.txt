@@ -1,0 +1,1001 @@
+
+======================================================================
+PROFIL: Valovich MARYIA (ID 1128)
+  wProcesie=true hidden=false obywatelstwo=Białoruś
+  paszport=- DOB=-
+  decyzjaPobytowaDo=-
+  Załączniki: 23 | Podstawy zatrudnienia: 1 | Podstawy pobytu: 1
+
+  --- PODSTAWY ZATRUDNIENIA (1) ---
+  #3746 TRC_FDK | - – - | BRAK_DANYCH | firma="-" | wyn="1 021 893 140 zł" | nr=- | src=VALOVICH_MARYIA_Zezwolenie 340 PLN.pdf
+  Typy: TRC_FDK×1
+  ⚠ ANOMALIE: PODEJRZANE WYNAGRODZENIE #3746: 1 021 893 140 zł | TRC BEZ DATY DO: #3746 TRC_FDK
+
+  --- PODSTAWY POBYTU (1) ---
+  #213 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=VALOVICH_MARYIA_Zezwolenie 340 PLN.pdf
+
+  --- ZAŁĄCZNIKI (23) ---
+  [glowne] Skan_Maryia_Valovich.pdf | folder=wazne | typ=(brak)
+  [trc] INPOL_VALOVICH_MARYIA.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] MUW wezwanie odebrane 08.11.2024 Valovich Maryia.pdf | folder=wazne | typ=(brak)
+  [trc] PoA_Maryia Valovich_III.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Maryia Valovich_Maryia Valovich_I.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_MG_Maryia Valovich_II.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] Potwierdzenie_złożenie_wniosku_Maryia_Valovich_ePuap_11.07.2024.pdf | folder=wazne | typ=(brak)
+  [trc] UZ Maryia Valovich.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Mp
+  [trc] VALOVICH_MARYIA_Karta_Pobytu 100 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_Paszport.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_PESEL.jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_Pełnomocnictwa 51 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_Podatki [01].jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_Podatki [02].jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_Podatki [03].jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_MARYIA_Zezwolenie 340 PLN.pdf | folder=wazne | typ=TRC_FDK
+  [trc] PoA_Maryia Valovich_KMS.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Maryia Valovich_MF.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Maryia Valovich_MG.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [glowne] Valovich_Maryia_Victar_Transkrypcja Wniosek [01].jpg | folder=wazne | typ=(brak)
+  [glowne] Valovich_Maryia_Victar_Wniosek [02].jpg | folder=wazne | typ=(brak)
+  [glowne] Valovich_Maryia_Victar_Wniosek [03].jpg | folder=wazne | typ=(brak)
+  [glowne] Valovich_Maryia_Victar_Wniosek [04].jpg | folder=wazne | typ=(brak)
+
+======================================================================
+PROFIL: Valovich VALIANTSIN (ID 1129)
+  wProcesie=true hidden=false obywatelstwo=Białoruś
+  paszport=- DOB=-
+  decyzjaPobytowaDo=-
+  Załączniki: 12 | Podstawy zatrudnienia: 1 | Podstawy pobytu: 1
+
+  --- PODSTAWY ZATRUDNIENIA (1) ---
+  #3747 TRC_FDK | - – - | BRAK_DANYCH | firma="-" | wyn="1 021 893 140 zł" | nr=- | src=VALOVICH_VALIANTSIN_Zezwolenie 340 PLN.pdf
+  Typy: TRC_FDK×1
+  ⚠ ANOMALIE: PODEJRZANE WYNAGRODZENIE #3747: 1 021 893 140 zł | TRC BEZ DATY DO: #3747 TRC_FDK
+
+  --- PODSTAWY POBYTU (1) ---
+  #214 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=VALOVICH_VALIANTSIN_Zezwolenie 340 PLN.pdf
+
+  --- ZAŁĄCZNIKI (12) ---
+  [glowne] Skan_Valiantsin_Valovich.pdf | folder=wazne | typ=(brak)
+  [trc] INPOL_VALIANTSIN_VALOVICH.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] MUW wezwanie odebrane 08.11.2024 Valovich Valiantsin.pdf | folder=wazne | typ=(brak)
+  [trc] Potwierdzenie_zlozenie_wniosku_Valiantsin_Valovich_ePuap_11.07.2024.pdf | folder=wazne | typ=(brak)
+  [trc] UZ Valiantsin Valovich.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Mp
+  [trc] VALOVICH_VALIANTSIN_Akt_urodzenia.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VALIANTSIN_Karta Pobytu 50 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VALIANTSIN_Legitymacja szkolna.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VALIANTSIN_Paszport.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VALIANTSIN_PESEL.jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VALIANTSIN_Pełnomocnictwa 51 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VALIANTSIN_Zezwolenie 340 PLN.pdf | folder=wazne | typ=TRC_FDK
+
+======================================================================
+PROFIL: Valovich VIACHASLAU (ID 1130)
+  wProcesie=true hidden=false obywatelstwo=Białoruś
+  paszport=- DOB=-
+  decyzjaPobytowaDo=-
+  Załączniki: 11 | Podstawy zatrudnienia: 1 | Podstawy pobytu: 1
+
+  --- PODSTAWY ZATRUDNIENIA (1) ---
+  #3748 TRC_FDK | - – - | BRAK_DANYCH | firma="-" | wyn="1 021 893 140 zł" | nr=- | src=VALOVICH_VIACHASLAU_Zezwolenie 340 PLN.pdf
+  Typy: TRC_FDK×1
+  ⚠ ANOMALIE: PODEJRZANE WYNAGRODZENIE #3748: 1 021 893 140 zł | TRC BEZ DATY DO: #3748 TRC_FDK
+
+  --- PODSTAWY POBYTU (1) ---
+  #215 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=VALOVICH_VIACHASLAU_Zezwolenie 340 PLN.pdf
+
+  --- ZAŁĄCZNIKI (11) ---
+  [trc] INPOL_VIACHASLAU_VALOVICH.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] MUW wezwanie odebrane 08.11.2024 Valovich  Viachaslau.pdf | folder=wazne | typ=(brak)
+  [trc] Potwierdzenie_wysłania_wniosku_Viachaslau_Valovich_ePuap_11.07.2024.pdf | folder=wazne | typ=(brak)
+  [trc] UZ Viachaslau Valovich.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Mp
+  [trc] VALOVICH_VIACHASLAU_Akt_urodzenia.jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VIACHASLAU_Karta Pobytu 50 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VIACHASLAU_Legitymacja szkolna.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VIACHASLAU_Paszport.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VIACHASLAU_PESEL.jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VIACHASLAU_Pełnomocnictwa 51 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VIACHASLAU_Zezwolenie 340 PLN.pdf | folder=wazne | typ=TRC_FDK
+
+======================================================================
+PROFIL: Valovich VERA (ID 1131)
+  wProcesie=true hidden=false obywatelstwo=Białoruś
+  paszport=- DOB=-
+  decyzjaPobytowaDo=-
+  Załączniki: 12 | Podstawy zatrudnienia: 1 | Podstawy pobytu: 1
+
+  --- PODSTAWY ZATRUDNIENIA (1) ---
+  #3749 TRC_FDK | - – - | BRAK_DANYCH | firma="-" | wyn="1 021 893 140 zł" | nr=- | src=VALOVICH_VERA_Zezwolenie 340 PLN.pdf
+  Typy: TRC_FDK×1
+  ⚠ ANOMALIE: PODEJRZANE WYNAGRODZENIE #3749: 1 021 893 140 zł | TRC BEZ DATY DO: #3749 TRC_FDK
+
+  --- PODSTAWY POBYTU (1) ---
+  #216 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=VALOVICH_VERA_Zezwolenie 340 PLN.pdf
+
+  --- ZAŁĄCZNIKI (12) ---
+  [glowne] Skan_Vera_Valovich_.pdf | folder=wazne | typ=(brak)
+  [trc] INPOL_WNIOSEK_NA_POBYT CZASOWY_VERA_VALOVICH.pdf | folder=wazne | typ=(brak)
+  [trc] MUW wezwanie odebrane 08.11.2024 Valovich Vera.pdf | folder=wazne | typ=(brak)
+  [trc] Potwierdzenie_wyslania_wniosku_Vera_Valovich_ePuap_11.07.2024.pdf | folder=wazne | typ=(brak)
+  [trc] UZ Vera Valovich.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Mp
+  [trc] VALOVICH_VERA_Akt_urodzenia.jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VERA_Karta Pobytu 50 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VERA_Legitymacja szkolna.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VERA_Paszport.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VERA_PESEL.jpg | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VERA_Pełnomocnictwa 51 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] VALOVICH_VERA_Zezwolenie 340 PLN.pdf | folder=wazne | typ=TRC_FDK
+
+======================================================================
+PROFIL: Valovich Viktar (ID 155)
+  wProcesie=true hidden=false obywatelstwo=Białoruś
+  paszport=MP4880107 DOB=1988-10-29
+  decyzjaPobytowaDo=2028-01-28
+  Załączniki: 108 | Podstawy zatrudnienia: 14 | Podstawy pobytu: 1
+
+  --- PODSTAWY ZATRUDNIENIA (14) ---
+  #231 OSWIADCZENIE | 2026-01-01 – 2027-12-31 | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="50,00 PLN/godz. brutto" | nr=PZC.4390.43430.AB.2025 | src=Oświadczenie_UZ_Viktar_Valovich  do 31.12.2027.pdf
+  #2953 OSWIADCZENIE | 2023-11-13 – 2025-11-12 | WYGASLE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="40,00 PLN/h brutto" | nr=OP.G.4390.51979.AL.2023 | src=FUNDACJA FIRMA DLA KAŻDEGO - OP.G.4390.51979.AL.2023 - (VIKTAR VALOVICH).pdf
+  #2958 TRC_BLUE_CARD | 2014-10-27 – 2024-05-08 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2968 OD_POBYT_STALY | 2024-07-02 – - | AKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #3035 OSWIADCZENIE | 2024-05-01 – - | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="-" | nr=OP.G,4390,51979,AL,2023 | src=(brak źródła)
+  #3037 OSWIADCZENIE | 2026-08-01 – 2028-07-31 | AKTYWNE | firma="-" | wyn="50,00 PLN/h brutto" | nr=PZC.4390.18013.EP.2026 | src=PSZ-OPPC_PZC-4390-18013-EP-2026_do_31.07.2028.pdf
+  #3038 ZGLOSZENIE_UA | 2026-08-01 – 2028-07-31 | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="-" | nr=- | src=(brak źródła)
+  #3039 KARTA_POBYTU | 2025-01-28 – 2028-01-28 | NIEAKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO, ul. Lwowska 5/15, 00-660 Warszawa" | wyn="-" | nr=WSC-II-P.6151.85854.2024 | src=(brak źródła)
+  #3365 ZEZWOLENIE_A | 2013-02-15 – 2024-05-08 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #3660 OSWIADCZENIE | - – 2033-02-24 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=Valovich_Viktar_NIE PODJĘCIE.pdf
+  #3661 OSWIADCZENIE | - – 2033-02-24 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=01.01.2026 podjęcie_zatrudnienia_UZ_Valovich_Viktar.pdf
+  #3662 OSWIADCZENIE | - – 2033-02-24 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=31.07.2026_zakończenie_pracy.pdf
+  #3663 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="1 021 893 140 zł" | nr=- | src=Valovich_Viktar_Zezwolenie 440 PLN.pdf
+  #3750 TRC_FDK | 2025-01-28 – 2028-01-28 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="7500 PLN brutto / mies." | nr=WSC-II-P.6151.85854.2024 | src=Valovich_Viktar_decyzja_do_28.01.2028.pdf
+  Typy: OSWIADCZENIE×7, TRC_BLUE_CARD×1, OD_POBYT_STALY×1, ZGLOSZENIE_UA×1, KARTA_POBYTU×1, ZEZWOLENIE_A×1, TRC_FDK×2
+  ⚠ ANOMALIE: DUŻO PODSTAW: 14 | OPŁATA jako WYNAGRODZENIE #231: 50,00 PLN/godz. brutto | OPŁATA jako WYNAGRODZENIE #3037: 50,00 PLN/h brutto | PODEJRZANE WYNAGRODZENIE #3663: 1 021 893 140 zł | PODSTAWY BEZ ŹRÓDŁA: 6 | TRC BEZ DATY DO: #3663 TRC_FDK
+
+  --- PODSTAWY POBYTU (1) ---
+  #165 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Valovich_Viktar_Zezwolenie 440 PLN.pdf
+
+  --- ZAŁĄCZNIKI (108) ---
+  [glowne] Oświadczenie_UZ_Viktar_Valovich  do 31.12.2027.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] FUNDACJA FIRMA DLA KAŻDEGO - OP.G.4390.51979.AL.2023 - (VIKTAR VALOVICH).pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Valovich_Viktar_NIE PODJĘCIE.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Valovich_Viktar_OSW_DRAFT.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Valovich_Viktar_Podjecie.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Valovich_Viktar_potwierdzenie_oplaty.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] 01.01.2026 podjęcie_zatrudnienia_UZ_Valovich_Viktar.pdf | folder=wazne | typ=OSWIADCZENIE
+  [inne] 10.12.2025 kopia_umowy_do_ośw_Valovich_Viktar.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] 31.07.2026_zakończenie_pracy.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Opłata Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Wniosek ośw UZ Valovich draft.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Opłata 400.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] podjęcie_pracy_Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] PSZ-OPPC_PZC-4390-18013-EP-2026_do_31.07.2028.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Viktar_Valovich_ośw_uz_draft.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] Zgłoszenie_umowy_20.07.2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Paszport VIKTAR VALOVICH wszystkie strony.pdf | folder=wazne | typ=(brak)
+  [trc] 1_potwierdzenie.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 2_potwierdzenie.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 3_potwierdzenie.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 4_potwierdzenie.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 5_potwierdzenie.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Legitymacje szkolne_dzieci_przod.jpg | folder=inne_dokumenty | typ=(brak)
+  [glowne] Legitymacje szkolne_tyl.jpg | folder=inne_dokumenty | typ=(brak)
+  [glowne] Skan_Viacheslau_Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Skan_Viktar_Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] uzupelnienie_danych.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pieczątka MARYIA.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_aneks_umowa_10.02.2025_rachunki_M_Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_pisma_4.12.2024_Maryia.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_umiejscowienia_TRC_rodzina_23.12.24.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ZUS Maryia.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] Pieczątka VALIANTSIN.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] uzupelnienie_danych.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pieczątka VERA.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] Pieczątka VIACHASLAU.jpg | folder=inne_dokumenty | typ=(brak)
+  [inne] Ankieta_MUW_Valovich.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] INPOL_WNIOSEK_VIKTAR_VALOVICH.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] Kwestionariusz VALOVICH (cała rodzina)_pelny.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] Kwestionariusz VALOVICH (cała rodzina)_pelny.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Kwestionariusz VALOVICH (cała rodzina)_stan_30.07.2024_zaaktualizowany.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Loginy i hasła_Valovich_cala_rodzina.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] uzupelnienie_danych.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] zal1_0.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko
+  [trc] MUW wezwanie odebrane 08.11.2024 Valovich Viktar.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] oswiadczenie_o_liczbie_osob_na_utrzymaniu_Valovich.docx | folder=wazne | typ=(brak)
+  [trc] PoA_Viktar Valovich_children_KMS.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_children_MF.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_children_MG.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_KMS.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_MF.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_MG.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] Pieczątka VIKTAR.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Pisma_przewodnie_umiejscowienia_aktów.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_przewodnie_na_osobiste_stawiennictwo_25.10.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] PoA_MG_Viktar Valovich.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] PoA_MG_Viktar Valovich_III.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [inne] PoA_Viktar Valovich_children_I.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] PoA_Viktar Valovich_children_I.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_children_II.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_children_III.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Viktar Valovich_II.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] Potwierdzenie_złożenia_wniosku_ePuap_Valovich_Viktar_11.07.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_dokumentow_Viktar_Valovich_rachunek_styczen_2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_oswiadczen_Valovich_25.10.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_pismo_4.12.24_Viktar_Valovich_MUW.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_poprzednia_umowa_rachunki_Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_TRC_uzupelnienie_2.12.24_rachunek_listopad_poprzednia_umowa_Valovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_umowy_rachunki_TRC_VALOVICH.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_uzupelnienie_dokumentacji_Valovich_aneks_20.01.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_uzupełnie_TRC_rachunek_luty_cała_rodzina_25.02.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_uzuplenienie_rachunek_grudzien_2024_Valovicj.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_wniosek_wydanie_zaświadczenia_TRC_19.09.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_wniosek_wydanie_zaświadczenia_TRC_z_oplatami_26.09.24.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_zalacznik_nr_1_Valovich_25.10.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] UZ Viktar Valovich.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Mp
+  [inne] VALOVICH_Kwestionariusz (cała rodzina).docx | folder=inne_dokumenty | typ=(brak)
+  [trc] VALOVICH_Kwestionariusz (cała rodzina).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Valovich_Viktar-VISA.pdf | folder=wazne | typ=(brak)
+  [trc] Valovich_Viktar_akt_małżeństwa.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Valovich_Viktar_Akt_notarialny_(mieszkanie).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Valovich_Viktar_Karta Pobytu 100 PLN.pdf | folder=wazne | typ=(brak)
+  [trc] Valovich_Viktar_KP_2025-2028.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Valovich_Viktar_Paszport.pdf | folder=wazne | typ=(brak)
+  [trc] Valovich_Viktar_PESEL.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Valovich_Viktar_Pełnomocnictwa 51 PLN.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Valovich_Viktar_Zezwolenie 440 PLN.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Viktar_Valovich-umowa dla nie pracownika.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Viktar_Valovich_Podatki [01].jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Viktar_Valovich_Podatki [02].jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Viktar_Valovich_Podatki [03].jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Viktar_Valovich_Uzupelnienie_dokumentacji_TRC_14.08.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Viktar_Valovich_ZUS.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Viktor_Valovich_TRC_decyzja_wazna_do_28.01.2028.pdf | folder=wazne | typ=(brak)
+  [glowne] 19257_sw-slubu 2022_pl- EPK.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] 19257_Sw_UR VALIANTSIN_2023_pl- EPK.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] 19257_Sw_UR VERA_2023_pl- EPK.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] 19257_Sw_UR VIACHASLAU_2023_pl- EPK.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Valovich_KP_do_28.01.2028.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Valovich_Viktar_decyzja_do_28.01.2028.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Valovich_Viktar_Paszport_2023-2033.pdf | folder=wazne | typ=(brak)
+  [glowne] Valovich_Viktar_wiza_2023-2024.pdf | folder=wazne | typ=(brak)
+
+  ⚠ ZAŁĄCZNIKI WSPÓLNE Z INNYMI PROFILAMI:
+    Profil Khoo Danny Eu Huat (ID 52): 2 wspólnych plików
+    Profil KURYTS KRYSTSINA (ID 83): 2 wspólnych plików
+    Profil Pranchuk Dzmitry (ID 89): 3 wspólnych plików
+    Profil Aksiutsin YAUHEN (ID 114): 2 wspólnych plików
+    Profil SKURATOVICH ALIAKSEI (ID 142): 2 wspólnych plików
+    Profil Anikanov Mikhail (ID 162): 5 wspólnych plików
+    Profil Naskar Tanmay (ID 271): 2 wspólnych plików
+    Profil Kryshtal Vladyslav (ID 279): 2 wspólnych plików
+    Profil Garny Alexey (ID 328): 1 wspólnych plików
+    Profil Liubchak Anastasiia (ID 400): 2 wspólnych plików
+    Profil Goldfinch Blake William (ID 440): 1 wspólnych plików
+
+======================================================================
+PROFIL: Morozov Anton (ID 28)
+  wProcesie=true hidden=false obywatelstwo=Rosja
+  paszport=RR3998478 DOB=2000-09-18
+  decyzjaPobytowaDo=2027-05-28
+  Załączniki: 112 | Podstawy zatrudnienia: 27 | Podstawy pobytu: 19
+
+  --- PODSTAWY ZATRUDNIENIA (27) ---
+  #197 TRC_BLUE_CARD | 2025-08-01 – 2027-05-27 | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2302 TRC_BLUE_CARD | 2022-11-10 – 2026-06-01 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2307 OD_REZYDENT_UE | 2026-07-03 – - | AKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2468 TRC_BLUE_CARD | 2025-08-06 – 2027-05-28 | BRAK_DANYCH | firma="-" | wyn="12 272,58 PLN brutto / mies." | nr=WSC-II-P.6151.82277.2024 | src=Anton_MOROZOV_decyzja_28.05.2027_(BLUE CARD).pdf
+  #2470 KARTA_POBYTU | 2023-10-30 – 2025-07-31 | WYGASLE | firma="MULTI PARTS POLAND sp. z o.o." | wyn="-" | nr=WSC-II-P.6151.54097.2023 | src=(brak źródła)
+  #2472 KARTA_POBYTU | 2025-08-19 – 2027-05-28 | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2475 ZEZWOLENIE_A | 2025-05-17 – 2026-05-16 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2476 ZEZWOLENIE_A | 2025-03-04 – - | AKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #3387 OD_BLUE_CARD | - – 2027-05-28 | BRAK_DANYCH | firma="-" | wyn="-" | nr=WSC-II-P.6151.82277.2024 | src=(brak źródła)
+  #3454 TRC_BLUE_CARD | - – - | NIEAKTYWNE | firma="-" | wyn="440,00 PLN" | nr=- | src=The fee for the application for temporary residence and work.pdf
+  #3455 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="100,00 PLN" | nr=- | src=The fee for the issuance of the Residence Card.pdf
+  #3456 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Potwierdzenie_wysłania_dokumentów_ANTON_MOROZOV_21.07.2026.pdf
+  #3457 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Potwierdzenie_wysłania_dokumentów_ANTON_MOROZOV_31.07.2026_niezaleganie.pdf
+  #3458 TRC_FDK | 2024-07-01 – 2025-06-30 | WYGASLE | firma="-" | wyn="-" | nr=- | src=Anex 2024.pdf
+  #3459 TRC_FDK | 2025-06-17 – 2026-06-30 | WYGASLE | firma="-" | wyn="-" | nr=- | src=Anex 2025.pdf
+  #3460 TRC_FDK | 2026-07-01 – 2027-06-30 | NIEAKTYWNE | firma="-" | wyn="3450 PLN" | nr=1/07/2026 | src=Anex 2026.pdf
+  #3461 TRC_FDK | 2025-03-01 – 2030-03-01 | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="28 000 PLN brutto miesięcznie" | nr=WSC-II-P.6151.82277.2024 | src=Skan_wysyłka_dokumentów_MUW_Morozov_11.03.25.pdf
+  #3462 TRC_FDK | 2024-08-01 – 2025-07-31 | WYGASLE | firma="Fundacja Firma Dla Każdego" | wyn="354 000,00 PLN brutto" | nr=23823/08/24/UDD/AM45/WWA | src=Anton_Morozov_uzupelnienie_dokumentacji_TRC_14.08.2024.pdf
+  #3463 TRC_FDK | 2024-05-17 – 2029-06-19 | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="5 000,00 PLN brutto miesięcznie" | nr=WRP-II.8671.21797.2024 | src=Anton_Morozov_wysyłka_poczta_TRC_skan_04.07.2024.pdf
+  #3464 TRC_BLUE_CARD | - – - | NIEAKTYWNE | firma="-" | wyn="440,00 PLN" | nr=- | src=Morozov_Anton_Potwierdzenie_CEN2406130233518.pdf
+  #3465 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="100,00 PLN" | nr=- | src=Morozov_Anton_Potwierdzenie_CEN2406130238109.pdf
+  #3466 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="51,00 PLN" | nr=- | src=Morozov_Anton_Potwierdzenie_CEN2406130912066.pdf
+  #3467 ZEZWOLENIE_A | 2024-05-17 – 2025-05-16 | WYGASLE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="5 000,00 PLN/miesięcznie" | nr=WRP-II.8671.21797.2024 | src=Morozov_Anton_zezwolenie_od 17.05.2024_16.05.2025 r..pdf
+  #3468 TRC_FDK | 2025-02-05 – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Scan_statement_TRC_work_Anton_Morozov.pdf
+  #3469 TRC_FDK | - – - | NIEAKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="-" | nr=- | src=Skan_dokumentów_osobiste_stawiennictwo_Morozov_05.02.2025.pdf
+  #3470 TRC_BLUE_CARD | 2025-02-05 – 2030-01-12 | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="29 500 PLN brutto miesięcznie" | nr=- | src=Skan_dokumentów_osobiste_stawiennictwo_Morozov_05.02.2025_czesc_I.pdf
+  #3471 ZEZWOLENIE_A | 2025-05-17 – 2026-05-16 | WYGASLE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="28 000,00 PLN brutto miesięcznie" | nr=WRP-II.8671.19565.2025 | src=Skan_dokumentów_TR_wysyła_23.04.25_przedluzenie_WP_Morozov.pdf
+  Typy: TRC_BLUE_CARD×6, OD_REZYDENT_UE×1, KARTA_POBYTU×2, ZEZWOLENIE_A×4, OD_BLUE_CARD×1, TRC_FDK×13
+  ⚠ ANOMALIE: DUŻO PODSTAW: 27 | ZA DUŻO TRC: 19 | OPŁATA jako WYNAGRODZENIE #3454: 440,00 PLN | OPŁATA jako WYNAGRODZENIE #3455: 100,00 PLN | PODEJRZANE WYNAGRODZENIE #3462: 354 000,00 PLN brutto | OPŁATA jako WYNAGRODZENIE #3464: 440,00 PLN | OPŁATA jako WYNAGRODZENIE #3465: 100,00 PLN | OPŁATA jako WYNAGRODZENIE #3466: 51,00 PLN | PODSTAWY BEZ ŹRÓDŁA: 8 | TRC BEZ DATY DO: #3454 TRC_BLUE_CARD, #3455 TRC_FDK, #3456 TRC_FDK, #3457 TRC_FDK, #3464 TRC_BLUE_CARD, #3465 TRC_FDK, #3466 TRC_FDK, #3468 TRC_FDK, #3469 TRC_FDK
+
+  --- PODSTAWY POBYTU (19) ---
+  #1 TRC_BLUE_CARD | 2025-08-06 – 2027-05-28 | BRAK_DANYCH | nr=WSC-II-P.6151.82277.2024 | src=Anton_MOROZOV_decyzja_28.05.2027_(BLUE CARD).pdf
+  #2 TRC_INNY_PRACODAWCA | 2023-10-30 – 2025-07-31 | BRAK_DANYCH | nr=WSC-II-P.6151.54097.2023 | src=Morozov_Anton_decyzja_nie_FDK_31.07.2025.pdf
+  #3 TRC_BLUE_CARD | - – - | BRAK_DANYCH | nr=- | src=The fee for the application for temporary residence and work.pdf
+  #4 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=The fee for the issuance of the Residence Card.pdf
+  #5 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Potwierdzenie_wysłania_dokumentów_ANTON_MOROZOV_21.07.2026.pdf
+  #6 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Potwierdzenie_wysłania_dokumentów_ANTON_MOROZOV_31.07.2026_niezaleganie.pdf
+  #7 TRC_FDK | 2024-07-01 – 2025-06-30 | BRAK_DANYCH | nr=- | src=Anex 2024.pdf
+  #8 TRC_FDK | 2025-06-17 – 2026-06-30 | BRAK_DANYCH | nr=- | src=Anex 2025.pdf
+  #9 TRC_FDK | 2026-07-01 – 2027-06-30 | BRAK_DANYCH | nr=1/07/2026 | src=Anex 2026.pdf
+  #10 TRC_FDK | 2025-03-01 – 2030-03-01 | BRAK_DANYCH | nr=WSC-II-P.6151.82277.2024 | src=Skan_wysyłka_dokumentów_MUW_Morozov_11.03.25.pdf
+  #11 TRC_FDK | 2024-08-01 – 2025-07-31 | BRAK_DANYCH | nr=23823/08/24/UDD/AM45/WWA | src=Anton_Morozov_uzupelnienie_dokumentacji_TRC_14.08.2024.pdf
+  #12 TRC_FDK | 2024-05-17 – 2029-06-19 | BRAK_DANYCH | nr=WRP-II.8671.21797.2024 | src=Anton_Morozov_wysyłka_poczta_TRC_skan_04.07.2024.pdf
+  #13 TRC_BLUE_CARD | - – - | BRAK_DANYCH | nr=- | src=Morozov_Anton_Potwierdzenie_CEN2406130233518.pdf
+  #14 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Morozov_Anton_Potwierdzenie_CEN2406130238109.pdf
+  #15 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Morozov_Anton_Potwierdzenie_CEN2406130912066.pdf
+  #16 TRC_FDK | 2025-02-05 – - | BRAK_DANYCH | nr=- | src=Scan_statement_TRC_work_Anton_Morozov.pdf
+  #17 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Skan_dokumentów_osobiste_stawiennictwo_Morozov_05.02.2025.pdf
+  #18 TRC_BLUE_CARD | 2025-02-05 – 2030-01-12 | BRAK_DANYCH | nr=- | src=Skan_dokumentów_osobiste_stawiennictwo_Morozov_05.02.2025_czesc_I.pdf
+  #19 TRC_INNY_PRACODAWCA | 2022-08-01 – 2024-06-07 | BRAK_DANYCH | nr=440000/0426408/2025 | src=ZUS_skladki_Morozov.pdf
+
+  --- ZAŁĄCZNIKI (112) ---
+  [glowne] Anton Morozov.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Nadawcy
+  [glowne] Anton_MOROZOV_decyzja_28.05.2027_(BLUE CARD).pdf | folder=wazne | typ=TRC_BLUE_CARD
+  [glowne] KP Passport Stamp Anton Morozov_TRC.pdf | folder=wazne | typ=(brak)
+  [glowne] Morozov_Anton_decyzja_nie_FDK_31.07.2025.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Morozov_Anton_karta_pobytu_2023-2025.pdf | folder=wazne | typ=(brak)
+  [glowne] Morozov_Anton_paszport_2021-2031.pdf | folder=wazne | typ=(brak)
+  [glowne] Skan_Karty_Pobytu_Morozov.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Authorization Agreement 2025.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: GRAŻYNA KOWALSKA
+  [trc] Morozov_Anton_Diplom bakalavra FR_RU_PL.BES (Morozov_diploma_II).pdf | folder=wazne | typ=(brak)
+  [trc] Passport.pdf | folder=wazne | typ=(brak)
+  [trc] PEŁNOMOCNICTWO Alina.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PEŁNOMOCNICTWO Kamila.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PEŁNOMOCNICTWO Michalina.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Photo from KP.jpg | folder=inne_dokumenty | typ=(brak)
+  [trc] Temporary Residence Application_MOS_07.07.2026.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] The fee for the application for temporary residence and work.pdf | folder=wazne | typ=TRC_BLUE_CARD
+  [trc] The fee for the issuance of the Residence Card.pdf | folder=wazne | typ=TRC_FDK
+  [trc] The fee – power of attorney.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Ubezpieczenie_Morozov_do_08.07.2027.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Paszport
+  [trc] UPO_MOS_07.07.2026.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Nadawcy
+  [trc] Załącznik_nr_1_Morozov_07.07.2026_MOS.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PIT-37_ANTON_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PIT-37_UPO_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PoA (AL)_AM.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA (KMS)_AM.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA (MG)_AM.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] Polisarium_Policy_Anton_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Potwierdzenie_wysłania_dokumentów_ANTON_MOROZOV_21.07.2026.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Potwierdzenie_wysłania_dokumentów_ANTON_MOROZOV_31.07.2026_niezaleganie.pdf | folder=wazne | typ=TRC_FDK
+  [trc] czerwiec_26.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Krs
+  [trc] Anex 2024.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Anex 2025.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Anex 2026.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Umowa 1.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Umowa 2.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Umowa 3.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Umowa 4.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Zaświadczenie_o_niezaleganiu_ZAS‑W_15-07-2026_12-15.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 05.03.2025_uzupełnienie_Morozov.pdf | folder=wazne | typ=TRC_FDK
+  [inne] 10.06.2024    zawiadomienie o zakonczeniu pracy - MUW.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] 10.06.2024 - potwierdzenie wysłania zawiadomienia o zakończeniu pracy.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poland
+  [trc] 10.06.2024 Anton Morozov - zawiadomienie o zakończeniu pracy.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poland
+  [trc] 10.06.24 Morozov Anton - pełnomocnictwa x3.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Anton Morozov - pismo_MUW_upowaznienie_Julka_16.07.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Anton_Morozov_nowe_ubezpieczenie_TRC_do14.04.2026.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Paszport
+  [trc] Anton_Morozov_pismo_ubezpieczenie_new_MUW_16.07.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Anton_Morozov_uzupelnienie_dokumentacji_TRC_14.08.2024.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Anton_Morozov_wezwanie_osobiste_wizyta_05.02.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Anton_Morozov_wysyłka_poczta_TRC_skan_04.07.2024.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Diplom bakalavra FR_RU_PL.BES_ANTON_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Epuap_Anton_Morozov_uzupelnienie_dyplom_elektroniczny_11.03.25.pdf | folder=wazne | typ=(brak)
+  [trc] KP Passport Stamp Anton Morozov_04.07.2024.pdf | folder=wazne | typ=(brak)
+  [trc] Morozov_Anton_Diploma.pdf | folder=wazne | typ=(brak)
+  [trc] Morozov_Anton_Diploma_Application.pdf | folder=wazne | typ=(brak)
+  [trc] Morozov_Anton_Inpol_wniosek_.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Morozov_Anton_Passport_2021-2031.pdf | folder=wazne | typ=(brak)
+  [trc] Morozov_Anton_Potwierdzenie_CEN2406130233518.pdf | folder=wazne | typ=TRC_BLUE_CARD
+  [trc] Morozov_Anton_Potwierdzenie_CEN2406130238109.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Morozov_Anton_Potwierdzenie_CEN2406130912066.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Morozov_Anton_Residence permit questionnaire filled.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Morozov_Anton_TRC_ePUAP_potwierdzenie_wysyłki_04.07.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Morozov_Anton_Umowa Naimu.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Morozov_Anton_wniosek.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Morozov_Anton_zal1_0.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko
+  [trc] Morozov_Anton_zal2.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Wykształcenie
+  [trc] Morozov_Anton_zezwolenie.pdf | folder=wazne | typ=ZEZWOLENIE_A
+  [inne] MUW - Pismo_uzupelnienie_dokumentacji_TRC.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] Oplata_100_PLN.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_doreczenie_decyzji_Morozov_11.08.2025.pdf | folder=wazne | typ=(brak)
+  [trc] Pismo_doreczenie_decyzji_Morozov_19.08.2025.pdf | folder=wazne | typ=(brak)
+  [trc] Pismo_nieprawidlowe_doreczenie_MUW_MOROZOV_21.08.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_TRC_PIT_2022_MOROZOV_Epuap.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PIT-37 UPO_2022_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PIT-37 UPO_2024_Morozov.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PIT-37_2022_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_czerwiec_Morozov_pismo_09.07.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Scan_statement_TRC_work_Anton_Morozov.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_dokumentów_osobiste_stawiennictwo_Morozov_05.02.2025.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_dokumentów_osobiste_stawiennictwo_Morozov_05.02.2025_czesc_I.pdf | folder=wazne | typ=TRC_BLUE_CARD
+  [trc] Skan_dokumentów_TR_wysyła_23.04.25_nowy_zalacznik_nr_1_siedziba_rachunek_kwiecien_24.04.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_dokumentów_TR_wysyła_23.04.25_przedluzenie_WP_Morozov.pdf | folder=wazne | typ=ZEZWOLENIE_A
+  [trc] Skan_pismo_urzad_25.02.25_rachunki_maj_styczzen_25_niezaleganie.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_uzupelnienei_rachunek_marzec_Morozov_TRC.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_wysyłka_dokumentów_MUW_Morozov_11.03.25.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Tax Return PIT-37 2022_ANTON_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Tax Return PIT-37 2023_ANTON_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Ubezpieczenie_Morozov_do_30.10.2025.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Paszport
+  [trc] Umowa_najmu_Morozov_new.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Wezwanie_osobiste_stawiennictwo_odebrane_30.01.2025_Anton_Morozov.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] WoPC-zal1 Zalacznik nr 1 do wniosku o udzielenie cudzoziemcowi zezwolenia na pobyt..., FUNDACJA FIRMA DLA KAZDEGO (BRAK BRAK) [2024-06-26].pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Zaswiadczenie_niezaleganie_podatki_Anton_Morozov.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ZUS_skladki_Morozov.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Morozov_Anton_opłata skarbowa.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Morozov_Anton_Pismo ogólne do podmiotu publicznego.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Morozov_Anton_WP_draft.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Morozov_Anton_zezwolenie_17.05.2024_16.05.2025.pdf | folder=wazne | typ=ZEZWOLENIE_A
+  [glowne] Morozov_Anton_zezwolenie_od 17.05.2024_16.05.2025 r..pdf | folder=wazne | typ=ZEZWOLENIE_A
+  [glowne] Anton Morozov zezwolenie_przedluzenie od 17.05.2025 r. do 16.05.2026 r..pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona Cudzoziemca
+  [inne] Anton_Morozov_pierwsza_umowa_WP.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] Nowa_umowa_UDD_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Oplata_WP_zaksiegowana.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Oswiadczenie_o_niekaralnosci_04.03.2025.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pracy
+  [glowne] Paszport_Anton_Morozov.pdf | folder=wazne | typ=(brak)
+  [glowne] Potwierdzenie_oplaty_WP.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Rachunek_czerwiec_MOROZOV.png | folder=inne_dokumenty | typ=(brak)
+  [glowne] Rachunek_luty_25_Morozov.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Rachunek_maj_MOROZOV.png | folder=inne_dokumenty | typ=(brak)
+  [glowne] Rachunki_lipiec_2024_styczen_2025_MOROZOV.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Rachunki_MOROZOV_lipiec_styczen.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] Rozwiazanie_poprzedniej_umowy_Morozov.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Wniosek_przedluzenie_postepowana_WP_MOROZOV_ANTON.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] WP_Anton_MOROZOV.pdf | folder=wazne | typ=ZEZWOLENIE_A
+
+  ⚠ ZAŁĄCZNIKI WSPÓLNE Z INNYMI PROFILAMI:
+    Profil Mkhize Wandile Njabulo (ID 43): 1 wspólnych plików
+    Profil OLSHANSKAIA ANASTASIIA (ID 46): 2 wspólnych plików
+    Profil Liudvichenka Anatoli (ID 116): 1 wspólnych plików
+    Profil Zaiko Maryia (ID 119): 1 wspólnych plików
+    Profil Tsudzin Ihar (ID 130): 2 wspólnych plików
+    Profil Malinovski Pavel (ID 139): 1 wspólnych plików
+    Profil Mitsura Ivan (ID 144): 1 wspólnych plików
+    Profil Lomats Ilya (ID 146): 1 wspólnych plików
+    Profil Meniukov Aleksandr (ID 185): 2 wspólnych plików
+    Profil Naskar Tanmay (ID 271): 1 wspólnych plików
+    Profil Diaz Hurtado Juan Jose (ID 290): 1 wspólnych plików
+    Profil Vasina Irina (ID 305): 1 wspólnych plików
+    Profil Maliankou Daniil (ID 519): 1 wspólnych plików
+    Profil Keiko Hashimoto (ID 663): 1 wspólnych plików
+    Profil Kirff Bohdan (ID 670): 1 wspólnych plików
+    Profil Maltsev Konstantin (ID 760): 1 wspólnych plików
+    Profil Ebunoluwa Odufuwa Oluwanifise (ID 841): 1 wspólnych plików
+    Profil Vorobei Volodymyr (ID 1064): 1 wspólnych plików
+    Profil Laura Vuchase Yenyie (ID 1066): 1 wspólnych plików
+    Profil Yaremchanka Alexandra (ID 1077): 1 wspólnych plików
+
+======================================================================
+PROFIL: Khoo Danny Eu Huat (ID 52)
+  wProcesie=true hidden=false obywatelstwo=Australia
+  paszport=PB3140422 DOB=1972-05-29
+  decyzjaPobytowaDo=2029-08-12
+  Załączniki: 112 | Podstawy zatrudnienia: 27 | Podstawy pobytu: 25
+
+  --- PODSTAWY ZATRUDNIENIA (27) ---
+  #2340 OD_REZYDENT_UE | 2025-01-10 – - | AKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2520 TRC_FDK | 2026-08-12 – 2029-08-12 | BRAK_DANYCH | firma="Fundacja Firma Dla Każdego" | wyn="5300 PLN brutto / mies." | nr=WSC-II-P.6151.2694.2025 | src=Decyzja_TRC_Khoo_Danny_Eu_Huat_do_12.08.2029.pdf
+  #2521 KARTA_POBYTU | 2020-09-17 – 2023-09-16 | WYGASLE | firma="FRAME TIME Sp. z o.o." | wyn="-" | nr=WSC-II-A.6151.13496.2020 | src=(brak źródła)
+  #2522 ZEZWOLENIE_A | 2024-10-16 – 2025-10-15 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2523 ZEZWOLENIE_A | 2025-11-24 – 2026-11-23 | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="4666,00 PLN brutto miesięcznie" | nr=WRP-II.8671.50119.2025 | src=Zezwolenie_Khoo_24.11.2025 r. do 23.11.2026 r..pdf
+  #2755 ZGLOSZENIE_UA | 2022-05-18 – - | AKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #3514 TRC_FDK | 2022-04-28 – 2025-02-06 | WYGASLE | firma="FUNDACJA FIRMA DLA KAŻDEGO, ul. Lwowska 5/15, 00-660 Warszawa" | wyn="3100 PLN brutto miesięcznie" | nr=WSC-II-P.6151.4917.2022 | src=Khoo KP 2022-2025 decyzja.JPG
+  #3515 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Danny Khoo BA ARTS.jpg
+  #3516 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Sworn Translation of Danny's Degree.pdf
+  #3517 TRC_FDK | 2020-04-24 – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Khoo WP 2 2020-2021.jpeg
+  #3518 ZEZWOLENIE_A | 2020-02-19 – 2021-03-16 | WYGASLE | firma="Frame Time Sp. z o.o." | wyn="3 000,00 PLN brutto" | nr=WO.IX.8671.1.2192.2020 | src=Khoo Wp 2020-2021.jpeg
+  #3519 TRC_FDK | 2021-02-23 – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=WSC-II-A.6151.13496.2020 | src=Spelling Correction - sprostowanie.pdf
+  #3520 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Danny_Eu_Huat-Khoo_ZUS_.pdf
+  #3521 ZEZWOLENIE_A | 2025-11-24 – 2026-11-23 | AKTYWNE | firma="-" | wyn="-" | nr=WSC-II-P.6151.2694.2025 | src=Dany_KHOO_nowe_WP_uzupelnienie_TRC_6.11.25.png
+  #3522 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=WSC-II-P.6151.2694.2024 | src=Epuap_potwierdzenie_zlozenia_dokumentu_niezaleganie_Khoo_29.01.2025_MUW.pdf
+  #3523 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=PIT_37_KHOO_2025.pdf
+  #3524 TRC_FDK | 2025-01-10 – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=PoA_MG_signed.JPG
+  #3525 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=PoA_TAX_PIT37_KHOO.pdf
+  #3526 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=PoA_TAX_PIT37_KHOO_.pdf
+  #3527 TRC_FDK | 2025-01-30 – 2025-04-01 | WYGASLE | firma="-" | wyn="-" | nr=- | src=PoA_ZUS_KHOO.pdf
+  #3528 TRC_FDK | 2025-06-20 – - | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="4800.00 PLN brutto" | nr=WSC-II-P.6151.2694.2025 | src=Poprzednie_ubezpieczenie_KHOO_.pdf
+  #3529 TRC_FDK | - – - | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=Skan_dokumentów_urząd_skarbowy_niezaleganie_20.01.2025.pdf
+  #3530 TRC_FDK | 2024-11-26 – 2025-11-25 | WYGASLE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="4 530,00 PLN brutto miesięcznie" | nr=WRP-II.8671.78630.2024 | src=Skan_dokumentów_urząd_wizyta_osobista_17.01.2025+PoApodpisane.pdf
+  #3531 TRC_FDK | 2022-12-01 – 2024-10-02 | WYGASLE | firma="-" | wyn="-" | nr=- | src=Khoo_experience.pdf
+  #3532 TRC_FDK | 2022-12-01 – 2024-10-02 | WYGASLE | firma="-" | wyn="-" | nr=- | src=Khoo_experience_signed.pdf
+  #3533 ZEZWOLENIE_A | - – - | BRAK_DANYCH | firma="-" | wyn="4 530,00 PLN/miesięcznie" | nr=WRP-II.8671.78630.2024 | src=Prosba_pozniejsze_rozpoczecie_pracy_Danny Eu Huat Khoo_15.01.2025.pdf
+  #3534 TRC_FDK | 2025-10-15 – 2026-10-31 | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="63 600,00 PLN brutto" | nr=31769/11/25/UDD/DK12/WWA | src=UDD_KHOO_01.11.2025_signed.pdf
+  Typy: OD_REZYDENT_UE×1, TRC_FDK×19, KARTA_POBYTU×1, ZEZWOLENIE_A×5, ZGLOSZENIE_UA×1
+  ⚠ ANOMALIE: DUŻO PODSTAW: 27 | ZA DUŻO TRC: 19 | PODSTAWY BEZ ŹRÓDŁA: 4 | TRC BEZ DATY DO: #3515 TRC_FDK, #3516 TRC_FDK, #3517 TRC_FDK, #3519 TRC_FDK, #3520 TRC_FDK, #3522 TRC_FDK, #3523 TRC_FDK, #3524 TRC_FDK, #3525 TRC_FDK, #3526 TRC_FDK, #3528 TRC_FDK, #3529 TRC_FDK
+
+  --- PODSTAWY POBYTU (25) ---
+  #49 TRC_FDK | 2026-08-12 – 2029-08-12 | BRAK_DANYCH | nr=WSC-II-P.6151.2694.2025 | src=Poprzednie_ubezpieczenie_KHOO_.pdf
+  #50 KARTA_POBYTU | - – 2025-02-06 | BRAK_DANYCH | nr=- | src=Khoo Danny - TRC.jpg
+  #51 KARTA_POBYTU | 2022-05-18 – - | BRAK_DANYCH | nr=- | src=Khoo Danny TRC 2.jpg
+  #52 TRC_FDK | 2022-04-28 – 2025-02-06 | BRAK_DANYCH | nr=WSC-II-P.6151.4917.2022 | src=Khoo KP 2022-2025 decyzja.JPG
+  #53 TRC_INNY_PRACODAWCA | 2020-09-17 – 2023-09-16 | BRAK_DANYCH | nr=WSC-II-A.6151.13496.2020 | src=Khoo TRc 2020-2023 Frame time.pdf
+  #54 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Danny Khoo BA ARTS.jpg
+  #55 TRC_INNY_PRACODAWCA | 2021-12-16 – 2022-12-15 | BRAK_DANYCH | nr=PWC014655 | src=Insurance 2021-2022.pdf
+  #56 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Sworn Translation of Danny's Degree.pdf
+  #57 TRC_FDK | 2020-04-24 – - | BRAK_DANYCH | nr=- | src=Khoo WP 2 2020-2021.jpeg
+  #58 KARTA_POBYTU | - – 2023-09-16 | BRAK_DANYCH | nr=- | src=Polish ID_Back.pdf
+  #59 KARTA_POBYTU | - – 2023-09-16 | BRAK_DANYCH | nr=RP5967911 | src=Polish ID_Front.pdf
+  #60 TRC_FDK | 2021-02-23 – - | BRAK_DANYCH | nr=WSC-II-A.6151.13496.2020 | src=Spelling Correction - sprostowanie.pdf
+  #61 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Danny_Eu_Huat-Khoo_ZUS_.pdf
+  #62 TRC_INNY_PRACODAWCA | 2020-03-17 – 2022-05-31 | BRAK_DANYCH | nr=440000/0452676/2025 | src=ZUS_Danny_Khoo_od_24.02.25.pdf
+  #63 TRC_FDK | - – - | BRAK_DANYCH | nr=WSC-II-P.6151.2694.2024 | src=Epuap_potwierdzenie_zlozenia_dokumentu_niezaleganie_Khoo_29.01.2025_MUW.pdf
+  #64 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=PIT_37_KHOO_2025.pdf
+  #65 TRC_FDK | 2025-01-10 – - | BRAK_DANYCH | nr=- | src=PoA_MG_signed.JPG
+  #66 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=PoA_TAX_PIT37_KHOO.pdf
+  #67 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=PoA_TAX_PIT37_KHOO_.pdf
+  #68 TRC_FDK | 2025-01-30 – 2025-04-01 | BRAK_DANYCH | nr=- | src=PoA_ZUS_KHOO.pdf
+  #69 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Skan_dokumentów_urząd_skarbowy_niezaleganie_20.01.2025.pdf
+  #70 TRC_FDK | 2024-11-26 – 2025-11-25 | BRAK_DANYCH | nr=WRP-II.8671.78630.2024 | src=Skan_dokumentów_urząd_wizyta_osobista_17.01.2025+PoApodpisane.pdf
+  #71 TRC_FDK | 2022-12-01 – 2024-10-02 | BRAK_DANYCH | nr=- | src=Khoo_experience.pdf
+  #72 TRC_FDK | 2022-12-01 – 2024-10-02 | BRAK_DANYCH | nr=- | src=Khoo_experience_signed.pdf
+  #73 TRC_FDK | 2025-10-15 – 2026-10-31 | BRAK_DANYCH | nr=31769/11/25/UDD/DK12/WWA | src=UDD_KHOO_01.11.2025_signed.pdf
+
+  --- ZAŁĄCZNIKI (112) ---
+  [glowne] Aust Passport_New_passport_Khoo.pdf | folder=wazne | typ=(brak)
+  [glowne] Decyzja_TRC_Khoo_Danny_Eu_Huat_do_12.08.2029.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Khoo Danny - TRC.jpg | folder=wazne | typ=KARTA_POBYTU
+  [trc] Khoo Danny TRC 2.jpg | folder=wazne | typ=KARTA_POBYTU
+  [glowne] Khoo KP 2022-2025 decyzja.JPG | folder=wazne | typ=TRC_FDK
+  [trc] Khoo TRc 2020-2023 Frame time.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Aust Passport_Expiring.pdf | folder=wazne | typ=(brak)
+  [trc] Aust Passport_New.pdf | folder=wazne | typ=(brak)
+  [inne] Danny Eu Huat Khoo              Warszawa.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny Khoo - wezwanie.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny Khoo BA ARTS.jpg | folder=wazne | typ=TRC_FDK
+  [trc] Informacja starosty.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona
+  [trc] Insurance 2021-2022.pdf | folder=wazne | typ=TRC_FDK
+  [trc] KRS fundacja.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Działalność
+  [trc] Nowe_ubezpieczenie_KHOO_przeslano_ePuap_17.11.2025_.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pb
+  [inne] Oświadczenie o stanie konta Fundacji zezwolenie.docx | folder=wazne | typ=(brak)
+  [trc] Sworn Translation of Danny's Degree.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Transfer confirmation.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Tłumaczenie przysięgłę dyplomu - POL.PDF | folder=wazne | typ=(brak)
+  [trc] Umowa - potwierdzenie stażu.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] UMOWA O DZIEŁO dla cudzoziemca.docx | folder=inne_dokumenty | typ=(brak)
+  [inne] Wniosek Danny.docx | folder=inne_dokumenty | typ=(brak)
+  [inne] Załącznik nr 1 Danny.docx | folder=inne_dokumenty | typ=(brak)
+  [glowne] Khoo WP 2 2020-2021.jpeg | folder=wazne | typ=TRC_FDK
+  [glowne] Khoo Wp 2020-2021.jpeg | folder=wazne | typ=ZEZWOLENIE_A
+  [glowne] Polish ID_Back.pdf | folder=wazne | typ=KARTA_POBYTU
+  [glowne] Polish ID_Front.pdf | folder=wazne | typ=KARTA_POBYTU
+  [glowne] Poprzednie_ubezpieczenie_KHOO_.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Spelling Correction - sprostowanie.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Stempel_paszport_Khoo_17.01.2025.png | folder=wazne | typ=(brak)
+  [trc] Certificate_ZUS_Danny_Khoo_FDK_od.12.03.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] Danny Eu Huat Khoo_dane_logowanie.docx | folder=inne_dokumenty | typ=(brak)
+  [inne] Danny Eu Huat Khoo_dane_logowanie_mos_inpol.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny Eu Huat Khoo_zasw_zatrudnienie_21.02.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Eu_Huat-Khoo_ZUS_.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Danny_Eu_Huat_Khoo_rachunki_TRC_UDD.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Khoo_pismo_FDK_10.04.26_s.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Khoo_pismo_ZUS_MG.png | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Khoo_rachunek_luty_2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Khoo_rachunki_TRC.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Khoo_umowa_01.12.2022.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Danny_Khoo_ZUS_24.02.25.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Dany_KHOO_nowe_WP_uzupelnienie_TRC_6.11.25.png | folder=wazne | typ=ZEZWOLENIE_A
+  [inne] EN - АNКIЕТА - QUESTIONNAIRE_ copy.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] Epuap_potwierdzenie_zlozenia_dokumentu_niezaleganie_Khoo_29.01.2025_MUW.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Inpol_Khoo.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] KHOO DANNY_niezaleganie_w_podatkach_.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Oraz Stanowisko
+  [trc] Khoo_pismo_PIT37_05.02.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Khoo_pismo_ZUS_05.02.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Khoo_PIT_37_UPO.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Korekta_załącznika_elektronicznie_11.08.2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_e-doreczenia_KHOO_TRC_10.04.26.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_KHOO_US_28.02.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_MUW_Khoo_nowa_UDD-21.10.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_rachunek_listopad_Khoo_09.12.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_rachunek_luty_Khoo_11.03.2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_rachunek_maj_26_Khoo_16.06.2026pdf.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_rachunek_pazdziernik_KOO_24.10.25.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_TAX_DK_28.02.25_signed.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_UDD_Załącznik_polisa_Khoo_05.05.2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_ZUS_EPUAP_KHOO.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pismo_ZUS_EPUAP_KHOO_SIGNED.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] pit_37_Danny_KHOO_2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PIT_37_Danny_KHOO_tax.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Ojcaimię Matki B
+  [trc] PIT_37_KHOO_2025.pdf | folder=wazne | typ=TRC_FDK
+  [trc] PoA_Danny Eu Huat Khoo _II.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Danny Eu Huat Khoo_III.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_Danny_Khoo_I.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_MG_signed.JPG | folder=wazne | typ=TRC_FDK
+  [trc] PoA_TAX_PIT37_KHOO.pdf | folder=wazne | typ=TRC_FDK
+  [trc] PoA_TAX_PIT37_KHOO_.pdf | folder=wazne | typ=TRC_FDK
+  [trc] PoA_ZUS_KHOO.pdf | folder=wazne | typ=TRC_FDK
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] Rachunek)lipiec_Khoo)TRC.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_KHOO_grudzien_TRC_MUW.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_Khoo_marzec_przeslane_MUW.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_Khoo_styczen_TRC_kurier_20.02.26.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_kwiecien_KHOO_2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_sierpien_Khoo.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachunek_wrzesien_KHOO_pismo_07.10.25_TRC.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Rachynek_czerwiec_Khoo_MUW.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_dokumentow_wysłanych_do_urzedu_07.02.2025_Khoo.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_dokumentow_wysłanych_do_urzedu_12.03.2025_Khoo.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_dokumentow_wysłanych_do_urzedu_27.02.2025_Khoo_aktualna_umowa.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_dokumentów_urząd_skarbowy_niezaleganie_20.01.2025.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_dokumentów_urząd_wizyta_osobista_17.01.2025+PoApodpisane.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Skan_rachunek_czerwiec_2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Skan_wezwanie_osobiste_17.01.2025_Khoo_Danny.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Twórca materiałów edukacyjnych z języka angielskiego_14701.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona
+  [trc] Ubezpieczenie_do_17.05.2026_KHOO.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pb
+  [trc] Ubezpieczenie_KHOO_do_27.10.2026.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pb
+  [trc] Ubezpiecznie_pismo_KHOO_27.04.2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] upo_Danny_Khoo_confirmation.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Uzupelnienie_dokumentacji_Khoo_rachunki_poprzednie_umowa_pismo_18.03.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] zal1_0.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko
+  [inne] zaswiadczenie_zatrudnienie_Khoo_.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] Załacznik_nr_1_KHOO_s.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ZUS_Danny_Khoo_od_24.02.25.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] 14650StPr24069001 tworca materiałów.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona
+  [glowne] Danny_KHOO_WP_draft_2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Danny_Khoo_zezwolenie_16.10.2024 r. do 15.10.2025 r..pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona Cudzoziemca
+  [glowne] Khoo_experience.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Khoo_experience_signed.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] oplata_Khoo.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Prosba_pozniejsze_rozpoczecie_pracy_Danny Eu Huat Khoo_15.01.2025.pdf | folder=wazne | typ=ZEZWOLENIE_A
+  [glowne] zezwolenie_Danny_Khoo_16.10.2024_15.10.2025_WP.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona Cudzoziemca
+  [glowne] Khoo Danny Eu Huat WP korekta.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Khoo Denny Eu Hua WP draft 2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Opłata WP Khoo Denny Eu Hua.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Potiwerdzenie_przeslania_UDD_KHOO_5.11.25.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Michalina Glapińska Dokument
+  [glowne] UDD_KHOO_01.11.2025_signed.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Zezwolenie_Khoo_24.11.2025 r. do 23.11.2026 r..pdf | folder=wazne | typ=ZEZWOLENIE_A
+
+  ⚠ ZAŁĄCZNIKI WSPÓLNE Z INNYMI PROFILAMI:
+    Profil Repkina Ekaterina (ID 35): 2 wspólnych plików
+    Profil HAKHVERDYAN ARTUR (ID 62): 1 wspólnych plików
+    Profil Datskevich Maksim (ID 67): 1 wspólnych plików
+    Profil KURYTS KRYSTSINA (ID 83): 2 wspólnych plików
+    Profil Pranchuk Dzmitry (ID 89): 1 wspólnych plików
+    Profil Aksiutsin YAUHEN (ID 114): 2 wspólnych plików
+    Profil SKURATOVICH ALIAKSEI (ID 142): 2 wspólnych plików
+    Profil Mitsura Ivan (ID 144): 1 wspólnych plików
+    Profil Valovich Viktar (ID 155): 6 wspólnych plików
+    Profil TOPALEU ULADZIMIR (ID 158): 1 wspólnych plików
+    Profil Anikanov Mikhail (ID 162): 3 wspólnych plików
+    Profil du Toit Johanna (ID 198): 2 wspólnych plików
+    Profil Naskar Tanmay (ID 271): 2 wspólnych plików
+    Profil Kryshtal Vladyslav (ID 279): 2 wspólnych plików
+    Profil Mekh Alena (ID 292): 1 wspólnych plików
+    Profil Garny Alexey (ID 328): 1 wspólnych plików
+    Profil Diahleva Kateryna (ID 339): 5 wspólnych plików
+    Profil Liubchak Anastasiia (ID 400): 2 wspólnych plików
+    Profil Csiba Louise Anita (ID 478): 1 wspólnych plików
+    Profil Denysiuk Anna (ID 496): 1 wspólnych plików
+    Profil Dolbilova Yana (ID 499): 1 wspólnych plików
+    Profil Kholov Viktor (ID 669): 1 wspólnych plików
+    Profil Bungu Lance (ID 712): 1 wspólnych plików
+    Profil Marcia Lewis (ID 722): 1 wspólnych plików
+    Profil Logvina Olga (ID 736): 1 wspólnych plików
+    Profil Nikita Lomianski (ID 739): 1 wspólnych plików
+    Profil Malyha Stanislau (ID 761): 1 wspólnych plików
+    Profil Sergey Lazarev (ID 941): 1 wspólnych plików
+    Profil Sobolev Valentin (ID 986): 1 wspólnych plików
+    Profil Valitskii Kirill (ID 1043): 1 wspólnych plików
+
+======================================================================
+PROFIL: Skuratovich Daminik (ID 1124)
+  wProcesie=true hidden=false obywatelstwo=Bialorus
+  paszport=- DOB=-
+  decyzjaPobytowaDo=-
+  Załączniki: 15 | Podstawy zatrudnienia: 0 | Podstawy pobytu: 0
+
+  --- PODSTAWY ZATRUDNIENIA (0) ---
+  Typy: 
+
+  --- PODSTAWY POBYTU (0) ---
+
+  --- ZAŁĄCZNIKI (15) ---
+  [trc] Daminik Skuratovich akt urodzenia.pdf | folder=wazne | typ=(brak)
+  [trc] Daminik Skuratovich akt urodzenia_PL.BES.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Odojcowskie Urodził
+  [trc] DAMINIK SKURATOVICH KP.pdf | folder=wazne | typ=(brak)
+  [trc] DAMINIK SKURATOVICH Pełnomocnictwo (2).pdf | folder=wazne | typ=(brak)
+  [trc] DAMINIK SKURATOVICH Pełnomocnictwo (3).pdf | folder=wazne | typ=(brak)
+  [trc] DAMINIK SKURATOVICH Pełnomocnictwo.pdf | folder=wazne | typ=(brak)
+  [trc] Daminik Skuratovich Wniosek.pdf | folder=wazne | typ=(brak)
+  [trc] DAMINIK SKURATOVICH wydanie karty.pdf | folder=wazne | typ=(brak)
+  [trc] Daminik SKURATOVICH_zaświadczenie_podpisane_elektronicznie.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Ii
+  [trc] Passport Daminik Skuratovich.pdf | folder=wazne | typ=(brak)
+  [trc] DaminikSkuratovichakturodzeniaPLBES.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Odojcowskie Urodził
+  [trc] PoA_ K_M_Daminik_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_MG_Daminik_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_S_SH_Daminik_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [inne] Tabela-dane-do-rezerwacji-Daminik Skuratovich.docx | folder=wazne | typ=(brak)
+
+======================================================================
+PROFIL: Skuratovich Daryian (ID 1125)
+  wProcesie=true hidden=false obywatelstwo=Bialorus
+  paszport=- DOB=-
+  decyzjaPobytowaDo=-
+  Załączniki: 16 | Podstawy zatrudnienia: 0 | Podstawy pobytu: 0
+
+  --- PODSTAWY ZATRUDNIENIA (0) ---
+  Typy: 
+
+  --- PODSTAWY POBYTU (0) ---
+
+  --- ZAŁĄCZNIKI (16) ---
+  [trc] Akt urodzenia Daryian Skuratovich.pdf | folder=wazne | typ=(brak)
+  [trc] Akt urodzenia Daryian Skuratovich_PL.BES.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Odojcowskie Numer
+  [trc] DARYIAN SKURATOVICH  Wniosek.pdf | folder=wazne | typ=(brak)
+  [trc] DARYIAN SKURATOVICH KP.pdf | folder=wazne | typ=(brak)
+  [trc] Daryian Skuratovich paszport.pdf | folder=wazne | typ=(brak)
+  [trc] DARYIAN SKURATOVICH Pełnomocnictwo (2).pdf | folder=wazne | typ=(brak)
+  [trc] DARYIAN SKURATOVICH Pełnomocnictwo (3).pdf | folder=wazne | typ=(brak)
+  [trc] DARYIAN SKURATOVICH Pełnomocnictwo.pdf | folder=wazne | typ=(brak)
+  [trc] DARYIAN SKURATOVICH wydanie karty pobytu.pdf | folder=wazne | typ=(brak)
+  [trc] Daryian SKURATOVICH_zaświadczenie_podpisane_elektronicznie.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Ii
+  [trc] Passport Daryian Skuratovich.pdf | folder=wazne | typ=(brak)
+  [trc] AkturodzeniaDaryianSkuratovichPLBES.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Odojcowskie Numer
+  [trc] PoA_ K_M_Daryian_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_MG_Daryian_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_S_SH_Daryian_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [inne] Tabela-dane-do-rezerwacji-Daryian Skuratovich.docx | folder=wazne | typ=(brak)
+
+======================================================================
+PROFIL: SKURATOVICH VERANIKA (ID 141)
+  wProcesie=true hidden=true obywatelstwo=Białoruś
+  paszport=BM2676510 DOB=1987-11-11
+  decyzjaPobytowaDo=-
+  Załączniki: 3 | Podstawy zatrudnienia: 2 | Podstawy pobytu: 0
+
+  --- PODSTAWY ZATRUDNIENIA (2) ---
+  #164 OSWIADCZENIE | 2025-04-11 – 2027-04-10 | AKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2643 OSWIADCZENIE | - – - | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="-" | nr=PZC.4390.15579.RM.2025 | src=(brak źródła)
+  Typy: OSWIADCZENIE×2
+  ⚠ ANOMALIE: PODSTAWY BEZ ŹRÓDŁA: 2
+
+  --- PODSTAWY POBYTU (0) ---
+
+  --- ZAŁĄCZNIKI (3) ---
+  [glowne] 17.04.2025 - niepodjęcie SKURATOVICH_VERANIKA.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] FUNDACJA FIRMA DLA KAŻDEGO - PZC.4390.15579.RM.2025 - (VERANIKA SKURATOVICH).pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Skuratovich Veranika_paszport_2020-2030.pdf | folder=wazne | typ=(brak)
+
+======================================================================
+PROFIL: SKURATOVICH ALIAKSEI (ID 142)
+  wProcesie=true hidden=false obywatelstwo=Bialorus
+  paszport=RT0007698 DOB=1986-11-09
+  decyzjaPobytowaDo=2029-06-10
+  Załączniki: 106 | Podstawy zatrudnienia: 14 | Podstawy pobytu: 0
+
+  --- PODSTAWY ZATRUDNIENIA (14) ---
+  #182 OSWIADCZENIE | 2025-10-29 – 2027-10-28 | NIEAKTYWNE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2404 OSWIADCZENIE | 2025-10-29 – 2027-10-28 | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="50,00 PLN/godz. brutto" | nr=PZC.4390.38085.MGR.2025 | src=AliakseiSkuratovichośwuz.pdf
+  #2405 TRC_POBYT_Z_CUDZ | - – 2026-03-06 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2409 KARTA_POBYTU | 2008-07-18 – 2026-03-11 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2645 OSWIADCZENIE | 2025-04-11 – 2027-04-10 | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="85,00 PLN/h brutto" | nr=PZC.4390.15578.RM.2025 | src=SkuratovichAliakseiOŚWIADCZENIE.pdf
+  #2646 KARTA_POBYTU | 2026-06-10 – 2029-06-10 | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego, ul. Lwowska 17/4, 00-660 Warszawa" | wyn="-" | nr=SC-V.6151.1.8121.2026 | src=(brak źródła)
+  #3390 OD_CZLONEK_RODZINY | - – 2026-03-06 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #3410 TRC_FDK | 2026-06-10 – 2029-06-10 | NIEAKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="8600 PLN brutto" | nr=SC-V.6151.1.8121.2026 | src=Skuratovich_Aliaksei_decyzja_do_10.06.2029.pdf
+  #3444 TRC_FDK | 2026-07-13 – 2029-06-10 | AKTYWNE | firma="-" | wyn="-" | nr=- | src=Karta_Pobytu_Aliaksei_Skuratovich_do_10.06.2029.pdf
+  #3648 OSWIADCZENIE | - – 2030-02-03 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=01.10.2025 podjęcie pracy Skuratovich ALIAKSEI.pdf
+  #3649 OSWIADCZENIE | - – 2030-02-03 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=17.04.2025 - niepodjęcie SKURATOVICH_ALIAKSEI.pdf
+  #3650 OSWIADCZENIE | - – 2030-02-03 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=Niepodjęcie_pracy.pdf
+  #3651 OSWIADCZENIE | - – 2030-02-03 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=podjęcie pracy.pdf
+  #3652 OSWIADCZENIE | 2025-10-29 – 2027-10-28 | AKTYWNE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="50,00 PLN/godz. brutto" | nr=- | src=Wnisek OŚW UZ Aliaksei Skuratovich.pdf
+  Typy: OSWIADCZENIE×8, TRC_POBYT_Z_CUDZ×1, KARTA_POBYTU×2, OD_CZLONEK_RODZINY×1, TRC_FDK×2
+  ⚠ ANOMALIE: DUŻO PODSTAW: 14 | OPŁATA jako WYNAGRODZENIE #2404: 50,00 PLN/godz. brutto | OPŁATA jako WYNAGRODZENIE #3652: 50,00 PLN/godz. brutto | PODSTAWY BEZ ŹRÓDŁA: 5
+
+  --- PODSTAWY POBYTU (0) ---
+
+  --- ZAŁĄCZNIKI (106) ---
+  [glowne] Karta_Pobytu_Aliaksei_Skuratovich_do_10.06.2029.pdf | folder=wazne | typ=KARTA_POBYTU
+  [glowne] 01.10.2025 podjęcie pracy Skuratovich ALIAKSEI.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] 17.04.2025 - niepodjęcie SKURATOVICH_ALIAKSEI.pdf | folder=wazne | typ=OSWIADCZENIE
+  [inne] Potwierdzenie wysłania umowy do urzędu Aliaksei Skuriatovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] SkuratovichAliakseiOŚWIADCZENIE.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] AliakseiSkuratovichośwuz.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Niepodjęcie_pracy.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] opłata osw.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] opłata za oswiadczenie UZ Skuratovich.pdf | folder=wazne | typ=(brak)
+  [glowne] podjęcie pracy.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Wnisek OŚW UZ Aliaksei Skuratovich.pdf | folder=wazne | typ=OSWIADCZENIE
+  [inne] Zgłoszenie_umowy_16.02.2026_Skuratovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Skuratovich Aliaksei_paszport_2020-2030.pdf | folder=wazne | typ=(brak)
+  [glowne] Skuratovich_Aliaksei_decyzja_do_10.06.2029.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Skuratovich_Aliaksei_wiza_2025-2026.pdf | folder=wazne | typ=(brak)
+  [trc] Ankiety wypełnione.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Braki_formalne_załącznik_zestawTRC_umowy_i_rachunki.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] pieczątki w paszporcie Aliaksei i Veranika.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Pit37za2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Akt małżeństwa Skuratovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Akt małżeństwa Skuratovich_PL.BES.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Odojcowskie Urodzony Noszone Po
+  [trc] ALIAKSEI SKURATOVICH KP.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Aliaksei Skuratovich Paszport.pdf | folder=wazne | typ=(brak)
+  [trc] ALIAKSEI SKURATOVICH pełnomocnictwo (2).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ALIAKSEI SKURATOVICH pełnomocnictwo (3).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ALIAKSEI SKURATOVICH pełnomocnictwo.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Aliaksei Skuratovich Wniosek.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ALIAKSEI SKURATOVICH wydanie karty pobytu.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] OŚWIADCZENIE o liczbie osób na utrzymaniu.pdf | folder=wazne | typ=(brak)
+  [trc] Passport Aliaksei Skuratovich.pdf | folder=wazne | typ=(brak)
+  [trc] Pełnomocnictwo_S_SH_Aliaksei Skuratovich.docx.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 05.03.2026-umowa_najmu_akty_urodzenia_akt_małżeństwa.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] BPOP-PPSA-E-ada53ceb-4999-437b-a394-1e425760dbf8.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-ada53ceb-4999-437b-a394-1e425760dbf8.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20260603121220361.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-ada53ceb-4999-437b-a394-1e425760dbf8.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ZUSZCNASKURATOVICHALIAKSEI.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ZUSZUASKURATOVICHALIAKSEI.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] BPOP-PPSA-E-69751544-5317-47e4-8308-42e6dd9d44e6.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-69751544-5317-47e4-8308-42e6dd9d44e6.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20261103151655544.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-69751544-5317-47e4-8308-42e6dd9d44e6.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 11.03.2026_umowy_rachunki_zaswiadczenia_zus_skarbowy_tłumaczenia.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 18.03.2026 rachunek za luty.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 22.04.2026_rachunki_za_marzec.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 26.05.2026_rachunek_kwiecien.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PoA_ K_M_Aliaksei_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_MG_Aliaksei_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [inne] Tabela-dane-do-rezerwacji-Aliaksei Skuratovich.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] pobcz.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Poprzednie Rodowe
+  [trc] zal1_0.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko
+  [trc] Dominik Skuratovich paszport.pdf | folder=wazne | typ=(brak)
+  [trc] 05.03.2026_umowa_najmu_akt_urodzenia.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] BPOP-PPSA-E-e532fff5-0dc7-452b-826f-aee46d9c08d7.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-e532fff5-0dc7-452b-826f-aee46d9c08d7.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20260603114728906.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-e532fff5-0dc7-452b-826f-aee46d9c08d7.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] BPOP-PPSA-E-d6f49bae-a9cb-43e4-968a-0525da8bbb97.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-d6f49bae-a9cb-43e4-968a-0525da8bbb97.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20261103152200019.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-d6f49bae-a9cb-43e4-968a-0525da8bbb97.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 11.03.2026_umowy_rachunki_zaświadczenia_legitymacja.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 18.03.2026 - rachunek za luty.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 22.04.2026_rachunki_za_marzec.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 26.05.2026_rachunek_za_kwiecien.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 05.03.2026_umowa_najmu_akt_urodzenia.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] BPOP-PPSA-E-fe756177-3730-4c92-b5be-f2e31cf02cea.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-fe756177-3730-4c92-b5be-f2e31cf02cea.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20260603114918119.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-fe756177-3730-4c92-b5be-f2e31cf02cea.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 11.03.2026_legitymacja_rachunki_umowy.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 18.03.2026 rachunek za luty.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 22.04.2026_rachunki_za_marzec.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 26.05.2026_rachunek_kwiecien.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] oswiadczenie_o_liczbie_osob_na_utrzymaniu.docx | folder=wazne | typ=(brak)
+  [trc] Passport Veranika Skuratovich.pdf | folder=wazne | typ=(brak)
+  [trc] Pełnomocnictwo_S_SH_Veranika_Skuratovich.docx.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 05.03.2026_umowa_najmu_akt_małżeństwa.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] AktmalzenstwaSkuratovichPLBES.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Odojcowskie Urodzony Noszone Po
+  [trc] BPOP-PPSA-E-5c3c8795-df0b-443e-ae9d-2ee6b5b3f60e.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-5c3c8795-df0b-443e-ae9d-2ee6b5b3f60e.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20260603115331971.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-5c3c8795-df0b-443e-ae9d-2ee6b5b3f60e.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] BPOP-PPSA-E-1910bc1e-08bc-4a55-9442-826e728b67bd.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] BPWP-PPSA-E-1910bc1e-08bc-4a55-9442-826e728b67bd.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Pl Pl
+  [trc] Pismo_przewodnie_20261103151838454.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PPSA-E-1910bc1e-08bc-4a55-9442-826e728b67bd.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 11.03.2026_umowy_rechunki_tłumaczenie_oswiadczenie_.pdf | folder=wazne | typ=(brak)
+  [trc] 17.08.2026 uzupełnienie_wezwania.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 18.03.2026 rachunek za luty.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 22.04.2026_rachunki_za_marzec.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 26.05.2026_rachunek_kwiecien.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] PoA_ K_M_Veranika_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [trc] PoA_MG_Veranika_Skuratovich.docx.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pełnomocnika
+  [inne] Tabela-dane-do-rezerwacji-Veranika Skuratovich.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] VERANIKA SKURATOVICH KP.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Veranika Skuratovich paszport.pdf | folder=wazne | typ=(brak)
+  [trc] VERANIKA SKURATOVICH pełnomocnictwo (2).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] VERANIKA SKURATOVICH pełnomocnictwo (3).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] VERANIKA SKURATOVICH pełnomocnictwo.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Veranika Skuratovich Wniosek.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] VERANIKA SKURATOVICH wydanie karty pobytu.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Wezwanie_z_03.08.2026_TRC.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Umowa najmu mieszkania Skuratovich.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Wezwania 03.03.2026.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Wiza_Skuratovich_31.07.2026.pdf | folder=wazne | typ=(brak)
+
+  ⚠ ZAŁĄCZNIKI WSPÓLNE Z INNYMI PROFILAMI:
+    Profil Kuwani Daniels Florence (ID 29): 1 wspólnych plików
+    Profil Rice Lydia Madeleine Jane (ID 39): 1 wspólnych plików
+    Profil Khoo Danny Eu Huat (ID 52): 2 wspólnych plików
+    Profil KURYTS KRYSTSINA (ID 83): 2 wspólnych plików
+    Profil Pranchuk Dzmitry (ID 89): 1 wspólnych plików
+    Profil Aksiutsin YAUHEN (ID 114): 2 wspólnych plików
+    Profil Liudvichenka Anatoli (ID 116): 1 wspólnych plików
+    Profil Valovich Viktar (ID 155): 6 wspólnych plików
+    Profil TOPALEU ULADZIMIR (ID 158): 1 wspólnych plików
+    Profil Anikanov Mikhail (ID 162): 3 wspólnych plików
+    Profil Zharnak Nadzeya (ID 166): 1 wspólnych plików
+    Profil Sytau Pavel (ID 172): 1 wspólnych plików
+    Profil Jajula Konaye (ID 186): 1 wspólnych plików
+    Profil Naskar Tanmay (ID 271): 2 wspólnych plików
+    Profil Kryshtal Vladyslav (ID 279): 2 wspólnych plików
+    Profil Garny Alexey (ID 328): 1 wspólnych plików
+    Profil Liubchak Anastasiia (ID 400): 2 wspólnych plików
+    Profil Dahura Uladzimir (ID 481): 1 wspólnych plików
+    Profil Denysiuk Anna (ID 496): 1 wspólnych plików
+    Profil Egorova Anastasiia (ID 532): 1 wspólnych plików
+    Profil Glushchenko Aleksey (ID 566): 1 wspólnych plików
+    Profil Kholov Viktor (ID 669): 1 wspólnych plików
+    Profil Krasnanosava Marharyta (ID 689): 1 wspólnych plików
+    Profil Maltsev Konstantin (ID 760): 1 wspólnych plików
+    Profil Sergey Lazarev (ID 941): 1 wspólnych plików
+    Profil Sheremet Taisiia (ID 957): 1 wspólnych plików
+
+======================================================================
+PROFIL: Liudvichenka Anatoli (ID 116)
+  wProcesie=true hidden=false obywatelstwo=Białoruś
+  paszport=PD0173457 DOB=2004-07-29
+  decyzjaPobytowaDo=2028-07-24
+  Załączniki: 49 | Podstawy zatrudnienia: 8 | Podstawy pobytu: 4
+
+  --- PODSTAWY ZATRUDNIENIA (8) ---
+  #127 OSWIADCZENIE | 2024-09-17 – 2026-09-08 | WYGASLE | firma="-" | wyn="-" | nr=- | src=(brak źródła)
+  #2588 TRC_FDK | 2025-04-16 – 2030-04-24 | AKTYWNE | firma="Fundacja Firma Dla Każdego" | wyn="6000 PLN brutto miesięcznie" | nr=WSC-II-P.6151.86433.2024 | src=16.04.2025_uzupełnienie (zmiana siedziby i adresu pełn) Liudvichenka_Anatoli.pdf
+  #2589 OSWIADCZENIE | 2024-09-17 – 2026-09-08 | WYGASLE | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="6000 PLN brutto miesięcznie" | nr=PZC.4390.41430.BB.2024 | src=Liudvichenka_Anatoli - zestaw na odciski 12.02.2025.pdf
+  #2590 KARTA_POBYTU | - – 2027-06-20 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="-" | nr=- | src=(brak źródła)
+  #3360 ZEZWOLENIE_A | - – 2028-07-24 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO" | wyn="-" | nr=WSC-II-P.6151.86433.2024 | src=(brak źródła)
+  #3595 OSWIADCZENIE | - – 2033-06-12 | BRAK_DANYCH | firma="FUNDACJA FIRMA DLA KAŻDEGO Nr NIP: 5252625624Numer REGON: 362170026" | wyn="-" | nr=- | src=Liudvichenka-podjęcie 17.09.pdf
+  #3596 TRC_FDK | - – - | BRAK_DANYCH | firma="-" | wyn="-" | nr=- | src=Liudvichenka_Anatoli- świadectwo z szkoły.pdf
+  #3597 TRC_FDK | - – 2029-07-03 | BRAK_DANYCH | firma="Fundacja Firma Dla Kazdego" | wyn="4630 PLN brutto miesiecznie" | nr=- | src=Liudvichenka_Anatoli-zestaw TRC wyasłany pocztą  04.07.2024.pdf
+  Typy: OSWIADCZENIE×3, TRC_FDK×3, KARTA_POBYTU×1, ZEZWOLENIE_A×1
+  ⚠ ANOMALIE: PODSTAWY BEZ ŹRÓDŁA: 3 | TRC BEZ DATY DO: #3596 TRC_FDK
+
+  --- PODSTAWY POBYTU (4) ---
+  #121 TRC_FDK | 2025-04-16 – 2030-04-24 | BRAK_DANYCH | nr=WSC-II-P.6151.86433.2024 | src=16.04.2025_uzupełnienie (zmiana siedziby i adresu pełn) Liudvichenka_Anatoli.pdf
+  #122 TRC_FDK | - – - | BRAK_DANYCH | nr=- | src=Liudvichenka_Anatoli- świadectwo z szkoły.pdf
+  #123 TRC_INNY_PRACODAWCA | 2022-05-03 – 2023-10-01 | BRAK_DANYCH | nr=- | src=Liudvichenka_Anatoli-doświadczenie oryginał.pdf
+  #124 TRC_FDK | - – 2029-07-03 | BRAK_DANYCH | nr=- | src=Liudvichenka_Anatoli-zestaw TRC wyasłany pocztą  04.07.2024.pdf
+
+  --- ZAŁĄCZNIKI (49) ---
+  [inne] Liudvichenka Anatoli - umowa współpracy.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Liudvichenka Anatoli_decyzja 2025-2028.pdf | folder=wazne | typ=TRC_FDK
+  [glowne] Liudvichenka Anatoli_paszport_visa PBH.pdf | folder=wazne | typ=(brak)
+  [glowne] Liudvichenka Anatoli_stempel.pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] FUNDACJA FIRMA DLA KAŻDEGO - PZC.4390.41430.BB.2024 - (ANATOLI LIUDVICHENKA).pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] Liudvichenka-draft ośw 02.09..pdf | folder=inne_dokumenty | typ=(brak)
+  [glowne] Liudvichenka-podjęcie 17.09.pdf | folder=wazne | typ=OSWIADCZENIE
+  [glowne] opłata skarbowa.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 21.02.2025 - wezwanie - termin na decyzje 12.05.2025 Liudvichenka.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 24.05.2025 - uzupełnienie Liudvichenka_Anatoli.pdf | folder=wazne | typ=TRC_FDK
+  [trc] 31.01.2025 - ponaglenie - odciski - Liudvichenka.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka Anatoli-tłumaczenie doświadczenia.pdf | folder=wazne | typ=(brak)
+  [trc] Liudvichenka Anatolii-potwierdzenie wysłanego wypowiedzenia MV- epuap 05.12.2024.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: I Nazwisko Pozostałych Pełnomocników
+  [trc] Liudvichenka_Anatoli - PIT-37 (2024).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenko Anatoli-wniosek inpol.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli- wezwanie na odciski 07.02.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli- świadectwo z szkoły.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Liudvichenka_Anatoli-doświadczenie oryginał.pdf | folder=wazne | typ=TRC_FDK
+  [trc] Liudvichenka_Anatoli-informacja starosty.pdf | folder=dokumenty_rodziny | typ=(brak) | ⚠ Dokument innej osoby: Lub Imiona
+  [trc] Liudvichenka_Anatoli-opłata do pełnomocnictwa (1).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-opłata do pełnomocnictwa (2).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-opłata do pełnomocnictwa (3).pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-opłata skarbowa 440 zł..pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-tłumaczenie wykształcenia.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli_Pełnomocnictwo-podpisane- Viktoriia.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli_Pełnomocnictwo-podpisane-Kamila.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli_Pełnomocnictwo-podpisane-Mariana.pdf | folder=inne_dokumenty | typ=(brak)
+  [inne] MUW - Pismo_przyspieszenie.docx | folder=inne_dokumenty | typ=(brak)
+  [inne] oswiadczenie_o_liczbie_osob_na_utrzymaniu.docx | folder=wazne | typ=(brak)
+  [inne] oswiadczenie_praca_tzw._tabelka_0 (1).docx | folder=wazne | typ=(brak)
+  [trc] 01.04.2025_uzupełnienie_rachunek_marzec_Liudvichenka_Anatoli.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 03.06.2025_uzupełnienie_rachunek_maj_Liudvichenka_Anatoli.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 05.03.2025_uzupełnienie_rachunek_luty_Pit_Liudvichenka.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 05.05.2025_uzupełnienie_rachunek_kwiecień_Liudvichenka.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 14.04.2025_przyspieszenie_TRC_Liudvichenka_Anatoli.pdf | folder=wazne | typ=TRC_FDK
+  [trc] 16.04.2025_uzupełnienie (zmiana siedziby i adresu pełn) Liudvichenka_Anatoli.pdf | folder=wazne | typ=TRC_FDK
+  [trc] 21.05.2025 - uzupeł_załącznik_korekta_Liudvichenka_Anatoli.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] 23.07.2025_uzupełnienie_rachunek_lipiec_Liudvichenka_Anatoli.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli - zestaw na odciski 12.02.2025.pdf | folder=wazne | typ=OSWIADCZENIE
+  [trc] Liudvichenka_Anatoli-pismo przewodnie -03.03.2025.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-pismo przewodnie -11.07.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-pismo przewodnie 12.08.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-pismo przewodnie 19.08.2024.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] Liudvichenka_Anatoli-zestaw TRC wyasłany pocztą  04.07.2024.pdf | folder=wazne | typ=TRC_FDK
+  [inne] MUW - Pismo_uzupelnienie_dokumentacji_TRC.docx | folder=inne_dokumenty | typ=(brak)
+  [trc] potwierdzenie z poczty  - uzupełnienie dokumentów do  TRC -Liudvichenka Anatolii.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] RU - АNКIЕТА.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] upo.pdf | folder=inne_dokumenty | typ=(brak)
+  [trc] ZUS PEL, Liudvichenka Anatoli 04272915031 (LYTVYNCHUK ALINA 98110210121) [2025-02-04].pdf | folder=inne_dokumenty | typ=(brak)

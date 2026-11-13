@@ -1,0 +1,12 @@
+action;baseId;foreignerId;nazwisko;field;oldValue;newValue
+uuid_cleanup;463;408;Miziurko;nrOswiadczenia;a17311d4-d623-4a33-92df-11acdcae0b5620251215122111;NULL
+uuid_cleanup;465;410;Anton;nrOswiadczenia;b1932ba6-0c44-43d2-ad6a-f01d70d2299d20240205120550;NULL
+uuid_cleanup;472;412;Arenas;nrDecyzji;f02d0d14-4f62-4a67-a27e-5821be20d238;NULL
+uuid_cleanup;577;251;Baluiev;nrOswiadczenia;a1132efd-7f85-42f9-b209-4def06dd6cde20251103131838;NULL
+uuid_cleanup;649;460;Buchynska;nrOswiadczenia;d0f8f912-b897-4059-812d-c30f30192d09;NULL
+uuid_cleanup;575;243;Bielichkova;nrOswiadczenia;2bc6686f-8501-47c6-8b60-142b16b9060420251215120134;NULL
+uuid_cleanup;477;414;Arseniuk;nrOswiadczenia;e28f739b-a362-41ea-a8fb-857fa18e9951;NULL
+uuid_cleanup;306;223;Abramova;nrOswiadczenia;cbdc1b1c-a6c0-433e-8316-a60b31e7abe720241115122132;NULL
+delete_no_source;506;92;Borzdov;base;ZEZWOLENIE_A;DELETED
+trc_suspect;1084;191;Ndlovu Jasi;typ;TRC_FDK;TRC_STUDIA
+trc_suspect;1253;286;Munhenzva;typ;TRC_FDK;TRC_STUDIA

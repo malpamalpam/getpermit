@@ -1,0 +1,3 @@
+employee_id;imie_csv;nazwisko_csv;pesel_csv;profile_id;imie_fdk;nazwisko_fdk;pesel_fdk;match_method;pesel_note
+"3347";"Rafał";"Sieradzki";"76011800797";221;"Rafal";"Sieradzki";"";name_unique;""
+"3158";"Julia";"Szałach";"99092302028";199;"Julia";"Szalach";"";name_unique;""

@@ -1,0 +1,18 @@
+foreignerId;nazwisko;imie;baseId;typ;old_wynagrodzenie;new_wynagrodzenie;podejrzana
+148;LIKHO;IVAN;263;OSWIADCZENIE;300,00 PLN/godz. brutto;300 PLN/h brutto — ≈ 50 400 PLN/mies. przy pełnym etacie;NIE
+148;LIKHO;IVAN;264;OSWIADCZENIE;250,00 PLN/godz. brutto;250 PLN/h brutto — ≈ 42 000 PLN/mies. przy pełnym etacie;NIE
+131;Kastunova;Hanna;147;OSWIADCZENIE;48,75;48,75 PLN;NIE
+131;Kastunova;Hanna;246;KARTA_POBYTU;3900,00 PLN brutto;3900 PLN brutto;NIE
+162;Anikanov;Mikhail;241;BLUE_CARD;12272,58 PLN brutto miesięcznie;12 272,58 PLN brutto / mies.;NIE
+47;Abraham;Daniel Dominic;239;KARTA_POBYTU;4806 PLN brutto miesięcznie;4806 PLN brutto / mies.;NIE
+63;Abrazhevich;Kirill;252;BLUE_CARD;12272,58 zł brutto miesięcznie;12 272,58 PLN brutto / mies.;NIE
+148;LIKHO;IVAN;262;BLUE_CARD;18 333,33 PLN brutto miesięcznie;18 333,33 PLN brutto / mies.;NIE
+411;Aphiwe;Kwandokuhle Mbatha;848;KARTA_POBYTU;4 530,00 PLN/miesięcznie;4530 PLN / mies.;NIE
+151;Brouka;Iryna;253;KARTA_POBYTU;5000 zł brutto;5000 PLN brutto;NIE
+336;Abubakarov;Kerim;312;KARTA_POBYTU;10000 PLN brutto miesięcznie;10 000 PLN brutto / mies.;NIE
+381;Achour;Mousseab;325;KARTA_POBYTU;4 530,00 PLN/miesięcznie;4530 PLN / mies.;NIE
+382;ADEOSUN;OLANIYI PETER;329;OSWIADCZENIE;4530.00 PLN brutto miesięcznie;4530 PLN brutto / mies.;NIE
+47;Abraham;Daniel Dominic;230;ZEZWOLENIE;4 666,00 PLN/miesięcznie;4666 PLN / mies.;NIE
+411;Aphiwe;Kwandokuhle Mbatha;384;ZEZWOLENIE;4 530,00 PLN/miesięcznie;4530 PLN / mies.;NIE
+223;Abramova;Anna;306;ZGLOSZENIE_UA;276,91 PLN brutto (stawka godzinowa);276,91 PLN/h brutto — ≈ 46 521 PLN/mies. przy pełnym etacie;NIE
+131;Kastunova;Hanna;173;OSWIADCZENIE;48,75 4.;48,75 PLN;NIE

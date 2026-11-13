@@ -1,0 +1,13 @@
+baseId;foreignerId;nazwisko;field;oldValue;newValue;action
+680;25;Unger;stanowisko;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.  15;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.;fixed
+262;148;LIKHO;stanowisko;Devops Engineer 2;Devops Engineer;fixed
+1352;92;Borzdov;stanowisko;/ rodzaj pracy: Czynności związane z fakturowaniem 4;Czynności związane z fakturowaniem;fixed
+388;415;Ashraf;stanowisko;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.  15;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.;fixed
+542;92;Borzdov;stanowisko;pracy bez;NULL;fixed
+529;450;Bondarenko;stanowisko;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.  15;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.;fixed
+710;220;Spykerman;stanowisko;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.  15;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.;fixed
+716;220;Spykerman;stanowisko;/ w rodzaju pracy: twórca podcastów edukacyjnych z języka angielskiegotwórca podcastów edukacyjnych z języka angielskieg;twórca podcastów edukacyjnych z języka angielskiegotwórca podcastów edukacyjnych z języka angielskiego;fixed
+760;520;Maloney;stanowisko;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.  15;wskazanym  we  wniosku  pod  adresem  ul.  Lwowska  5  lok.;fixed
+919;629;Joanne;stanowisko;wskazanym we wniosku pod adresem ul. Lwowska 5 lok. 15;wskazanym we wniosku pod adresem ul. Lwowska 5 lok.;fixed
+1354;92;Borzdov;firma;Pana Maksim BORZDOV, ob. Białoruś, ur. 28.08.1979 r. udzielam zezwolenia na pobyt czasowy i pracę na terytorium Rzeczypo;FUNDACJA FIRMA DLA KAŻDEGO;fixed
+1352;92;Borzdov;wynagrodzenie;100;100 PLN/h brutto;fixed

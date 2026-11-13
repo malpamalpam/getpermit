@@ -5,8 +5,9 @@ export function CookieResetButton() {
     <button
       type="button"
       onClick={() => {
-        window.localStorage.removeItem("getpermit-cookie-consent");
-        window.location.reload();
+        if (typeof window !== "undefined" && window.Cookiebot) {
+          window.Cookiebot.renew();
+        }
       }}
       className="hover:text-white"
     >

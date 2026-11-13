@@ -1,5 +1,11 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(node scripts/import-dokumenty.mjs \"C:/Users/gstep/Desktop/Cudzoziemcy CD/Cudzoziemcy C-D\" --dry-run --batch CD --only \"Casagrandi_Talita,Charnavok_Anhelina,Csiba Louise Anita\" --report raport-import-CD.csv)",
+      "Bash(node -e \"const fs = require\\('fs'\\); const dirs = fs.readdirSync\\('C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\gstep\\\\\\\\\\\\\\\\Desktop\\\\\\\\\\\\\\\\Cudzoziemcy ALl\\\\\\\\\\\\\\\\Cudzoziemcy E-J', {withFileTypes:true}\\).filter\\(d=>d.isDirectory\\(\\)\\).map\\(d=>d.name\\); console.log\\('COUNT:', dirs.length\\); dirs.forEach\\(d=>console.log\\(d\\)\\);\")",
+      "Bash(wc -l /c/Users/gstep/getpermit.pl/raport-scrape-*.csv)",
+      "Bash(git status:*)"
+    ],
     "additionalDirectories": [
       "c:\\Users\\gstep\\getpermit.pl\\src\\app\\[locale]\\o-nas"
     ]

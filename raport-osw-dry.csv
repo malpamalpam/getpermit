@@ -1,0 +1,89 @@
+foreignerId;nazwisko;imie;obywatelstwo;baseId;nrOswiadczenia;action;reason
+85;Astakhau;Siarhei;Bialorus;92;;flagged;citizenship_Bialorus_not_eligible
+75;VASHCHYLAU;YURY;Bialorus;82;;flagged;citizenship_Bialorus_not_eligible
+80;HNIP;STANISLAU;Bialorus;87;;flagged;citizenship_Bialorus_not_eligible
+81;LIPSKAYA;VALERYIA;Bialorus;88;;flagged;citizenship_Bialorus_not_eligible
+82;Filatau;Aleh;Bialorus;89;;flagged;citizenship_Bialorus_not_eligible
+86;Luchkouski;Aleh;Bialorus;93;;flagged;citizenship_Bialorus_not_eligible
+89;Pranchuk;Dzmitry;Bialorus;96;;flagged;citizenship_Bialorus_not_eligible
+107;Kliuchnikau;Barys;Bialorus;118;;flagged;citizenship_Bialorus_not_eligible
+111;Hlushakova;Elina;Bialorus;122;;flagged;citizenship_Bialorus_not_eligible
+120;Borzdy;Yaraslau;Bialorus;131;;flagged;citizenship_Bialorus_not_eligible
+115;Kalinouskaya;Volha;Bialorus;126;;flagged;citizenship_Bialorus_not_eligible
+118;Sukhan;Anatoli;Bialorus;129;;flagged;citizenship_Bialorus_not_eligible
+119;Zaiko;Maryia;Bialorus;130;;flagged;citizenship_Bialorus_not_eligible
+125;Kukhtsiuk;Viachaslau;Bialorus;140;;flagged;citizenship_Bialorus_not_eligible
+121;Pankevich;Siarhei;Bialorus;132;;flagged;citizenship_Bialorus_not_eligible
+122;Tarasevich;Ilya;Bialorus;133;;flagged;citizenship_Bialorus_not_eligible
+122;Tarasevich;Ilya;Bialorus;135;;flagged;citizenship_Bialorus_not_eligible
+124;Zhdaniuk;Yury;Bialorus;137;;flagged;citizenship_Bialorus_not_eligible
+110;Nikitsenka;Tatsiana;Bialorus;139;;flagged;citizenship_Bialorus_not_eligible
+126;Fedarynchyk;Yelisei;Bialorus;141;;flagged;citizenship_Bialorus_not_eligible
+130;Tsudzin;Ihar;Bialorus;146;;flagged;citizenship_Bialorus_not_eligible
+132;Shymanel;Iryna;Bialorus;148;;flagged;citizenship_Bialorus_not_eligible
+132;Shymanel;Iryna;Bialorus;149;;flagged;citizenship_Bialorus_not_eligible
+134;SHYMANSKAYA;KARYNA;Bialorus;151;;flagged;citizenship_Bialorus_not_eligible
+121;Pankevich;Siarhei;Bialorus;155;;flagged;citizenship_Bialorus_not_eligible
+115;Kalinouskaya;Volha;Bialorus;156;;flagged;citizenship_Bialorus_not_eligible
+139;Malinovski;Pavel;Bialorus;161;;flagged;citizenship_Bialorus_not_eligible
+139;Malinovski;Pavel;Bialorus;162;;flagged;citizenship_Bialorus_not_eligible
+142;SKURATOVICH;ALIAKSEI;Bialorus;165;;flagged;citizenship_Bialorus_not_eligible
+118;Sukhan;Anatoli;Bialorus;166;;flagged;citizenship_Bialorus_not_eligible
+143;Pakhadzenka;Mikalai;Bialorus;167;;flagged;citizenship_Bialorus_not_eligible
+144;Mitsura;Ivan;Bialorus;168;;flagged;citizenship_Bialorus_not_eligible
+107;Kliuchnikau;Barys;Bialorus;169;;flagged;citizenship_Bialorus_not_eligible
+146;Lomats;Ilya;Bialorus;171;;flagged;citizenship_Bialorus_not_eligible
+149;Piatrovich;Anastasiya;Bialorus;177;;flagged;citizenship_Bialorus_not_eligible
+152;Smolik;Alena;Bialorus;180;;flagged;citizenship_Bialorus_not_eligible
+142;SKURATOVICH;ALIAKSEI;Bialorus;182;;flagged;citizenship_Bialorus_not_eligible
+74;MEDVED;VLADISLAV;Bialorus;183;;flagged;citizenship_Bialorus_not_eligible
+154;Sidarenka;Marharyta;Bialorus;184;;flagged;citizenship_Bialorus_not_eligible
+156;Pahari;Malvina;Moldawia;186;;flagged;citizenship_Moldawia_not_eligible
+157;ASETSKI;YAUHENI;Bialorus;187;;flagged;citizenship_Bialorus_not_eligible
+100;SHCHUCHKIN;KANSTANTSIN;Bialorus;188;;flagged;citizenship_Bialorus_not_eligible
+158;TOPALEU;ULADZIMIR;Bialorus;189;;flagged;citizenship_Bialorus_not_eligible
+159;Rudz;Dzmitry;Bialorus;190;;flagged;citizenship_Bialorus_not_eligible
+84;Vouna;Volha;Bialorus;193;;flagged;citizenship_Bialorus_not_eligible
+100;SHCHUCHKIN;KANSTANTSIN;Bialorus;110;;flagged;citizenship_Bialorus_not_eligible
+81;LIPSKAYA;VALERYIA;Bialorus;174;;flagged;citizenship_Bialorus_not_eligible
+95;Bandarenka;Aliaksandr;Bialorus;104;;flagged;citizenship_Bialorus_not_eligible
+103;Zhukava;Liliya;Bialorus;113;;flagged;citizenship_Bialorus_not_eligible
+136;Shapialevich;Mikhail;Bialorus;157;;flagged;citizenship_Bialorus_not_eligible
+375;Abdarshitov;Emil;Kazakhstan;274;;flagged;citizenship_Kazakhstan_not_eligible
+47;Abraham;Daniel Dominic;Malezja;287;;flagged;citizenship_Malezja_not_eligible
+114;Aksiutsin;YAUHEN;Bialorus;125;;flagged;citizenship_Bialorus_not_eligible
+336;Abubakarov;Kerim;Rosja;313;;flagged;citizenship_Rosja_not_eligible
+66;TSIKHANOVICH;NINA;Bialorus;73;;flagged;citizenship_Bialorus_not_eligible
+74;MEDVED;VLADISLAV;Bialorus;81;;flagged;citizenship_Bialorus_not_eligible
+84;Vouna;Volha;Bialorus;91;;flagged;citizenship_Bialorus_not_eligible
+380;Abuseridze;Ana;Georgia;317;;flagged;citizenship_Georgia_not_eligible
+380;Abuseridze;Ana;Georgia;318;;flagged;citizenship_Georgia_not_eligible
+380;Abuseridze;Ana;Georgia;319;;flagged;citizenship_Georgia_not_eligible
+380;Abuseridze;Ana;Georgia;320;;flagged;citizenship_Georgia_not_eligible
+382;ADEOSUN;OLANIYI PETER;Nigeria;331;;flagged;citizenship_Nigeria_not_eligible
+382;ADEOSUN;OLANIYI PETER;Nigeria;329;;flagged;citizenship_Nigeria_not_eligible
+80;HNIP;STANISLAU;Bialorus;1057;069;flagged;citizenship_Bialorus_not_eligible
+80;HNIP;STANISLAU;Bialorus;1056;OP.G,4390,22497,MW,2024;flagged;citizenship_Bialorus_not_eligible
+82;Filatau;Aleh;Bialorus;1062;OP.G,4390,23398,MW,2024;flagged;citizenship_Bialorus_not_eligible
+382;ADEOSUN;OLANIYI PETER;Nigeria;447;;flagged;citizenship_Nigeria_not_eligible
+47;Abraham;Daniel Dominic;Malezja;408;;flagged;citizenship_Malezja_not_eligible
+234;Gaidukova;Alina;Bialorus;487;;flagged;citizenship_Bialorus_not_eligible
+120;Borzdy;Yaraslau;Bialorus;563;PZC.4390.42035.BB.2024;flagged;citizenship_Bialorus_not_eligible
+300;Bahamolau;Aliaksei;Bialorus;591;;flagged;citizenship_Bialorus_not_eligible
+300;Bahamolau;Aliaksei;Bialorus;517;OP.G.4390.11921.PL.2024;flagged;citizenship_Bialorus_not_eligible
+427;Belov;Igor;Rosja;609;;flagged;citizenship_Rosja_not_eligible
+283;Baranouski;Viachaslau;Bialorus;587;;flagged;citizenship_Bialorus_not_eligible
+220;Spykerman;Dean;Republika Poludniowej Afryki;1094;;flagged;citizenship_Republika Poludniowej Afryki_not_eligible
+220;Spykerman;Dean;Republika Poludniowej Afryki;1095;;flagged;citizenship_Republika Poludniowej Afryki_not_eligible
+220;Spykerman;Dean;Republika Poludniowej Afryki;1096;;flagged;citizenship_Republika Poludniowej Afryki_not_eligible
+328;Garny;Alexey;Bialorus;1129;OP.M.4390.58393.AB.2023;flagged;citizenship_Bialorus_not_eligible
+280;Hanson;Jacqueline;Kanada;1310;;flagged;citizenship_Kanada_not_eligible
+126;Fedarynchyk;Yelisei;Bialorus;881;OP.G.4390.76572.RM.2022;flagged;citizenship_Bialorus_not_eligible
+111;Hlushakova;Elina;Bialorus;880;OP.G.4390.40376.AK.2024;flagged;citizenship_Bialorus_not_eligible
+180;Frolovsky;Valentin;Bialorus;887;OP.G.4390.7921.TR.2024;flagged;citizenship_Bialorus_not_eligible
+82;Filatau;Aleh;Bialorus;874;OP.G.4390.23398.MW.2024;flagged;citizenship_Bialorus_not_eligible
+110;Nikitsenka;Tatsiana;Bialorus;121;;flagged;citizenship_Bialorus_not_eligible
+126;Fedarynchyk;Yelisei;Bialorus;882;;flagged;citizenship_Bialorus_not_eligible
+126;Fedarynchyk;Yelisei;Bialorus;883;PZC.4390.47121.WK.2024;flagged;citizenship_Bialorus_not_eligible
+80;HNIP;STANISLAU;Bialorus;956;OP.G.4390.22497.MW.2024;flagged;citizenship_Bialorus_not_eligible
+80;HNIP;STANISLAU;Bialorus;957;PZC.4390.10203.WK.2026;flagged;citizenship_Bialorus_not_eligible

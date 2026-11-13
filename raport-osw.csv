@@ -1,0 +1,11 @@
+foreignerId;nazwisko;imie;obywatelstwo;baseId;nrOswiadczenia;action;reason
+375;Abdarshitov;Emil;Kazakhstan;274;;flagged;citizenship_Kazakhstan_not_eligible
+47;Abraham;Daniel Dominic;Malezja;287;;flagged;citizenship_Malezja_not_eligible
+336;Abubakarov;Kerim;Rosja;313;;flagged;citizenship_Rosja_not_eligible
+382;ADEOSUN;OLANIYI PETER;Nigeria;331;;flagged;citizenship_Nigeria_not_eligible
+382;ADEOSUN;OLANIYI PETER;Nigeria;329;;flagged;citizenship_Nigeria_not_eligible
+382;ADEOSUN;OLANIYI PETER;Nigeria;447;;flagged;citizenship_Nigeria_not_eligible
+47;Abraham;Daniel Dominic;Malezja;408;;flagged;citizenship_Malezja_not_eligible
+427;Belov;Igor;Rosja;609;;flagged;citizenship_Rosja_not_eligible
+220;Spykerman;Dean;Republika Poludniowej Afryki;1094;;flagged;citizenship_Republika Poludniowej Afryki_not_eligible
+280;Hanson;Jacqueline;Kanada;1310;;flagged;citizenship_Kanada_not_eligible

@@ -1,0 +1,3 @@
+employee_id;imie;nazwisko;pesel;profile_id;hidden;match_method
+"3347";"Rafał";"Sieradzki";"76011800797";221;true;name_exact
+"3158";"Julia";"Szałach";"99092302028";199;true;name_exact

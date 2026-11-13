@@ -1,0 +1,119 @@
+foreignerId;nazwisko;imie;baseId_kept;baseId_removed;typ;dataDo;reason
+6;Harris;Rebecca Jane;932;9;ZEZWOLENIE;2026-04-30;dedup_same_type_date
+22;Ershadi;Mostafa;935;934;ZEZWOLENIE;2026-08-25;dedup_same_type_date
+40;Nkwocha;Edith Ngozi;938;43;ZEZWOLENIE;2026-06-19;dedup_same_type_date
+40;Nkwocha;Edith Ngozi;937;861;ZEZWOLENIE;2025-11-06;dedup_same_type_date
+58;Fenske;Cecilia Jani;947;64;ZEZWOLENIE;2027-04-03;dedup_same_type_date
+59;Fenske;Alfred Ewald;950;65;ZEZWOLENIE;2027-04-03;dedup_same_type_date
+77;ZAROWSKA;SOFIA;84;105;OSWIADCZENIE;2026-06-24;dedup_same_type_date
+81;LIPSKAYA;VALERYIA;88;174;OSWIADCZENIE;2026-05-21;dedup_same_type_date
+25;Unger;Christopher Donald Scott;776;28;ZEZWOLENIE;2026-05-27;dedup_same_type_date
+25;Unger;Christopher Donald Scott;680;683;ZEZWOLENIE;brak;dedup_same_type_date
+25;Unger;Christopher Donald Scott;680;772;ZEZWOLENIE;brak;dedup_same_type_date
+13;Branconnier;Leslie;540;51;ZEZWOLENIE;2026-10-26;dedup_same_type_date
+13;Branconnier;Leslie;540;501;ZEZWOLENIE;2026-10-26;dedup_same_type_date
+4;Atif;Kevaan;391;7;ZEZWOLENIE;2026-07-31;dedup_same_type_date
+7;Adewoyin;Oluwapelumi Paul;334;10;ZEZWOLENIE;2026-04-30;dedup_same_type_date
+16;Blyth;Amanda Jane;502;19;ZEZWOLENIE;2026-07-31;dedup_same_type_date
+102;Bandarenka;Tamara;657;656;KARTA_POBYTU;2027-12-13;dedup_same_type_date
+12;Chiweshe;Tendai Donald;769;15;ZEZWOLENIE;2026-07-31;dedup_same_type_date
+12;Chiweshe;Tendai Donald;677;678;ZEZWOLENIE;brak;dedup_same_type_date
+17;Constable;Simon Edward;770;20;ZEZWOLENIE;2026-07-31;dedup_same_type_date
+29;Kuwani;Daniels Florence;787;32;ZEZWOLENIE;2026-07-31;dedup_same_type_date
+29;Kuwani;Daniels Florence;686;687;BLUE_CARD;brak;dedup_same_type_date
+29;Kuwani;Daniels Florence;686;688;BLUE_CARD;brak;dedup_same_type_date
+60;MDAKANE;GUGU CHARLOTTE;952;66;ZEZWOLENIE;2027-08-31;dedup_same_type_date
+82;Filatau;Aleh;875;876;KARTA_POBYTU;2024-09-20;dedup_same_type_date
+82;Filatau;Aleh;875;877;KARTA_POBYTU;2024-09-20;dedup_same_type_date
+82;Filatau;Aleh;878;879;KARTA_POBYTU;brak;dedup_same_type_date
+82;Filatau;Aleh;1058;1061;KARTA_POBYTU;2028-09-19;dedup_same_type_date
+8;Valentine;Euphemia;933;11;ZEZWOLENIE;2026-04-30;dedup_same_type_date
+56;DIAZ SUAREZ;ENMA EUNICE;945;62;ZEZWOLENIE;2027-01-22;dedup_same_type_date
+56;DIAZ SUAREZ;ENMA EUNICE;944;865;ZEZWOLENIE;2025-06-16;dedup_same_type_date
+62;HAKHVERDYAN;ARTUR;954;1236;KARTA_POBYTU;2029-06-09;dedup_same_type_date
+62;HAKHVERDYAN;ARTUR;954;1237;KARTA_POBYTU;2029-06-09;dedup_same_type_date
+139;Malinovski;Pavel;161;162;OSWIADCZENIE;2027-03-11;dedup_same_type_date
+192;Hinko;Artur;1244;1243;KARTA_POBYTU;2026-06-27;dedup_same_type_date
+126;Fedarynchyk;Yelisei;1239;1238;KARTA_POBYTU;2024-11-15;dedup_same_type_date
+137;Chyhir;Mikhail;795;1070;KARTA_POBYTU;2027-01-01;dedup_same_type_date
+191;Ndlovu Jasi;Heather;964;1085;KARTA_POBYTU;2024-12-30;dedup_same_type_date
+191;Ndlovu Jasi;Heather;1080;1082;KARTA_POBYTU;brak;dedup_same_type_date
+243;Bielichkova;Nataliia;574;576;ZGLOSZENIE_UA;brak;dedup_same_type_date
+243;Bielichkova;Nataliia;574;972;ZGLOSZENIE_UA;brak;dedup_same_type_date
+252;Baluieva;Viktoriia;579;580;ZGLOSZENIE_UA;brak;dedup_same_type_date
+227;Iakovleva;Mariia;1248;1249;KARTA_POBYTU;2029-06-28;dedup_same_type_date
+198;du Toit;Johanna;967;966;ZEZWOLENIE;2025-06-13;dedup_same_type_date
+198;du Toit;Johanna;1246;1245;KARTA_POBYTU;2024-02-15;dedup_same_type_date
+198;du Toit;Johanna;1246;1247;KARTA_POBYTU;2024-02-15;dedup_same_type_date
+222;Cherevko;Anna;969;970;ZGLOSZENIE_UA;brak;dedup_same_type_date
+222;Cherevko;Anna;969;971;ZGLOSZENIE_UA;brak;dedup_same_type_date
+220;Spykerman;Dean;710;713;ZEZWOLENIE;brak;dedup_same_type_date
+220;Spykerman;Dean;710;715;ZEZWOLENIE;brak;dedup_same_type_date
+220;Spykerman;Dean;710;804;ZEZWOLENIE;brak;dedup_same_type_date
+220;Spykerman;Dean;1094;1095;OSWIADCZENIE;brak;dedup_same_type_date
+220;Spykerman;Dean;1094;1096;OSWIADCZENIE;brak;dedup_same_type_date
+289;Cherepanova;Inga;1258;1259;KARTA_POBYTU;2027-05-24;dedup_same_type_date
+286;Munhenzva;Engeline;1251;1250;KARTA_POBYTU;2025-10-14;dedup_same_type_date
+377;Abmyetko;Andrey;282;283;OSWIADCZENIE;brak;dedup_same_type_date
+316;Barnard;Conrad;598;597;KARTA_POBYTU;2027-09-19;dedup_same_type_date
+300;Bahamolau;Aliaksei;590;661;KARTA_POBYTU;brak;dedup_same_type_date
+392;Shane;Alexander Christopher;374;403;ZEZWOLENIE;brak;dedup_same_type_date
+387;Aksinovich;Natallia;489;453;KARTA_POBYTU;2025-11-14;dedup_same_type_date
+387;Aksinovich;Natallia;489;490;KARTA_POBYTU;2025-11-14;dedup_same_type_date
+326;van Reenen;Christian;1128;1127;KARTA_POBYTU;2027-08-02;dedup_same_type_date
+44;Gimashev;Linar;943;47;ZEZWOLENIE;2026-09-29;dedup_same_type_date
+44;Gimashev;Linar;863;939;ZEZWOLENIE;brak;dedup_same_type_date
+44;Gimashev;Linar;863;940;ZEZWOLENIE;brak;dedup_same_type_date
+379;Abramchuk;Raman;488;299;KARTA_POBYTU;2023-11-15;dedup_same_type_date
+380;Abuseridze;Ana;317;318;OSWIADCZENIE;2025-01-31;dedup_same_type_date
+380;Abuseridze;Ana;320;319;OSWIADCZENIE;brak;dedup_same_type_date
+397;Alport;Jessica Kate;377;378;ZEZWOLENIE;brak;dedup_same_type_date
+408;Miziurko;Anna;462;464;ZGLOSZENIE_UA;brak;dedup_same_type_date
+414;Arseniuk;Oleksandra;476;478;ZGLOSZENIE_UA;brak;dedup_same_type_date
+414;Arseniuk;Oleksandra;476;479;ZGLOSZENIE_UA;brak;dedup_same_type_date
+414;Arseniuk;Oleksandra;476;483;ZGLOSZENIE_UA;brak;dedup_same_type_date
+234;Gaidukova;Alina;439;442;KARTA_POBYTU;2025-08-10;dedup_same_type_date
+234;Gaidukova;Alina;485;486;KARTA_POBYTU;2028-01-14;dedup_same_type_date
+445;Bogomolov;Ivan;671;670;KARTA_POBYTU;2024-07-19;dedup_same_type_date
+425;Beliaeva;Baran Elena;664;663;KARTA_POBYTU;2033-08-16;dedup_same_type_date
+426;Belik;Alexander;667;666;KARTA_POBYTU;2028-07-30;dedup_same_type_date
+223;Abramova;Anna;306;429;ZGLOSZENIE_UA;brak;dedup_same_type_date
+223;Abramova;Anna;306;431;ZGLOSZENIE_UA;brak;dedup_same_type_date
+223;Abramova;Anna;306;432;ZGLOSZENIE_UA;brak;dedup_same_type_date
+223;Abramova;Anna;306;435;ZGLOSZENIE_UA;brak;dedup_same_type_date
+223;Abramova;Anna;306;436;ZGLOSZENIE_UA;brak;dedup_same_type_date
+223;Abramova;Anna;306;437;ZGLOSZENIE_UA;brak;dedup_same_type_date
+514;Dziadyk;Valentyn;1286;1285;KARTA_POBYTU;2026-05-24;dedup_same_type_date
+465;Caglar;Huseyin;725;811;ZEZWOLENIE;2025-09-30;dedup_same_type_date
+480;Castellano;Dadivas Michelle;735;734;ZEZWOLENIE;2026-01-05;dedup_same_type_date
+486;Edward;David;741;819;ZEZWOLENIE;2026-07-31;dedup_same_type_date
+520;Maloney;Charmien;841;840;ZEZWOLENIE;2025-03-10;dedup_same_type_date
+523;Otieno;Daeyna Sheyanne;761;762;ZEZWOLENIE;2027-05-17;dedup_same_type_date
+511;Dyaln;Meyer;834;832;ZEZWOLENIE;2025-08-31;dedup_same_type_date
+524;Persad;Chamali;766;765;ZEZWOLENIE;brak;dedup_same_type_date
+492;Del-Buono;Jonathan William;1156;1155;KARTA_POBYTU;2027-01-17;dedup_same_type_date
+493;Delport;Andrew Timothy Fowler Duncan;822;821;ZEZWOLENIE;2025-04-25;dedup_same_type_date
+481;Dahura;Uladzimir;1273;1274;KARTA_POBYTU;2026-01-30;dedup_same_type_date
+481;Dahura;Uladzimir;1273;1275;KARTA_POBYTU;2026-01-30;dedup_same_type_date
+515;DZIAMITSKAYA;DANA;1288;1289;KARTA_POBYTU;2027-07-31;dedup_same_type_date
+517;Dzioshava;Maryia;1177;1178;KARTA_POBYTU;2027-08-28;dedup_same_type_date
+494;Demianenko;Vladyslav;1278;1279;KARTA_POBYTU;2027-06-15;dedup_same_type_date
+51;Ayad;Mario Mamdouh Makeen;345;56;ZEZWOLENIE;2027-04-30;dedup_same_type_date
+530;Prisca;Edward Chidinma;980;1184;KARTA_POBYTU;2027-01-11;dedup_same_type_date
+534;Eleanor;Fay Sharman;983;1049;ZEZWOLENIE;2025-10-15;dedup_same_type_date
+548;Yavuzyilmaz;Fatih;1297;1296;KARTA_POBYTU;2027-08-20;dedup_same_type_date
+562;Gelderblom;Shereen Andrea;1197;1198;OSWIADCZENIE;brak;dedup_same_type_date
+564;Githehu;Kevin Wellington Njau;1003;1004;ZEZWOLENIE;brak;dedup_same_type_date
+579;Habyshava;Katsiaryna;1211;1212;KARTA_POBYTU;2026-02-08;dedup_same_type_date
+626;Jeyhun;Asadli;915;916;ZEZWOLENIE;brak;dedup_same_type_date
+631;Ashleigh;Jooste Mikayla;920;921;ZEZWOLENIE;brak;dedup_same_type_date
+636;Joshua;Thomas Odgers;1042;924;ZEZWOLENIE;2025-10-10;dedup_same_type_date
+639;Esterhuizen;Julia-Lomé;927;928;ZEZWOLENIE;brak;dedup_same_type_date
+639;Esterhuizen;Julia-Lomé;927;929;ZEZWOLENIE;brak;dedup_same_type_date
+57;Marin Santos;Diego;200;1234;BLUE_CARD;2027-03-31;dedup_same_type_date
+169;Shah;Darshitkumar Macheshkumar;704;705;KARTA_POBYTU;brak;dedup_same_type_date
+320;Markilolo;Charity Ejoumeyetei;720;805;ZEZWOLENIE;2024-09-29;dedup_same_type_date
+575;Gugulethu;Khethiwe Mkhwanazi;1208;1207;KARTA_POBYTU;2027-10-16;dedup_same_type_date
+627;FREDDY;JIRIENGWA TAPIWA;1032;918;ZEZWOLENIE;2025-08-03;dedup_same_type_date
+350;Cepicov;Chiril;1267;1266;KARTA_POBYTU;2034-01-23;dedup_same_type_date
+516;Dzikusarau;Aliaksandr;1291;1290;KARTA_POBYTU;2026-12-02;dedup_same_type_date
