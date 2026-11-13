@@ -58,11 +58,12 @@ KRYTYCZNE ZASADY:
    - formularz PSZ-OPWP → OSWIADCZENIE
    - PSZ-PPWPU / "powiadomienie o powierzeniu pracy" → POWIADOMIENIE_UA
    - skan plastikowej karty pobytu → KARTA_POBYTU
-9. DLA POWIADOMIEN UA (PSZ-PPWPU): stanowisko = z pola "stanowisko / rodzaj pracy", NIE z przedmiotu umowy. firma = podmiot powierzajacy prace. rodzajUmowy = typ umowy z formularza.
-10. STANOWISKO ZAWSZE W MIANOWNIKU: jesli decyzja uzywa odmiany (np. "na stanowisku specjalisty"), podaj forme podstawowa ("Specjalista"). Np. "kierowcy" → "Kierowca", "ksiegowej" → "Ksiegowa".
-10. DLA ZEZWOLENIA NA PRACE: okres = "Zezwolenie na prace jest wazne od DD.MM.RRRR do DD.MM.RRRR". NIE bierz dat z wniosku, umowy, ani daty doreczenia.
-11. stanowisko z sentencji decyzji pobytowej: tekst w cudzyslowie po "na stanowisku".
-12. rodzajUmowy z sentencji: "na podstawie umowy o dzielo" / "umowy zlecenia" / "umowy o prace".
+9. DLA POWIADOMIEN UA (PSZ-PPWPU): stanowisko = TYLKO z pola "stanowisko / rodzaj pracy" w formularzu. NIGDY z "przedmiotu umowy / dziela". firma = podmiot powierzajacy prace. rodzajUmowy = typ umowy z formularza. wynagrodzenie = kwota z pola "wynagrodzenie / stawka / kwota za wykonanie" (np. "2000 zl brutto").
+10. STANOWISKO NIGDY NIE JEST OPISEM CZYNNOSCI: jesli wartosc zaczyna sie od slowa "Stworzenie", "Wykonanie", "Opracowanie", "Przyjmuje", "Realizacja", "Przygotowanie", "Prowadzenie" lub innego rzeczownika odczasownikowego — to jest PRZEDMIOT DZIELA, nie stanowisko. Zwroc null.
+11. STANOWISKO ZAWSZE W MIANOWNIKU: jesli decyzja uzywa odmiany (np. "na stanowisku specjalisty"), podaj forme podstawowa ("Specjalista"). Np. "kierowcy" → "Kierowca", "ksiegowej" → "Ksiegowa".
+12. DLA ZEZWOLENIA NA PRACE: okres = "Zezwolenie na prace jest wazne od DD.MM.RRRR do DD.MM.RRRR". NIE bierz dat z wniosku, umowy, ani daty doreczenia.
+13. stanowisko z sentencji decyzji pobytowej: tekst w cudzyslowie po "na stanowisku".
+14. rodzajUmowy z sentencji: "na podstawie umowy o dzielo" / "umowy zlecenia" / "umowy o prace".
 
 Pola nieznalezione = null.`;
 

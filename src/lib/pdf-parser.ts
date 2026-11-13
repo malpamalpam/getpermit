@@ -1483,9 +1483,11 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
    - Inna karta pobytu → KARTA_POBYTU
    DLA POWIADOMIEN UA (PSZ-PPWPU, "powiadomienie o powierzeniu pracy"):
    - detectedType = POWIADOMIENIE_UA
-   - stanowisko = z pola "stanowisko / rodzaj pracy" formularza powiadomienia, NIE z przedmiotu umowy
+   - stanowisko = TYLKO z pola "stanowisko / rodzaj pracy" formularza powiadomienia, NIGDY z "przedmiotu umowy / dziela"
    - firma = podmiot powierzajacy prace (z naglowka lub sekcji "dane podmiotu")
    - rodzajUmowy = "umowa o dzielo", "umowa zlecenie", "umowa o prace" z formularza
+   - wynagrodzenie = kwota z pola "wynagrodzenie / stawka / kwota za wykonanie" (np. "2000 zl brutto")
+   STANOWISKO NIGDY NIE JEST OPISEM CZYNNOSCI: jesli wartosc zaczyna sie od "Stworzenie", "Wykonanie", "Opracowanie", "Przyjmuje", "Realizacja", "Przygotowanie", "Prowadzenie" lub innego rzeczownika odczasownikowego — to jest PRZEDMIOT DZIELA, nie stanowisko. Zwroc null.
    STANOWISKO ZAWSZE W MIANOWNIKU: jesli decyzja uzywa odmiany (np. "na stanowisku specjalisty"), podaj forme podstawowa ("Specjalista"). Np. "kierowcy" → "Kierowca", "ksiegowej" → "Ksiegowa".
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
 10. urzad = organ wydajacy decyzje z naglowka: "WOJEWODA MAZOWIECKI" → "Wojewoda Mazowiecki", "Szef Urzedu do Spraw Cudzoziemcow". Dla oswiadczen i powiadomien UA = null.

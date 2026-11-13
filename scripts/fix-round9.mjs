@@ -98,7 +98,7 @@ async function step2() {
     where: {
       foreignerId: 155,
       OR: [
-        { detectedType: { in: TRC_TYPES as never } },
+        { detectedType: { in: TRC_TYPES } },
         { nazwaPliku: { contains: "WSC" } },
         { nazwaPliku: { contains: "karta" } },
         { nazwaPliku: { contains: "decyzj" } },
@@ -168,7 +168,7 @@ async function step3(noResidenceBases) {
     const trcAtts = await prisma.fdkAttachment.findMany({
       where: {
         foreignerId: f.id,
-        detectedType: { in: TRC_TYPES as never },
+        detectedType: { in: TRC_TYPES },
       },
       orderBy: { id: "desc" },
     });
