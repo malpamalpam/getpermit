@@ -1486,7 +1486,7 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
    - stanowisko = TYLKO z pola "stanowisko / rodzaj pracy" formularza powiadomienia, NIGDY z "przedmiotu umowy / dziela"
    - firma = podmiot powierzajacy prace (z naglowka lub sekcji "dane podmiotu")
    - rodzajUmowy = "umowa o dzielo", "umowa zlecenie", "umowa o prace" z formularza
-   - wynagrodzenie = kwota z pola "wynagrodzenie / stawka / kwota za wykonanie" (np. "2000 zl brutto")
+   - wynagrodzenie = szukaj liczby z PLN/zl w polach: "wynagrodzenie brutto", "stawka godzinowa", "kwota za wykonanie dziela", "przewidywana kwota wynagrodzenia", "lacznie" — zwroc np. "3500 zl brutto" lub "25 zl/h". Jesli brak → null.
    STANOWISKO NIGDY NIE JEST OPISEM CZYNNOSCI: jesli wartosc zaczyna sie od "Stworzenie", "Wykonanie", "Opracowanie", "Przyjmuje", "Realizacja", "Przygotowanie", "Prowadzenie" lub innego rzeczownika odczasownikowego — to jest PRZEDMIOT DZIELA, nie stanowisko. Zwroc null.
    STANOWISKO ZAWSZE W MIANOWNIKU: jesli decyzja uzywa odmiany (np. "na stanowisku specjalisty"), podaj forme podstawowa ("Specjalista"). Np. "kierowcy" → "Kierowca", "ksiegowej" → "Ksiegowa".
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.

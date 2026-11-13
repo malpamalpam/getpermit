@@ -58,7 +58,7 @@ KRYTYCZNE ZASADY:
    - formularz PSZ-OPWP → OSWIADCZENIE
    - PSZ-PPWPU / "powiadomienie o powierzeniu pracy" → POWIADOMIENIE_UA
    - skan plastikowej karty pobytu → KARTA_POBYTU
-9. DLA POWIADOMIEN UA (PSZ-PPWPU): stanowisko = TYLKO z pola "stanowisko / rodzaj pracy" w formularzu. NIGDY z "przedmiotu umowy / dziela". firma = podmiot powierzajacy prace. rodzajUmowy = typ umowy z formularza. wynagrodzenie = kwota z pola "wynagrodzenie / stawka / kwota za wykonanie" (np. "2000 zl brutto").
+9. DLA POWIADOMIEN UA (PSZ-PPWPU): stanowisko = TYLKO z pola "stanowisko / rodzaj pracy" w formularzu. NIGDY z "przedmiotu umowy / dziela". firma = podmiot powierzajacy prace. rodzajUmowy = typ umowy z formularza. wynagrodzenie = szukaj liczby z PLN/zl w polach: "wynagrodzenie brutto", "stawka godzinowa", "kwota za wykonanie dziela", "przewidywana kwota wynagrodzenia", "lacznie" — zwroc np. "3500 zl brutto" lub "25 zl/h". Jesli brak kwoty → null.
 10. STANOWISKO NIGDY NIE JEST OPISEM CZYNNOSCI: jesli wartosc zaczyna sie od slowa "Stworzenie", "Wykonanie", "Opracowanie", "Przyjmuje", "Realizacja", "Przygotowanie", "Prowadzenie" lub innego rzeczownika odczasownikowego — to jest PRZEDMIOT DZIELA, nie stanowisko. Zwroc null.
 11. STANOWISKO ZAWSZE W MIANOWNIKU: jesli decyzja uzywa odmiany (np. "na stanowisku specjalisty"), podaj forme podstawowa ("Specjalista"). Np. "kierowcy" → "Kierowca", "ksiegowej" → "Ksiegowa".
 12. DLA ZEZWOLENIA NA PRACE: okres = "Zezwolenie na prace jest wazne od DD.MM.RRRR do DD.MM.RRRR". NIE bierz dat z wniosku, umowy, ani daty doreczenia.
