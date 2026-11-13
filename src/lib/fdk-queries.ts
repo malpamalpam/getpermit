@@ -67,12 +67,23 @@ export function computeStatus(base: {
  * Returns null if either input is null/empty (caller decides what null means).
  * Ignores words shorter than 3 characters.
  */
+/**
+ * Stem a Polish word by taking the first N characters.
+ * Handles declension: "Specjalisty" → "specjali", "Specjalista" → "specjali" ✓
+ * Words < 5 chars: use as-is (stopwords/prepositions expected to match exactly).
+ */
+function stemPL(w: string): string {
+  if (w.length <= 5) return w;
+  // Take the first 70% of the word (min 5 chars) — covers Polish inflectional suffixes
+  return w.slice(0, Math.max(5, Math.floor(w.length * 0.7)));
+}
+
 function jaccardWords(a: string | null | undefined, b: string | null | undefined): number | null {
   if (!a || !b) return null;
-  const normalize = (s: string) =>
-    s.toLowerCase().replace(/[^\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3);
-  const wa = normalize(a);
-  const wb = normalize(b);
+  const tokenize = (s: string) =>
+    s.toLowerCase().replace(/[^\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3).map(stemPL);
+  const wa = tokenize(a);
+  const wb = tokenize(b);
   if (wa.length === 0 || wb.length === 0) return null;
   const sa = new Set(wa);
   const sb = new Set(wb);
