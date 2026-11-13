@@ -63,12 +63,44 @@ export function computeStatus(base: {
 }
 
 /**
+ * Jaccard word-overlap similarity between two strings.
+ * Returns null if either input is null/empty (caller decides what null means).
+ * Ignores words shorter than 3 characters.
+ */
+function jaccardWords(a: string | null | undefined, b: string | null | undefined): number | null {
+  if (!a || !b) return null;
+  const normalize = (s: string) =>
+    s.toLowerCase().replace(/[^\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3);
+  const wa = normalize(a);
+  const wb = normalize(b);
+  if (wa.length === 0 || wb.length === 0) return null;
+  const sa = new Set(wa);
+  const sb = new Set(wb);
+  let inter = 0;
+  for (const w of sa) if (sb.has(w)) inter++;
+  const union = sa.size + sb.size - inter;
+  return union === 0 ? 1 : inter / union;
+}
+
+/** Normalize company name for comparison (strip legal form suffixes). */
+function normalizeFirmaForMatch(s: string | null | undefined): string | null {
+  if (!s) return null;
+  const result = s
+    .toLowerCase()
+    .replace(/\b(sp\.?\s*z\.?\s*o\.?o\.?|s\.?a\.?|s\.?c\.?|sp\.j\.?|spółka\s+z\s+o\.o\.|spółka\s+akcyjna)\b/gi, "")
+    .replace(/[^\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return result || null;
+}
+
+/**
  * Apply computeStatus to an array of employment bases.
  * Returns new array with computed status field.
  * Also enforces: only one residence permit (KARTA_POBYTU/BLUE_CARD) can be AKTYWNE.
  * Others are marked NIEAKTYWNE (superseded by the newest one).
  */
-export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null; rodzajUmowy?: string | null; firma?: string | null }>(
+export function withComputedStatuses<T extends { id?: number; typ?: string; status: string; dataOd: Date | null; dataDo: Date | null; dataZakPracy?: Date | null; rodzajUmowy?: string | null; firma?: string | null; stanowisko?: string | null }>(
   bases: T[]
 ): T[] {
   const uaTypes = ["ZGLOSZENIE_UA", "POWIADOMIENIE_UA"];
@@ -113,7 +145,36 @@ export function withComputedStatuses<T extends { id?: number; typ?: string; stat
       if (!b.typ || !ABSORBABLE_TYPES.has(b.typ) || b.status !== "AKTYWNE") continue;
       const absorbingTrc = activeTrc.find((trc) => {
         if (!trc.dataOd || !b.dataDo) return false;
-        return trc.dataOd.getTime() <= b.dataDo.getTime();
+        // Condition 1: Date overlap — TRC started before or when employment ends
+        if (trc.dataOd.getTime() > b.dataDo.getTime()) return false;
+        // Condition 2: TRC started no earlier than employment started (TRC is a continuation/upgrade)
+        if (b.dataOd && trc.dataOd.getTime() < b.dataOd.getTime()) return false;
+
+        // Condition 3: Same employer (Jaccard ≥ 0.5 on normalized firma, skip if either null)
+        const trcFirma = normalizeFirmaForMatch(trc.firma);
+        const bFirma = normalizeFirmaForMatch(b.firma);
+        if (trcFirma !== null && bFirma !== null) {
+          const sim = jaccardWords(trcFirma, bFirma);
+          if (sim !== null && sim < 0.5) return false;
+        }
+
+        // Condition 4: Same stanowisko (Jaccard ≥ 0.85, skip if either null)
+        const trcStan = trc.stanowisko;
+        const bStan = b.stanowisko;
+        if (trcStan && bStan) {
+          const sim = jaccardWords(trcStan, bStan);
+          if (sim !== null && sim < 0.85) return false;
+        }
+
+        // Condition 5: Same rodzajUmowy (case-insensitive exact, skip if either null)
+        const trcRU = trc.rodzajUmowy;
+        const bRU = b.rodzajUmowy;
+        if (trcRU && bRU) {
+          const norm = (s: string) => s.toLowerCase().trim().replace(/\s+/g, " ");
+          if (norm(trcRU) !== norm(bRU)) return false;
+        }
+
+        return true;
       });
       if (absorbingTrc) {
         const label = TYPE_LABELS[absorbingTrc.typ ?? ""] ?? absorbingTrc.typ;

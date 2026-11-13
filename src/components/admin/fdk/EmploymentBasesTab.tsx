@@ -303,8 +303,8 @@ export function EmploymentBasesTab({ foreignerId, bases, hasActiveResidence, oby
                 // Przedmiot dzieła — usunięte z widoku (pkt 3 reguł legalizacji)
                 ["Urząd", b.urzad],
                 ["Rodzaj sprawy", b.rodzajSprawy],
-                ["Sygnatura", b.sygnatura && b.nrDecyzji !== b.sygnatura ? b.sygnatura : null],
-                ["Nr oświadczenia", b.nrOswiadczenia && b.nrDecyzji !== b.nrOswiadczenia ? b.nrOswiadczenia : null],
+                ["Sygnatura", b.sygnatura && b.nrDecyzji && b.nrDecyzji !== b.sygnatura ? b.sygnatura : null],
+                ["Nr oświadczenia", b.nrOswiadczenia && b.nrDecyzji && b.nrDecyzji !== b.nrOswiadczenia ? b.nrOswiadczenia : null],
                 ["Status podjęcia", b.podjeciePracyStatus === "PODJAL" ? "Podjął pracę" : b.podjeciePracyStatus === "NIE_PODJAL" ? "Nie podjął pracy" : null],
                 ["Data podjęcia pracy", b.podjeciePracyData ? fmt(b.podjeciePracyData) : null],
                 ["Data rozpoczęcia pracy", b.dataStartu ? fmt(b.dataStartu) : null],

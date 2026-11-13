@@ -1486,6 +1486,7 @@ KRYTYCZNE ZASADY DLA DECYZJI POBYTOWYCH (dokumenty z naglowkiem urzedu/wojewody)
    - stanowisko = z pola "stanowisko / rodzaj pracy" formularza powiadomienia, NIE z przedmiotu umowy
    - firma = podmiot powierzajacy prace (z naglowka lub sekcji "dane podmiotu")
    - rodzajUmowy = "umowa o dzielo", "umowa zlecenie", "umowa o prace" z formularza
+   STANOWISKO ZAWSZE W MIANOWNIKU: jesli decyzja uzywa odmiany (np. "na stanowisku specjalisty"), podaj forme podstawowa ("Specjalista"). Np. "kierowcy" → "Kierowca", "ksiegowej" → "Ksiegowa".
 9. obywatelstwo: TYLKO nazwa kraju (np. "Bialorus"), bez dodatkowych slow.
 10. urzad = organ wydajacy decyzje z naglowka: "WOJEWODA MAZOWIECKI" → "Wojewoda Mazowiecki", "Szef Urzedu do Spraw Cudzoziemcow". Dla oswiadczen i powiadomien UA = null.
 

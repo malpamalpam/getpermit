@@ -150,9 +150,8 @@ const OSW_FILENAME_PATTERNS = [
   /WNIOSEK-OSW/i,
   /PSZ-OPPC|PSZ-OPWP|PSZ-ZOPP/i,
   /PSZ-PPPO|PSZ-PZPO|PGP-UZC/i,
-  /podj[ęe]ci[ea].*(?:pracy|zatrudnieni)/i,
-  /niepodj[ęe]ci[ea].*pracy/i,
-  /niepodjęcie/i,  // "niepodjęcie SKURATOVICH"
+  /podj[ęe]ci[ea]/i,          // "podjęcie pracy", "podjęcie 17.09" — in FDK context always means starting work
+  /niepodj[ęe]ci[ea]/i,      // "niepodjęcie pracy", "niepodjęcie SKURATOVICH"
   /zako[ńn]czeni[ea].*pracy/i,
   /zg[łl]oszeni[ea].*umowy/i,
   /op[łl]ata.*(?:o[śs]wiadczen|400\s*PLN|PUP)/i,
