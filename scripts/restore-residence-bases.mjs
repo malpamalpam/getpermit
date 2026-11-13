@@ -107,7 +107,7 @@ async function main() {
     const trcBases = await db.fdkEmploymentBase.findMany({
       where: {
         foreignerId: f.id,
-        typ: { in: TRC_EMP_TYPES as never },
+        typ: { in: TRC_EMP_TYPES },
         dataOd: { not: null },
         dataDo: { not: null },
       },
@@ -129,7 +129,7 @@ async function main() {
         await db.fdkResidenceBasis.create({
           data: {
             foreignerId: f.id,
-            typ: best.typ as never,
+            typ: best.typ,
             status: "AKTYWNE",
             dataOd: best.dataOd,
             dataDo: best.dataDo,
@@ -148,7 +148,7 @@ async function main() {
       const trcAtt = await db.fdkAttachment.findFirst({
         where: {
           foreignerId: f.id,
-          detectedType: { in: TRC_EMP_TYPES as never },
+          detectedType: { in: TRC_EMP_TYPES },
           folder: "wazne",
         },
         orderBy: { id: "desc" },
@@ -169,7 +169,7 @@ async function main() {
             await db.fdkResidenceBasis.create({
               data: {
                 foreignerId: f.id,
-                typ: parsed.detectedType as never,
+                typ: parsed.detectedType,
                 status: "AKTYWNE",
                 dataOd: parsed.dataOd ? new Date(parsed.dataOd) : null,
                 dataDo: parsed.dataDo ? new Date(parsed.dataDo) : null,
@@ -201,7 +201,7 @@ async function main() {
       await db.fdkResidenceBasis.create({
         data: {
           foreignerId: f.id,
-          typ: "KARTA_POBYTU" as never,
+          typ: "KARTA_POBYTU",
           status: "BRAK_DANYCH",
           dataOd: null,
           dataDo: f.decyzjaPobytowaDo,
